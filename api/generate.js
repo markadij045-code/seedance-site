@@ -22,9 +22,10 @@ export default async function handler(req, res) {
         'Authorization': 'Bearer ' + key,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
+           body: JSON.stringify({
         model: model,
-        prompt: prompt
+        prompt: prompt,
+        seconds: '5'
       })
     });
 
