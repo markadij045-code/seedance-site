@@ -13,10 +13,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Нужен промпт' });
   }
 
-  const model = process.env.SEEDANCE_MODEL || 'seedance-2-5';
+  const model = process.env.SEEDANCE_MODEL || 'doubao-seedance-2-5';
 
   try {
-    const r = await fetch('https://api.cometapi.com/volc/v3/contents/generations/tasks', {
+    const r = await fetch('https://api.cometapi.com/v1/videos', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + key,
@@ -24,15 +24,14 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: model,
-        content: [{ type: 'text', text: prompt }],
-        output: { resolution: '720p', duration_s: 5 }
+        prompt: prompt
       })
     });
 
     const data = await r.json();
 
     if (!r.ok) {
-      const msg = (data.error && data.error.message) || data.error || data.message || 'Ошибка API';
+      const msg = (data.error && (data.error.message || data.error)) || data.message || 'Ошибка API';
       return res.status(502).json({ error: msg });
     }
 
