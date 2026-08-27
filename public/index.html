@@ -7,33 +7,50 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b0b14;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
-h1{font-size:2.4rem;margin:40px 0 8px;background:linear-gradient(90deg,#7c5cff,#00d4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
-.sub{color:#8a8aa3;margin-bottom:36px;text-align:center}
-.card{width:100%;max-width:640px;background:#151522;border:1px solid #26263a;border-radius:16px;padding:24px}
+h1{font-size:2.4rem;margin:30px 0 8px;background:linear-gradient(90deg,#7c5cff,#00d4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.sub{color:#8a8aa3;margin-bottom:24px;text-align:center}
+.card{width:100%;max-width:640px;background:#151522;border:1px solid #26263a;border-radius:16px;padding:24px;margin-bottom:20px}
 label{display:block;margin-bottom:8px;color:#b9b9cf;font-size:.95rem}
-textarea{width:100%;height:110px;background:#0e0e18;border:1px solid #2c2c44;border-radius:10px;color:#fff;padding:12px;font-size:1rem;resize:vertical;outline:none}
+textarea{width:100%;height:100px;background:#0e0e18;border:1px solid #2c2c44;border-radius:10px;color:#fff;padding:12px;font-size:1rem;resize:vertical;outline:none}
 textarea:focus{border-color:#7c5cff}
-button{margin-top:16px;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(90deg,#7c5cff,#00d4ff);color:#fff;font-size:1.05rem;font-weight:600;cursor:pointer}
+button{margin-top:14px;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(90deg,#7c5cff,#00d4ff);color:#fff;font-size:1.05rem;font-weight:600;cursor:pointer}
 button:disabled{opacity:.5;cursor:not-allowed}
-#status{margin-top:14px;min-height:20px;color:#8a8aa3;text-align:center}
-#result{margin-top:20px;display:none}
+#status{margin-top:12px;min-height:20px;color:#8a8aa3;text-align:center}
+#result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
-footer{margin-top:auto;padding:30px 0 10px;color:#55556e;font-size:.85rem}
+h2{font-size:1.3rem;margin-bottom:14px;text-align:center}
+.price{display:flex;justify-content:space-between;align-items:center;background:#0e0e18;border:1px solid #2c2c44;border-radius:10px;padding:14px;margin-bottom:10px}
+.price b{font-size:1.2rem;color:#00d4ff}
+.steps{color:#b9b9cf;font-size:.95rem;line-height:1.6}
+footer{margin-top:auto;padding:26px 0 10px;color:#55556e;font-size:.85rem;text-align:center;line-height:1.7}
+footer a{color:#8a8aa3;text-decoration:none}
 </style>
 </head>
 <body>
 <h1>🎬 SeedGen</h1>
-<p class="sub">Генерация видео с помощью нейросети Seedance 2.5</p>
+<p class="sub">Генерация видео из текстового описания с помощью нейросети Seedance</p>
 
 <div class="card">
   <label for="prompt">Опиши, какое видео хочешь создать:</label>
   <textarea id="prompt" placeholder="Например: кот в космосе летит на ракете, кинематографичный стиль"></textarea>
-  <button id="btn">Сгенерировать видео</button>
+  <button id="btn">Сгенерировать видео — 199 ₽</button>
   <div id="status"></div>
   <div id="result"><video id="video" controls></video></div>
 </div>
 
-<footer>© 2025 SeedGen · Работает на ИИ</footer>
+<div class="card">
+  <h2>Цены</h2>
+  <div class="price"><span>Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
+  <h2 style="margin-top:18px">Как получить заказ</h2>
+  <p class="steps">1. Введите описание видео и оплатите заказ.<br>
+  2. Нейросеть сгенерирует видео в течение 1–3 минут.<br>
+  3. Готовое видео появится на этой странице и будет доступно для скачивания. Доставка электронная, мгновенная.</p>
+</div>
+
+<footer>
+  Самозанятый [ТВОИ ФАМИЛИЯ ИМЯ ОТЧЕСТВО], ИНН [ТВОЙ ИНН]<br>
+  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты и реквизиты</a>
+</footer>
 
 <script>
 const btn=document.getElementById('btn');
@@ -48,7 +65,7 @@ btn.addEventListener('click',async()=>{
   resultEl.style.display='none';
   setStatus('Отправляем запрос...');
   try{
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
     const data=await r.json();
     if(!r.ok)throw new Error(data.error||'Ошибка сервера');
     setStatus('Видео генерируется... это займёт 1–3 минуты ⏳');
