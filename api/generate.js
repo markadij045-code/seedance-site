@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     form.append('prompt', prompt);
     form.append('model', model);
     form.append('seconds', '4');
-    form.append('size', '1280x720');
+       form.append('size', '848x480');
 
     const r = await fetch('https://api.cometapi.com/v1/videos', {
       method: 'POST',
