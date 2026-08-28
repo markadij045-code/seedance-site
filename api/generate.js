@@ -8,25 +8,30 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Не настроен ключ API (COMETAPI_KEY)' });
   }
 
+  const isAdmin = !!process.env.ADMIN_SECRET && req.body && req.body.adminPassword === process.env.ADMIN_SECRET;
+  if (!isAdmin) {
+    return res.status(403).json({ error: 'Генерация доступна только после оплаты' });
+  }
+
   const prompt = (req.body && req.body.prompt) || '';
   if (!prompt) {
     return res.status(400).json({ error: 'Нужен промпт' });
   }
 
   const model = process.env.SEEDANCE_MODEL || 'seedance-2-5';
+  const seconds = String(req.body.seconds || '10');
+  const size = String(req.body.size || '1280x720');
 
   try {
     const form = new FormData();
     form.append('prompt', prompt);
     form.append('model', model);
-    form.append('seconds', '4');
-       form.append('size', '848x480');
+    form.append('seconds', seconds);
+    form.append('size', size);
 
     const r = await fetch('https://api.cometapi.com/v1/videos', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + key
-      },
+      headers: { 'Authorization': 'Bearer ' + key },
       body: form
     });
 
