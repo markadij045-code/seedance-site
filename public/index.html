@@ -99,6 +99,76 @@ async function poll(taskId){
     }catch(e){}
   },5000);
 }
+<script>
+const btn=document.getElementById('btn');
+const statusEl=document.getElementById('status');
+const resultEl=document.getElementById('result');
+const videoEl=document.getElementById('video');
+function setStatus(t){statusEl.textContent=t;}
+
+btn.addEventListener('click',async()=>{
+  const prompt=document.getElementById('prompt').value.trim();
+  if(!prompt){alert('Введите описание видео');return;}
+  btn.disabled=true;
+  setStatus('Создаём платёж...');
+  try{
+    const r=await fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt})});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||'Ошибка сервера');
+    window.location.href=data.confirmationUrl;
+  }catch(e){
+    setStatus('Ошибка: '+e.message);
+    btn.disabled=false;
+  }
+});
+
+async function poll(taskId){
+  const timer=setInterval(async()=>{
+    try{
+      const r=await fetch('/api/status?taskId='+encodeURIComponent(taskId));
+      const data=await r.json();
+      if(data.status==='succeeded'){
+        clearInterval(timer);
+        videoEl.src=data.videoUrl;
+        resultEl.style.display='block';
+        setStatus('Готово! ✅');
+        btn.disabled=false;
+      }else if(data.status==='failed'){
+        clearInterval(timer);
+        setStatus('Ошибка генерации: '+(data.error||'попробуйте другой запрос'));
+        btn.disabled=false;
+      }else{
+        setStatus('Видео генерируется... ⏳');
+      }
+    }catch(e){}
+  },5000);
+}
+
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const paymentId=params.get('paymentId');
+  if(!paymentId)return;
+  const savedTask=localStorage.getItem('seedgen_task_'+paymentId);
+  if(savedTask){btn.disabled=true;setStatus('Видео генерируется... ⏳');poll(savedTask);return;}
+  btn.disabled=true;
+  setStatus('Проверяем оплату...');
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.paid&&data.taskId){
+        localStorage.setItem('seedgen_task_'+paymentId,data.taskId);
+        setStatus('Оплата прошла! Видео генерируется... 1–3 минуты ⏳');
+        poll(data.taskId);
+      }else if(data.paid&&data.error){
+        setStatus('Оплата прошла, но генерация не запустилась: '+data.error);
+        btn.disabled=false;
+      }else{
+        setStatus('Оплата не завершена');
+        btn.disabled=false;
+      }
+    })
+    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+})();
 </script>
 </body>
 </html>
