@@ -100,7 +100,7 @@ function poll(taskId,btn){
           btn.disabled=false;
         }else if(data.status==='failed'){
           clearInterval(timer);
-          document.getElementById('status').textContent='Ошибка: '+(data.error||'попробуй другое фото'));
+          document.getElementById('status').textContent='Ошибка: '+(data.error||'попробуй другое фото');
           btn.disabled=false;
         }else{
           document.getElementById('status').textContent='Оживляем... ⏳';
