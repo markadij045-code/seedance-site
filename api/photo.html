@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Оживи фото — SeedGen</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b0b14;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2.2rem;margin:30px 0 8px;background:linear-gradient(90deg,#ff8c00,#ff3d68);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.sub{color:#8a8aa3;margin-bottom:24px;text-align:center}
+.card{width:100%;max-width:640px;background:#151522;border:1px solid #26263a;border-radius:16px;padding:24px;margin-bottom:20px}
+label{display:block;margin:12px 0 8px;color:#b9b9cf;font-size:.95rem}
+textarea,input{width:100%;background:#0e0e18;border:1px solid #2c2c44;border-radius:10px;color:#fff;padding:12px;font-size:1rem;outline:none}
+textarea{height:90px;resize:vertical}
+button{margin-top:16px;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff8c00,#ff3d68);color:#fff;font-size:1.05rem;font-weight:600;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+#status{margin-top:12px;min-height:20px;color:#8a8aa3;text-align:center}
+#preview{display:none;width:100%;border-radius:12px;margin-top:12px}
+#result{margin-top:16px;display:none}
+#result video{width:100%;border-radius:12px}
+a{color:#8a8aa3}
+</style>
+</head>
+<body>
+<h1>🐱 Оживи фото</h1>
+<p class="sub">Загрузи картинку — нейросеть оживит её в видео</p>
+<div class="card">
+<label>Пароль (пока только для своих)</label>
+<input id="pass" type="password" placeholder="Секретный пароль"/>
+<label>Выбери фото (JPG/PNG)</label>
+<input id="file" type="file" accept="image/*"/>
+<img id="preview"/>
+<label>Что должно происходить в видео?</label>
+<textarea id="prompt" placeholder="Например: кот моргает и шевелит ушами, лёгкое движение камеры"></textarea>
+<button id="btn">Оживить фото</button>
+<div id="status"></div>
+<div id="result"><video id="video" controls></video></div>
+</div>
+<p><a href="/">← На главную</a></p>
+<script>
+var fileInput=document.getElementById('file');
+var preview=document.getElementById('preview');
+var imageData=null;
+
+fileInput.addEventListener('change',function(){
+  var f=fileInput.files[0];
+  if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      var max=1024;
+      var w=img.width,h=img.height;
+      if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
+      var canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      var dataUrl=canvas.toDataURL('image/jpeg',0.85);
+      imageData=dataUrl.split(',')[1];
+      preview.src=dataUrl;
+      preview.style.display='block';
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(f);
+});
+
+document.getElementById('btn').addEventListener('click',function(){
+  var btn=document.getElementById('btn');
+  var prompt=document.getElementById('prompt').value.trim();
+  var pass=document.getElementById('pass').value;
+  if(!imageData){alert('Сначала выбери фото');return;}
+  if(!pass){alert('Введи пароль');return;}
+  btn.disabled=true;
+  document.getElementById('status').textContent='Отправляем фото...';
+  fetch('/api/animate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,prompt:prompt||'Animate this image, cinematic motion',adminPassword:pass})})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){throw new Error(data.error);}
+      document.getElementById('status').textContent='Оживляем... 1–3 минуты ⏳';
+      poll(data.taskId,btn);
+    })
+    .catch(function(e){
+      document.getElementById('status').textContent='Ошибка: '+e.message;
+      btn.disabled=false;
+    });
+});
+
+function poll(taskId,btn){
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data.status==='succeeded'){
+          clearInterval(timer);
+          document.getElementById('video').src=data.videoUrl;
+          document.getElementById('result').style.display='block';
+          document.getElementById('status').textContent='Готово! ✅';
+          btn.disabled=false;
+        }else if(data.status==='failed'){
+          clearInterval(timer);
+          document.getElementById('status').textContent='Ошибка: '+(data.error||'попробуй другое фото'));
+          btn.disabled=false;
+        }else{
+          document.getElementById('status').textContent='Оживляем... ⏳';
+        }
+      })
+      .catch(function(){});
+  },5000);
+}
+</script>
+</body>
+</html>
