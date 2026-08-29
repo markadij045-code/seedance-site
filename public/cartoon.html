@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Мультфильм из фото — SeedGen</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b0b14;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2.2rem;margin:30px 0 8px;background:linear-gradient(90deg,#ff8c00,#ff3d68);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.sub{color:#8a8aa3;margin-bottom:24px;text-align:center;max-width:520px}
+.card{width:100%;max-width:640px;background:#151522;border:1px solid #26263a;border-radius:16px;padding:24px;margin-bottom:20px}
+label{display:block;margin:12px 0 8px;color:#b9b9cf;font-size:.95rem}
+input{width:100%;background:#0e0e18;border:1px solid #2c2c44;border-radius:10px;color:#fff;padding:12px;font-size:1rem;outline:none}
+button{margin-top:16px;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff8c00,#ff3d68);color:#fff;font-size:1.05rem;font-weight:600;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+#status1,#status2{margin-top:12px;min-height:20px;color:#8a8aa3;text-align:center}
+#preview,#toon{display:none;width:100%;border-radius:12px;margin-top:12px}
+#result{margin-top:16px;display:none}
+#result video{width:100%;border-radius:12px}
+a{color:#8a8aa3}
+</style>
+</head>
+<body>
+<h1>🎭 Мультфильм из фото</h1>
+<p class="sub">Шаг 1 — превратим фото в мультяшный арт. Шаг 2 — оживим его в видео</p>
+<div class="card">
+<label>Пароль (пока только для своих)</label>
+<input id="pass" type="password" placeholder="Секретный пароль"/>
+<label>Выбери фото с человеком (JPG/PNG)</label>
+<input id="file" type="file" accept="image/*"/>
+<img id="preview"/>
+<button id="btn1">Шаг 1: сделать мультяшный арт</button>
+<div id="status1"></div>
+<img id="toon"/>
+<button id="btn2" style="display:none">Шаг 2: оживить в видео</button>
+<div id="status2"></div>
+<div id="result"><video id="video" controls></video></div>
+</div>
+<p><a href="/">← На главную</a></p>
+<script>
+var fileInput=document.getElementById('file');
+var preview=document.getElementById('preview');
+var imageData=null;
+var toonJpeg=null;
+
+function shrink(dataUrl,cb){
+  var img=new Image();
+  img.onload=function(){
+    var max=1024;
+    var w=img.width,h=img.height;
+    if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
+    var canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    cb(canvas.toDataURL('image/jpeg',0.85));
+  };
+  img.src=dataUrl;
+}
+
+fileInput.addEventListener('change',function(){
+  var f=fileInput.files[0];
+  if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    shrink(reader.result,function(d){
+      imageData=d.split(',')[1];
+      preview.src=d;
+      preview.style.display='block';
+    });
+  };
+  reader.readAsDataURL(f);
+});
+
+document.getElementById('btn1').addEventListener('click',function(){
+  var pass=document.getElementById('pass').value;
+  if(!imageData){alert('Сначала выбери фото');return;}
+  if(!pass){alert('Введи пароль');return;}
+  var b=document.getElementById('btn1');
+  b.disabled=true;
+  document.getElementById('status1').textContent='Рисуем мультяшный арт... до минуты ⏳';
+  fetch('/api/toon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,adminPassword:pass})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){throw new Error(d.error);}
+      var url='data:'+(d.mime||'image/png')+';base64,'+d.image;
+      shrink(url,function(j){
+        toonJpeg=j.split(',')[1];
+        document.getElementById('toon').src=j;
+        document.getElementById('toon').style.display='block';
+        document.getElementById('btn2').style.display='block';
+        document.getElementById('status1').textContent='Арт готов! ✅ Жми шаг 2';
+      });
+      b.disabled=false;
+    })
+    .catch(function(e){
+      document.getElementById('status1').textContent='Ошибка: '+e.message;
+      b.disabled=false;
+    });
+});
+
+document.getElementById('btn2').addEventListener('click',function(){
+  var pass=document.getElementById('pass').value;
+  if(!toonJpeg){return;}
+  var b=document.getElementById('btn2');
+  b.disabled=true;
+  document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
+  fetch('/api/animate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:toonJpeg,prompt:'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion',adminPassword:pass})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){throw new Error(d.error);}
+      poll(d.taskId,b);
+    })
+    .catch(function(e){
+      document.getElementById('status2').textContent='Ошибка: '+e.message;
+      b.disabled=false;
+    });
+});
+
+function poll(taskId,b){
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.status==='succeeded'){
+          clearInterval(timer);
+          document.getElementById('video').src=d.videoUrl;
+          document.getElementById('result').style.display='block';
+          document.getElementById('status2').textContent='Готово! ✅';
+          b.disabled=false;
+        }else if(d.status==='failed'){
+          clearInterval(timer);
+          document.getElementById('status2').textContent='Ошибка: '+(d.error||'попробуй другое фото');
+          b.disabled=false;
+        }else{
+          document.getElementById('status2').textContent='Оживляем... ⏳';
+        }
+      })
+      .catch(function(){});
+  },5000);
+}
+</script>
+</body>
+</html>
