@@ -23,6 +23,9 @@ h1 .lime{color:#A3E635}
 .services{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .pill{display:inline-flex;align-items:center;gap:6px;background:#161a0e;border:1px solid #2a3118;border-radius:999px;padding:8px 14px;color:#e5e7eb;text-decoration:none;font-size:.9rem}
 .pill:hover{border-color:#A3E635}
+.modes{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.mode{flex:1;min-width:150px;padding:12px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
+.mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
 label{display:block;margin:6px 0 8px;color:#c3c9b4;font-size:.95rem}
 textarea{width:100%;height:110px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
 textarea:focus{border-color:#A3E635}
@@ -69,6 +72,10 @@ footer a{color:#9ca3af;text-decoration:none}
     <a class="pill" href="/cartoon.html">🎭 Мультфильм (стиль Pixar)</a>
     <a class="pill" href="/avatar.html">🗣 Говорящий аватар</a>
   </div>
+  <div class="modes">
+    <div class="mode active" id="dur5" onclick="setDur('5')">⏱ До 5 секунд — 199 ₽</div>
+    <div class="mode" id="dur30" onclick="setDur('30')">🎬 До 30 секунд — 999 ₽</div>
+  </div>
   <label for="prompt">Опиши, какое видео хочешь создать:</label>
   <textarea id="prompt" placeholder="Например: кот в космосе летит на ракете, кинематографичный стиль"></textarea>
   <button class="btn" id="btn">Сгенерировать видео — 199 ₽</button>
@@ -93,6 +100,7 @@ footer a{color:#9ca3af;text-decoration:none}
 <div class="card" id="price">
   <h2>Цены</h2>
   <div class="price"><span>Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
+  <div class="price"><span>Видео до 30 секунд по вашему описанию</span><b>999 ₽</b></div>
   <div class="price"><span>Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
   <div class="price"><span>Мультфильм из фото (стиль Pixar)</span><b>299 ₽</b></div>
   <div class="price"><span>Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
@@ -112,14 +120,27 @@ var btn=document.getElementById('btn');
 var statusEl=document.getElementById('status');
 var resultEl=document.getElementById('result');
 var videoEl=document.getElementById('video');
+var currentService='text2video';
 function setStatus(t){statusEl.textContent=t;}
+
+function setDur(d){
+  if(d==='30'){
+    currentService='text30';
+    btn.textContent='Сгенерировать видео — 999 ₽';
+  }else{
+    currentService='text2video';
+    btn.textContent='Сгенерировать видео — 199 ₽';
+  }
+  document.getElementById('dur5').classList.toggle('active',d==='5');
+  document.getElementById('dur30').classList.toggle('active',d==='30');
+}
 
 btn.addEventListener('click',function(){
   var prompt=document.getElementById('prompt').value.trim();
   if(!prompt){alert('Введите описание видео');return;}
   btn.disabled=true;
   setStatus('Создаём платёж...');
-  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'text2video',prompt:prompt})})
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:currentService,prompt:prompt})})
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.error){throw new Error(data.error);}
