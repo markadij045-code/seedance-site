@@ -13,6 +13,10 @@ nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:
 .links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
 .links a:hover{color:#A3E635}
 .links a.active{color:#A3E635;font-weight:700}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
 h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
 .warn{width:100%;max-width:640px;background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.4);color:#ffb066;border-radius:12px;padding:12px;margin:12px 0;font-size:.9rem;text-align:center}
 .card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
@@ -36,6 +40,7 @@ footer a{color:#9ca3af;text-decoration:none}
     <a class="active" href="/photo.html">Оживи картинку</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a href="/avatar.html">Аватар</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
   </div>
 </nav>
 
