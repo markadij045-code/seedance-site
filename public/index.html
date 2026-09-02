@@ -12,6 +12,10 @@ nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:
 .logo span{color:#A3E635}
 .links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
 .links a:hover{color:#A3E635}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
 h1{font-size:2.5rem;text-align:center;margin:16px 0 12px}
 h1 .lime{color:#A3E635}
 .sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:28px}
@@ -51,6 +55,7 @@ footer a{color:#9ca3af;text-decoration:none}
     <a href="/cartoon.html">Мультфильм</a>
     <a href="/avatar.html">Аватар</a>
     <a href="#price">Цены</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
   </div>
 </nav>
 
