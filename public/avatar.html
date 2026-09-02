@@ -15,6 +15,10 @@ nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:
 .links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
 .links a:hover{color:#A3E635}
 .links a.active{color:#A3E635;font-weight:700}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
 h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
 .sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:24px}
 .card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
@@ -37,8 +41,6 @@ select{background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff
 .paymethods span{background:#161a0e;border:1px solid #2a3118;border-radius:999px;padding:5px 12px;color:#9ca3af;font-size:.8rem}
 #status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
 .success{background:rgba(163,230,53,.15);border:1px solid #A3E635;color:#A3E635;border-radius:14px;padding:16px;text-align:center;margin-top:16px;line-height:1.6}
-.pro{display:inline-block;margin-top:16px;padding:10px 20px;border-radius:999px;border:1px dashed #2a3118;color:#9ca3af;font-size:.9rem}
-.pro .soon{color:#A3E635;font-weight:700}
 .hidden{display:none}
 img.prev{max-width:140px;border-radius:12px;margin-top:10px}
 .how{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-top:8px}
@@ -54,6 +56,7 @@ footer a{color:#9ca3af;text-decoration:none}
     <a href="/photo.html">Оживи картинку</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a class="active" href="/avatar.html">Аватар</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
   </div>
 </nav>
 
@@ -109,10 +112,6 @@ footer a{color:#9ca3af;text-decoration:none}
 
 <div id="result" class="hidden">
   <div class="success">✅ Оплата прошла!<br>Мы начали работу над вашим видео. Готовый аватар придёт в течение 15 минут.</div>
-</div>
-
-<div style="text-align:center">
-  <div class="pro">🎛 PRO-студия для блогеров — <span class="soon">скоро ✨</span></div>
 </div>
 
 <div class="card">
