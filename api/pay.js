@@ -12,15 +12,16 @@ export default async function handler(req, res) {
   const service = (req.body && req.body.service) || 'text2video';
   const prompt = (req.body && req.body.prompt) || '';
   const imageData = (req.body && req.body.image) || '';
-  
+
   // Прайс-лист
   const prices = {
-    'text2video': { amount: '199.00', desc: 'Видео из текста SeedGen' },
+    'text2video': { amount: '199.00', desc: 'Видео до 5 секунд SeedGen' },
+    'text30': { amount: '999.00', desc: 'Видео до 30 секунд SeedGen' },
     'animate': { amount: '199.00', desc: 'Оживи картинку SeedGen' },
     'cartoon': { amount: '299.00', desc: 'Мультфильм из фото SeedGen' },
     'avatar': { amount: '499.00', desc: 'Говорящий аватар SeedGen' }
   };
-  
+
   const price = prices[service] || prices['text2video'];
 
   const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
