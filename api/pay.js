@@ -9,10 +9,19 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'ЮKassa не настроена' });
   }
 
+  const service = (req.body && req.body.service) || 'text2video';
   const prompt = (req.body && req.body.prompt) || '';
-  if (!prompt) {
-    return res.status(400).json({ error: 'Нужен промпт' });
-  }
+  const imageData = (req.body && req.body.image) || '';
+  
+  // Прайс-лист
+  const prices = {
+    'text2video': { amount: '199.00', desc: 'Видео из текста SeedGen' },
+    'animate': { amount: '199.00', desc: 'Оживи картинку SeedGen' },
+    'cartoon': { amount: '299.00', desc: 'Мультфильм из фото SeedGen' },
+    'avatar': { amount: '499.00', desc: 'Говорящий аватар SeedGen' }
+  };
+  
+  const price = prices[service] || prices['text2video'];
 
   const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
 
@@ -25,14 +34,14 @@ export default async function handler(req, res) {
         'Idempotence-Key': 'pay-' + Date.now() + '-' + Math.random().toString(36).slice(2)
       },
       body: JSON.stringify({
-        amount: { value: '199.00', currency: 'RUB' },
+        amount: { value: price.amount, currency: 'RUB' },
         capture: true,
         confirmation: {
           type: 'redirect',
           return_url: 'https://seedance-site-nu.vercel.app/'
         },
-        description: 'Генерация видео SeedGen',
-        metadata: { prompt: prompt }
+        description: price.desc,
+        metadata: { service: service, prompt: prompt, image: imageData ? 'yes' : 'no' }
       })
     });
 
