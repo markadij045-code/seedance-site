@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Говорящий аватар — SeedGen</title>
+<meta property="og:title" content="Говорящий аватар — фото говорит твоим голосом">
+<meta property="og:description" content="Загрузи фото и текст или аудио — нейросеть оживит его. 499 ₽">
+<meta property="og:image" content="https://seedance-site-nu.vercel.app/preview.jpg">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+  body{background:#171310;color:#e8d5b0;min-height:100vh;padding:20px}
+  .wrap{max-width:640px;margin:0 auto}
+  a.back{color:#a89880;text-decoration:none;font-size:14px}
+  h1{font-size:26px;margin:16px 0 4px}
+  .price{display:inline-block;background:#e8590c;color:#fff;border-radius:20px;padding:4px 14px;font-weight:700;margin:8px 0}
+  .promo{color:#a89880;font-size:13px;margin-bottom:20px}
+  .card{background:#262019;border:1px solid #3a3229;border-radius:16px;padding:20px;margin-bottom:16px}
+  .step{font-size:13px;color:#a89880;margin-bottom:10px}
+  .drop{border:2px dashed #4a4034;border-radius:12px;padding:24px;text-align:center;cursor:pointer;color:#a89880}
+  .drop:hover{border-color:#e8590c;color:#e8d5b0}
+  .modes{display:flex;gap:10px}
+  .mode{flex:1;padding:12px;border-radius:12px;border:1px solid #4a4034;background:#1d1813;color:#a89880;cursor:pointer;text-align:center;font-size:14px}
+  .mode.active{border-color:#e8590c;color:#e8d5b0;background:#2a2018}
+  textarea{width:100%;background:#1d1813;border:1px solid #4a4034;border-radius:12px;color:#e8d5b0;padding:12px;min-height:90px;margin-top:12px;font-size:14px}
+  .row{display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap}
+  .lbl{font-size:13px;color:#a89880}
+  select{background:#1d1813;border:1px solid #4a4034;border-radius:10px;color:#e8d5b0;padding:8px 12px}
+  .orient{display:flex;gap:10px}
+  .orient .mode{flex:0 0 auto;padding:10px 16px}
+  .pay{width:100%;background:#e8590c;border:none;color:#fff;font-size:17px;font-weight:700;border-radius:14px;padding:16px;cursor:pointer}
+  .pay:hover{background:#ff7a1a}
+  .pro{position:relative;display:inline-block;margin-top:16px;padding:10px 18px;border-radius:12px;border:1px solid #4a4034;color:#6b5f4f;cursor:pointer;font-size:14px}
+  .pro .tip{display:none;position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#e8d5b0;color:#171310;font-size:12px;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap}
+  .pro:hover .tip{display:block}
+  .how{font-size:13px;color:#a89880;line-height:1.6}
+  .hidden{display:none}
+  img.prev{max-width:120px;border-radius:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← На главную</a>
+  <h1>🗣 Говорящий аватар</h1>
+  <div class="price">499 ₽</div>
+  <div class="promo">🎉 Акция запуска: вместо 999 ₽ — до конца месяца</div>
+
+  <div class="card">
+    <div class="step">Шаг 1. Загрузите фото (лицо крупно)</div>
+    <label class="drop" for="photo">📷 Выбрать фото<input type="file" id="photo" accept="image/*" hidden></label>
+    <img class="prev hidden" id="photoPrev">
+  </div>
+
+  <div class="card">
+    <div class="step">Шаг 2. Выберите режим озвучки</div>
+    <div class="modes">
+      <div class="mode active" id="mText" onclick="setMode('text')">✍️ Текст в речь</div>
+      <div class="mode" id="mAudio" onclick="setMode('audio')">🎙 Своё аудио</div>
+    </div>
+    <div id="textBlock">
+      <textarea id="txt" placeholder="Введите текст, который скажет аватар..."></textarea>
+      <div class="row">
+        <span class="lbl">Язык:</span>
+        <select id="lang"><option value="ru">🇷🇺 Русский</option><option value="en">🇬🇧 English</option></select>
+        <span class="lbl">Голос:</span>
+        <select id="voice">
+          <option>Женский — мягкий</option><option>Женский — диктор</option>
+          <option>Мужской — спокойный</option><option>Мужской — энергичный</option>
+        </select>
+      </div>
+    </div>
+    <div id="audioBlock" class="hidden">
+      <label class="drop" for="aud" style="margin-top:12px">🎵 Выбрать аудио<input type="file" id="aud" accept="audio/*" hidden></label>
+      <div class="lbl" id="audName" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="step">Шаг 3. Ориентация видео</div>
+    <div class="orient">
+      <div class="mode active" onclick="setOr(this)">📱 9:16</div>
+      <div class="mode" onclick="setOr(this)">💻 16:9</div>
+      <div class="mode" onclick="setOr(this)">⬜ 1:1</div>
+    </div>
+  </div>
+
+  <button class="pay" onclick="pay()">💳 Оплатить 499 ₽</button>
+  <div class="pro">🎛 PRO-студия<span class="tip">✨ Скоро!</span></div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="how">
+      <b>Как это работает:</b> нейросеть синтезирует голос (или берёт ваше аудио)
+      и оживляет фото — губы, мимика и движения синхронизируются с речью.
+      Готовое видео придёт через 1–3 минуты после оплаты.
+    </div>
+  </div>
+</div>
+<script>
+function setMode(m){
+  document.getElementById('mText').classList.toggle('active', m=='text');
+  document.getElementById('mAudio').classList.toggle('active', m=='audio');
+  document.getElementById('textBlock').classList.toggle('hidden', m!='text');
+  document.getElementById('audioBlock').classList.toggle('hidden', m!='audio');
+}
+function setOr(el){
+  el.parentElement.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+}
+document.getElementById('photo').onchange=e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const p=document.getElementById('photoPrev');
+  p.src=URL.createObjectURL(f); p.classList.remove('hidden');
+};
+document.getElementById('aud').onchange=e=>{
+  const f=e.target.files[0]; if(f) document.getElementById('audName').textContent='🎵 '+f.name;
+};
+function pay(){
+  // ВРЕМЕННО: оплата подключается после теста (как в photo.html)
+  alert('Оплата подключается после финального теста. Страница в сборке! ✅');
+}
+</script>
+</body>
+</html>
