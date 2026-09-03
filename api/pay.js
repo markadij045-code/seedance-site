@@ -11,9 +11,7 @@ export default async function handler(req, res) {
 
   const service = (req.body && req.body.service) || 'text2video';
   const prompt = (req.body && req.body.prompt) || '';
-  const imageData = (req.body && req.body.image) || '';
 
-  // Прайс-лист
   const prices = {
     'text2video': { amount: '199.00', desc: 'Видео до 5 секунд SeedGen' },
     'text30': { amount: '999.00', desc: 'Видео до 30 секунд SeedGen' },
@@ -22,7 +20,16 @@ export default async function handler(req, res) {
     'avatar': { amount: '499.00', desc: 'Говорящий аватар SeedGen' }
   };
 
+  const returnUrls = {
+    'text2video': 'https://seedance-site-nu.vercel.app/',
+    'text30': 'https://seedance-site-nu.vercel.app/',
+    'animate': 'https://seedance-site-nu.vercel.app/photo.html',
+    'cartoon': 'https://seedance-site-nu.vercel.app/cartoon.html',
+    'avatar': 'https://seedance-site-nu.vercel.app/avatar.html'
+  };
+
   const price = prices[service] || prices['text2video'];
+  const returnUrl = returnUrls[service] || 'https://seedance-site-nu.vercel.app/';
 
   const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
 
@@ -39,10 +46,10 @@ export default async function handler(req, res) {
         capture: true,
         confirmation: {
           type: 'redirect',
-          return_url: 'https://seedance-site-nu.vercel.app/'
+          return_url: returnUrl
         },
         description: price.desc,
-        metadata: { service: service, prompt: prompt, image: imageData ? 'yes' : 'no' }
+        metadata: { service: service, prompt: prompt }
       })
     });
 
