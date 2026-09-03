@@ -145,6 +145,61 @@ function setOr(el,or){
   el.parentElement.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active');});
   el.classList.add('active');
 }
+
+// Восстановление после "назад"
+try{
+  var saved=localStorage.getItem('seedgen_avatar_draft');
+  if(saved){
+    var s=JSON.parse(saved);
+    if(s.image){
+      imageData=s.image;
+      document.getElementById('photoPrev').src='data:image/jpeg;base64,'+s.image;
+      document.getElementById('photoPrev').classList.remove('hidden');
+      document.getElementById('photoDel').classList.remove('hidden');
+    }
+    if(s.text){
+      document.getElementById('txt').value=s.text;
+    }
+    if(s.mode==='audio'){
+      setMode('audio');
+      if(s.audio){
+        audioData=s.audio;
+        document.getElementById('audName').textContent='🎵 аудио загружено';
+        document.getElementById('audDel').classList.remove('hidden');
+      }
+    }
+    if(s.orientation){
+      orientation=s.orientation;
+      document.querySelectorAll('.orient .mode').forEach(function(x){x.classList.remove('active');});
+      var orButtons=document.querySelectorAll('.orient .mode');
+      if(orButtons[0]&&s.orientation==='9:16')orButtons[0].classList.add('active');
+      if(orButtons[1]&&s.orientation==='16:9')orButtons[1].classList.add('active');
+      if(orButtons[2]&&s.orientation==='1:1')orButtons[2].classList.add('active');
+    }
+    if(s.voice)document.getElementById('voice').value=s.voice;
+    if(s.language)document.getElementById('lang').value=s.language;
+  }
+}catch(e){}
+
+function saveDraft(){
+  try{
+    var draft={};
+    if(imageData)draft.image=imageData;
+    if(currentMode==='text'){
+      draft.mode='text';
+      var t=document.getElementById('txt').value.trim();
+      if(t)draft.text=t;
+      draft.voice=document.getElementById('voice').value;
+      draft.language=document.getElementById('lang').value;
+    }else{
+      draft.mode='audio';
+      if(audioData)draft.audio=audioData;
+    }
+    draft.orientation=orientation;
+    localStorage.setItem('seedgen_avatar_draft',JSON.stringify(draft));
+  }catch(e){}
+}
+
 document.getElementById('photo').onchange=function(e){
   var f=e.target.files[0]; if(!f)return;
   var reader=new FileReader();
@@ -161,6 +216,7 @@ document.getElementById('photo').onchange=function(e){
       document.getElementById('photoPrev').src=d;
       document.getElementById('photoPrev').classList.remove('hidden');
       document.getElementById('photoDel').classList.remove('hidden');
+      saveDraft();
     };
     img.src=reader.result;
   };
@@ -171,7 +227,12 @@ document.getElementById('photoDel').onclick=function(){
   document.getElementById('photo').value='';
   document.getElementById('photoPrev').classList.add('hidden');
   this.classList.add('hidden');
+  saveDraft();
 };
+document.getElementById('txt').oninput=function(){saveDraft();};
+document.getElementById('voice').onchange=function(){saveDraft();};
+document.getElementById('lang').onchange=function(){saveDraft();};
+
 document.getElementById('aud').onchange=function(e){
   var f=e.target.files[0]; if(!f)return;
   var reader=new FileReader();
@@ -179,6 +240,7 @@ document.getElementById('aud').onchange=function(e){
     audioData=reader.result.split(',')[1];
     document.getElementById('audName').textContent='🎵 '+f.name;
     document.getElementById('audDel').classList.remove('hidden');
+    saveDraft();
   };
   reader.readAsDataURL(f);
 };
@@ -187,7 +249,15 @@ document.getElementById('audDel').onclick=function(){
   document.getElementById('aud').value='';
   document.getElementById('audName').textContent='';
   this.classList.add('hidden');
+  saveDraft();
 };
+
+// Сохранение ориентации
+document.querySelectorAll('.orient .mode').forEach(function(btn){
+  btn.addEventListener('click',function(){saveDraft();});
+});
+document.getElementById('mText').addEventListener('click',function(){saveDraft();});
+document.getElementById('mAudio').addEventListener('click',function(){saveDraft();});
 
 var btn=document.getElementById('btn');
 var statusEl=document.getElementById('status');
@@ -282,7 +352,7 @@ btn.addEventListener('click',function(){
       }
       if(data.taskId){
         statusEl.textContent='Генерация запущена! Задача: '+data.taskId;
-        localStorage.clear();
+        localStorage.removeItem('seedgen_avatar_draft');
       }
     })
     .catch(function(e){
