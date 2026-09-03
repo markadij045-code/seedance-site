@@ -43,6 +43,8 @@ select{background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff
 .success{background:rgba(163,230,53,.15);border:1px solid #A3E635;color:#A3E635;border-radius:14px;padding:16px;text-align:center;margin-top:16px;line-height:1.6}
 .hidden{display:none}
 img.prev{max-width:140px;border-radius:12px;margin-top:10px}
+.del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem}
+.del:hover{background:rgba(127,29,29,.45);color:#fff}
 .how{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-top:8px}
 footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
 footer a{color:#9ca3af;text-decoration:none}
@@ -67,6 +69,7 @@ footer a{color:#9ca3af;text-decoration:none}
   <label>Шаг 1. Загрузите фото (лицо крупно)</label>
   <label class="drop" for="photo">📷 Выбрать фото<input type="file" id="photo" accept="image/*" hidden></label>
   <img class="prev hidden" id="photoPrev">
+  <button class="del hidden" id="photoDel" type="button">✖ Удалить фото</button>
 </div>
 
 <div class="card">
@@ -92,6 +95,7 @@ footer a{color:#9ca3af;text-decoration:none}
   <div id="audioBlock" class="hidden">
     <label class="drop" for="aud">🎵 Выбрать аудио (mp3/wav, до 60 сек)<input type="file" id="aud" accept="audio/*" hidden></label>
     <div id="audName" style="color:#9ca3af;font-size:.9rem;margin-top:8px"></div>
+    <button class="del hidden" id="audDel" type="button">✖ Удалить аудио</button>
   </div>
 </div>
 
@@ -115,7 +119,7 @@ footer a{color:#9ca3af;text-decoration:none}
 </div>
 
 <div class="card">
-  <div class="how"><b>Как это работает:</b> нейросеть синтезирует голос (или берёт ваше аудио) и оживляет фото — губы, мимика и движения синхронизируются с речью. Готовое видео придёт в течение 15 минут после оплаты.</div>
+  <div class="how"><b>Как это работает:</b> нейросеть синтезирует голос (или берёт ваше аудио) и оживляет фото — губы, мимика и движения синхронизируются с речью. Готовое видео придёт в течение 15 минут после оплаты.<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит, что деньги пришли, и сразу запускает видео. Тебе ничего нажимать не надо.<br><b>🔒 Не перепутает ли меня с кем-то?</b> Нет. У каждого платежа свой номер, как у чека. Сайт находит твой чек и делает видео из твоего фото.<br><b>🤔 А если видео не пришло?</b> Напиши нам — проверим твой чек и сделаем вручную. Деньги не пропадут.</div>
 </div>
 
 <footer>
@@ -156,10 +160,17 @@ document.getElementById('photo').onchange=function(e){
       imageData=d.split(',')[1];
       document.getElementById('photoPrev').src=d;
       document.getElementById('photoPrev').classList.remove('hidden');
+      document.getElementById('photoDel').classList.remove('hidden');
     };
     img.src=reader.result;
   };
   reader.readAsDataURL(f);
+};
+document.getElementById('photoDel').onclick=function(){
+  imageData=null;
+  document.getElementById('photo').value='';
+  document.getElementById('photoPrev').classList.add('hidden');
+  this.classList.add('hidden');
 };
 document.getElementById('aud').onchange=function(e){
   var f=e.target.files[0]; if(!f)return;
@@ -167,8 +178,15 @@ document.getElementById('aud').onchange=function(e){
   reader.onload=function(){
     audioData=reader.result.split(',')[1];
     document.getElementById('audName').textContent='🎵 '+f.name;
+    document.getElementById('audDel').classList.remove('hidden');
   };
   reader.readAsDataURL(f);
+};
+document.getElementById('audDel').onclick=function(){
+  audioData=null;
+  document.getElementById('aud').value='';
+  document.getElementById('audName').textContent='';
+  this.classList.add('hidden');
 };
 
 var btn=document.getElementById('btn');
