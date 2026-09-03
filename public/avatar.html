@@ -240,6 +240,7 @@ btn.addEventListener('click',function(){
         }
         
         var payload=JSON.parse(payloadStr);
+        payload.paymentId=paymentId;
         
         return fetch('/api/generate',{
           method:'POST',
