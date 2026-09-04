@@ -159,7 +159,7 @@ footer a{color:#9ca3af;text-decoration:none}
 <!-- HERO СЕКЦИЯ -->
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
-    <source src="/cat-knight-dance.mp4" type="video/mp4">
+    <source src="/cat-knight-dance.mp4.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
   
@@ -189,13 +189,13 @@ footer a{color:#9ca3af;text-decoration:none}
 
 <div class="card" id="gen">
   <div class="services">
-    <a class="pill" href="#gen"> Видео из текста</a>
+    <a class="pill" href="#gen">📝 Видео из текста</a>
     <a class="pill" href="/photo.html">🐱 Оживи картинку</a>
     <a class="pill" href="/cartoon.html">🎭 Мультфильм (стиль Pixar)</a>
     <a class="pill" href="/avatar.html">🗣 Говорящий аватар</a>
   </div>
   <div class="modes">
-    <div class="mode active" id="dur5" onclick="setDur('5')"> До 5 секунд — 199 ₽</div>
+    <div class="mode active" id="dur5" onclick="setDur('5')">⏱ До 5 секунд — 199 ₽</div>
     <div class="mode" id="dur30" onclick="setDur('30')">🎬 До 30 секунд — 999 ₽</div>
   </div>
   <label for="prompt">Опиши, какое видео хочешь создать:</label>
@@ -312,7 +312,7 @@ function poll(taskId){
     .then(function(data){
       if(data.paid&&data.taskId){
         localStorage.setItem('seedgen_task_'+paymentId,data.taskId);
-        setStatus('Оплата прошла! Видео генерируется... 1–3 минуты ⏳');
+        setStatus('Оплата прошла! Видео генерируется... 1–3 минуты ');
         poll(data.taskId);
       }else if(data.paid&&data.error){
         setStatus('Оплата прошла, но генерация не запустилась: '+data.error);
