@@ -6,20 +6,24 @@
 <title>SeedGen — генерация видео нейросетью</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
 /* ===== HERO СЕКЦИЯ ===== */
 .hero{
   position:relative;
   width:100%;
   height:100vh;
-  min-height:600px;
+  min-height:700px;
   overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
-  margin:-20px -20px 40px -20px;
-  max-width:none;
 }
 .hero-video{
   position:absolute;
@@ -36,122 +40,350 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;m
   left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.55);
+  background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
   z-index:2;
 }
+
+/* ===== НАВИГАЦИЯ ===== */
+nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:24px 48px;
+  z-index:100;
+  background:rgba(0,0,0,0.1);
+  backdrop-filter:blur(20px);
+  transition:all 0.3s ease;
+}
+nav.scrolled{
+  background:rgba(0,0,0,0.8);
+  padding:16px 48px;
+}
+.logo{
+  font-weight:700;
+  font-size:1.3rem;
+  letter-spacing:-0.02em;
+}
+.logo span{color:#A3E635}
+.links{display:flex;gap:32px;align-items:center}
+.links a{
+  color:#fff;
+  text-decoration:none;
+  font-size:0.95rem;
+  font-weight:500;
+  opacity:0.8;
+  transition:opacity 0.2s ease;
+}
+.links a:hover{opacity:1}
+.links .pro{
+  color:#6b7a58;
+  cursor:pointer;
+  position:relative;
+}
+.links .pro:hover{color:#A3E635;opacity:1}
+.links .pro .tip{
+  display:none;
+  position:absolute;
+  top:130%;
+  left:50%;
+  transform:translateX(-50%);
+  background:#A3E635;
+  color:#000;
+  font-size:0.75rem;
+  font-weight:700;
+  border-radius:8px;
+  padding:4px 10px;
+  white-space:nowrap;
+}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
+
+/* ===== HERO КОНТЕНТ ===== */
 .hero-content{
   position:relative;
   z-index:3;
   text-align:center;
-  max-width:800px;
+  max-width:900px;
   padding:0 24px;
-  animation:fadeUp 1.2s ease-out;
+  animation:fadeUp 1.4s ease-out;
 }
 .hero-content h1{
-  font-size:clamp(2rem, 5vw, 3.5rem);
+  font-size:clamp(2.5rem, 6vw, 4.5rem);
   font-weight:700;
-  line-height:1.1;
-  margin-bottom:20px;
-  letter-spacing:-0.02em;
+  line-height:1.05;
+  margin-bottom:24px;
+  letter-spacing:-0.03em;
 }
 .hero-content h1 .lime{color:#A3E635}
 .hero-content p{
-  font-size:clamp(1rem, 2vw, 1.25rem);
-  color:#d1d5db;
-  line-height:1.6;
-  margin-bottom:32px;
-  max-width:600px;
+  font-size:clamp(1.1rem, 2vw, 1.4rem);
+  color:rgba(255,255,255,0.85);
+  line-height:1.5;
+  margin-bottom:40px;
+  max-width:700px;
   margin-left:auto;
   margin-right:auto;
+  font-weight:400;
 }
 .hero-cta{
   display:inline-block;
-  padding:16px 40px;
-  background:#A3E635;
-  color:#0a0c08;
+  padding:18px 48px;
+  background:#fff;
+  color:#000;
   font-size:1.1rem;
-  font-weight:700;
+  font-weight:600;
   border-radius:999px;
   text-decoration:none;
-  transition:transform 0.3s ease, background 0.3s ease;
+  transition:all 0.3s ease;
+  border:none;
 }
 .hero-cta:hover{
   transform:scale(1.05);
-  background:#b5f045;
+  background:#A3E635;
 }
 @keyframes fadeUp{
-  from{opacity:0;transform:translateY(30px)}
+  from{opacity:0;transform:translateY(40px)}
   to{opacity:1;transform:translateY(0)}
 }
-
-/* ===== НАВИГАЦИЯ ПОВЕРХ HERO ===== */
-nav{
-  position:absolute;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  width:90%;
-  max-width:1000px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:10px;
-  background:rgba(17,20,8,0.85);
-  backdrop-filter:blur(10px);
-  border:1px solid #232a18;
-  border-radius:999px;
-  padding:12px 22px;
-  z-index:10;
-}
-.logo{font-weight:700;font-size:1.15rem}
-.logo span{color:#A3E635}
-.links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
-.links a:hover{color:#A3E635}
-.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
-.links .pro:hover{color:#A3E635}
-.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
-.links .pro:hover .tip,.links .pro.open .tip{display:block}
 
 /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
 .main-content{
   width:100%;
-  max-width:1000px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:0 20px;
+  max-width:1200px;
+  margin:0 auto;
+  padding:120px 48px;
 }
-h1{font-size:2.5rem;text-align:center;margin:16px 0 12px}
-h1 .lime{color:#A3E635}
-.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:28px}
-.card{width:100%;max-width:720px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:22px;margin-bottom:22px}
-.services{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.pill{display:inline-flex;align-items:center;gap:6px;background:#161a0e;border:1px solid #2a3118;border-radius:999px;padding:8px 14px;color:#e5e7eb;text-decoration:none;font-size:.9rem}
-.pill:hover{border-color:#A3E635}
-.modes{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.mode{flex:1;min-width:150px;padding:12px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
-.mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
-label{display:block;margin:6px 0 8px;color:#c3c9b4;font-size:.95rem}
-textarea{width:100%;height:110px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
-textarea:focus{border-color:#A3E635}
-.btn{margin-top:14px;width:100%;padding:15px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.paymethods span{background:#161a0e;border:1px solid #2a3118;border-radius:999px;padding:5px 12px;color:#9ca3af;font-size:.8rem}
-#status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
-#result{margin-top:16px;display:none}
-#result video{width:100%;border-radius:14px}
-h2{font-size:1.25rem;margin-bottom:12px;text-align:center}
-.steps{color:#c3c9b4;font-size:.95rem;line-height:1.7}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid video{width:100%;border-radius:12px;background:#000}
-.grid p{color:#9ca3af;font-size:.85rem;text-align:center;margin-top:6px}
-@media(max-width:560px){.grid{grid-template-columns:1fr}}
-.price{display:flex;justify-content:space-between;background:#0b0e07;border:1px solid #262d16;border-radius:14px;padding:14px;margin-bottom:10px}
-.price b{color:#A3E635;font-size:1.15rem}
-footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
-footer a{color:#9ca3af;text-decoration:none}
+
+/* ===== СЕКЦИИ ===== */
+.section{
+  margin-bottom:120px;
+  opacity:0;
+  transform:translateY(30px);
+  transition:all 0.8s ease;
+}
+.section.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ===== КАРТОЧКИ ===== */
+.card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px;
+  padding:48px;
+  margin-bottom:32px;
+  backdrop-filter:blur(10px);
+}
+.card h2{
+  font-size:2rem;
+  font-weight:700;
+  margin-bottom:32px;
+  letter-spacing:-0.02em;
+}
+
+/* ===== УСЛУГИ ===== */
+.services{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:999px;
+  padding:12px 20px;
+  color:#fff;
+  text-decoration:none;
+  font-size:0.95rem;
+  transition:all 0.2s ease;
+}
+.pill:hover{
+  background:rgba(163,230,53,0.1);
+  border-color:#A3E635;
+}
+
+/* ===== РЕЖИМЫ ===== */
+.modes{
+  display:flex;
+  gap:12px;
+  margin-bottom:24px;
+}
+.mode{
+  flex:1;
+  min-width:200px;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.02);
+  color:rgba(255,255,255,0.7);
+  cursor:pointer;
+  text-align:center;
+  font-size:0.95rem;
+  transition:all 0.2s ease;
+}
+.mode:hover{
+  border-color:rgba(255,255,255,0.3);
+}
+.mode.active{
+  border-color:#A3E635;
+  color:#fff;
+  background:rgba(163,230,53,0.1);
+}
+
+/* ===== ФОРМА ===== */
+label{
+  display:block;
+  margin:24px 0 12px;
+  color:rgba(255,255,255,0.7);
+  font-size:0.95rem;
+  font-weight:500;
+}
+textarea{
+  width:100%;
+  height:120px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:16px;
+  color:#fff;
+  padding:16px;
+  font-size:1rem;
+  resize:vertical;
+  outline:none;
+  transition:border-color 0.2s ease;
+}
+textarea:focus{
+  border-color:#A3E635;
+}
+.btn{
+  margin-top:24px;
+  width:100%;
+  padding:18px;
+  border:none;
+  border-radius:999px;
+  background:#A3E635;
+  color:#000;
+  font-size:1.05rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(163,230,53,0.3);
+}
+.btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* ===== ОПЛАТА ===== */
+.paymethods{
+  margin-top:16px;
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.paymethods span{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:999px;
+  padding:6px 14px;
+  color:rgba(255,255,255,0.6);
+  font-size:0.85rem;
+}
+
+/* ===== СТАТУС ===== */
+#status{
+  margin-top:16px;
+  min-height:20px;
+  color:rgba(255,255,255,0.6);
+  text-align:center;
+}
+#result{
+  margin-top:24px;
+  display:none;
+}
+#result video{
+  width:100%;
+  border-radius:16px;
+}
+
+/* ===== ПРИМЕРЫ ===== */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.grid video{
+  width:100%;
+  border-radius:16px;
+  background:#000;
+}
+.grid p{
+  color:rgba(255,255,255,0.6);
+  font-size:0.9rem;
+  text-align:center;
+  margin-top:12px;
+}
+@media(max-width:768px){
+  .grid{grid-template-columns:1fr}
+  nav{padding:16px 24px}
+  .links{gap:16px}
+  .main-content{padding:80px 24px}
+  .card{padding:32px 24px}
+}
+
+/* ===== ЦЕНЫ ===== */
+.price{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.price:last-child{border-bottom:none}
+.price span{
+  color:rgba(255,255,255,0.8);
+  font-size:1rem;
+}
+.price b{
+  color:#A3E635;
+  font-size:1.2rem;
+  font-weight:700;
+}
+
+/* ===== ШАГИ ===== */
+.steps{
+  color:rgba(255,255,255,0.7);
+  font-size:1rem;
+  line-height:1.8;
+}
+
+/* ===== ФУТЕР ===== */
+footer{
+  padding:48px 24px;
+  color:rgba(255,255,255,0.4);
+  font-size:0.85rem;
+  text-align:center;
+  line-height:1.7;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+footer a{
+  color:rgba(255,255,255,0.6);
+  text-decoration:none;
+  transition:color 0.2s ease;
+}
+footer a:hover{color:#A3E635}
 </style>
 </head>
 <body>
@@ -163,8 +395,7 @@ footer a{color:#9ca3af;text-decoration:none}
   </video>
   <div class="hero-overlay"></div>
   
-  <!-- Навигация внутри hero -->
-  <nav>
+  <nav id="navbar">
     <div class="logo"><span>▶</span> SeedGen</div>
     <div class="links">
       <a href="#gen">Генерация</a>
@@ -173,7 +404,7 @@ footer a{color:#9ca3af;text-decoration:none}
       <a href="/cartoon.html">Мультфильм</a>
       <a href="/avatar.html">Аватар</a>
       <a href="#price">Цены</a>
-      <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
+      <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
     </div>
   </nav>
 
@@ -187,49 +418,55 @@ footer a{color:#9ca3af;text-decoration:none}
 <!-- ОСНОВНОЙ КОНТЕНТ -->
 <div class="main-content">
 
-<div class="card" id="gen">
-  <div class="services">
-    <a class="pill" href="#gen">📝 Видео из текста</a>
-    <a class="pill" href="/photo.html">🐱 Оживи картинку</a>
-    <a class="pill" href="/cartoon.html">🎭 Мультфильм (стиль Pixar)</a>
-    <a class="pill" href="/avatar.html">🗣 Говорящий аватар</a>
-  </div>
-  <div class="modes">
-    <div class="mode active" id="dur5" onclick="setDur('5')">⏱ До 5 секунд — 199 ₽</div>
-    <div class="mode" id="dur30" onclick="setDur('30')">🎬 До 30 секунд — 999 ₽</div>
-  </div>
-  <label for="prompt">Опиши, какое видео хочешь создать:</label>
-  <textarea id="prompt" placeholder="Например: кот в космосе летит на ракете, кинематографичный стиль"></textarea>
-  <button class="btn" id="btn">Сгенерировать видео — 199 ₽</button>
-  <div class="paymethods">
-    <span>💳 Банковские карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
-  </div>
-  <div id="status"></div>
-  <div id="result"><video id="video" controls></video></div>
-</div>
-
-<div class="card" id="examples">
-  <h2>Примеры работ</h2>
-  <p class="steps" style="text-align:center;margin-bottom:14px">Все эти видео сгенерированы нейросетью из одной фразы</p>
-  <div class="grid">
-    <div><video src="/cat-city.mp4.mp4" controls muted loop preload="metadata"></video><p>Гигантский кот в городе</p></div>
-    <div><video src="/cat-space.mp4.mp4" controls muted loop preload="metadata"></video><p>Кот-пилот в космосе</p></div>
-    <div><video src="/cat-dance.mp4.mp4" controls muted loop preload="metadata"></video><p>Танцующий котёнок</p></div>
-    <div><video src="/cat-knight.mp4.mp4" controls muted loop preload="metadata"></video><p>Кот-рыцарь против дракона</p></div>
+<div class="section" id="gen">
+  <div class="card">
+    <div class="services">
+      <a class="pill" href="#gen">📝 Видео из текста</a>
+      <a class="pill" href="/photo.html">🐱 Оживи картинку</a>
+      <a class="pill" href="/cartoon.html">🎭 Мультфильм (стиль Pixar)</a>
+      <a class="pill" href="/avatar.html"> Говорящий аватар</a>
+    </div>
+    <div class="modes">
+      <div class="mode active" id="dur5" onclick="setDur('5')">⏱ До 5 секунд — 199 ₽</div>
+      <div class="mode" id="dur30" onclick="setDur('30')"> До 30 секунд — 999 ₽</div>
+    </div>
+    <label for="prompt">Опиши, какое видео хочешь создать:</label>
+    <textarea id="prompt" placeholder="Например: кот в космосе летит на ракете, кинематографичный стиль"></textarea>
+    <button class="btn" id="btn">Сгенерировать видео — 199 ₽</button>
+    <div class="paymethods">
+      <span>💳 Банковские карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
+    </div>
+    <div id="status"></div>
+    <div id="result"><video id="video" controls></video></div>
   </div>
 </div>
 
-<div class="card" id="price">
-  <h2>Цены</h2>
-  <div class="price"><span>Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
-  <div class="price"><span>Видео до 30 секунд по вашему описанию</span><b>999 ₽</b></div>
-  <div class="price"><span>Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
-  <div class="price"><span>Мультфильм из фото (стиль Pixar)</span><b>299 ₽</b></div>
-  <div class="price"><span>Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
-  <h2 style="margin-top:16px">Как получить заказ</h2>
-  <p class="steps">1. Опиши видео или загрузи фото и оплати заказ.<br>
-  2. Нейросеть сгенерирует видео в течение 1–3 минут.<br>
-  3. Готовое видео появится на странице. Доставка электронная, мгновенная.</p>
+<div class="section" id="examples">
+  <div class="card">
+    <h2>Примеры работ</h2>
+    <p class="steps" style="text-align:center;margin-bottom:32px">Все эти видео сгенерированы нейросетью из одной фразы</p>
+    <div class="grid">
+      <div><video src="/cat-city.mp4.mp4" controls muted loop preload="metadata"></video><p>Гигантский кот в городе</p></div>
+      <div><video src="/cat-space.mp4.mp4" controls muted loop preload="metadata"></video><p>Кот-пилот в космосе</p></div>
+      <div><video src="/cat-dance.mp4.mp4" controls muted loop preload="metadata"></video><p>Танцующий котёнок</p></div>
+      <div><video src="/cat-knight.mp4.mp4" controls muted loop preload="metadata"></video><p>Кот-рыцарь против дракона</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="price">
+  <div class="card">
+    <h2>Цены</h2>
+    <div class="price"><span>Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
+    <div class="price"><span>Видео до 30 секунд по вашему описанию</span><b>999 ₽</b></div>
+    <div class="price"><span>Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
+    <div class="price"><span>Мультфильм из фото (стиль Pixar)</span><b>299 ₽</b></div>
+    <div class="price"><span>Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
+    <h2 style="margin-top:48px">Как получить заказ</h2>
+    <p class="steps">1. Опиши видео или загрузи фото и оплати заказ.<br>
+    2. Нейросеть сгенерирует видео в течение 1–3 минут.<br>
+    3. Готовое видео появится на странице. Доставка электронная, мгновенная.</p>
+  </div>
 </div>
 
 </div>
@@ -240,6 +477,21 @@ footer a{color:#9ca3af;text-decoration:none}
 </footer>
 
 <script>
+// Навигация при скролле
+window.addEventListener('scroll',function(){
+  var nav=document.getElementById('navbar');
+  if(window.scrollY>100){nav.classList.add('scrolled');}
+  else{nav.classList.remove('scrolled');}
+});
+
+// Плавное появление секций
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){entry.target.classList.add('visible');}
+  });
+},{threshold:0.1});
+document.querySelectorAll('.section').forEach(function(s){observer.observe(s);});
+
 var btn=document.getElementById('btn');
 var statusEl=document.getElementById('status');
 var resultEl=document.getElementById('result');
@@ -312,7 +564,7 @@ function poll(taskId){
     .then(function(data){
       if(data.paid&&data.taskId){
         localStorage.setItem('seedgen_task_'+paymentId,data.taskId);
-        setStatus('Оплата прошла! Видео генерируется... 1–3 минуты ');
+        setStatus('Оплата прошла! Видео генерируется... 1–3 минуты ⏳');
         poll(data.taskId);
       }else if(data.paid&&data.error){
         setStatus('Оплата прошла, но генерация не запустилась: '+data.error);
