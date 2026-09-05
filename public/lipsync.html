@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Липсинк (дубляж) — SeedGen</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
+.logo{font-weight:700;font-size:1.15rem}
+.logo span{color:#A3E635}
+.links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
+.links a:hover{color:#A3E635}
+.links a.active{color:#A3E635;font-weight:700}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
+h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
+.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:16px}
+.warn{width:100%;max-width:640px;background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.4);color:#ffb066;border-radius:12px;padding:12px;margin:12px 0;font-size:.9rem;text-align:center}
+.card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
+label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
+.drop{display:block;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
+.drop:hover{border-color:#A3E635;color:#fff}
+button{margin-top:16px;width:100%;padding:14px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem;width:auto}
+.del:hover{background:rgba(127,29,29,.45);color:#fff}
+#status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
+#result{margin-top:16px;display:none}
+#result video{width:100%;border-radius:12px}
+.fname{color:#9ca3af;font-size:.9rem;margin-top:8px}
+.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:.85rem}
+.how{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-top:8px}
+footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
+footer a{color:#9ca3af;text-decoration:none}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><span>▶</span> SeedGen</div>
+  <div class="links">
+    <a href="/">Генерация</a>
+    <a href="/photo.html">Оживи картинку</a>
+    <a href="/cartoon.html">Мультфильм</a>
+    <a href="/avatar.html">Аватар</a>
+    <a href="/motion.html">Моушен</a>
+    <a class="active" href="/lipsync.html">Липсинк</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
+  </div>
+</nav>
+
+<h1>🗣 Липсинк (дубляж)</h1>
+<p class="sub">Загрузи видео с человеком и свою озвучку — губы и мимика синхронизируются с твоим голосом</p>
+<div class="warn">⚠️ Видео: MP4, до 3 МБ, лицо крупно. Аудио: MP3/WAV, до 2 МБ (примерно до 60 сек речи).</div>
+
+<div class="card">
+  <label>Шаг 1. Видео с человеком</label>
+  <label class="drop" for="vid">🎬 Выбрать видео (MP4, до 3 МБ)<input type="file" id="vid" accept="video/mp4,video/webm" hidden></label>
+  <div class="fname" id="vidName"></div>
+  <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
+</div>
+
+<div class="card">
+  <label>Шаг 2. Твоя озвучка (что должен «сказать» человек)</label>
+  <label class="drop" for="aud">🎵 Выбрать аудио (MP3/WAV, до 2 МБ)<input type="file" id="aud" accept="audio/*" hidden></label>
+  <div class="fname" id="audName"></div>
+  <button class="del" id="audDel" type="button" style="display:none">✖ Удалить аудио</button>
+</div>
+
+<button id="btn">Оплатить липсинк — 199 ₽</button>
+<div class="paymethods">
+  <span>💳 Карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
+</div>
+<div id="status"></div>
+<div id="result"><video id="video" controls></video></div>
+
+<div class="card">
+  <div class="how"><b>Как это работает:</b> нейросеть сравнивает твою озвучку с видео и двигает губы человека синхронно с речью. Подходит для дубляжа, переводов и мемов «заставь сказать».<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит оплату и запускает генерацию. Готовое видео появится на странице в течение 1–5 минут.<br><b>🤔 Не пришло видео?</b> Напиши нам — проверим чек и сделаем вручную.</div>
+</div>
+
+<footer>
+  Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
+  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
+</footer>
+
+<script>
+var videoData=null,audioData=null;
+var paidReturn=false,paymentIdReturn=null;
+var btn=document.getElementById('btn');
+var statusEl=document.getElementById('status');
+function setStatus(t){statusEl.textContent=t;}
+
+function saveDraft(){
+  try{
+    localStorage.setItem('seedgen_lipsync_draft',JSON.stringify({video:videoData,audio:audioData}));
+  }catch(e){}
+}
+
+try{
+  var s=JSON.parse(localStorage.getItem('seedgen_lipsync_draft')||'null');
+  if(s){
+    if(s.video){videoData=s.video;document.getElementById('vidName').textContent='🎬 видео из черновика восстановлено';document.getElementById('vidDel').style.display='block';}
+    if(s.audio){audioData=s.audio;document.getElementById('audName').textContent='🎵 аудио из черновика восстановлено';document.getElementById('audDel').style.display='block';}
+  }
+}catch(e){}
+
+document.getElementById('vid').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  if(f.type!=='video/mp4'&&f.type!=='video/webm'){alert('Нужно видео в формате MP4');return;}
+  if(f.size>3*1024*1024){alert('Видео больше 3 МБ. Выбери ролик короче или сожми.');return;}
+  var reader=new FileReader();
+  reader.onload=function(){
+    videoData=reader.result.split(',')[1];
+    document.getElementById('vidName').textContent='🎬 '+f.name+' ('+(f.size/1024/1024).toFixed(1)+' МБ)';
+    document.getElementById('vidDel').style.display='block';
+    saveDraft();
+  };
+  reader.readAsDataURL(f);
+};
+document.getElementById('vidDel').onclick=function(){
+  videoData=null;this.style.display='none';
+  document.getElementById('vidName').textContent='';
+  document.getElementById('vid').value='';saveDraft();
+};
+
+document.getElementById('aud').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  if(f.size>2*1024*1024){alert('Аудио больше 2 МБ. Выбери файл короче.');return;}
+  var reader=new FileReader();
+  reader.onload=function(){
+    audioData=reader.result.split(',')[1];
+    document.getElementById('audName').textContent='🎵 '+f.name;
+    document.getElementById('audDel').style.display='block';
+    saveDraft();
+  };
+  reader.readAsDataURL(f);
+};
+document.getElementById('audDel').onclick=function(){
+  audioData=null;this.style.display='none';
+  document.getElementById('audName').textContent='';
+  document.getElementById('aud').value='';saveDraft();
+};
+
+function poll(taskId){
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.status==='succeeded'){
+          clearInterval(timer);
+          document.getElementById('video').src=d.videoUrl;
+          document.getElementById('result').style.display='block';
+          setStatus('Готово! ✅');
+          btn.disabled=false;
+        }else if(d.status==='failed'){
+          clearInterval(timer);
+          setStatus('Ошибка: '+(d.error||'попробуй другие видео и аудио'));
+          btn.disabled=false;
+        }else{
+          setStatus('Синхронизируем губы... 1–5 минут ⏳');
+        }
+      })
+      .catch(function(){});
+  },5000);
+}
+
+function callGenerate(pid){
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'lipsync',paymentId:pid,video:videoData,audio:audioData})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){throw new Error(d.error);}
+      try{localStorage.setItem('seedgen_lipsync_task_'+pid,d.taskId);}catch(e){}
+      setStatus('Синхронизируем губы... 1–5 минут ⏳');
+      poll(d.taskId);
+    })
+    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+}
+
+btn.addEventListener('click',function(){
+  if(!videoData){alert('Сначала загрузи видео');return;}
+  if(!audioData){alert('Сначала загрузи аудио');return;}
+  btn.disabled=true;
+  if(paidReturn){
+    setStatus('Запускаем генерацию...');
+    callGenerate(paymentIdReturn);
+    return;
+  }
+  setStatus('Создаём платёж...');
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'lipsync'})})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){throw new Error(data.error);}
+      saveDraft();
+      window.location.href=data.confirmationUrl;
+    })
+    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+});
+
+(function(){
+  var pid=new URLSearchParams(window.location.search).get('paymentId');
+  if(!pid)return;
+  paymentIdReturn=pid;
+  var savedTask=localStorage.getItem('seedgen_lipsync_task_'+pid);
+  if(savedTask){btn.disabled=true;setStatus('Синхронизируем губы... 1–5 минут ⏳');poll(savedTask);return;}
+  btn.disabled=true;
+  setStatus('Проверяем оплату...');
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.paid){
+        paidReturn=true;
+        if(videoData&&audioData){
+          setStatus('Оплата прошла! Запускаем генерацию...');
+          callGenerate(pid);
+        }else{
+          setStatus('Оплата прошла! ✅ Загрузи видео и аудио заново и нажми кнопку.');
+          btn.textContent='Запустить генерацию (оплачено)';
+          btn.disabled=false;
+        }
+      }else{
+        setStatus('Оплата не завершена');
+        btn.disabled=false;
+      }
+    })
+    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+})();
+</script>
+</body>
+</html>
