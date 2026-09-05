@@ -69,7 +69,7 @@ nav.scrolled{
   letter-spacing:-0.02em;
 }
 .logo span{color:#A3E635}
-.links{display:flex;gap:32px;align-items:center}
+.links{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
 .links a{
   color:#fff;
   text-decoration:none;
@@ -350,6 +350,7 @@ textarea:focus{
   align-items:center;
   padding:20px 0;
   border-bottom:1px solid rgba(255,255,255,0.08);
+  gap:16px;
 }
 .price:last-child{border-bottom:none}
 .price span{
@@ -360,6 +361,45 @@ textarea:focus{
   color:#A3E635;
   font-size:1.2rem;
   font-weight:700;
+  white-space:nowrap;
+}
+
+/* ===== НОВЫЕ УСЛУГИ (карточки) ===== */
+.new-services{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-bottom:32px;
+}
+.new-card{
+  background:linear-gradient(135deg, rgba(163,230,53,0.08) 0%, rgba(163,230,53,0.02) 100%);
+  border:1px solid rgba(163,230,53,0.25);
+  border-radius:20px;
+  padding:28px;
+  text-decoration:none;
+  color:#fff;
+  transition:all 0.3s ease;
+  display:block;
+}
+.new-card:hover{
+  border-color:#A3E635;
+  transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(163,230,53,0.15);
+}
+.new-card .emoji{font-size:2.5rem;margin-bottom:12px;display:block}
+.new-card h3{font-size:1.3rem;font-weight:700;margin-bottom:8px;color:#fff}
+.new-card .desc{color:rgba(255,255,255,0.7);font-size:0.95rem;line-height:1.5;margin-bottom:16px}
+.new-card .from{
+  display:inline-block;
+  background:#A3E635;
+  color:#000;
+  font-weight:700;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:0.9rem;
+}
+@media(max-width:768px){
+  .new-services{grid-template-columns:1fr}
 }
 
 /* ===== ШАГИ ===== */
@@ -403,6 +443,8 @@ footer a:hover{color:#A3E635}
       <a href="/photo.html">Оживи картинку</a>
       <a href="/cartoon.html">Мультфильм</a>
       <a href="/avatar.html">Аватар</a>
+      <a href="/motion.html">Моушен</a>
+      <a href="/lipsync.html">Липсинк</a>
       <a href="#price">Цены</a>
       <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
     </div>
@@ -410,7 +452,7 @@ footer a:hover{color:#A3E635}
 
   <div class="hero-content">
     <h1>Нейросеть <span class="lime">снимет для тебя кино</span></h1>
-    <p>Опиши словами — получи видео. Оживи фото. Сделай мультфильм. Всё за 2-5 минут, без навыков монтажа.</p>
+    <p>Опиши словами — получи видео. Оживи фото. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
     <a href="#gen" class="hero-cta">Создать видео</a>
   </div>
 </section>
@@ -418,17 +460,41 @@ footer a:hover{color:#A3E635}
 <!-- ОСНОВНОЙ КОНТЕНТ -->
 <div class="main-content">
 
+<!-- НОВЫЕ УСЛУГИ (крупные карточки) -->
+<div class="section">
+  <div class="card">
+    <h2>🔥 Новинки сезона</h2>
+    <p class="steps" style="margin-bottom:32px">Самые вирусные AI-услуги прямо сейчас</p>
+    <div class="new-services">
+      <a class="new-card" href="/motion.html">
+        <span class="emoji">🎮</span>
+        <h3>Моушен контроль</h3>
+        <div class="desc">Загрузи фото персонажа и видео с движением — персонаж повторит всё: танцы, речь, мимику. Идеально для мемов и рилсов.</div>
+        <span class="from">от 199 ₽</span>
+      </a>
+      <a class="new-card" href="/lipsync.html">
+        <span class="emoji">🗣</span>
+        <h3>Липсинк (дубляж)</h3>
+        <div class="desc">Видео с человеком + твоя озвучка — губы синхронно с речью. Дубляж, переводы, мемы «заставь сказать».</div>
+        <span class="from">199 ₽</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <div class="section" id="gen">
   <div class="card">
     <div class="services">
       <a class="pill" href="#gen">📝 Видео из текста</a>
       <a class="pill" href="/photo.html">🐱 Оживи картинку</a>
       <a class="pill" href="/cartoon.html">🎭 Мультфильм (стиль Pixar)</a>
-      <a class="pill" href="/avatar.html"> Говорящий аватар</a>
+      <a class="pill" href="/avatar.html">🗣 Говорящий аватар</a>
+      <a class="pill" href="/motion.html">🎮 Моушен контроль</a>
+      <a class="pill" href="/lipsync.html">💬 Липсинк</a>
     </div>
     <div class="modes">
       <div class="mode active" id="dur5" onclick="setDur('5')">⏱ До 5 секунд — 199 ₽</div>
-      <div class="mode" id="dur30" onclick="setDur('30')"> До 30 секунд — 999 ₽</div>
+      <div class="mode" id="dur30" onclick="setDur('30')">⏱ До 30 секунд — 999 ₽</div>
     </div>
     <label for="prompt">Опиши, какое видео хочешь создать:</label>
     <textarea id="prompt" placeholder="Например: кот в космосе летит на ракете, кинематографичный стиль"></textarea>
@@ -457,14 +523,16 @@ footer a:hover{color:#A3E635}
 <div class="section" id="price">
   <div class="card">
     <h2>Цены</h2>
-    <div class="price"><span>Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
-    <div class="price"><span>Видео до 30 секунд по вашему описанию</span><b>999 ₽</b></div>
-    <div class="price"><span>Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
-    <div class="price"><span>Мультфильм из фото (стиль Pixar)</span><b>299 ₽</b></div>
-    <div class="price"><span>Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
+    <div class="price"><span>📝 Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
+    <div class="price"><span>📝 Видео до 30 секунд по вашему описанию</span><b>999 ₽</b></div>
+    <div class="price"><span>🐱 Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
+    <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar)</span><b>299 ₽</b></div>
+    <div class="price"><span>🗣 Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
+    <div class="price"><span>🎮 Моушен контроль (фото + видео с движением, до 30 сек)</span><b>от 199 ₽</b></div>
+    <div class="price"><span>💬 Липсинк / дубляж (видео + твоя озвучка)</span><b>199 ₽</b></div>
     <h2 style="margin-top:48px">Как получить заказ</h2>
     <p class="steps">1. Опиши видео или загрузи фото и оплати заказ.<br>
-    2. Нейросеть сгенерирует видео в течение 1–3 минут.<br>
+    2. Нейросеть сгенерирует видео в течение 1–5 минут.<br>
     3. Готовое видео появится на странице. Доставка электронная, мгновенная.</p>
   </div>
 </div>
@@ -477,14 +545,12 @@ footer a:hover{color:#A3E635}
 </footer>
 
 <script>
-// Навигация при скролле
 window.addEventListener('scroll',function(){
   var nav=document.getElementById('navbar');
   if(window.scrollY>100){nav.classList.add('scrolled');}
   else{nav.classList.remove('scrolled');}
 });
 
-// Плавное появление секций
 var observer=new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
     if(entry.isIntersecting){entry.target.classList.add('visible');}
