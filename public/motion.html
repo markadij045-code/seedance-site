@@ -59,18 +59,18 @@ footer a{color:#9ca3af;text-decoration:none}
 
 <h1>🎮 Моушен контроль</h1>
 <p class="sub">Загрузи фото персонажа и видео с движением — персонаж повторит всё: движения, речь и губы</p>
-<div class="warn">⚠️ Видео: MP4, до 3 МБ (примерно 5–10 секунд), человек в кадре крупно. Фото: JPG/PNG.</div>
+<div class="warn">⚠️ Видео: MP4, до 20 МБ (до 30 секунд), человек в кадре крупно. Фото: JPG/PNG.</div>
 
 <div class="card">
   <label>Шаг 1. Фото персонажа</label>
   <label class="drop" for="photo">📷 Выбрать фото<input type="file" id="photo" accept="image/*" hidden></label>
   <img id="preview"/>
-  <button class="del hidden" id="photoDel" type="button" style="display:none">✖ Удалить фото</button>
+  <button class="del" id="photoDel" type="button" style="display:none">✖ Удалить фото</button>
 </div>
 
 <div class="card">
   <label>Шаг 2. Видео с движением (танец, речь, жесты)</label>
-  <label class="drop" for="vid">🎬 Выбрать видео (MP4, до 3 МБ)<input type="file" id="vid" accept="video/mp4,video/webm" hidden></label>
+  <label class="drop" for="vid">🎬 Выбрать видео (MP4, до 20 МБ)<input type="file" id="vid" accept="video/mp4,video/webm" hidden></label>
   <div class="fname" id="vidName"></div>
   <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
 </div>
@@ -103,6 +103,20 @@ footer a{color:#9ca3af;text-decoration:none}
   <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
 </footer>
 
+<script type="module">
+let uploadFn = null;
+try {
+  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
+  uploadFn = m.upload;
+} catch (e) {
+  try {
+    const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
+    uploadFn = m2.upload;
+  } catch (e2) {}
+}
+if (uploadFn) window.blobUpload = uploadFn;
+</script>
+
 <script>
 var PRICES={5:199,10:349,15:499,20:649,25:799,30:949};
 var seconds=10;
@@ -126,7 +140,6 @@ function saveDraft(){
   }catch(e){}
 }
 
-// Восстановление черновика
 try{
   var s=JSON.parse(localStorage.getItem('seedgen_motion_draft')||'null');
   if(s){
@@ -164,18 +177,25 @@ document.getElementById('photoDel').onclick=function(){
   document.getElementById('photo').value='';saveDraft();
 };
 
+// === Загрузка видео напрямую в Vercel Blob ===
 document.getElementById('vid').onchange=function(e){
   var f=e.target.files[0];if(!f)return;
   if(f.type!=='video/mp4'&&f.type!=='video/webm'){alert('Нужно видео в формате MP4');return;}
-  if(f.size>3*1024*1024){alert('Видео больше 3 МБ. Выбери ролик короче или сожми.');return;}
-  var reader=new FileReader();
-  reader.onload=function(){
-    videoData=reader.result.split(',')[1];
-    document.getElementById('vidName').textContent='🎬 '+f.name+' ('+(f.size/1024/1024).toFixed(1)+' МБ)';
-    document.getElementById('vidDel').style.display='block';
-    saveDraft();
-  };
-  reader.readAsDataURL(f);
+  if(f.size>20*1024*1024){alert('Видео больше 20 МБ. Выбери ролик короче.');return;}
+  if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.');return;}
+  setStatus('Загружаем видео в хранилище...');
+  window.blobUpload(f.name,f,{access:'public',handleUploadUrl:'/api/upload'})
+    .then(function(blob){
+      videoData=blob.url;
+      document.getElementById('vidName').textContent='🎬 '+f.name+' — загружено ✅';
+      document.getElementById('vidDel').style.display='block';
+      setStatus('');
+      saveDraft();
+    })
+    .catch(function(err){
+      setStatus('');
+      alert('Не удалось загрузить видео: '+err.message);
+    });
 };
 document.getElementById('vidDel').onclick=function(){
   videoData=null;this.style.display='none';
@@ -238,7 +258,6 @@ btn.addEventListener('click',function(){
     .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
 });
 
-// Возврат с оплаты
 (function(){
   var pid=new URLSearchParams(window.location.search).get('paymentId');
   if(!pid)return;
