@@ -177,7 +177,6 @@ document.getElementById('photoDel').onclick=function(){
   document.getElementById('photo').value='';saveDraft();
 };
 
-// === Загрузка видео напрямую в Vercel Blob ===
 document.getElementById('vid').onchange=function(e){
   var f=e.target.files[0];if(!f)return;
   if(f.type!=='video/mp4'&&f.type!=='video/webm'){alert('Нужно видео в формате MP4');return;}
@@ -285,6 +284,35 @@ btn.addEventListener('click',function(){
       }
     })
     .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+})();
+</script>
+
+<script>
+(function(){
+  function addAgree(){
+    var btns=document.querySelectorAll('button');
+    for(var i=0;i<btns.length;i++){
+      var t=btns[i].textContent||'';
+      if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)&&!document.getElementById('agreeWrap')){
+        var wrap=document.createElement('div');
+        wrap.id='agreeWrap';
+        wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
+        wrap.innerHTML='<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
+        btns[i].parentNode.insertBefore(wrap,btns[i]);
+        break;
+      }
+    }
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',addAgree);}else{addAgree();}
+  document.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('button'):null;
+    if(!b)return;
+    var t=b.textContent||'';
+    if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)){
+      var c=document.getElementById('agree');
+      if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
+    }
+  },true);
 })();
 </script>
 </body>
