@@ -6,435 +6,80 @@
 <title>SeedGen — генерация видео нейросетью</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:#000;
-  color:#fff;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* ===== HERO СЕКЦИЯ ===== */
-.hero{
-  position:relative;
-  width:100%;
-  height:100vh;
-  min-height:700px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.hero-video{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:1;
-}
-.hero-overlay{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
-  z-index:2;
-}
-
-/* ===== НАВИГАЦИЯ ===== */
-nav{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:24px 48px;
-  z-index:100;
-  background:rgba(0,0,0,0.1);
-  backdrop-filter:blur(20px);
-  transition:all 0.3s ease;
-}
-nav.scrolled{
-  background:rgba(0,0,0,0.8);
-  padding:16px 48px;
-}
-.logo{
-  font-weight:700;
-  font-size:1.3rem;
-  letter-spacing:-0.02em;
-}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
+.hero{position:relative;width:100%;height:100vh;min-height:700px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);z-index:2}
+nav{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;z-index:100;background:rgba(0,0,0,0.1);backdrop-filter:blur(20px);transition:all 0.3s ease}
+nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
+.logo{font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
 .logo span{color:#A3E635}
 .links{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
-.links a{
-  color:#fff;
-  text-decoration:none;
-  font-size:0.95rem;
-  font-weight:500;
-  opacity:0.8;
-  transition:opacity 0.2s ease;
-}
+.links a{color:#fff;text-decoration:none;font-size:0.95rem;font-weight:500;opacity:0.8;transition:opacity 0.2s ease}
 .links a:hover{opacity:1}
-.links .pro{
-  color:#6b7a58;
-  cursor:pointer;
-  position:relative;
-}
+.links .pro{color:#6b7a58;cursor:pointer;position:relative}
 .links .pro:hover{color:#A3E635;opacity:1}
-.links .pro .tip{
-  display:none;
-  position:absolute;
-  top:130%;
-  left:50%;
-  transform:translateX(-50%);
-  background:#A3E635;
-  color:#000;
-  font-size:0.75rem;
-  font-weight:700;
-  border-radius:8px;
-  padding:4px 10px;
-  white-space:nowrap;
-}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#000;font-size:0.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap}
 .links .pro:hover .tip,.links .pro.open .tip{display:block}
-
-/* ===== HERO КОНТЕНТ ===== */
-.hero-content{
-  position:relative;
-  z-index:3;
-  text-align:center;
-  max-width:900px;
-  padding:0 24px;
-  animation:fadeUp 1.4s ease-out;
-}
-.hero-content h1{
-  font-size:clamp(2.5rem, 6vw, 4.5rem);
-  font-weight:700;
-  line-height:1.05;
-  margin-bottom:24px;
-  letter-spacing:-0.03em;
-}
+.hero-content{position:relative;z-index:3;text-align:center;max-width:900px;padding:0 24px;animation:fadeUp 1.4s ease-out}
+.hero-content h1{font-size:clamp(2.5rem, 6vw, 4.5rem);font-weight:700;line-height:1.05;margin-bottom:24px;letter-spacing:-0.03em}
 .hero-content h1 .lime{color:#A3E635}
-.hero-content p{
-  font-size:clamp(1.1rem, 2vw, 1.4rem);
-  color:rgba(255,255,255,0.85);
-  line-height:1.5;
-  margin-bottom:40px;
-  max-width:700px;
-  margin-left:auto;
-  margin-right:auto;
-  font-weight:400;
-}
-.hero-cta{
-  display:inline-block;
-  padding:18px 48px;
-  background:#fff;
-  color:#000;
-  font-size:1.1rem;
-  font-weight:600;
-  border-radius:999px;
-  text-decoration:none;
-  transition:all 0.3s ease;
-  border:none;
-}
-.hero-cta:hover{
-  transform:scale(1.05);
-  background:#A3E635;
-}
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(40px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* ===== ОСНОВНОЙ КОНТЕНТ ===== */
-.main-content{
-  width:100%;
-  max-width:1200px;
-  margin:0 auto;
-  padding:120px 48px;
-}
-
-/* ===== СЕКЦИИ ===== */
-.section{
-  margin-bottom:120px;
-  opacity:0;
-  transform:translateY(30px);
-  transition:all 0.8s ease;
-}
-.section.visible{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* ===== КАРТОЧКИ ===== */
-.card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:24px;
-  padding:48px;
-  margin-bottom:32px;
-  backdrop-filter:blur(10px);
-}
-.card h2{
-  font-size:2rem;
-  font-weight:700;
-  margin-bottom:32px;
-  letter-spacing:-0.02em;
-}
-
-/* ===== УСЛУГИ ===== */
-.services{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:32px;
-}
-.pill{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:999px;
-  padding:12px 20px;
-  color:#fff;
-  text-decoration:none;
-  font-size:0.95rem;
-  transition:all 0.2s ease;
-}
-.pill:hover{
-  background:rgba(163,230,53,0.1);
-  border-color:#A3E635;
-}
-
-/* ===== РЕЖИМЫ ===== */
-.modes{
-  display:flex;
-  gap:12px;
-  margin-bottom:24px;
-}
-.mode{
-  flex:1;
-  min-width:200px;
-  padding:16px;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,0.1);
-  background:rgba(255,255,255,0.02);
-  color:rgba(255,255,255,0.7);
-  cursor:pointer;
-  text-align:center;
-  font-size:0.95rem;
-  transition:all 0.2s ease;
-}
-.mode:hover{
-  border-color:rgba(255,255,255,0.3);
-}
-.mode.active{
-  border-color:#A3E635;
-  color:#fff;
-  background:rgba(163,230,53,0.1);
-}
-
-/* ===== ФОРМА ===== */
-label{
-  display:block;
-  margin:24px 0 12px;
-  color:rgba(255,255,255,0.7);
-  font-size:0.95rem;
-  font-weight:500;
-}
-textarea{
-  width:100%;
-  height:120px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:16px;
-  color:#fff;
-  padding:16px;
-  font-size:1rem;
-  resize:vertical;
-  outline:none;
-  transition:border-color 0.2s ease;
-}
-textarea:focus{
-  border-color:#A3E635;
-}
-.btn{
-  margin-top:24px;
-  width:100%;
-  padding:18px;
-  border:none;
-  border-radius:999px;
-  background:#A3E635;
-  color:#000;
-  font-size:1.05rem;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.3s ease;
-}
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(163,230,53,0.3);
-}
-.btn:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  transform:none;
-}
-
-/* ===== ОПЛАТА ===== */
-.paymethods{
-  margin-top:16px;
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-.paymethods span{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:999px;
-  padding:6px 14px;
-  color:rgba(255,255,255,0.6);
-  font-size:0.85rem;
-}
-
-/* ===== СТАТУС ===== */
-#status{
-  margin-top:16px;
-  min-height:20px;
-  color:rgba(255,255,255,0.6);
-  text-align:center;
-}
-#result{
-  margin-top:24px;
-  display:none;
-}
-#result video{
-  width:100%;
-  border-radius:16px;
-}
-
-/* ===== ПРИМЕРЫ ===== */
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:24px;
-}
-.grid video{
-  width:100%;
-  border-radius:16px;
-  background:#000;
-}
-.grid p{
-  color:rgba(255,255,255,0.6);
-  font-size:0.9rem;
-  text-align:center;
-  margin-top:12px;
-}
-@media(max-width:768px){
-  .grid{grid-template-columns:1fr}
-  nav{padding:16px 24px}
-  .links{gap:16px}
-  .main-content{padding:80px 24px}
-  .card{padding:32px 24px}
-}
-
-/* ===== ЦЕНЫ ===== */
-.price{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 0;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  gap:16px;
-}
+.hero-content p{font-size:clamp(1.1rem, 2vw, 1.4rem);color:rgba(255,255,255,0.85);line-height:1.5;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto;font-weight:400}
+.hero-cta{display:inline-block;padding:18px 48px;background:#fff;color:#000;font-size:1.1rem;font-weight:600;border-radius:999px;text-decoration:none;transition:all 0.3s ease;border:none}
+.hero-cta:hover{transform:scale(1.05);background:#A3E635}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.main-content{width:100%;max-width:1200px;margin:0 auto;padding:120px 48px}
+.section{margin-bottom:120px;opacity:0;transform:translateY(30px);transition:all 0.8s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:48px;margin-bottom:32px;backdrop-filter:blur(10px)}
+.card h2{font-size:2rem;font-weight:700;margin-bottom:32px;letter-spacing:-0.02em}
+.services{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px}
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:12px 20px;color:#fff;text-decoration:none;font-size:0.95rem;transition:all 0.2s ease}
+.pill:hover{background:rgba(163,230,53,0.1);border-color:#A3E635}
+.modes{display:flex;gap:12px;margin-bottom:24px}
+.mode{flex:1;min-width:200px;padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.7);cursor:pointer;text-align:center;font-size:0.95rem;transition:all 0.2s ease}
+.mode:hover{border-color:rgba(255,255,255,0.3)}
+.mode.active{border-color:#A3E635;color:#fff;background:rgba(163,230,53,0.1)}
+label{display:block;margin:24px 0 12px;color:rgba(255,255,255,0.7);font-size:0.95rem;font-weight:500}
+textarea{width:100%;height:120px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;color:#fff;padding:16px;font-size:1rem;resize:vertical;outline:none;transition:border-color 0.2s ease}
+textarea:focus{border-color:#A3E635}
+.btn{margin-top:24px;width:100%;padding:18px;border:none;border-radius:999px;background:#A3E635;color:#000;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(163,230,53,0.3)}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.paymethods{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:0.85rem}
+#status{margin-top:16px;min-height:20px;color:rgba(255,255,255,0.6);text-align:center}
+#result{margin-top:24px;display:none}
+#result video{width:100%;border-radius:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid video{width:100%;border-radius:16px;background:#000}
+.grid p{color:rgba(255,255,255,0.6);font-size:0.9rem;text-align:center;margin-top:12px}
+@media(max-width:768px){.grid{grid-template-columns:1fr}nav{padding:16px 24px}.links{gap:16px}.main-content{padding:80px 24px}.card{padding:32px 24px}}
+.price{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.08);gap:16px}
 .price:last-child{border-bottom:none}
-.price span{
-  color:rgba(255,255,255,0.8);
-  font-size:1rem;
-}
-.price b{
-  color:#A3E635;
-  font-size:1.2rem;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-/* ===== НОВЫЕ УСЛУГИ (карточки) ===== */
-.new-services{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-  margin-bottom:32px;
-}
-.new-card{
-  background:linear-gradient(135deg, rgba(163,230,53,0.08) 0%, rgba(163,230,53,0.02) 100%);
-  border:1px solid rgba(163,230,53,0.25);
-  border-radius:20px;
-  padding:28px;
-  text-decoration:none;
-  color:#fff;
-  transition:all 0.3s ease;
-  display:block;
-}
-.new-card:hover{
-  border-color:#A3E635;
-  transform:translateY(-3px);
-  box-shadow:0 12px 32px rgba(163,230,53,0.15);
-}
+.price span{color:rgba(255,255,255,0.8);font-size:1rem}
+.price b{color:#A3E635;font-size:1.2rem;font-weight:700;white-space:nowrap}
+.new-services{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
+.new-card{background:linear-gradient(135deg, rgba(163,230,53,0.08) 0%, rgba(163,230,53,0.02) 100%);border:1px solid rgba(163,230,53,0.25);border-radius:20px;padding:28px;text-decoration:none;color:#fff;transition:all 0.3s ease;display:block}
+.new-card:hover{border-color:#A3E635;transform:translateY(-3px);box-shadow:0 12px 32px rgba(163,230,53,0.15)}
 .new-card .emoji{font-size:2.5rem;margin-bottom:12px;display:block}
 .new-card h3{font-size:1.3rem;font-weight:700;margin-bottom:8px;color:#fff}
 .new-card .desc{color:rgba(255,255,255,0.7);font-size:0.95rem;line-height:1.5;margin-bottom:16px}
-.new-card .from{
-  display:inline-block;
-  background:#A3E635;
-  color:#000;
-  font-weight:700;
-  padding:6px 14px;
-  border-radius:999px;
-  font-size:0.9rem;
-}
-@media(max-width:768px){
-  .new-services{grid-template-columns:1fr}
-}
-
-/* ===== ШАГИ ===== */
-.steps{
-  color:rgba(255,255,255,0.7);
-  font-size:1rem;
-  line-height:1.8;
-}
-
-/* ===== ФУТЕР ===== */
-footer{
-  padding:48px 24px;
-  color:rgba(255,255,255,0.4);
-  font-size:0.85rem;
-  text-align:center;
-  line-height:1.7;
-  border-top:1px solid rgba(255,255,255,0.08);
-}
-footer a{
-  color:rgba(255,255,255,0.6);
-  text-decoration:none;
-  transition:color 0.2s ease;
-}
+.new-card .from{display:inline-block;background:#A3E635;color:#000;font-weight:700;padding:6px 14px;border-radius:999px;font-size:0.9rem}
+@media(max-width:768px){.new-services{grid-template-columns:1fr}}
+.steps{color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.8}
+footer{padding:48px 24px;color:rgba(255,255,255,0.4);font-size:0.85rem;text-align:center;line-height:1.7;border-top:1px solid rgba(255,255,255,0.08)}
+footer a{color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.2s ease}
 footer a:hover{color:#A3E635}
 </style>
 </head>
 <body>
 
-<!-- HERO СЕКЦИЯ -->
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
     <source src="/cat-knight-dance.mp4.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
-  
   <nav id="navbar">
     <div class="logo"><span>▶</span> SeedGen</div>
     <div class="links">
@@ -449,7 +94,6 @@ footer a:hover{color:#A3E635}
       <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
     </div>
   </nav>
-
   <div class="hero-content">
     <h1>Нейросеть <span class="lime">снимет для тебя кино</span></h1>
     <p>Опиши словами — получи видео. Оживи фото. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
@@ -457,10 +101,8 @@ footer a:hover{color:#A3E635}
   </div>
 </section>
 
-<!-- ОСНОВНОЙ КОНТЕНТ -->
 <div class="main-content">
 
-<!-- НОВЫЕ УСЛУГИ (крупные карточки) -->
 <div class="section">
   <div class="card">
     <h2>🔥 Новинки сезона</h2>
@@ -641,6 +283,35 @@ function poll(taskId){
       }
     })
     .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+})();
+</script>
+
+<script>
+(function(){
+  function addAgree(){
+    var btns=document.querySelectorAll('button');
+    for(var i=0;i<btns.length;i++){
+      var t=btns[i].textContent||'';
+      if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)&&!document.getElementById('agreeWrap')){
+        var wrap=document.createElement('div');
+        wrap.id='agreeWrap';
+        wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
+        wrap.innerHTML='<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
+        btns[i].parentNode.insertBefore(wrap,btns[i]);
+        break;
+      }
+    }
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',addAgree);}else{addAgree();}
+  document.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('button'):null;
+    if(!b)return;
+    var t=b.textContent||'';
+    if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)){
+      var c=document.getElementById('agree');
+      if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
+    }
+  },true);
 })();
 </script>
 </body>
