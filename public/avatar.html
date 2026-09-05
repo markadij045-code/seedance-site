@@ -40,7 +40,8 @@ select{background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff
 .paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .paymethods span{background:#161a0e;border:1px solid #2a3118;border-radius:999px;padding:5px 12px;color:#9ca3af;font-size:.8rem}
 #status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
-.success{background:rgba(163,230,53,.15);border:1px solid #A3E635;color:#A3E635;border-radius:14px;padding:16px;text-align:center;margin-top:16px;line-height:1.6}
+#result{margin-top:16px;display:none}
+#result video{width:100%;border-radius:12px}
 .hidden{display:none}
 img.prev{max-width:140px;border-radius:12px;margin-top:10px}
 .del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem}
@@ -108,18 +109,15 @@ footer a{color:#9ca3af;text-decoration:none}
   </div>
 </div>
 
-<button class="btn" id="btn">Оплатить 499 ₽</button>
+<button class="btn" id="btn">Оплатить аватар — 499 ₽</button>
 <div class="paymethods">
   <span>💳 Банковские карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
 </div>
 <div id="status"></div>
-
-<div id="result" class="hidden">
-  <div class="success">✅ Оплата прошла!<br>Мы начали работу над вашим видео. Готовый аватар придёт в течение 15 минут.</div>
-</div>
+<div id="result"><video id="video" controls></video></div>
 
 <div class="card">
-  <div class="how"><b>Как это работает:</b> нейросеть синтезирует голос (или берёт ваше аудио) и оживляет фото — губы, мимика и движения синхронизируются с речью. Готовое видео придёт в течение 15 минут после оплаты.<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит, что деньги пришли, и сразу запускает видео. Тебе ничего нажимать не надо.<br><b>🔒 Не перепутает ли меня с кем-то?</b> Нет. У каждого платежа свой номер, как у чека. Сайт находит твой чек и делает видео из твоего фото.<br><b>🤔 А если видео не пришло?</b> Напиши нам — проверим твой чек и сделаем вручную. Деньги не пропадут.</div>
+  <div class="how"><b>Как это работает:</b> нейросеть синтезирует голос (или берёт ваше аудио) и оживляет фото — губы, мимика и движения синхронизируются с речью. Готовое видео появится на странице в течение 1–5 минут после оплаты.<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит, что деньги пришли, и сразу запускает видео. Тебе ничего нажимать не надо.<br><b>🔒 Не перепутает ли меня с кем-то?</b> Нет. У каждого платежа свой номер, как у чека. Сайт находит твой чек и делает видео из твоего фото.<br><b>🤔 А если видео не пришло?</b> Напиши нам — проверим твой чек и сделаем вручную. Деньги не пропадут.</div>
 </div>
 
 <footer>
@@ -132,6 +130,8 @@ var imageData=null;
 var audioData=null;
 var currentMode='text';
 var orientation='9:16';
+var btn=document.getElementById('btn');
+var statusEl=document.getElementById('status');
 
 function setMode(m){
   currentMode=m;
@@ -145,6 +145,8 @@ function setOr(el,or){
   el.parentElement.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active');});
   el.classList.add('active');
 }
+
+function setStatus(t){statusEl.textContent=t;}
 
 // Восстановление после "назад"
 try{
@@ -252,16 +254,13 @@ document.getElementById('audDel').onclick=function(){
   saveDraft();
 };
 
-// Сохранение ориентации
 document.querySelectorAll('.orient .mode').forEach(function(btn){
   btn.addEventListener('click',function(){saveDraft();});
 });
 document.getElementById('mText').addEventListener('click',function(){saveDraft();});
 document.getElementById('mAudio').addEventListener('click',function(){saveDraft();});
 
-var btn=document.getElementById('btn');
-var statusEl=document.getElementById('status');
-
+// === Оплата ===
 btn.addEventListener('click',function(){
   if(!imageData){alert('Сначала загрузите фото');return;}
   
@@ -277,11 +276,9 @@ btn.addEventListener('click',function(){
     payload.audio=audioData;
   }
   
-  var payloadKey='seedgen_payload_'+Date.now();
-  localStorage.setItem(payloadKey,JSON.stringify(payload));
-  
+  saveDraft();
   btn.disabled=true;
-  statusEl.textContent='Создаём платёж...';
+  setStatus('Создаём платёж...');
   fetch('/api/pay',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -290,53 +287,84 @@ btn.addEventListener('click',function(){
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.error){throw new Error(data.error);}
-      localStorage.setItem('seedgen_payment_'+data.paymentId,payloadKey);
       window.location.href=data.confirmationUrl;
     })
     .catch(function(e){
-      statusEl.textContent='Ошибка: '+e.message;
+      setStatus('Ошибка: '+e.message);
       btn.disabled=false;
     });
 });
 
+// === Polling статуса задачи ===
+function poll(taskId){
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.status==='succeeded'){
+          clearInterval(timer);
+          document.getElementById('video').src=d.videoUrl;
+          document.getElementById('result').style.display='block';
+          setStatus('Готово! ✅');
+          btn.disabled=false;
+          try{localStorage.removeItem('seedgen_avatar_draft');}catch(e){}
+        }else if(d.status==='failed'){
+          clearInterval(timer);
+          setStatus('Ошибка: '+(d.error||'попробуй другое фото'));
+          btn.disabled=false;
+        }else{
+          setStatus('Создаём аватар... 1–5 минут ⏳');
+        }
+      })
+      .catch(function(){});
+  },5000);
+}
+
+// === Обработка возврата с оплаты ===
 (function(){
   var params=new URLSearchParams(window.location.search);
   var paymentId=params.get('paymentId');
   if(!paymentId)return;
   
+  // Проверяем сохранённый taskId
+  var savedTask=localStorage.getItem('seedgen_avatar_task_'+paymentId);
+  if(savedTask){
+    btn.disabled=true;
+    setStatus('Создаём аватар... 1–5 минут ⏳');
+    poll(savedTask);
+    return;
+  }
+  
   btn.disabled=true;
-  statusEl.textContent='Проверяем оплату...';
+  setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.paid){
-        statusEl.textContent='Оплата прошла! Запускаем генерацию...';
-        document.getElementById('result').classList.remove('hidden');
-        btn.classList.add('hidden');
-        document.querySelector('.paymethods').classList.add('hidden');
-        
-        var payloadKey=localStorage.getItem('seedgen_payment_'+paymentId);
-        if(!payloadKey){
-          statusEl.textContent='Ошибка: не найден payload';
-          return;
+        // Оплата прошла — запускаем генерацию
+        var draft=JSON.parse(localStorage.getItem('seedgen_avatar_draft')||'{}');
+        var payload={
+          service:'avatar',
+          paymentId:paymentId,
+          orientation:draft.orientation||'9:16',
+          image:draft.image
+        };
+        if(draft.mode==='audio'){
+          payload.audio=draft.audio;
+        }else{
+          payload.prompt=draft.text;
+          payload.language=draft.language;
+          payload.voice=draft.voice;
         }
         
-        var payloadStr=localStorage.getItem(payloadKey);
-        if(!payloadStr){
-          statusEl.textContent='Ошибка: payload не найден';
-          return;
-        }
-        
-        var payload=JSON.parse(payloadStr);
-        payload.paymentId=paymentId;
-        
+        setStatus('Оплата прошла! Запускаем генерацию...');
         return fetch('/api/generate',{
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify(payload)
         });
       }else{
-        statusEl.textContent='Оплата не завершена';
+        setStatus('Оплата не завершена');
         btn.disabled=false;
       }
     })
@@ -347,16 +375,18 @@ btn.addEventListener('click',function(){
     .then(function(data){
       if(!data)return;
       if(data.error){
-        statusEl.textContent='Ошибка генерации: '+data.error;
+        setStatus('Ошибка генерации: '+data.error);
+        btn.disabled=false;
         return;
       }
       if(data.taskId){
-        statusEl.textContent='Генерация запущена! Задача: '+data.taskId;
-        localStorage.removeItem('seedgen_avatar_draft');
+        localStorage.setItem('seedgen_avatar_task_'+paymentId,data.taskId);
+        setStatus('Создаём аватар... 1–5 минут ⏳');
+        poll(data.taskId);
       }
     })
     .catch(function(e){
-      statusEl.textContent='Ошибка: '+e.message;
+      setStatus('Ошибка: '+e.message);
       btn.disabled=false;
     });
 })();
