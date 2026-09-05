@@ -11,7 +11,26 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
-  // === ЗАЩИТА: без пароля владельца нужен ОПЛАЧЕННЫЙ платёж ===
+  // === ТАБЛИЦА ЦЕН И ЛИМИТОВ ПО КАЖДОЙ УСЛУГЕ ===
+  const SERVICES = {
+    text2video: { price: 199, maxSeconds: 10, needsImage: false },
+    text30:     { price: 999, maxSeconds: 30, needsImage: false },
+    animate:    { price: 199, maxSeconds: 10, needsImage: true },
+    toon:       { price: 299, maxSeconds: 10, needsImage: true },
+    avatar:     { price: 499, maxSeconds: 10, needsImage: true },
+    motion:     { price: 299, maxSeconds: 10, needsImage: true }
+  };
+
+  const service = body.service || 'text2video';
+  const cfg = SERVICES[service];
+  if (!cfg) {
+    return res.status(400).json({ error: 'Неизвестная услуга' });
+  }
+  if (service === 'motion') {
+    return res.status(501).json({ error: 'Услуга «Моушен контроль» скоро запустится' });
+  }
+
+  // === ЗАЩИТА: без пароля владельца нужен ОПЛАЧЕННЫЙ платёж на НУЖНУЮ сумму ===
   if (!isAdmin) {
     const paymentId = body.paymentId;
     if (!paymentId) {
@@ -33,57 +52,63 @@ export default async function handler(req, res) {
     if (!pr.ok || pdata.status !== 'succeeded') {
       return res.status(403).json({ error: 'Оплата не найдена или не завершена' });
     }
+
+    // ПРОВЕРКА СУММЫ: заплатил не меньше цены услуги
+    const paid = parseFloat(pdata.amount && pdata.amount.value);
+    if (pdata.currency !== 'RUB' || !(paid >= cfg.price)) {
+      console.error('Payment mismatch:', paymentId, pdata.amount, 'service:', service);
+      return res.status(403).json({ error: 'Сумма оплаты не соответствует выбранной услуге' });
+    }
   }
 
   // === Данные для генерации ===
-  const prompt = body.prompt || '';
-  const image = body.image || '';
-  const service = body.service || 'text2video';
+  const prompt = String(body.prompt || '').trim();
+  const image = String(body.image || '');
   const orientation = body.orientation || '9:16';
-  const seconds = String(body.seconds || '10');
   const size = String(body.size || '1280x720');
   const model = process.env.SEEDANCE_MODEL || 'seedance-2-5';
 
+  let seconds = parseInt(body.seconds, 10);
+  if (!seconds) seconds = (service === 'text30') ? 30 : 5;
+  if (seconds > cfg.maxSeconds) seconds = cfg.maxSeconds;
+
+  // === Проверки входных данных ===
+  if (!cfg.needsImage && !prompt) {
+    return res.status(400).json({ error: 'Нужен промпт' });
+  }
+
+  let img = null;
+  if (cfg.needsImage) {
+    if (!image) return res.status(400).json({ error: 'Нужно загрузить картинку' });
+    img = parseImage(image);
+    if (img.error) return res.status(400).json({ error: img.error });
+  }
+
   try {
-    // === АВАТАР: оживление фото ===
-    if (service === 'avatar' && image) {
-      const sizes = { '9:16': '720x1280', '16:9': '1280x720', '1:1': '720x720' };
-      const buf = Buffer.from(image, 'base64');
-      const blob = new Blob([buf], { type: 'image/jpeg' });
-
-      const form = new FormData();
-      form.append('prompt', 'The person speaks naturally, slight head movements and expressions');
-      form.append('model', model);
-      form.append('seconds', '10');
-      form.append('size', sizes[orientation] || '720x1280');
-      form.append('input_reference', blob, 'avatar.jpg');
-
-      const r = await fetch('https://api.cometapi.com/v1/videos', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + key },
-        body: form
-      });
-      const data = await r.json();
-
-      if (!r.ok) {
-        const msg = (data.error && (data.error.message || data.error)) || data.message || 'Ошибка API';
-        return res.status(502).json({ error: msg });
-      }
-      const taskId = data.id || data.task_id;
-      if (!taskId) return res.status(502).json({ error: 'API не вернул ID задачи' });
-      return res.json({ taskId: taskId });
-    }
-
-    // === ВИДЕО ИЗ ТЕКСТА ===
-    if (!prompt) {
-      return res.status(400).json({ error: 'Нужен промпт' });
-    }
-
+    const sizes = { '9:16': '720x1280', '16:9': '1280x720', '1:1': '720x720' };
     const form = new FormData();
-    form.append('prompt', prompt);
     form.append('model', model);
-    form.append('seconds', seconds);
-    form.append('size', size);
+    form.append('seconds', String(seconds));
+
+    if (service === 'avatar') {
+      form.append('prompt', 'The person speaks naturally, slight head movements and expressions');
+      form.append('size', sizes[orientation] || '720x1280');
+      form.append('input_reference', new Blob([Buffer.from(img.base64, 'base64')], { type: img.mime }), 'avatar.jpg');
+
+    } else if (service === 'animate') {
+      form.append('prompt', prompt || 'The scene comes alive: natural smooth motion, gentle camera movement');
+      form.append('size', sizes[orientation] || '1280x720');
+      form.append('input_reference', new Blob([Buffer.from(img.base64, 'base64')], { type: img.mime }), 'photo.jpg');
+
+    } else if (service === 'toon') {
+      form.append('prompt', 'Pixar-style 3D cartoon animation of this image, cute characters, bright colors, smooth lively motion' + (prompt ? ': ' + prompt : ''));
+      form.append('size', sizes[orientation] || '1280x720');
+      form.append('input_reference', new Blob([Buffer.from(img.base64, 'base64')], { type: img.mime }), 'photo.jpg');
+
+    } else {
+      form.append('prompt', prompt);
+      form.append('size', size);
+    }
 
     const r = await fetch('https://api.cometapi.com/v1/videos', {
       method: 'POST',
@@ -93,14 +118,37 @@ export default async function handler(req, res) {
     const data = await r.json();
 
     if (!r.ok) {
-      const msg = (data.error && (data.error.message || data.error)) || data.message || 'Ошибка API';
-      return res.status(502).json({ error: msg });
+      console.error('CometAPI error:', r.status, JSON.stringify(data));
+      return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
     }
     const taskId = data.id || data.task_id;
-    if (!taskId) return res.status(502).json({ error: 'API не вернул ID задачи' });
+    if (!taskId) {
+      console.error('CometAPI no taskId:', JSON.stringify(data));
+      return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
+    }
     return res.json({ taskId: taskId });
 
   } catch (e) {
-    return res.status(500).json({ error: 'Не удалось связаться с API: ' + e.message });
+    console.error('Generate error:', e);
+    return res.status(500).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
   }
+}
+
+// === Проверка картинки: формат JPG/PNG и размер до 10 МБ ===
+function parseImage(image) {
+  let mime = 'image/jpeg';
+  let base64 = image;
+  if (image.startsWith('data:')) {
+    const comma = image.indexOf(',');
+    if (comma === -1) return { error: 'Не удалось прочитать картинку' };
+    const header = image.slice(0, comma);
+    if (header.indexOf('image/png') !== -1) mime = 'image/png';
+    else if (header.indexOf('image/jpeg') !== -1 || header.indexOf('image/jpg') !== -1) mime = 'image/jpeg';
+    else return { error: 'Поддерживаются только JPG и PNG' };
+    base64 = image.slice(comma + 1);
+  }
+  if (base64.length < 100) return { error: 'Не удалось прочитать картинку' };
+  const bytes = Math.ceil(base64.length * 0.75);
+  if (bytes > 10 * 1024 * 1024) return { error: 'Файл слишком большой (максимум 10 МБ)' };
+  return { mime: mime, base64: base64 };
 }
