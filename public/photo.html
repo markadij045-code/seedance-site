@@ -28,6 +28,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #preview{display:none;width:100%;border-radius:12px;margin-top:12px}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
+.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:.85rem}
 footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
 footer a{color:#9ca3af;text-decoration:none}
 </style>
@@ -47,12 +49,15 @@ footer a{color:#9ca3af;text-decoration:none}
 <h1>🐱 Оживи картинку</h1>
 <p class="warn">⚠️ Фото с людьми не пройдут — нейросеть защищает людей от дипфейков. Оживляем: питомцев, природу, игрушки, рисунки и арт.</p>
 <div class="card">
-<label>Пароль (пока только для своих)</label>
-<input id="pass" type="password" placeholder="Секретный пароль"/>
 <label>Выбери картинку (JPG/PNG)</label>
 <input id="file" type="file" accept="image/*"/>
 <img id="preview"/>
-<button id="btn">Оживить</button>
+<label style="margin-top:20px">Что должно происходить на картинке? (необязательно)</label>
+<input id="prompt" type="text" placeholder="Например: кот моргает и смотрит по сторонам"/>
+<button id="btn">Оживить картинку — 199 ₽</button>
+<div class="paymethods">
+  <span>💳 Карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
+</div>
 <div id="status"></div>
 <div id="result"><video id="video" controls></video></div>
 </div>
@@ -65,7 +70,22 @@ footer a{color:#9ca3af;text-decoration:none}
 <script>
 var fileInput=document.getElementById('file');
 var preview=document.getElementById('preview');
+var btn=document.getElementById('btn');
+var statusEl=document.getElementById('status');
 var imageData=null;
+
+// Восстановление черновика
+try{
+  var saved=localStorage.getItem('seedgen_photo_draft');
+  if(saved){
+    var s=JSON.parse(saved);
+    if(s.image){
+      imageData=s.image;
+      preview.src='data:image/jpeg;base64,'+s.image;
+      preview.style.display='block';
+    }
+  }
+}catch(e){}
 
 fileInput.addEventListener('change',function(){
   var f=fileInput.files[0];
@@ -84,33 +104,41 @@ fileInput.addEventListener('change',function(){
       imageData=d.split(',')[1];
       preview.src=d;
       preview.style.display='block';
+      try{localStorage.setItem('seedgen_photo_draft',JSON.stringify({image:imageData}));}catch(e){}
     };
     img.src=reader.result;
   };
   reader.readAsDataURL(f);
 });
 
-document.getElementById('btn').addEventListener('click',function(){
-  var btn=document.getElementById('btn');
-  var pass=document.getElementById('pass').value;
+function setStatus(t){statusEl.textContent=t;}
+
+btn.addEventListener('click',function(){
   if(!imageData){alert('Сначала выбери картинку');return;}
-  if(!pass){alert('Введи пароль');return;}
+  var prompt=document.getElementById('prompt').value.trim() || 'Animate this image, cinematic motion';
+  // Сохраняем данные до оплаты
+  try{localStorage.setItem('seedgen_photo_draft',JSON.stringify({image:imageData,prompt:prompt}));}catch(e){}
   btn.disabled=true;
-  document.getElementById('status').textContent='Отправляем картинку...';
-  fetch('/api/animate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,prompt:'Animate this image, cinematic motion',adminPassword:pass})})
+  setStatus('Создаём платёж...');
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',prompt:prompt})})
     .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.error){throw new Error(d.error);}
-      document.getElementById('status').textContent='Оживляем... 1–3 минуты ⏳';
-      poll(d.taskId,btn);
+    .then(function(data){
+      if(data.error){throw new Error(data.error);}
+      // Сохраняем paymentId перед редиректом
+      try{
+        var draft=JSON.parse(localStorage.getItem('seedgen_photo_draft')||'{}');
+        draft.paymentId=data.paymentId;
+        localStorage.setItem('seedgen_photo_draft',JSON.stringify(draft));
+      }catch(e){}
+      window.location.href=data.confirmationUrl;
     })
     .catch(function(e){
-      document.getElementById('status').textContent='Ошибка: '+e.message;
+      setStatus('Ошибка: '+e.message);
       btn.disabled=false;
     });
 });
 
-function poll(taskId,btn){
+function poll(taskId){
   var timer=setInterval(function(){
     fetch('/api/status?taskId='+encodeURIComponent(taskId))
       .then(function(r){return r.json();})
@@ -119,19 +147,60 @@ function poll(taskId,btn){
           clearInterval(timer);
           document.getElementById('video').src=d.videoUrl;
           document.getElementById('result').style.display='block';
-          document.getElementById('status').textContent='Готово! ✅';
+          setStatus('Готово! ✅');
           btn.disabled=false;
         }else if(d.status==='failed'){
           clearInterval(timer);
-          document.getElementById('status').textContent='Ошибка: '+(d.error||'попробуй другую картинку');
+          setStatus('Ошибка: '+(d.error||'попробуй другую картинку'));
           btn.disabled=false;
         }else{
-          document.getElementById('status').textContent='Оживляем... ⏳';
+          setStatus('Оживляем... 1–3 минуты ⏳');
         }
       })
       .catch(function(){});
   },5000);
 }
+
+function startGeneration(paymentId,taskId){
+  if(taskId){btn.disabled=true;setStatus('Оживляем... 1–3 минуты ⏳');poll(taskId);return;}
+  btn.disabled=true;
+  setStatus('Проверяем оплату...');
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.paid&&data.taskId){
+        try{localStorage.setItem('seedgen_photo_task_'+paymentId,data.taskId);}catch(e){}
+        setStatus('Оплата прошла! Оживляем... 1–3 минуты ⏳');
+        poll(data.taskId);
+      }else if(data.paid&&!data.taskId){
+        // Оплата прошла, но задача ещё не создана — запускаем генерацию
+        var draft=JSON.parse(localStorage.getItem('seedgen_photo_draft')||'{}');
+        fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:paymentId,image:draft.image,prompt:draft.prompt||'Animate this image, cinematic motion'})})
+          .then(function(r){return r.json();})
+          .then(function(d){
+            if(d.error){throw new Error(d.error);}
+            try{localStorage.setItem('seedgen_photo_task_'+paymentId,d.taskId);}catch(e){}
+            setStatus('Оживляем... 1–3 минуты ⏳');
+            poll(d.taskId);
+          })
+          .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+      }else{
+        setStatus('Оплата не завершена');
+        btn.disabled=false;
+      }
+    })
+    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+}
+
+// Обработка возврата с оплаты
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var paymentId=params.get('paymentId');
+  if(!paymentId){return;}
+  var savedTask=localStorage.getItem('seedgen_photo_task_'+paymentId);
+  if(savedTask){startGeneration(paymentId,savedTask);return;}
+  startGeneration(paymentId,null);
+})();
 </script>
 </body>
 </html>
