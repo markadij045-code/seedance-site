@@ -21,7 +21,6 @@ h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
 .sub{color:#9ca3af;text-align:center;max-width:520px;margin-bottom:20px}
 .card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
 label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
-input[type=password]{width:100%;background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff;padding:12px;font-size:1rem;outline:none}
 .drop{display:block;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
 .drop:hover{border-color:#A3E635;color:#fff}
 button{margin-top:16px;width:100%;padding:14px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
@@ -32,6 +31,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #preview,#toon{display:none;max-width:200px;border-radius:12px;margin-top:12px}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
+.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:.85rem}
 footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
 footer a{color:#9ca3af;text-decoration:none}
 </style>
@@ -49,19 +50,28 @@ footer a{color:#9ca3af;text-decoration:none}
 </nav>
 
 <h1>🎭 Мультфильм из фото</h1>
-<p class="sub">Шаг 1 — превратим фото в мультяшный арт в стиле Pixar. Шаг 2 — оживим его в видео.</p>
+<p class="sub">Шаг 1 — превратим фото в мультяшный арт в стиле Pixar. Шаг 2 — оживим его в видео. Одна оплата — оба шага.</p>
 <div class="card">
-<label>Пароль (пока только для своих)</label>
-<input id="pass" type="password" placeholder="Секретный пароль"/>
 <label>Выбери фото с человеком (JPG/PNG)</label>
 <label class="drop" for="file">📷 Выбрать фото<input type="file" id="file" accept="image/*" hidden></label>
 <img id="preview"/>
 <button class="del" id="fileDel" style="display:none" type="button">✖ Удалить фото</button>
-<button id="btn1">Шаг 1: сделать арт в стиле Pixar</button>
+<button id="payBtn">Оплатить мультфильм — 299 ₽</button>
+<div class="paymethods">
+  <span>💳 Карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
+</div>
+<div id="statusPay" style="margin-top:12px;min-height:20px;color:#9ca3af;text-align:center"></div>
+</div>
+
+<div class="card" id="stepsCard" style="display:none">
+<label>Шаг 1: арт в стиле Pixar</label>
+<button id="btn1">Сделать арт</button>
 <div id="status1"></div>
 <img id="toon"/>
 <button class="del" id="toonDel" style="display:none" type="button">✖ Удалить арт и начать заново</button>
-<button id="btn2" style="display:none">Шаг 2: оживить в видео</button>
+
+<label style="margin-top:24px">Шаг 2: оживить в видео</label>
+<button id="btn2" style="display:none">Оживить арт в видео</button>
 <div id="status2"></div>
 <div id="result"><video id="video" controls></video></div>
 </div>
@@ -74,8 +84,11 @@ footer a{color:#9ca3af;text-decoration:none}
 <script>
 var fileInput=document.getElementById('file');
 var preview=document.getElementById('preview');
+var payBtn=document.getElementById('payBtn');
+var stepsCard=document.getElementById('stepsCard');
 var imageData=null;
 var toonJpeg=null;
+var activePaymentId=null;
 
 function shrink(dataUrl,cb){
   var img=new Image();
@@ -91,15 +104,22 @@ function shrink(dataUrl,cb){
   img.src=dataUrl;
 }
 
-// Восстановление фото
+// Восстановление черновика
 try{
   var saved=localStorage.getItem('seedgen_cartoon_draft');
   if(saved){
     var s=JSON.parse(saved);
     imageData=s.image;
-    preview.src='data:image/jpeg;base64,'+s.image;
-    preview.style.display='block';
-    document.getElementById('fileDel').style.display='block';
+    if(s.image){
+      preview.src='data:image/jpeg;base64,'+s.image;
+      preview.style.display='block';
+      document.getElementById('fileDel').style.display='block';
+    }
+    if(s.paymentId){
+      activePaymentId=s.paymentId;
+      payBtn.style.display='none';
+      stepsCard.style.display='block';
+    }
     if(s.toon){
       toonJpeg=s.toon;
       document.getElementById('toon').src='data:image/jpeg;base64,'+s.toon;
@@ -121,15 +141,22 @@ fileInput.addEventListener('change',function(){
       preview.src=d;
       preview.style.display='block';
       document.getElementById('fileDel').style.display='block';
-      try{localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg}));}catch(e){}
+      saveDraft();
     });
   };
   reader.readAsDataURL(f);
 });
 
+function saveDraft(){
+  try{
+    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId}));
+  }catch(e){}
+}
+
 document.getElementById('fileDel').onclick=function(){
   imageData=null;
   toonJpeg=null;
+  activePaymentId=null;
   fileInput.value='';
   preview.style.display='none';
   document.getElementById('toon').style.display='none';
@@ -137,6 +164,8 @@ document.getElementById('fileDel').onclick=function(){
   this.style.display='none';
   document.getElementById('toonDel').style.display='none';
   document.getElementById('status1').textContent='';
+  payBtn.style.display='block';
+  stepsCard.style.display='none';
   try{localStorage.removeItem('seedgen_cartoon_draft');}catch(e){}
 };
 
@@ -145,18 +174,37 @@ document.getElementById('toonDel').onclick=function(){
   document.getElementById('toon').style.display='none';
   document.getElementById('btn2').style.display='none';
   this.style.display='none';
-  document.getElementById('status1').textContent='Арт удалён. Жми шаг 1 заново.';
-  try{localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData}));}catch(e){}
+  document.getElementById('status1').textContent='Арт удалён. Жми "Сделать арт" заново.';
+  saveDraft();
 };
 
-document.getElementById('btn1').addEventListener('click',function(){
-  var pass=document.getElementById('pass').value;
+// === ШАГ 1: Оплата ===
+payBtn.addEventListener('click',function(){
   if(!imageData){alert('Сначала выбери фото');return;}
-  if(!pass){alert('Введи пароль');return;}
+  payBtn.disabled=true;
+  document.getElementById('statusPay').textContent='Создаём платёж...';
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'cartoon',prompt:'Мультфильм из фото (стиль Pixar)'})})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){throw new Error(data.error);}
+      activePaymentId=data.paymentId;
+      saveDraft();
+      window.location.href=data.confirmationUrl;
+    })
+    .catch(function(e){
+      document.getElementById('statusPay').textContent='Ошибка: '+e.message;
+      payBtn.disabled=false;
+    });
+});
+
+// === Шаг 1: сделать арт (после оплаты) ===
+document.getElementById('btn1').addEventListener('click',function(){
+  if(!imageData){alert('Сначала выбери фото');return;}
+  if(!activePaymentId){alert('Сначала оплати услугу');return;}
   var b=document.getElementById('btn1');
   b.disabled=true;
   document.getElementById('status1').textContent='Рисуем арт в стиле Pixar... до минуты ⏳';
-  fetch('/api/toon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,adminPassword:pass})})
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'toon',paymentId:activePaymentId,image:imageData})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error){throw new Error(d.error);}
@@ -168,9 +216,9 @@ document.getElementById('btn1').addEventListener('click',function(){
         document.getElementById('btn2').style.display='block';
         document.getElementById('toonDel').style.display='block';
         document.getElementById('status1').textContent='Арт готов! ✅ Жми шаг 2';
-        try{localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg}));}catch(e){}
+        saveDraft();
+        b.disabled=false;
       });
-      b.disabled=false;
     })
     .catch(function(e){
       document.getElementById('status1').textContent='Ошибка: '+e.message;
@@ -178,13 +226,14 @@ document.getElementById('btn1').addEventListener('click',function(){
     });
 });
 
+// === Шаг 2: оживление арта ===
 document.getElementById('btn2').addEventListener('click',function(){
-  var pass=document.getElementById('pass').value;
   if(!toonJpeg){return;}
+  if(!activePaymentId){alert('Сначала оплати услугу');return;}
   var b=document.getElementById('btn2');
   b.disabled=true;
   document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
-  fetch('/api/animate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:toonJpeg,prompt:'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion',adminPassword:pass})})
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:activePaymentId,image:toonJpeg,prompt:'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion'})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error){throw new Error(d.error);}
@@ -213,12 +262,47 @@ function poll(taskId,b){
           document.getElementById('status2').textContent='Ошибка: '+(d.error||'попробуй другое фото');
           b.disabled=false;
         }else{
-          document.getElementById('status2').textContent='Оживляем... ⏳';
+          document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
         }
       })
       .catch(function(){});
   },5000);
 }
+
+// === Обработка возврата с оплаты ===
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var paymentId=params.get('paymentId');
+  if(!paymentId){return;}
+  // Если это наш черновик — активируем шаги
+  if(activePaymentId===paymentId){
+    payBtn.style.display='none';
+    stepsCard.style.display='block';
+    document.getElementById('statusPay').textContent='Оплата прошла! ✅ Жми "Сделать арт"';
+    return;
+  }
+  // Проверяем оплату
+  payBtn.disabled=true;
+  document.getElementById('statusPay').textContent='Проверяем оплату...';
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.paid){
+        activePaymentId=paymentId;
+        saveDraft();
+        payBtn.style.display='none';
+        stepsCard.style.display='block';
+        document.getElementById('statusPay').textContent='Оплата прошла! ✅ Жми "Сделать арт"';
+      }else{
+        document.getElementById('statusPay').textContent='Оплата не завершена';
+        payBtn.disabled=false;
+      }
+    })
+    .catch(function(e){
+      document.getElementById('statusPay').textContent='Ошибка: '+e.message;
+      payBtn.disabled=false;
+    });
+})();
 </script>
 </body>
 </html>
