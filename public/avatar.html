@@ -44,7 +44,7 @@ select{background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff
 #result video{width:100%;border-radius:12px}
 .hidden{display:none}
 img.prev{max-width:140px;border-radius:12px;margin-top:10px}
-.del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem}
+.del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem;width:auto}
 .del:hover{background:rgba(127,29,29,.45);color:#fff}
 .how{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-top:8px}
 footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
@@ -59,6 +59,8 @@ footer a{color:#9ca3af;text-decoration:none}
     <a href="/photo.html">Оживи картинку</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a class="active" href="/avatar.html">Аватар</a>
+    <a href="/motion.html">Моушен</a>
+    <a href="/lipsync.html">Липсинк</a>
     <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
   </div>
 </nav>
@@ -148,7 +150,6 @@ function setOr(el,or){
 
 function setStatus(t){statusEl.textContent=t;}
 
-// Восстановление после "назад"
 try{
   var saved=localStorage.getItem('seedgen_avatar_draft');
   if(saved){
@@ -254,16 +255,15 @@ document.getElementById('audDel').onclick=function(){
   saveDraft();
 };
 
-document.querySelectorAll('.orient .mode').forEach(function(btn){
-  btn.addEventListener('click',function(){saveDraft();});
+document.querySelectorAll('.orient .mode').forEach(function(b){
+  b.addEventListener('click',function(){saveDraft();});
 });
 document.getElementById('mText').addEventListener('click',function(){saveDraft();});
 document.getElementById('mAudio').addEventListener('click',function(){saveDraft();});
 
-// === Оплата ===
 btn.addEventListener('click',function(){
   if(!imageData){alert('Сначала загрузите фото');return;}
-  
+
   var payload={service:'avatar',orientation:orientation,image:imageData};
   if(currentMode==='text'){
     var t=document.getElementById('txt').value.trim();
@@ -275,7 +275,7 @@ btn.addEventListener('click',function(){
     if(!audioData){alert('Сначала загрузите аудио');return;}
     payload.audio=audioData;
   }
-  
+
   saveDraft();
   btn.disabled=true;
   setStatus('Создаём платёж...');
@@ -295,7 +295,6 @@ btn.addEventListener('click',function(){
     });
 });
 
-// === Polling статуса задачи ===
 function poll(taskId){
   var timer=setInterval(function(){
     fetch('/api/status?taskId='+encodeURIComponent(taskId))
@@ -320,13 +319,11 @@ function poll(taskId){
   },5000);
 }
 
-// === Обработка возврата с оплаты ===
 (function(){
   var params=new URLSearchParams(window.location.search);
   var paymentId=params.get('paymentId');
   if(!paymentId)return;
-  
-  // Проверяем сохранённый taskId
+
   var savedTask=localStorage.getItem('seedgen_avatar_task_'+paymentId);
   if(savedTask){
     btn.disabled=true;
@@ -334,14 +331,13 @@ function poll(taskId){
     poll(savedTask);
     return;
   }
-  
+
   btn.disabled=true;
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.paid){
-        // Оплата прошла — запускаем генерацию
         var draft=JSON.parse(localStorage.getItem('seedgen_avatar_draft')||'{}');
         var payload={
           service:'avatar',
@@ -356,7 +352,7 @@ function poll(taskId){
           payload.language=draft.language;
           payload.voice=draft.voice;
         }
-        
+
         setStatus('Оплата прошла! Запускаем генерацию...');
         return fetch('/api/generate',{
           method:'POST',
