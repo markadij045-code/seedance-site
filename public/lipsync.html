@@ -55,18 +55,18 @@ footer a{color:#9ca3af;text-decoration:none}
 
 <h1>🗣 Липсинк (дубляж)</h1>
 <p class="sub">Загрузи видео с человеком и свою озвучку — губы и мимика синхронизируются с твоим голосом</p>
-<div class="warn">⚠️ Видео: MP4, до 3 МБ, лицо крупно. Аудио: MP3/WAV, до 2 МБ (примерно до 60 сек речи).</div>
+<div class="warn">⚠️ Видео: MP4, до 20 МБ, лицо крупно. Аудио: MP3/WAV, до 5 МБ.</div>
 
 <div class="card">
   <label>Шаг 1. Видео с человеком</label>
-  <label class="drop" for="vid">🎬 Выбрать видео (MP4, до 3 МБ)<input type="file" id="vid" accept="video/mp4,video/webm" hidden></label>
+  <label class="drop" for="vid">🎬 Выбрать видео (MP4, до 20 МБ)<input type="file" id="vid" accept="video/mp4,video/webm" hidden></label>
   <div class="fname" id="vidName"></div>
   <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
 </div>
 
 <div class="card">
   <label>Шаг 2. Твоя озвучка (что должен «сказать» человек)</label>
-  <label class="drop" for="aud">🎵 Выбрать аудио (MP3/WAV, до 2 МБ)<input type="file" id="aud" accept="audio/*" hidden></label>
+  <label class="drop" for="aud">🎵 Выбрать аудио (MP3/WAV, до 5 МБ)<input type="file" id="aud" accept="audio/*" hidden></label>
   <div class="fname" id="audName"></div>
   <button class="del" id="audDel" type="button" style="display:none">✖ Удалить аудио</button>
 </div>
@@ -86,6 +86,20 @@ footer a{color:#9ca3af;text-decoration:none}
   Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
   <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
 </footer>
+
+<script type="module">
+let uploadFn = null;
+try {
+  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
+  uploadFn = m.upload;
+} catch (e) {
+  try {
+    const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
+    uploadFn = m2.upload;
+  } catch (e2) {}
+}
+if (uploadFn) window.blobUpload = uploadFn;
+</script>
 
 <script>
 var videoData=null,audioData=null;
@@ -108,18 +122,25 @@ try{
   }
 }catch(e){}
 
+// === Загрузка видео в Vercel Blob ===
 document.getElementById('vid').onchange=function(e){
   var f=e.target.files[0];if(!f)return;
   if(f.type!=='video/mp4'&&f.type!=='video/webm'){alert('Нужно видео в формате MP4');return;}
-  if(f.size>3*1024*1024){alert('Видео больше 3 МБ. Выбери ролик короче или сожми.');return;}
-  var reader=new FileReader();
-  reader.onload=function(){
-    videoData=reader.result.split(',')[1];
-    document.getElementById('vidName').textContent='🎬 '+f.name+' ('+(f.size/1024/1024).toFixed(1)+' МБ)';
-    document.getElementById('vidDel').style.display='block';
-    saveDraft();
-  };
-  reader.readAsDataURL(f);
+  if(f.size>20*1024*1024){alert('Видео больше 20 МБ. Выбери ролик короче.');return;}
+  if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.');return;}
+  setStatus('Загружаем видео в хранилище...');
+  window.blobUpload(f.name,f,{access:'public',handleUploadUrl:'/api/upload'})
+    .then(function(blob){
+      videoData=blob.url;
+      document.getElementById('vidName').textContent='🎬 '+f.name+' — загружено ✅';
+      document.getElementById('vidDel').style.display='block';
+      setStatus('');
+      saveDraft();
+    })
+    .catch(function(err){
+      setStatus('');
+      alert('Не удалось загрузить видео: '+err.message);
+    });
 };
 document.getElementById('vidDel').onclick=function(){
   videoData=null;this.style.display='none';
@@ -127,17 +148,24 @@ document.getElementById('vidDel').onclick=function(){
   document.getElementById('vid').value='';saveDraft();
 };
 
+// === Загрузка аудио в Vercel Blob ===
 document.getElementById('aud').onchange=function(e){
   var f=e.target.files[0];if(!f)return;
-  if(f.size>2*1024*1024){alert('Аудио больше 2 МБ. Выбери файл короче.');return;}
-  var reader=new FileReader();
-  reader.onload=function(){
-    audioData=reader.result.split(',')[1];
-    document.getElementById('audName').textContent='🎵 '+f.name;
-    document.getElementById('audDel').style.display='block';
-    saveDraft();
-  };
-  reader.readAsDataURL(f);
+  if(f.size>5*1024*1024){alert('Аудио больше 5 МБ. Выбери файл короче.');return;}
+  if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.');return;}
+  setStatus('Загружаем аудио в хранилище...');
+  window.blobUpload(f.name,f,{access:'public',handleUploadUrl:'/api/upload'})
+    .then(function(blob){
+      audioData=blob.url;
+      document.getElementById('audName').textContent='🎵 '+f.name+' — загружено ✅';
+      document.getElementById('audDel').style.display='block';
+      setStatus('');
+      saveDraft();
+    })
+    .catch(function(err){
+      setStatus('');
+      alert('Не удалось загрузить аудио: '+err.message);
+    });
 };
 document.getElementById('audDel').onclick=function(){
   audioData=null;this.style.display='none';
