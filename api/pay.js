@@ -13,7 +13,6 @@ export default async function handler(req, res) {
   const prompt = (req.body && req.body.prompt) || '';
   const seconds = String((req.body && req.body.seconds) || '');
 
-  // === Цены моушен контроля по секундам ===
   const MOTION = {
     '5': '199.00',
     '10': '349.00',
@@ -41,16 +40,16 @@ export default async function handler(req, res) {
   }
 
   const returnUrls = {
-    'text2video': 'https://seedance-site-nu.vercel.app/',
-    'text30': 'https://seedance-site-nu.vercel.app/',
-    'animate': 'https://seedance-site-nu.vercel.app/photo.html',
-    'cartoon': 'https://seedance-site-nu.vercel.app/cartoon.html',
-    'avatar': 'https://seedance-site-nu.vercel.app/avatar.html',
-    'motion': 'https://seedance-site-nu.vercel.app/motion.html',
-    'lipsync': 'https://seedance-site-nu.vercel.app/lipsync.html'
+    'text2video': 'https://seedgen.ru/',
+    'text30': 'https://seedgen.ru/',
+    'animate': 'https://seedgen.ru/photo.html',
+    'cartoon': 'https://seedgen.ru/cartoon.html',
+    'avatar': 'https://seedgen.ru/avatar.html',
+    'motion': 'https://seedgen.ru/motion.html',
+    'lipsync': 'https://seedgen.ru/lipsync.html'
   };
 
-  const returnUrl = returnUrls[service] || 'https://seedance-site-nu.vercel.app/';
+  const returnUrl = returnUrls[service] || 'https://seedgen.ru/';
 
   const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
 
