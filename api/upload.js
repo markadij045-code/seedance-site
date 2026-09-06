@@ -19,8 +19,7 @@ export default async function handler(req, res) {
             'audio/mpeg',
             'audio/wav'
           ],
-          maximumSizeInBytes: 50 * 1024 * 1024,
-          addRandomSuffix: true
+          maximumSizeInBytes: 50 * 1024 * 1024
         };
       },
       onUploadCompleted: async ({ blob }) => {
