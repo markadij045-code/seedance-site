@@ -96,7 +96,9 @@ try {
   try {
     const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
     uploadFn = m2.upload;
-  } catch (e2) {}
+  } catch (e2) {
+    console.error('Blob client load failed:', e2);
+  }
 }
 if (uploadFn) window.blobUpload = uploadFn;
 </script>
@@ -107,6 +109,25 @@ var paidReturn=false,paymentIdReturn=null;
 var btn=document.getElementById('btn');
 var statusEl=document.getElementById('status');
 function setStatus(t){statusEl.textContent=t;}
+
+function safeFileName(prefix,f,defExt){
+  var m=(f.name||'').match(/\.[a-z0-9]+$/i);
+  var ext=m?m[0].toLowerCase():defExt;
+  return prefix+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+ext;
+}
+
+function uploadFile(f,prefix,defExt,onProgress){
+  var controller=new AbortController();
+  var timedOut=false;
+  var timeoutId=setTimeout(function(){timedOut=true;controller.abort();},30000);
+  return window.blobUpload(safeFileName(prefix,f,defExt),f,{
+    access:'public',
+    handleUploadUrl:'/api/upload',
+    abortSignal:controller.signal,
+    onUploadProgress:function(p){clearTimeout(timeoutId);onProgress(Math.round(p.percentage));}
+  }).then(function(blob){clearTimeout(timeoutId);return blob;})
+    .catch(function(err){clearTimeout(timeoutId);if(timedOut){throw new Error('загрузка не началась за 30 секунд. Отключи VPN/блокировщик рекламы и попробуй снова.');}throw err;});
+}
 
 function saveDraft(){
   try{
@@ -127,8 +148,8 @@ document.getElementById('vid').onchange=function(e){
   if(f.type!=='video/mp4'&&f.type!=='video/webm'){alert('Нужно видео в формате MP4');return;}
   if(f.size>20*1024*1024){alert('Видео больше 20 МБ. Выбери ролик короче.');return;}
   if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.');return;}
-  setStatus('Загружаем видео в хранилище...');
-  window.blobUpload(f.name,f,{access:'public',handleUploadUrl:'/api/upload'})
+  setStatus('Загружаем видео: 0%');
+  uploadFile(f,'lipsync-video','.mp4',function(p){setStatus('Загружаем видео: '+p+'%');})
     .then(function(blob){
       videoData=blob.url;
       document.getElementById('vidName').textContent='🎬 '+f.name+' — загружено ✅';
@@ -149,10 +170,11 @@ document.getElementById('vidDel').onclick=function(){
 
 document.getElementById('aud').onchange=function(e){
   var f=e.target.files[0];if(!f)return;
+  if(f.type.indexOf('audio/')!==0){alert('Нужно аудио в формате MP3 или WAV');return;}
   if(f.size>5*1024*1024){alert('Аудио больше 5 МБ. Выбери файл короче.');return;}
-  if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.');return;}
-  setStatus('Загружаем аудио в хранилище...');
-  window.blobUpload(f.name,f,{access:'public',handleUploadUrl:'/api/upload'})
+  if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунды и выбери файл снова.');return;}
+  setStatus('Загружаем аудио: 0%');
+  uploadFile(f,'lipsync-audio','.mp3',function(p){setStatus('Загружаем аудио: '+p+'%');})
     .then(function(blob){
       audioData=blob.url;
       document.getElementById('audName').textContent='🎵 '+f.name+' — загружено ✅';
