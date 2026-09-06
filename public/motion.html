@@ -106,19 +106,14 @@ footer a{color:#9ca3af;text-decoration:none}
 <script type="module">
 let uploadFn = null;
 try {
-  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/dist/client.js');
+  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
   uploadFn = m.upload;
 } catch (e) {
   try {
-    const m2 = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
+    const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
     uploadFn = m2.upload;
   } catch (e2) {
-    try {
-      const m3 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
-      uploadFn = m3.upload;
-    } catch (e3) {
-      console.error('Blob client load failed:', e3);
-    }
+    console.error('Blob client load failed:', e2);
   }
 }
 if (uploadFn) window.blobUpload = uploadFn;
@@ -190,22 +185,31 @@ document.getElementById('vid').onchange=async function(e){
   if(f.size>20*1024*1024){alert('Видео больше 20 МБ. Выбери ролик короче.');return;}
   if(!window.blobUpload){alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.');return;}
   setStatus('Загружаем видео: 0%');
+  var controller=new AbortController();
+  var timedOut=false;
+  var timeoutId=setTimeout(function(){timedOut=true;controller.abort();},30000);
   try{
     var blob=await window.blobUpload(f.name,f,{
       access:'public',
       handleUploadUrl:'/api/upload',
-      multipart:true,
-      onUploadProgress:function(p){setStatus('Загружаем видео: '+Math.round(p.percentage)+'%');}
+      abortSignal:controller.signal,
+      onUploadProgress:function(p){clearTimeout(timeoutId);setStatus('Загружаем видео: '+Math.round(p.percentage)+'%');}
     });
+    clearTimeout(timeoutId);
     videoData=blob.url;
     document.getElementById('vidName').textContent='🎬 '+f.name+' — загружено ✅';
     document.getElementById('vidDel').style.display='block';
     setStatus('');
     saveDraft();
   }catch(err){
+    clearTimeout(timeoutId);
     console.error('Upload failed:',err);
     setStatus('');
-    alert('Не удалось загрузить видео: '+err.message);
+    if(timedOut){
+      alert('Загрузка видео не началась за 30 секунд. Часто это блокировщик рекламы или VPN — отключи их и попробуй снова.');
+    }else{
+      alert('Не удалось загрузить видео: '+err.message);
+    }
   }
 };
 document.getElementById('vidDel').onclick=function(){
