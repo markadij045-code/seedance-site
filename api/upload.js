@@ -17,7 +17,13 @@ export default async function handler(req, res) {
             'video/mp4',
             'video/webm',
             'audio/mpeg',
-            'audio/wav'
+            'audio/mp3',
+            'audio/wav',
+            'audio/x-wav',
+            'audio/wave',
+            'audio/mp4',
+            'audio/x-m4a',
+            'audio/aac'
           ],
           maximumSizeInBytes: 50 * 1024 * 1024
         };
