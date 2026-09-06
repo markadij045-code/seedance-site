@@ -128,6 +128,10 @@ var btn=document.getElementById('btn');
 var statusEl=document.getElementById('status');
 function setStatus(t){statusEl.textContent=t;}
 
+function safeFileName(prefix,f,ext){
+  return prefix+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+ext;
+}
+
 function setSec(el,s){
   seconds=s;
   el.parentElement.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active');});
@@ -189,7 +193,7 @@ document.getElementById('vid').onchange=async function(e){
   var timedOut=false;
   var timeoutId=setTimeout(function(){timedOut=true;controller.abort();},30000);
   try{
-    var blob=await window.blobUpload(f.name,f,{
+    var blob=await window.blobUpload(safeFileName('motion',f,'.mp4'),f,{
       access:'public',
       handleUploadUrl:'/api/upload',
       abortSignal:controller.signal,
