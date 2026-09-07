@@ -207,13 +207,49 @@ function setSec(el,s){
   document.querySelectorAll('#durModes .mode').forEach(function(x){x.classList.remove('active');});
   el.classList.add('active');
   btn.textContent='Создать видео — '+PRICES[s]+' ₽';
+  saveDraft();
 }
 function pickAspect(a){
   aspect=a;
   document.querySelectorAll('.tool[data-aspect]').forEach(function(el){
     el.classList.toggle('active',el.getAttribute('data-aspect')===a);
   });
+  saveDraft();
 }
+function saveDraft(){
+  try{
+    var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
+    s.prompt=document.getElementById('prompt').value;
+    s.aspect=aspect;
+    s.seconds=seconds;
+    s.refImage=refImageData;
+    localStorage.setItem('seedgen_gen_draft',JSON.stringify(s));
+  }catch(e){}
+}
+
+(function restoreDraft(){
+  try{
+    var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'null');
+    if(!s)return;
+    if(s.prompt)document.getElementById('prompt').value=s.prompt;
+    if(s.aspect)pickAspect(s.aspect);
+    if(s.seconds&&PRICES[s.seconds]){
+      seconds=s.seconds;
+      document.querySelectorAll('#durModes .mode').forEach(function(x){
+        x.classList.toggle('active',x.textContent.indexOf(s.seconds+' сек')!==-1);
+      });
+      btn.textContent='Создать видео — '+PRICES[s.seconds]+' ₽';
+    }
+    if(s.refImage){
+      refImageData=s.refImage;
+      document.getElementById('refImg').src='data:image/jpeg;base64,'+s.refImage;
+      document.getElementById('refName').textContent='картинка из черновика';
+      document.getElementById('refBox').style.display='flex';
+    }
+  }catch(e){}
+})();
+
+document.getElementById('prompt').addEventListener('input',saveDraft);
 
 document.getElementById('refInput').addEventListener('change',function(e){
   var f=e.target.files[0];
@@ -243,6 +279,7 @@ document.getElementById('refInput').addEventListener('change',function(e){
       bar.style.width='100%';
       setTimeout(function(){prog.style.display='none';},600);
       setStatus('');
+      saveDraft();
     };
     img.src=reader.result;
   };
@@ -252,6 +289,7 @@ function removeRef(){
   refImageData=null;
   document.getElementById('refInput').value='';
   document.getElementById('refBox').style.display='none';
+  saveDraft();
 }
 
 document.getElementById('aiBtn').addEventListener('click',function(){
@@ -269,6 +307,7 @@ document.getElementById('aiBtn').addEventListener('click',function(){
       if(d.error){st.textContent='Не удалось улучшить, попробуй ещё раз';return;}
       document.getElementById('prompt').value=d.prompt;
       localStorage.setItem('seedgen_ai_used',String(used+1));
+      saveDraft();
       st.textContent='Готово! ✨';
       setTimeout(function(){st.textContent='';},3000);
     })
@@ -279,7 +318,7 @@ document.getElementById('aiBtn').addEventListener('click',function(){
 
 btn.addEventListener('click',function(){
   var prompt=document.getElementById('prompt').value.trim();
-  if(!prompt){alert('Опиши видео или нажми «✨ Улучшить описание» после пары своих слов');return;}
+  if(!prompt){alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»');return;}
   if(!document.getElementById('agree').checked){alert('Сначала отметь согласие с офертой ⚠️');return;}
   btn.disabled=true;
   setStatus('Создаём платёж...');
@@ -287,7 +326,12 @@ btn.addEventListener('click',function(){
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.error){throw new Error(data.error);}
-      try{localStorage.setItem('seedgen_gen_draft',JSON.stringify({prompt:prompt,aspect:aspect,seconds:seconds,refImage:refImageData,paymentId:data.paymentId}));}catch(e){}
+      saveDraft();
+      try{
+        var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
+        s.paymentId=data.paymentId;
+        localStorage.setItem('seedgen_gen_draft',JSON.stringify(s));
+      }catch(e){}
       window.location.href=data.confirmationUrl;
     })
     .catch(function(e){
@@ -348,7 +392,7 @@ function poll(taskId){
           })
           .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
       }else{
-        setStatus('Оплата не завершена');
+        setStatus('Оплата не завершена. Твой текст и настройки сохранены ниже — проверь и нажми кнопку ещё раз.');
         btn.disabled=false;
       }
     })
