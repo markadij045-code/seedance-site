@@ -35,7 +35,7 @@ label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
 .drop{display:block;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
 .drop:hover{border-color:#A3E635;color:#fff}
 .modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.mode{flex:1;min-width:90px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
+.mode{flex:1;min-width:70px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
 .mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
 textarea{width:100%;min-height:90px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
 textarea:focus{border-color:#A3E635}
@@ -110,6 +110,16 @@ footer a{color:#9ca3af;text-decoration:none}
 <label style="margin-top:20px">Опиши, что происходит в мультфильме:</label>
 <textarea id="actPrompt" placeholder="Например: персонаж танцует на облаке, вокруг летают драконы, закатное небо"></textarea>
 
+<label style="margin-top:20px">Формат видео</label>
+<div class="modes" id="aspectModes">
+  <div class="mode" onclick="setAspect(this,'21:9')">21:9</div>
+  <div class="mode active" onclick="setAspect(this,'16:9')">16:9</div>
+  <div class="mode" onclick="setAspect(this,'4:3')">4:3</div>
+  <div class="mode" onclick="setAspect(this,'1:1')">1:1</div>
+  <div class="mode" onclick="setAspect(this,'3:4')">3:4</div>
+  <div class="mode" onclick="setAspect(this,'9:16')">9:16</div>
+</div>
+
 <label style="margin-top:20px">Длительность видео</label>
 <div class="modes" id="durModes">
   <div class="mode active" onclick="setSec(this,5)">5 сек<br><b>299 ₽</b></div>
@@ -163,6 +173,7 @@ function toggleSidebar(){
 
 var PRICES={5:299,10:449,15:599,20:749,25:899,30:1049};
 var seconds=5;
+var aspect='16:9';
 var fileInput=document.getElementById('file');
 var preview=document.getElementById('preview');
 var payBtn=document.getElementById('payBtn');
@@ -172,6 +183,13 @@ var toonJpeg=null;
 var activePaymentId=null;
 
 function getPrompt(){return document.getElementById('actPrompt').value.trim();}
+
+function setAspect(el,a){
+  aspect=a;
+  document.querySelectorAll('#aspectModes .mode').forEach(function(x){x.classList.remove('active');});
+  el.classList.add('active');
+  saveDraft();
+}
 
 function setSec(el,s){
   seconds=s;
@@ -201,6 +219,14 @@ try{
     var s=JSON.parse(saved);
     imageData=s.image;
     if(s.act){document.getElementById('actPrompt').value=s.act;}
+    if(s.aspect){
+      aspect=s.aspect;
+      document.querySelectorAll('#aspectModes .mode').forEach(function(x){x.classList.remove('active');});
+      var ab=document.querySelectorAll('#aspectModes .mode');
+      var order=['21:9','16:9','4:3','1:1','3:4','9:16'];
+      var idx=order.indexOf(aspect);
+      if(idx>=0&&ab[idx])ab[idx].classList.add('active');
+    }
     if(s.seconds&&PRICES[s.seconds]){seconds=s.seconds;payBtn.textContent='Оплатить мультфильм — '+PRICES[seconds]+' ₽';}
     if(s.image){
       preview.src='data:image/jpeg;base64,'+s.image;
@@ -242,7 +268,7 @@ document.getElementById('actPrompt').addEventListener('input',function(){saveDra
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId,seconds:seconds,act:getPrompt()}));
+    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId,seconds:seconds,aspect:aspect,act:getPrompt()}));
   }catch(e){}
 }
 
@@ -297,7 +323,7 @@ document.getElementById('btn1').addEventListener('click',function(){
   var b=document.getElementById('btn1');
   b.disabled=true;
   document.getElementById('status1').textContent='Рисуем арт в стиле Pixar... до минуты ⏳';
-  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'toon',paymentId:activePaymentId,image:imageData,prompt:getPrompt()})})
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'toon',paymentId:activePaymentId,image:imageData,prompt:getPrompt(),aspect:aspect})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error){throw new Error(d.error);}
@@ -325,7 +351,7 @@ document.getElementById('btn2').addEventListener('click',function(){
   var b=document.getElementById('btn2');
   b.disabled=true;
   document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
-  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:activePaymentId,image:toonJpeg,seconds:seconds,prompt:getPrompt()||'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion'})})
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:activePaymentId,image:toonJpeg,seconds:seconds,aspect:aspect,prompt:getPrompt()||'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion'})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error){throw new Error(d.error);}
@@ -354,7 +380,7 @@ function poll(taskId,b){
           document.getElementById('status2').textContent='Ошибка: '+(d.error||'попробуй другое фото'));
           b.disabled=false;
         }else{
-          document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳');
+          document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
         }
       })
       .catch(function(){});
