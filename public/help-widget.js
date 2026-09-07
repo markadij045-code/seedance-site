@@ -14,13 +14,14 @@
     cartoon:{t:'Мультфильм из фото',s:['Загрузи фото с человеком.','Опиши сюжет мультфильма.','Выбери формат и длительность.','Оплати, затем нажми «Сделать арт», потом «Оживить арт в видео».']},
     avatar:{t:'Говорящий аватар',s:['Загрузи фото — лицо крупно.','Выбери озвучку: текст (напиши и выбери голос) или своё аудио.','Выбери ориентацию видео.','Оплати — видео через 1–5 минут.']},
     motion:{t:'Моушен контроль',s:['Загрузи фото персонажа.','Загрузи видео с движением (MP4, до 20 МБ, до 30 сек).','Выбери длительность.','Оплати — персонаж повторит движения через 1–5 минут.']},
-    lipsync:{t:'Липсинк (дубляж)',s:['Загрузи видео с человеком (лицо крупно).','Загрузи свою озвучку (MP3/WAV, до 5 МБ).','Оплати — губы синхронизируются с твоим голосом за 1–5 минут.']}
+    lipsync:{t:'Липсинк (дубляж)',s:['Загрузи видео с человеком (лицо крупно).','Загрузи свою озвучку (MP3/WAV, до 5 МБ).','Выбери длительность.','Оплати — губы синхронизируются с твоим голосом за 1–5 минут.']}
   };
   var FAQ=[
     ['Как оплатить?','Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — одна оплата за один заказ.'],
-    ['Когда придёт видео?','Через 1–5 минут после оплаты, прямо на странице. Скачивать ничего не нужно.'],
+    ['Когда придёт видео?','Через 1–5 минут после оплаты видео появится на странице. Смотришь его там же и скачиваешь себе кнопкой «Скачать видео» — выкладывай куда хочешь.'],
+    ['Сколько хранится видео?','7 дней на сервере. Скачай его сразу — потом оно удалится без возможности восстановления.'],
     ['А если не получится?','Напиши нам в MAX — проверим чек и сделаем видео вручную или вернём деньги по оферте.'],
-    ['Можно фото с людьми?','В «Оживи картинку» и в «Генерации» с картинкой-референсом — нет (нейросеть защищает людей от дипфейков). В мультфильме, аватаре, моушене и липсинке — можно.']
+    ['Можно фото с людьми?','В «Оживи картинку» и в «Генерации» с картинкой-референсом — нет (нейросеть защищает людей от дипфейков). В мультфильме, аватаре, моушене и липсинке — можно, но только своё фото или фото человека с его согласия.']
   ];
 
   var fl=document.createElement('link');
@@ -39,6 +40,8 @@
   +'::selection{background:#A3E635;color:#000}'
   +'#trustBlock{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}'
   +'#trustBlock a{color:#A3E635;text-decoration:none}'
+  +'.hwNote{margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5}'
+  +'.hwDl{display:inline-block;margin-top:12px;padding:10px 20px;background:#A3E635;color:#000;border-radius:999px;font-weight:700;text-decoration:none;font-size:.9rem}'
   +'#hwFloat{position:fixed;right:18px;bottom:18px;z-index:400;width:56px;height:56px;border-radius:50%;background:#A3E635;color:#0a0c08;font-size:1.6rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(163,230,53,.4)}'
   +'#hwModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:401;align-items:center;justify-content:center;padding:20px}'
   +'#hwModal.open{display:flex}'
@@ -52,6 +55,12 @@
   +'#hwBox a{color:#A3E635}'
   +'#hwInline{display:block;width:100%;margin-top:10px;padding:10px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}';
   document.head.appendChild(st);
+
+  var om=document.querySelector('meta[property="og:image"]');
+  if(om)om.remove();
+
+  var g=document.querySelector('.welcome-box .gift');
+  if(g)g.textContent='🎁 Новичкам: начни с доступных услуг — «Оживи картинку» и «Моушен» от 199 ₽';
 
   function fixFooter(){
     var ft=document.querySelector('footer');
@@ -72,6 +81,27 @@
     trust.id='trustBlock';
     trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a><br>💬 Есть вопрос до оплаты? <a href="'+MAXURL+'" target="_blank" rel="noopener">Напиши в MAX</a> — ответим быстро.<br>🛡 Не устроит результат — переделаем или вернём деньги по оферте.';
     payBtn.parentNode.insertBefore(trust,payBtn);
+  }
+
+  if(key==='cartoon'||key==='avatar'||key==='motion'||key==='lipsync'){
+    var drop=document.querySelector('.drop');
+    if(drop){
+      var cn=document.createElement('div');
+      cn.className='hwNote';
+      cn.textContent='🛡 Загружай только своё фото/видео или материал человека, который дал согласие на его использование.';
+      drop.parentNode.insertBefore(cn,drop.nextSibling);
+    }
+  }
+
+  if(key==='cartoon'){
+    var sc=document.getElementById('stepsCard');
+    if(sc){
+      var fn=document.createElement('div');
+      fn.className='hwNote';
+      fn.style.cssText='margin:0 0 12px;padding:10px 12px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:10px';
+      fn.textContent='После оплаты запусти шаги по очереди: сначала «Сделать арт», затем «Оживить арт в видео». Оба шага уже включены в цену.';
+      sc.insertBefore(fn,sc.firstChild);
+    }
   }
 
   var m=document.createElement('div');m.id='hwModal';
@@ -113,11 +143,29 @@
     var tb=document.querySelector('.toolbar');
     if(tb){
       var w=document.createElement('div');
-      w.style.cssText='margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5';
+      w.className='hwNote';
       w.textContent='⚠️ Картинка-референс с людьми не пройдёт — нейросеть защищает людей от дипфейков. Используй: питомцев, природу, игрушки, арт.';
       tb.parentNode.insertBefore(w,tb.nextSibling);
     }
   }
+
+  setInterval(function(){
+    var v=document.querySelector('#result video');
+    if(v&&v.src&&!v.getAttribute('data-dl')){
+      v.setAttribute('data-dl','1');
+      var dl=document.createElement('a');
+      dl.className='hwDl';
+      dl.href=v.src;
+      dl.target='_blank';
+      dl.rel='noopener';
+      dl.textContent='⬇ Скачать видео';
+      v.parentNode.insertBefore(dl,v.nextSibling);
+      var note=document.createElement('div');
+      note.className='hwNote';
+      note.textContent='💾 Скачай видео в течение 7 дней — потом оно удалится с сервера без возможности восстановления.';
+      v.parentNode.insertBefore(note,dl.nextSibling);
+    }
+  },1000);
 
   window.addEventListener('load',function(){
     if(payBtn&&!document.getElementById('agreeWrap')){
