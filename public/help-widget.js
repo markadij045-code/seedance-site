@@ -1,4 +1,5 @@
 (function(){
+  var MAXURL='https://max.ru/u/f9LHodD0cOK8_N1RfXgxLPzGiumem7bZA3oTYU5i0BAV5PK6dj7huMZRGGQ';
   var path=location.pathname;
   var key='gen';
   if(path.indexOf('photo')!==-1)key='photo';
@@ -8,7 +9,7 @@
   else if(path.indexOf('lipsync')!==-1)key='lipsync';
 
   var DATA={
-    gen:{t:'Видео из текста',s:['Опиши видео словами. Не знаешь что написать? Нажми «🎲 Придумай за меня».','Выбери формат кадра (📐) и длительность.','Хочешь — прикрепи картинку-пример (📎).','Отметь галочку согласия и нажми «Сгенерировать».','Оплати — видео появится на странице через 1–5 минут.']},
+    gen:{t:'Видео из текста',s:['Опиши видео словами. Не знаешь что написать? Нажми «🎲 Придумай за меня».','Выбери формат кадра (📐) и длительность.','Хочешь — прикрепи картинку-пример (📎). ВАЖНО: картинки с людьми не пройдут — защита от дипфейков.','Отметь галочку согласия и нажми «Сгенерировать».','Оплати — видео появится на странице через 1–5 минут.']},
     photo:{t:'Оживи картинку',s:['Выбери картинку БЕЗ людей: питомцы, природа, игрушки, арт.','Хочешь — опиши, что должно происходить.','Отметь галочку и нажми «Оживить картинку».','Оплати — видео через 1–3 минуты.']},
     cartoon:{t:'Мультфильм из фото',s:['Загрузи фото с человеком.','Опиши сюжет мультфильма.','Выбери формат и длительность.','Оплати, затем нажми «Сделать арт», потом «Оживить арт в видео».']},
     avatar:{t:'Говорящий аватар',s:['Загрузи фото — лицо крупно.','Выбери озвучку: текст (напиши и выбери голос) или своё аудио.','Выбери ориентацию видео.','Оплати — видео через 1–5 минут.']},
@@ -18,13 +19,60 @@
   var FAQ=[
     ['Как оплатить?','Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — одна оплата за один заказ.'],
     ['Когда придёт видео?','Через 1–5 минут после оплаты, прямо на странице. Скачивать ничего не нужно.'],
-    ['А если не получится?','Напиши нам — проверим чек и сделаем видео вручную или вернём деньги.'],
-    ['Можно фото с людьми?','В «Оживи картинку» — нет (защита от дипфейков). Во всех остальных услугах — можно.']
+    ['А если не получится?','Напиши нам в MAX — проверим чек и сделаем видео вручную или вернём деньги по оферте.'],
+    ['Можно фото с людьми?','В «Оживи картинку» и в «Генерации» с картинкой-референсом — нет (нейросеть защищает людей от дипфейков). В мультфильме, аватаре, моушене и липсинке — можно.']
   ];
 
+  var fl=document.createElement('link');
+  fl.rel='stylesheet';
+  fl.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap';
+  document.head.appendChild(fl);
+
   var st=document.createElement('style');
-  st.textContent='#hwFloat{position:fixed;right:18px;bottom:18px;z-index:400;width:56px;height:56px;border-radius:50%;background:#A3E635;color:#0a0c08;font-size:1.6rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(163,230,53,.4)}#hwModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:401;align-items:center;justify-content:center;padding:20px}#hwModal.open{display:flex}#hwBox{background:#101308;border:1px solid rgba(163,230,53,.4);border-radius:20px;padding:28px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative}#hwBox h3{color:#A3E635;margin-bottom:14px;font-size:1.3rem}#hwBox ol{margin:0 0 16px 20px;color:#e5e7eb;line-height:1.7}#hwBox h4{color:#fff;margin:14px 0 8px}#hwBox .faq{color:#9ca3af;font-size:.9rem;line-height:1.6;margin-bottom:10px}#hwBox .faq b{color:#d1d5db}#hwClose{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer}#hwBox a{color:#A3E635}#hwInline{display:block;width:100%;margin-top:10px;padding:10px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}';
+  st.textContent=''
+  +'body{font-family:\'Inter\',-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif}'
+  +'h1,h2,h3,h4,.logo{font-family:\'Space Grotesk\',\'Inter\',sans-serif}'
+  +'body{background-image:radial-gradient(900px 500px at 85% -100px,rgba(163,230,53,.06),transparent 60%),radial-gradient(700px 500px at -100px 40%,rgba(59,130,246,.05),transparent 60%);background-attachment:fixed}'
+  +'.warn{background:rgba(163,230,53,.06)!important;border-color:rgba(163,230,53,.25)!important;color:#c9cfba!important}'
+  +'button,.mode,.tool,.pill,.new-card,.drop{transition:all .2s ease}'
+  +'.links a:hover{color:#e5e7eb!important}'
+  +'::selection{background:#A3E635;color:#000}'
+  +'#trustBlock{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}'
+  +'#trustBlock a{color:#A3E635;text-decoration:none}'
+  +'#hwFloat{position:fixed;right:18px;bottom:18px;z-index:400;width:56px;height:56px;border-radius:50%;background:#A3E635;color:#0a0c08;font-size:1.6rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(163,230,53,.4)}'
+  +'#hwModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:401;align-items:center;justify-content:center;padding:20px}'
+  +'#hwModal.open{display:flex}'
+  +'#hwBox{background:#101308;border:1px solid rgba(163,230,53,.4);border-radius:20px;padding:28px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative}'
+  +'#hwBox h3{color:#A3E635;margin-bottom:14px;font-size:1.3rem}'
+  +'#hwBox ol{margin:0 0 16px 20px;color:#e5e7eb;line-height:1.7}'
+  +'#hwBox h4{color:#fff;margin:14px 0 8px}'
+  +'#hwBox .faq{color:#9ca3af;font-size:.9rem;line-height:1.6;margin-bottom:10px}'
+  +'#hwBox .faq b{color:#d1d5db}'
+  +'#hwClose{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer}'
+  +'#hwBox a{color:#A3E635}'
+  +'#hwInline{display:block;width:100%;margin-top:10px;padding:10px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}';
   document.head.appendChild(st);
+
+  function fixFooter(){
+    var ft=document.querySelector('footer');
+    if(!ft)return;
+    ft.innerHTML=ft.innerHTML.replace('Малкова Ольга Аркадьевна','Малкова О. А.');
+    ft.innerHTML+='<br><a href="'+MAXURL+'" target="_blank" rel="noopener">💬 Написать в MAX — поддержка</a>';
+  }
+  fixFooter();
+
+  var payBtn=null;
+  var btns=document.querySelectorAll('button');
+  for(var i=0;i<btns.length;i++){
+    var t=btns[i].textContent||'';
+    if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)){payBtn=btns[i];break;}
+  }
+  if(payBtn){
+    var trust=document.createElement('div');
+    trust.id='trustBlock';
+    trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a><br>💬 Есть вопрос до оплаты? <a href="'+MAXURL+'" target="_blank" rel="noopener">Напиши в MAX</a> — ответим быстро.<br>🛡 Не устроит результат — переделаем или вернём деньги по оферте.';
+    payBtn.parentNode.insertBefore(trust,payBtn);
+  }
 
   var m=document.createElement('div');m.id='hwModal';
   var d=DATA[key];
@@ -46,17 +94,12 @@
   fb.onclick=open;
   document.body.appendChild(fb);
 
-  var btns=document.querySelectorAll('button');
-  for(var i=0;i<btns.length;i++){
-    var t=btns[i].textContent||'';
-    if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)){
-      var ib=document.createElement('button');
-      ib.id='hwInline';ib.type='button';
-      ib.textContent='❓ Пошаговая инструкция — для новичков';
-      ib.onclick=open;
-      btns[i].parentNode.insertBefore(ib,btns[i]);
-      break;
-    }
+  if(payBtn){
+    var ib=document.createElement('button');
+    ib.id='hwInline';ib.type='button';
+    ib.textContent='❓ Пошаговая инструкция — для новичков';
+    ib.onclick=open;
+    payBtn.parentNode.insertBefore(ib,payBtn);
   }
 
   var links=document.querySelector('.links');
@@ -65,4 +108,30 @@
     a.href='/help.html';a.textContent='❓ Помощь';
     links.appendChild(a);
   }
+
+  if(key==='gen'){
+    var tb=document.querySelector('.toolbar');
+    if(tb){
+      var w=document.createElement('div');
+      w.style.cssText='margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5';
+      w.textContent='⚠️ Картинка-референс с людьми не пройдёт — нейросеть защищает людей от дипфейков. Используй: питомцев, природу, игрушки, арт.';
+      tb.parentNode.insertBefore(w,tb.nextSibling);
+    }
+  }
+
+  window.addEventListener('load',function(){
+    if(payBtn&&!document.getElementById('agreeWrap')){
+      var wrap=document.createElement('div');
+      wrap.id='agreeWrap';
+      wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
+      wrap.innerHTML='<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
+      payBtn.parentNode.insertBefore(wrap,payBtn);
+    }
+  });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('button'):null;
+    if(!b||b!==payBtn)return;
+    var c=document.getElementById('agree');
+    if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
+  },true);
 })();
