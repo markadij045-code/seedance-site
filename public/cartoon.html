@@ -34,8 +34,10 @@ h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
 label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
 .drop{display:block;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
 .drop:hover{border-color:#A3E635;color:#fff}
+.drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop{position:relative;overflow:hidden}
 .modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.mode{flex:1;min-width:70px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
+.mode{flex:1;min-width:70px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;user-select:none}
 .mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
 textarea{width:100%;min-height:90px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
 textarea:focus{border-color:#A3E635}
@@ -45,6 +47,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .del:hover{background:rgba(127,29,29,.45);color:#fff}
 #status1,#status2,#statusPay{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
 #preview,#toon{display:none;max-width:200px;border-radius:12px;margin-top:12px}
+.prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
+.prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
 .paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
@@ -69,8 +73,8 @@ footer a{color:#9ca3af;text-decoration:none}
   <div class="welcome-box">
     <button class="welcome-close" onclick="closeWelcome()">✕</button>
     <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
-    <p>Нейросеть снимает для тебя кино: оживи фото, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
-    <div class="gift">🎁 Новичкам — акция на первый месяц: все услуги от 199 ₽</div>
+    <p>Нейросеть снимает для тебя кино: создай видео с нуля, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
+    <div class="gift">🎁 Новичкам: начни с доступных услуг — «Создать видео» и «Моушен» от 199 ₽</div>
     <button onclick="closeWelcome()">Начать создавать</button>
   </div>
 </div>
@@ -78,8 +82,8 @@ footer a{color:#9ca3af;text-decoration:none}
 <nav>
   <div class="logo"><span>▶</span> SeedGen</div>
   <div class="links">
-    <a href="/">Генерация</a>
-    <a href="/photo.html">Оживи картинку</a>
+    <a href="/">Главная</a>
+    <a href="/gen.html">Создать видео</a>
     <a class="active" href="/cartoon.html">Мультфильм</a>
     <a href="/avatar.html">Аватар</a>
     <a href="/motion.html">Моушен</a>
@@ -91,8 +95,8 @@ footer a{color:#9ca3af;text-decoration:none}
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-  <a href="/">📝 Генерация</a>
-  <a href="/photo.html">🐱 Оживи картинку</a>
+  <a href="/">🏠 Главная</a>
+  <a href="/gen.html">📝 Создать видео</a>
   <a href="/cartoon.html">🎭 Мультфильм</a>
   <a href="/avatar.html">🗣 Аватар</a>
   <a href="/motion.html">🎮 Моушен</a>
@@ -103,8 +107,9 @@ footer a{color:#9ca3af;text-decoration:none}
 <p class="sub">Шаг 1 — превратим фото в мультяшный арт в стиле Pixar. Шаг 2 — оживим его в видео по твоему сценарию. Одна оплата — оба шага.</p>
 <div class="card">
 <label>Выбери фото с человеком (JPG/PNG)</label>
-<label class="drop" for="file">📷 Выбрать фото<input type="file" id="file" accept="image/*" hidden></label>
+<label class="drop" id="dropZone">📷 Выбрать фото<input type="file" id="file" accept="image/*"></label>
 <img id="preview"/>
+<div class="prog" id="prog"><i></i></div>
 <button class="del" id="fileDel" style="display:none" type="button">✖ Удалить фото</button>
 
 <label style="margin-top:20px">Опиши, что происходит в мультфильме:</label>
@@ -217,17 +222,22 @@ try{
   var saved=localStorage.getItem('seedgen_cartoon_draft');
   if(saved){
     var s=JSON.parse(saved);
-    imageData=s.image;
+    imageData=s.image||null;
     if(s.act){document.getElementById('actPrompt').value=s.act;}
     if(s.aspect){
       aspect=s.aspect;
-      document.querySelectorAll('#aspectModes .mode').forEach(function(x){x.classList.remove('active');});
       var ab=document.querySelectorAll('#aspectModes .mode');
       var order=['21:9','16:9','4:3','1:1','3:4','9:16'];
       var idx=order.indexOf(aspect);
+      ab.forEach(function(x){x.classList.remove('active');});
       if(idx>=0&&ab[idx])ab[idx].classList.add('active');
     }
-    if(s.seconds&&PRICES[s.seconds]){seconds=s.seconds;payBtn.textContent='Оплатить мультфильм — '+PRICES[seconds]+' ₽';}
+    if(s.seconds&&PRICES[s.seconds]){
+      seconds=s.seconds;
+      payBtn.textContent='Оплатить мультфильм — '+PRICES[seconds]+' ₽';
+      var db=document.querySelectorAll('#durModes .mode');
+      db.forEach(function(x){x.classList.toggle('active',x.textContent.indexOf(s.seconds+' сек')!==-1);});
+    }
     if(s.image){
       preview.src='data:image/jpeg;base64,'+s.image;
       preview.style.display='block';
@@ -252,13 +262,26 @@ try{
 fileInput.addEventListener('change',function(){
   var f=fileInput.files[0];
   if(!f)return;
+  if(f.type.indexOf('image/')!==0){alert('Нужно изображение JPG или PNG');return;}
+  if(f.size>10*1024*1024){alert('Файл больше 10 МБ. Выбери фото поменьше.');return;}
+  var prog=document.getElementById('prog');
+  var bar=prog.querySelector('i');
+  prog.style.display='block';bar.style.width='10%';
+  document.getElementById('statusPay').textContent='Обрабатываем фото...';
   var reader=new FileReader();
+  reader.onprogress=function(ev){
+    if(ev.total>0){bar.style.width=Math.round(10+ev.loaded/ev.total*60)+'%';}
+  };
   reader.onload=function(){
+    bar.style.width='80%';
     shrink(reader.result,function(d){
       imageData=d.split(',')[1];
       preview.src=d;
       preview.style.display='block';
       document.getElementById('fileDel').style.display='block';
+      bar.style.width='100%';
+      setTimeout(function(){prog.style.display='none';},600);
+      document.getElementById('statusPay').textContent='';
       saveDraft();
     });
   };
@@ -372,7 +395,7 @@ function poll(taskId,b){
           clearInterval(timer);
           document.getElementById('video').src=d.videoUrl;
           document.getElementById('result').style.display='block';
-          document.getElementById('status2').textContent='Готово! ✅';
+          document.getElementById('status2').textContent='Готово! ✅ Скачай видео в течение 7 дней.';
           b.disabled=false;
           try{localStorage.removeItem('seedgen_cartoon_draft');}catch(e){}
         }else if(d.status==='failed'){
@@ -409,7 +432,7 @@ function poll(taskId,b){
         stepsCard.style.display='block';
         document.getElementById('statusPay').textContent='Оплата прошла! ✅ Жми "Сделать арт"';
       }else{
-        document.getElementById('statusPay').textContent='Оплата не завершена';
+        document.getElementById('statusPay').textContent='Оплата не завершена. Твоё фото и сюжет сохранены — проверь и нажми кнопку ещё раз.';
         payBtn.disabled=false;
       }
     })
@@ -426,7 +449,7 @@ function poll(taskId,b){
     var btns=document.querySelectorAll('button');
     for(var i=0;i<btns.length;i++){
       var t=btns[i].textContent||'';
-      if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)&&!document.getElementById('agreeWrap')){
+      if(/Оплатить|Создать видео|Сгенерировать/.test(t)&&!document.getElementById('agreeWrap')){
         var wrap=document.createElement('div');
         wrap.id='agreeWrap';
         wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
@@ -441,7 +464,7 @@ function poll(taskId,b){
     var b=e.target.closest?e.target.closest('button'):null;
     if(!b)return;
     var t=b.textContent||'';
-    if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)){
+    if(/Оплатить|Создать видео|Сгенерировать/.test(t)){
       var c=document.getElementById('agree');
       if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
     }
