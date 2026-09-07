@@ -4,6 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SeedGen — генерация видео нейросетью</title>
+<meta property="og:title" content="SeedGen — нейросеть снимет для тебя кино">
+<meta property="og:description" content="Опиши словами — получи видео за 2–5 минут. Оживи фото, мультфильм, аватар, мем с танцем. От 199 ₽">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://seedgen.ru/cat-knight-dance.mp4.mp4">
+<meta property="og:url" content="https://seedgen.ru/">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
@@ -21,6 +27,14 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .links .pro:hover{color:#A3E635;opacity:1}
 .links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#000;font-size:0.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap}
 .links .pro:hover .tip,.links .pro.open .tip{display:block}
+.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;padding:0;line-height:1}
+.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
+.sidebar.open{right:0}
+.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px;transition:background 0.2s}
+.sidebar a:hover{background:rgba(163,230,53,0.1)}
+.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
+.sidebar-backdrop.open{display:block}
 .hero-content{position:relative;z-index:3;text-align:center;max-width:900px;padding:0 24px;animation:fadeUp 1.4s ease-out}
 .hero-content h1{font-size:clamp(2.5rem, 6vw, 4.5rem);font-weight:700;line-height:1.05;margin-bottom:24px;letter-spacing:-0.03em}
 .hero-content h1 .lime{color:#A3E635}
@@ -36,13 +50,24 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .services{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px}
 .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:12px 20px;color:#fff;text-decoration:none;font-size:0.95rem;transition:all 0.2s ease}
 .pill:hover{background:rgba(163,230,53,0.1);border-color:#A3E635}
-.modes{display:flex;gap:12px;margin-bottom:24px}
+.pill .seed{background:#A3E635;color:#000;font-size:0.7rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:2px}
+.modes{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
 .mode{flex:1;min-width:200px;padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.7);cursor:pointer;text-align:center;font-size:0.95rem;transition:all 0.2s ease}
 .mode:hover{border-color:rgba(255,255,255,0.3)}
 .mode.active{border-color:#A3E635;color:#fff;background:rgba(163,230,53,0.1)}
 label{display:block;margin:24px 0 12px;color:rgba(255,255,255,0.7);font-size:0.95rem;font-weight:500}
 textarea{width:100%;height:120px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;color:#fff;padding:16px;font-size:1rem;resize:vertical;outline:none;transition:border-color 0.2s ease}
 textarea:focus{border-color:#A3E635}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0 8px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px}
+.tool{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 14px;color:rgba(255,255,255,0.8);font-size:0.85rem;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.tool:hover{border-color:#A3E635;color:#A3E635}
+.tool.active{background:rgba(163,230,53,0.15);border-color:#A3E635;color:#A3E635}
+.tool-attach{position:relative;overflow:hidden}
+.tool-attach input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ref-preview{display:none;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(163,230,53,0.1);border:1px solid rgba(163,230,53,0.3);border-radius:10px}
+.ref-preview img{width:40px;height:40px;border-radius:8px;object-fit:cover}
+.ref-preview span{color:rgba(255,255,255,0.8);font-size:0.85rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-preview button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1.1rem;padding:0 4px}
 .btn{margin-top:24px;width:100%;padding:18px;border:none;border-radius:999px;background:#A3E635;color:#000;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all 0.3s ease}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(163,230,53,0.3)}
 .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
@@ -52,9 +77,18 @@ textarea:focus{border-color:#A3E635}
 #result{margin-top:24px;display:none}
 #result video{width:100%;border-radius:16px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.grid video{width:100%;border-radius:16px;background:#000}
+.grid-item{position:relative;border-radius:16px;overflow:hidden;background:#000}
+.grid video{width:100%;display:block;cursor:pointer}
 .grid p{color:rgba(255,255,255,0.6);font-size:0.9rem;text-align:center;margin-top:12px}
-@media(max-width:768px){.grid{grid-template-columns:1fr}nav{padding:16px 24px}.links{gap:16px}.main-content{padding:80px 24px}.card{padding:32px 24px}}
+@media(max-width:768px){
+  .grid{grid-template-columns:1fr}
+  nav{padding:16px 24px}
+  .links{display:none}
+  .burger{display:block}
+  .main-content{padding:80px 24px}
+  .card{padding:32px 24px}
+  .mode{min-width:calc(50% - 6px)}
+}
 .price{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.08);gap:16px}
 .price:last-child{border-bottom:none}
 .price span{color:rgba(255,255,255,0.8);font-size:1rem}
@@ -68,12 +102,36 @@ textarea:focus{border-color:#A3E635}
 .new-card .from{display:inline-block;background:#A3E635;color:#000;font-weight:700;padding:6px 14px;border-radius:999px;font-size:0.9rem}
 @media(max-width:768px){.new-services{grid-template-columns:1fr}}
 .steps{color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.8}
+.promo-banner{background:linear-gradient(135deg, rgba(255,140,0,0.15) 0%, rgba(255,210,0,0.08) 100%);border:1px solid rgba(255,140,0,0.4);border-radius:20px;padding:24px 32px;margin-bottom:32px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.promo-banner .emoji{font-size:2.5rem}
+.promo-banner .text{flex:1;min-width:200px}
+.promo-banner h3{color:#ffb066;font-size:1.2rem;margin-bottom:6px}
+.promo-banner p{color:rgba(255,255,255,0.8);font-size:0.95rem;line-height:1.5}
 footer{padding:48px 24px;color:rgba(255,255,255,0.4);font-size:0.85rem;text-align:center;line-height:1.7;border-top:1px solid rgba(255,255,255,0.08)}
 footer a{color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.2s ease}
 footer a:hover{color:#A3E635}
+.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
+.welcome-modal.open{display:flex}
+.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
+.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
+.welcome-box h2 .lime{color:#A3E635}
+.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
+.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
+.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
 </style>
 </head>
 <body>
+
+<div class="welcome-modal" id="welcomeModal">
+  <div class="welcome-box">
+    <button class="welcome-close" onclick="closeWelcome()">✕</button>
+    <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
+    <p>Нейросеть снимает для тебя кино: оживи фото, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
+    <div class="gift">🎁 Новичкам — акция на первый месяц: все услуги от 199 ₽</div>
+    <button onclick="closeWelcome()">Начать создавать</button>
+  </div>
+</div>
 
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline>
@@ -93,7 +151,20 @@ footer a:hover{color:#A3E635}
       <a href="#price">Цены</a>
       <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
     </div>
+    <button class="burger" onclick="toggleSidebar()">☰</button>
   </nav>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    <a href="#gen" onclick="toggleSidebar()">📝 Генерация</a>
+    <a href="/photo.html">🐱 Оживи картинку</a>
+    <a href="/cartoon.html">🎭 Мультфильм</a>
+    <a href="/avatar.html">🗣 Аватар</a>
+    <a href="/motion.html">🎮 Моушен</a>
+    <a href="/lipsync.html">💬 Липсинк</a>
+    <a href="#examples" onclick="toggleSidebar()">🖼 Примеры</a>
+    <a href="#price" onclick="toggleSidebar()">💰 Цены</a>
+  </div>
   <div class="hero-content">
     <h1>Нейросеть <span class="lime">снимет для тебя кино</span></h1>
     <p>Опиши словами — получи видео. Оживи фото. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
@@ -102,6 +173,16 @@ footer a:hover{color:#A3E635}
 </section>
 
 <div class="main-content">
+
+<div class="section">
+  <div class="promo-banner">
+    <div class="emoji">🎁</div>
+    <div class="text">
+      <h3>Акция месяца: всё от 199 ₽</h3>
+      <p>Новичкам — любая услуга со скидкой до 30%. Без подписки, платишь только за то, что нужно.</p>
+    </div>
+  </div>
+</div>
 
 <div class="section">
   <div class="card">
@@ -127,11 +208,11 @@ footer a:hover{color:#A3E635}
 <div class="section" id="gen">
   <div class="card">
     <div class="services">
-      <a class="pill" href="#gen">📝 Видео из текста</a>
-      <a class="pill" href="/photo.html">🐱 Оживи картинку</a>
-      <a class="pill" href="/cartoon.html">🎭 Мультфильм (стиль Pixar)</a>
+      <a class="pill" href="#gen">📝 Видео из текста <span class="seed">2.5</span></a>
+      <a class="pill" href="/photo.html">🐱 Оживи картинку <span class="seed">2.5</span></a>
+      <a class="pill" href="/cartoon.html">🎭 Мультфильм (Pixar)</a>
       <a class="pill" href="/avatar.html">🗣 Говорящий аватар</a>
-      <a class="pill" href="/motion.html">🎮 Моушен контроль</a>
+      <a class="pill" href="/motion.html">🎮 Моушен</a>
       <a class="pill" href="/lipsync.html">💬 Липсинк</a>
     </div>
     <div class="modes">
@@ -140,6 +221,27 @@ footer a:hover{color:#A3E635}
     </div>
     <label for="prompt">Опиши, какое видео хочешь создать:</label>
     <textarea id="prompt" placeholder="Например: кот в космосе летит на ракете, кинематографичный стиль"></textarea>
+
+    <div class="toolbar">
+      <label class="tool tool-attach" title="Прикрепить картинку-референс (необязательно)">
+        📎 Картинка
+        <input type="file" id="refInput" accept="image/*">
+      </label>
+      <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
+      <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
+      <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
+      <div class="tool" onclick="pickAspect('1:1')" data-aspect="1:1">📐 1:1</div>
+      <div class="tool" onclick="pickAspect('3:4')" data-aspect="3:4">📐 3:4</div>
+      <div class="tool" onclick="pickAspect('9:16')" data-aspect="9:16">📐 9:16</div>
+      <div class="tool" onclick="randomPrompt()" title="Случайное описание">🎲 Придумай за меня</div>
+    </div>
+
+    <div class="ref-preview" id="refPreview">
+      <img id="refImg" src="" alt="">
+      <span id="refName">image.jpg</span>
+      <button onclick="removeRef()" type="button">✕</button>
+    </div>
+
     <button class="btn" id="btn">Сгенерировать видео — 199 ₽</button>
     <div class="paymethods">
       <span>💳 Банковские карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
@@ -154,11 +256,12 @@ footer a:hover{color:#A3E635}
     <h2>Примеры работ</h2>
     <p class="steps" style="text-align:center;margin-bottom:32px">Все эти видео сгенерированы нейросетью из одной фразы</p>
     <div class="grid">
-      <div><video src="/cat-city.mp4.mp4" controls muted loop preload="metadata"></video><p>Гигантский кот в городе</p></div>
-      <div><video src="/cat-space.mp4.mp4" controls muted loop preload="metadata"></video><p>Кот-пилот в космосе</p></div>
-      <div><video src="/cat-dance.mp4.mp4" controls muted loop preload="metadata"></video><p>Танцующий котёнок</p></div>
-      <div><video src="/cat-knight.mp4.mp4" controls muted loop preload="metadata"></video><p>Кот-рыцарь против дракона</p></div>
+      <div class="grid-item"><video src="/cat-city.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-space.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-dance.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-knight.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
     </div>
+    <p class="steps" style="text-align:center;margin-top:16px"><a href="/examples.html" style="color:#A3E635">→ Все примеры в галерее</a></p>
   </div>
 </div>
 
@@ -168,10 +271,10 @@ footer a:hover{color:#A3E635}
     <div class="price"><span>📝 Видео до 5 секунд по вашему описанию</span><b>199 ₽</b></div>
     <div class="price"><span>📝 Видео до 30 секунд по вашему описанию</span><b>999 ₽</b></div>
     <div class="price"><span>🐱 Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
-    <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar)</span><b>299 ₽</b></div>
+    <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar, до 30 сек)</span><b>от 299 ₽</b></div>
     <div class="price"><span>🗣 Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
     <div class="price"><span>🎮 Моушен контроль (фото + видео с движением, до 30 сек)</span><b>от 199 ₽</b></div>
-    <div class="price"><span>💬 Липсинк / дубляж (видео + твоя озвучка)</span><b>199 ₽</b></div>
+    <div class="price"><span>💬 Липсинк / дубляж (видео + твоя озвучка, до 30 сек)</span><b>199 ₽</b></div>
     <h2 style="margin-top:48px">Как получить заказ</h2>
     <p class="steps">1. Опиши видео или загрузи фото и оплати заказ.<br>
     2. Нейросеть сгенерирует видео в течение 1–5 минут.<br>
@@ -187,6 +290,24 @@ footer a:hover{color:#A3E635}
 </footer>
 
 <script>
+// Приветственное окно
+function showWelcome(){
+  if(!localStorage.getItem('seedgen_welcomed')){
+    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
+  }
+}
+function closeWelcome(){
+  document.getElementById('welcomeModal').classList.remove('open');
+  localStorage.setItem('seedgen_welcomed','1');
+}
+showWelcome();
+
+// Сайдбар на мобильных
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+
 window.addEventListener('scroll',function(){
   var nav=document.getElementById('navbar');
   if(window.scrollY>100){nav.classList.add('scrolled');}
@@ -205,6 +326,9 @@ var statusEl=document.getElementById('status');
 var resultEl=document.getElementById('result');
 var videoEl=document.getElementById('video');
 var currentService='text2video';
+var currentAspect='16:9';
+var refImageData=null;
+
 function setStatus(t){statusEl.textContent=t;}
 
 function setDur(d){
@@ -219,15 +343,72 @@ function setDur(d){
   document.getElementById('dur30').classList.toggle('active',d==='30');
 }
 
+function pickAspect(a){
+  currentAspect=a;
+  document.querySelectorAll('.tool[data-aspect]').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-aspect')===a);
+  });
+}
+
+document.getElementById('refInput').addEventListener('change',function(e){
+  var f=e.target.files[0];
+  if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      var max=1024,w=img.width,h=img.height;
+      if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
+      var c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      var d=c.toDataURL('image/jpeg',0.85);
+      refImageData=d.split(',')[1];
+      document.getElementById('refImg').src=d;
+      document.getElementById('refName').textContent=f.name;
+      document.getElementById('refPreview').style.display='flex';
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(f);
+});
+
+function removeRef(){
+  refImageData=null;
+  document.getElementById('refInput').value='';
+  document.getElementById('refPreview').style.display='none';
+}
+
+var PROMPTS=[
+  'Кот в скафандре летит сквозь звёздное поле, кинематографичный стиль, мягкий свет',
+  'Средневековый рыцарь-кот сражается с драконом на фоне заката',
+  'Танцующий щенок под неоновыми огнями ночного города',
+  'Гигантский пушистый кот спит на крыше небоскрёба, туман',
+  'Робот-помощник готовит кофе на футуристической кухне',
+  'Лесная фея танцует среди светящихся грибов в сумерках',
+  'Ретро-автомобиль едет по пустынному шоссе в стиле 80-х',
+  'Подводный город с русалками и светящимися медузами',
+  'Астронавт гладит инопланетное существо на марсианской базе',
+  'Самурай-лиса медитирует под цветущей сакурой'
+];
+function randomPrompt(){
+  var p=PROMPTS[Math.floor(Math.random()*PROMPTS.length)];
+  document.getElementById('prompt').value=p;
+  document.getElementById('prompt').focus();
+}
+
 btn.addEventListener('click',function(){
   var prompt=document.getElementById('prompt').value.trim();
-  if(!prompt){alert('Введите описание видео');return;}
+  if(!prompt){alert('Введите описание видео или нажми 🎲 Придумай за меня');return;}
   btn.disabled=true;
   setStatus('Создаём платёж...');
-  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:currentService,prompt:prompt})})
+  var payload={service:currentService,prompt:prompt,aspect:currentAspect};
+  if(refImageData)payload.refImage=refImageData;
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.error){throw new Error(data.error);}
+      try{localStorage.setItem('seedgen_gen_draft',JSON.stringify({prompt:prompt,aspect:currentAspect,service:currentService,refImage:refImageData,paymentId:data.paymentId}));}catch(e){}
       window.location.href=data.confirmationUrl;
     })
     .catch(function(e){
@@ -274,9 +455,20 @@ function poll(taskId){
         localStorage.setItem('seedgen_task_'+paymentId,data.taskId);
         setStatus('Оплата прошла! Видео генерируется... 1–3 минуты ⏳');
         poll(data.taskId);
-      }else if(data.paid&&data.error){
-        setStatus('Оплата прошла, но генерация не запустилась: '+data.error);
-        btn.disabled=false;
+      }else if(data.paid){
+        var draft=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
+        var payload={service:draft.service||'text2video',paymentId:paymentId,prompt:draft.prompt||'',aspect:draft.aspect||'16:9'};
+        if(draft.refImage)payload.refImage=draft.refImage;
+        setStatus('Оплата прошла! Запускаем генерацию...');
+        fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+          .then(function(r){return r.json();})
+          .then(function(d){
+            if(d.error){throw new Error(d.error);}
+            localStorage.setItem('seedgen_task_'+paymentId,d.taskId);
+            setStatus('Видео генерируется... 1–3 минуты ⏳');
+            poll(d.taskId);
+          })
+          .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
       }else{
         setStatus('Оплата не завершена');
         btn.disabled=false;
@@ -292,7 +484,7 @@ function poll(taskId){
     var btns=document.querySelectorAll('button');
     for(var i=0;i<btns.length;i++){
       var t=btns[i].textContent||'';
-      if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)&&!document.getElementById('agreeWrap')){
+      if(/Оплатить|Сгенерировать|Оживить картинку|Придумай/.test(t)&&!document.getElementById('agreeWrap')){
         var wrap=document.createElement('div');
         wrap.id='agreeWrap';
         wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
