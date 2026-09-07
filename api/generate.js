@@ -12,6 +12,7 @@ export default async function handler(req, res) {
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
   const MOTION_PRICES = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
+  const LIPSYNC_PRICES = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
   const CARTOON_PRICES = { 5: 299, 10: 449, 15: 599, 20: 749, 25: 899, 30: 1049 };
 
   const SIZE_MAP = {
@@ -31,7 +32,7 @@ export default async function handler(req, res) {
     cartoon:    { prices: CARTOON_PRICES, maxSeconds: 30, needsImage: true },
     avatar:     { price: 499, maxSeconds: 60, needsImage: true },
     motion:     { maxSeconds: 30, needsImage: true, needsVideo: true, prices: MOTION_PRICES },
-    lipsync:    { price: 199, maxSeconds: 30, needsVideo: true, needsAudio: true }
+    lipsync:    { maxSeconds: 30, needsVideo: true, needsAudio: true, prices: LIPSYNC_PRICES }
   };
 
   const service = body.service || 'text2video';
@@ -42,7 +43,7 @@ export default async function handler(req, res) {
 
   let seconds = parseInt(body.seconds, 10);
   if (cfg.prices) {
-    if (!seconds) seconds = (service === 'cartoon') ? 5 : 10;
+    if (!seconds) seconds = (service === 'cartoon') ? 5 : 5;
     if (!cfg.prices[seconds]) {
       const keys = Object.keys(cfg.prices).map(Number).sort(function(a, b) { return a - b; });
       seconds = keys.reduce(function(p, c) { return Math.abs(c - seconds) < Math.abs(p - seconds) ? c : p; });
