@@ -4,46 +4,37 @@ export default async function handler(req, res) {
   }
 
   const key = process.env.COMETAPI_KEY;
-  if (!key) {
-    return res.status(500).json({ error: 'Не настроен ключ API (COMETAPI_KEY)' });
-  }
+  if (!key) return res.status(500).json({ error: 'Не настроен ключ API (COMETAPI_KEY)' });
 
   const body = req.body || {};
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
-  const MOTION_PRICES = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
-  const LIPSYNC_PRICES = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
-  const CARTOON_PRICES = { 5: 299, 10: 449, 15: 599, 20: 749, 25: 899, 30: 1049 };
+  const T6 = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
+  const CARTOON = { 5: 299, 10: 449, 15: 599, 20: 749, 25: 899, 30: 1049 };
 
   const SIZE_MAP = {
-    '21:9': '1920x816',
-    '16:9': '1280x720',
-    '4:3':  '1024x768',
-    '1:1':  '720x720',
-    '3:4':  '768x1024',
-    '9:16': '720x1280'
+    '21:9': '1920x816', '16:9': '1280x720', '4:3': '1024x768',
+    '1:1': '720x720', '3:4': '768x1024', '9:16': '720x1280'
   };
 
   const SERVICES = {
-    text2video: { price: 199, maxSeconds: 10 },
+    text2video: { prices: T6, maxSeconds: 30 },
     text30:     { price: 999, maxSeconds: 30 },
     animate:    { price: 199, maxSeconds: 10, needsImage: true },
     toon:       { price: 299, maxSeconds: 10, needsImage: true },
-    cartoon:    { prices: CARTOON_PRICES, maxSeconds: 30, needsImage: true },
+    cartoon:    { prices: CARTOON, maxSeconds: 30, needsImage: true },
     avatar:     { price: 499, maxSeconds: 60, needsImage: true },
-    motion:     { maxSeconds: 30, needsImage: true, needsVideo: true, prices: MOTION_PRICES },
-    lipsync:    { maxSeconds: 30, needsVideo: true, needsAudio: true, prices: LIPSYNC_PRICES }
+    motion:     { prices: T6, maxSeconds: 30, needsImage: true, needsVideo: true },
+    lipsync:    { prices: T6, maxSeconds: 30, needsVideo: true, needsAudio: true }
   };
 
   const service = body.service || 'text2video';
   const cfg = SERVICES[service];
-  if (!cfg) {
-    return res.status(400).json({ error: 'Неизвестная услуга' });
-  }
+  if (!cfg) return res.status(400).json({ error: 'Неизвестная услуга' });
 
   let seconds = parseInt(body.seconds, 10);
   if (cfg.prices) {
-    if (!seconds) seconds = (service === 'cartoon') ? 5 : 5;
+    if (!seconds) seconds = 5;
     if (!cfg.prices[seconds]) {
       const keys = Object.keys(cfg.prices).map(Number).sort(function(a, b) { return a - b; });
       seconds = keys.reduce(function(p, c) { return Math.abs(c - seconds) < Math.abs(p - seconds) ? c : p; });
@@ -57,29 +48,20 @@ export default async function handler(req, res) {
 
   if (!isAdmin) {
     const paymentId = body.paymentId;
-    if (!paymentId) {
-      return res.status(403).json({ error: 'Генерация доступна только после оплаты' });
-    }
+    if (!paymentId) return res.status(403).json({ error: 'Генерация доступна только после оплаты' });
 
     const shopId = process.env.YOOKASSA_SHOP_ID;
     const secret = process.env.YOOKASSA_SECRET_KEY;
-    if (!shopId || !secret) {
-      return res.status(500).json({ error: 'ЮKassa не настроена' });
-    }
+    if (!shopId || !secret) return res.status(500).json({ error: 'ЮKassa не настроена' });
 
     const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
-    const pr = await fetch('https://api.yookassa.ru/v3/payments/' + paymentId, {
-      headers: { 'Authorization': auth }
-    });
+    const pr = await fetch('https://api.yookassa.ru/v3/payments/' + paymentId, { headers: { 'Authorization': auth } });
     const pdata = await pr.json();
-
     if (!pr.ok || pdata.status !== 'succeeded') {
       return res.status(403).json({ error: 'Оплата не найдена или не завершена' });
     }
-
     const paid = parseFloat(pdata.amount && pdata.amount.value);
     if (pdata.currency !== 'RUB' || !(paid >= expectedPrice)) {
-      console.error('Payment mismatch:', paymentId, pdata.amount, 'service:', service, 'seconds:', seconds);
       return res.status(403).json({ error: 'Сумма оплаты не соответствует выбранной услуге' });
     }
   }
@@ -130,10 +112,7 @@ export default async function handler(req, res) {
         })
       });
       const data = await r.json();
-      if (!r.ok) {
-        console.error('Toon API error:', r.status, JSON.stringify(data));
-        return res.status(502).json({ error: 'Не удалось создать арт, попробуйте ещё раз' });
-      }
+      if (!r.ok) return res.status(502).json({ error: 'Не удалось создать арт, попробуйте ещё раз' });
       const parts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
       let finalImage = null;
       if (parts) {
@@ -142,9 +121,7 @@ export default async function handler(req, res) {
           if (parts[i].inlineData && parts[i].inlineData.data) { finalImage = parts[i].inlineData; break; }
         }
       }
-      if (!finalImage) {
-        return res.status(502).json({ error: 'Не удалось создать арт, попробуйте ещё раз' });
-      }
+      if (!finalImage) return res.status(502).json({ error: 'Не удалось создать арт, попробуйте ещё раз' });
       return res.json({ image: finalImage.data, mime: finalImage.mimeType || 'image/png' });
     }
 
@@ -156,29 +133,23 @@ export default async function handler(req, res) {
       form.append('model', model);
       form.append('prompt', 'The person speaks naturally, slight head movements and expressions');
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'avatar.jpg');
-
     } else if (service === 'animate') {
       form.append('model', model);
       form.append('prompt', prompt || 'The scene comes alive: natural smooth motion, gentle camera movement');
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
-
     } else if (service === 'motion') {
       form.append('model', 'kling-video');
       form.append('prompt', prompt || 'The character from the image performs the exact same movements and speech as in the reference video');
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
       form.append('video_reference', new Blob([vid.buffer], { type: vid.mime }), 'motion.mp4');
-
     } else if (service === 'lipsync') {
       form.append('model', 'kling-advanced-lip-sync');
       form.append('video', new Blob([vid.buffer], { type: vid.mime }), 'video.mp4');
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
-
     } else {
       form.append('model', model);
       form.append('prompt', prompt);
-      if (refImg) {
-        form.append('input_reference', new Blob([refImg.buffer], { type: refImg.mime }), 'ref.jpg');
-      }
+      if (refImg) form.append('input_reference', new Blob([refImg.buffer], { type: refImg.mime }), 'ref.jpg');
     }
 
     const r = await fetch('https://api.cometapi.com/v1/videos', {
@@ -187,20 +158,11 @@ export default async function handler(req, res) {
       body: form
     });
     const data = await r.json();
-
-    if (!r.ok) {
-      console.error('CometAPI error:', r.status, JSON.stringify(data));
-      return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
-    }
+    if (!r.ok) return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
     const taskId = data.id || data.task_id;
-    if (!taskId) {
-      console.error('CometAPI no taskId:', JSON.stringify(data));
-      return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
-    }
+    if (!taskId) return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
     return res.json({ taskId: taskId });
-
   } catch (e) {
-    console.error('Generate error:', e);
     return res.status(500).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
   }
 }
@@ -231,7 +193,6 @@ async function resolveMedia(value, kind) {
       if (buf.length > limits[kind]) return { error: tooBigMsg(kind) };
       return { mime: mime, buffer: buf };
     }
-
     if (typeof value === 'string' && value.startsWith('http')) {
       const r = await fetch(value);
       if (!r.ok) return { error: 'Не удалось загрузить файл' };
@@ -240,7 +201,6 @@ async function resolveMedia(value, kind) {
       const ct = r.headers.get('content-type') || (kind === 'image' ? 'image/jpeg' : kind === 'video' ? 'video/mp4' : 'audio/mpeg');
       return { mime: ct.split(';')[0], buffer: buf };
     }
-
     return { error: 'Не удалось прочитать файл' };
   } catch (e) {
     return { error: 'Не удалось прочитать файл' };
