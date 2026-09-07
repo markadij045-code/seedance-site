@@ -11,13 +11,13 @@
 <meta name="twitter:card" content="summary_large_image">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
 .hero{position:relative;width:100%;height:100vh;min-height:700px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);z-index:2}
 nav{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;z-index:100;background:rgba(0,0,0,0.1);backdrop-filter:blur(20px);transition:all 0.3s ease}
 nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
-.logo{font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
+.logo{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
 .logo span{color:#A3E635}
 .links{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
 .links a{color:#fff;text-decoration:none;font-size:0.95rem;font-weight:500;opacity:0.8;transition:opacity 0.2s ease}
@@ -35,7 +35,7 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
 .sidebar-backdrop.open{display:block}
 .hero-content{position:relative;z-index:3;text-align:center;max-width:900px;padding:0 24px;animation:fadeUp 1.4s ease-out}
-.hero-content h1{font-size:clamp(2.5rem, 6vw, 4.5rem);font-weight:700;line-height:1.05;margin-bottom:24px;letter-spacing:-0.03em}
+.hero-content h1{font-family:'Space Grotesk','Inter',sans-serif;font-size:clamp(2.5rem, 6vw, 4.5rem);font-weight:700;line-height:1.05;margin-bottom:24px;letter-spacing:-0.03em}
 .hero-content h1 .lime{color:#A3E635}
 .hero-content p{font-size:clamp(1.1rem, 2vw, 1.4rem);color:rgba(255,255,255,0.85);line-height:1.5;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto;font-weight:400}
 .hero-cta{display:inline-block;padding:18px 48px;background:#fff;color:#000;font-size:1.1rem;font-weight:600;border-radius:999px;text-decoration:none;transition:all 0.3s ease;border:none}
@@ -45,7 +45,23 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .section{margin-bottom:120px;opacity:0;transform:translateY(30px);transition:all 0.8s ease}
 .section.visible{opacity:1;transform:translateY(0)}
 .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:48px;margin-bottom:32px;backdrop-filter:blur(10px)}
-.card h2{font-size:2rem;font-weight:700;margin-bottom:32px;letter-spacing:-0.02em}
+.card h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:2rem;font-weight:700;margin-bottom:32px;letter-spacing:-0.02em}
+.how3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.step{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;text-align:center}
+.step .num{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#A3E635;color:#000;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:14px}
+.step h3{font-size:1.1rem;margin-bottom:8px}
+.step p{color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.6}
+@media(max-width:768px){.how3{grid-template-columns:1fr}}
+.shop{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.shop-card{position:relative;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;text-decoration:none;color:#fff;transition:all 0.25s ease;display:block}
+.shop-card:hover{border-color:#A3E635;transform:translateY(-4px);box-shadow:0 12px 32px rgba(163,230,53,0.12)}
+.shop-card .em{font-size:2rem;display:block;margin-bottom:10px}
+.shop-card h3{font-size:1.05rem;margin-bottom:6px}
+.shop-card p{color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.5;margin-bottom:12px}
+.shop-card b{color:#A3E635;font-size:0.95rem}
+.shop-card .hit{position:absolute;top:12px;right:12px;background:#A3E635;color:#000;font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:6px}
+@media(max-width:900px){.shop{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.shop{grid-template-columns:1fr}}
 .services{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px}
 .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:12px 20px;color:#fff;text-decoration:none;font-size:0.95rem;transition:all 0.2s ease}
 .pill:hover{background:rgba(163,230,53,0.1);border-color:#A3E635}
@@ -92,14 +108,6 @@ textarea:focus{border-color:#A3E635}
 .price:last-child{border-bottom:none}
 .price span{color:rgba(255,255,255,0.8);font-size:1rem}
 .price b{color:#A3E635;font-size:1.2rem;font-weight:700;white-space:nowrap}
-.new-services{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
-.new-card{background:linear-gradient(135deg, rgba(163,230,53,0.08) 0%, rgba(163,230,53,0.02) 100%);border:1px solid rgba(163,230,53,0.25);border-radius:20px;padding:28px;text-decoration:none;color:#fff;transition:all 0.3s ease;display:block}
-.new-card:hover{border-color:#A3E635;transform:translateY(-3px);box-shadow:0 12px 32px rgba(163,230,53,0.15)}
-.new-card .emoji{font-size:2.5rem;margin-bottom:12px;display:block}
-.new-card h3{font-size:1.3rem;font-weight:700;margin-bottom:8px;color:#fff}
-.new-card .desc{color:rgba(255,255,255,0.7);font-size:0.95rem;line-height:1.5;margin-bottom:16px}
-.new-card .from{display:inline-block;background:#A3E635;color:#000;font-weight:700;padding:6px 14px;border-radius:999px;font-size:0.9rem}
-@media(max-width:768px){.new-services{grid-template-columns:1fr}}
 .steps{color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.8}
 .promo-banner{background:linear-gradient(135deg, rgba(255,140,0,0.15) 0%, rgba(255,210,0,0.08) 100%);border:1px solid rgba(255,140,0,0.4);border-radius:20px;padding:24px 32px;margin-bottom:32px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
 .promo-banner .emoji{font-size:2.5rem}
@@ -112,7 +120,7 @@ footer a:hover{color:#A3E635}
 .welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
 .welcome-modal.open{display:flex}
 .welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
-.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
+.welcome-box h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.8rem;margin-bottom:16px;color:#fff}
 .welcome-box h2 .lime{color:#A3E635}
 .welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
 .welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
@@ -185,21 +193,25 @@ footer a:hover{color:#A3E635}
 
 <div class="section">
   <div class="card">
-    <h2>🔥 Новинки сезона</h2>
-    <p class="steps" style="margin-bottom:32px">Самые вирусные AI-услуги прямо сейчас</p>
-    <div class="new-services">
-      <a class="new-card" href="/motion.html">
-        <span class="emoji">🎮</span>
-        <h3>Моушен контроль</h3>
-        <div class="desc">Загрузи фото персонажа и видео с движением — персонаж повторит всё: танцы, речь, мимику. Идеально для мемов и рилсов.</div>
-        <span class="from">от 199 ₽</span>
-      </a>
-      <a class="new-card" href="/lipsync.html">
-        <span class="emoji">🗣</span>
-        <h3>Липсинк (дубляж)</h3>
-        <div class="desc">Видео с человеком + твоя озвучка — губы синхронно с речью. Дубляж, переводы, мемы «заставь сказать».</div>
-        <span class="from">199 ₽</span>
-      </a>
+    <h2>Как это работает</h2>
+    <div class="how3">
+      <div class="step"><span class="num">1</span><h3>Опиши или загрузи</h3><p>Текст, фото или видео — смотря какую услугу выбрал. Подсказки и примеры встроены в каждую страницу.</p></div>
+      <div class="step"><span class="num">2</span><h3>Оплати удобно</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек официальный, от самозанятой. Без подписок и скрытых списаний.</p></div>
+      <div class="step"><span class="num">3</span><h3>Получи видео</h3><p>Через 1–5 минут видео появится прямо на странице. Ничего скачивать и устанавливать не нужно.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="card">
+    <h2>Все услуги</h2>
+    <div class="shop">
+      <a class="shop-card" href="#gen"><span class="em">📝</span><h3>Видео из текста</h3><p>Опиши сцену словами — нейросеть снимет видео</p><b>от 199 ₽</b></a>
+      <a class="shop-card" href="/photo.html"><span class="em">🐱</span><h3>Оживи картинку</h3><p>Питомцы, природа и арт начинают двигаться</p><b>199 ₽</b></a>
+      <a class="shop-card" href="/cartoon.html"><span class="em">🎭</span><h3>Мультфильм</h3><p>Твоё фото в стиле Pixar с твоим сюжетом</p><b>от 299 ₽</b></a>
+      <a class="shop-card" href="/avatar.html"><span class="em">🗣</span><h3>Говорящий аватар</h3><p>Фото говорит твоим текстом или голосом</p><b>499 ₽</b></a>
+      <a class="shop-card" href="/motion.html"><span class="hit">🔥 хит</span><span class="em">🎮</span><h3>Моушен контроль</h3><p>Персонаж повторяет танец и речь из видео</p><b>от 199 ₽</b></a>
+      <a class="shop-card" href="/lipsync.html"><span class="hit">🔥 хит</span><span class="em">💬</span><h3>Липсинк</h3><p>Человек в видео говорит твоими словами</p><b>199 ₽</b></a>
     </div>
   </div>
 </div>
