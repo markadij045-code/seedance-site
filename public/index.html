@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SeedGen — нейросеть снимет для тебя кино</title>
 <meta property="og:title" content="SeedGen — нейросеть снимет для тебя кино">
-<meta property="og:description" content="Опиши словами — получи видео за 2–5 минут. Оживи фото, мультфильм, аватар, мем с танцем. От 199 ₽">
+<meta property="og:description" content="Опиши словами — получи видео за 2–5 минут. Мультфильм, аватар, мем с танцем. От 199 ₽">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://seedgen.ru/">
 <meta name="twitter:card" content="summary_large_image">
@@ -80,11 +80,6 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .price span{color:rgba(255,255,255,0.8);font-size:1rem}
 .price b{color:#A3E635;font-size:1.2rem;font-weight:700;white-space:nowrap}
 .steps{color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.8}
-.promo-banner{background:linear-gradient(135deg, rgba(255,140,0,0.15) 0%, rgba(255,210,0,0.08) 100%);border:1px solid rgba(255,140,0,0.4);border-radius:20px;padding:24px 32px;margin-bottom:32px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
-.promo-banner .emoji{font-size:2.5rem}
-.promo-banner .text{flex:1;min-width:200px}
-.promo-banner h3{color:#ffb066;font-size:1.2rem;margin-bottom:6px}
-.promo-banner p{color:rgba(255,255,255,0.8);font-size:0.95rem;line-height:1.5}
 .go-bottom{text-align:center;margin-top:40px}
 .go-bottom a{display:inline-block;padding:18px 48px;background:#fff;color:#000;font-size:1.1rem;font-weight:600;border-radius:999px;text-decoration:none;transition:all 0.3s ease}
 .go-bottom a:hover{transform:scale(1.05);background:#A3E635}
@@ -108,8 +103,8 @@ footer a:hover{color:#A3E635}
   <div class="welcome-box">
     <button class="welcome-close" onclick="closeWelcome()">✕</button>
     <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
-    <p>Нейросеть снимает для тебя кино: оживи фото, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
-    <div class="gift">🎁 Новичкам: начни с доступных услуг — «Оживи картинку» и «Моушен» от 199 ₽</div>
+    <p>Нейросеть снимает для тебя кино.</p>
+    <div class="gift">🎁 Загрузка...</div>
     <button onclick="closeWelcome()">Начать создавать</button>
   </div>
 </div>
@@ -134,7 +129,6 @@ footer a:hover{color:#A3E635}
     <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
     <a href="#services" onclick="toggleSidebar()">🎬 Все услуги</a>
     <a href="/gen.html">📝 Создать видео</a>
-    <a href="/photo.html">🐱 Оживи картинку</a>
     <a href="/cartoon.html">🎭 Мультфильм</a>
     <a href="/avatar.html">🗣 Аватар</a>
     <a href="/motion.html">🎮 Моушен</a>
@@ -144,22 +138,12 @@ footer a:hover{color:#A3E635}
   </div>
   <div class="hero-content">
     <h1>Нейросеть <span class="lime">снимет для тебя кино</span></h1>
-    <p>Опиши словами — получи видео. Оживи фото. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
+    <p>Опиши словами — получи видео. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
     <a href="#services" class="hero-cta">Поехали?</a>
   </div>
 </section>
 
 <div class="main-content">
-
-<div class="section">
-  <div class="promo-banner">
-    <div class="emoji">🎁</div>
-    <div class="text">
-      <h3>Новичкам: начни с доступных услуг</h3>
-      <p>«Оживи картинку» и «Моушен контроль» — от 199 ₽. Без подписки: платишь только за то, что нужно.</p>
-    </div>
-  </div>
-</div>
 
 <div class="section">
   <div class="card">
@@ -176,8 +160,7 @@ footer a:hover{color:#A3E635}
   <div class="card">
     <h2>Все услуги</h2>
     <div class="shop">
-      <a class="shop-card" href="/gen.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">📝</span><h3>Создать видео</h3><p>Опиши сцену словами — нейросеть снимет ролик</p><b>от 199 ₽</b></a>
-      <a class="shop-card" href="/photo.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">🐱</span><h3>Оживи картинку</h3><p>Питомцы, природа и арт начинают двигаться</p><b>199 ₽</b></a>
+      <a class="shop-card" href="/gen.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">📝</span><h3>Создать видео</h3><p>Опиши сцену словами или загрузи изображение — нейросеть снимет ролик</p><b>от 199 ₽</b></a>
       <a class="shop-card" href="/cartoon.html"><span class="em">🎭</span><h3>Мультфильм</h3><p>Твоё фото в стиле Pixar с твоим сюжетом</p><b>от 299 ₽</b></a>
       <a class="shop-card" href="/avatar.html"><span class="em">🗣</span><h3>Говорящий аватар</h3><p>Фото говорит твоим текстом или голосом</p><b>499 ₽</b></a>
       <a class="shop-card" href="/motion.html"><span class="hit">🔥 хит</span><span class="em">🎮</span><h3>Моушен контроль</h3><p>Персонаж повторяет танец и речь из видео</p><b>от 199 ₽</b></a>
@@ -207,7 +190,6 @@ footer a:hover{color:#A3E635}
   <div class="card">
     <h2>Цены</h2>
     <div class="price"><span>📝 Создать видео (5–30 сек, Seedance 2.5)</span><b>199–949 ₽</b></div>
-    <div class="price"><span>🐱 Оживи картинку (питомцы, природа, арт — без людей)</span><b>199 ₽</b></div>
     <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar, до 30 сек)</span><b>от 299 ₽</b></div>
     <div class="price"><span>🗣 Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
     <div class="price"><span>🎮 Моушен контроль (фото + видео с движением, до 30 сек)</span><b>от 199 ₽</b></div>
