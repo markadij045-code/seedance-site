@@ -2,16 +2,19 @@
   var MAXURL='https://max.ru/u/f9LHodD0cOK8_N1RfXgxLPzGiumem7bZA3oTYU5i0BAV5PK6dj7huMZRGGQ';
   var path=location.pathname;
   var key='gen';
-  if(path.indexOf('photo')!==-1)key='photo';
+  if(path.indexOf('gen.html')!==-1)key='create';
+  else if(path.indexOf('photo')!==-1)key='photo';
   else if(path.indexOf('cartoon')!==-1)key='cartoon';
   else if(path.indexOf('avatar')!==-1)key='avatar';
   else if(path.indexOf('motion')!==-1)key='motion';
   else if(path.indexOf('lipsync')!==-1)key='lipsync';
+  else if(path==='/')key='home';
 
   var DATA={
-    gen:{t:'Создать видео',s:['Опиши видео словами. Кнопка «✨ Улучшить описание» превратит твой черновик в кинематографичный промпт.','Выбери формат кадра (📐) и длительность (от 5 до 30 сек).','Хочешь — прикрепи картинку-пример (📎). ВАЖНО: картинки с людьми не пройдут — защита от дипфейков.','Отметь галочку согласия и нажми «Создать видео».','Оплати — ⚡ Seedance 2.5 создаст ролик за 1–5 минут.']},
-    photo:{t:'Оживи картинку',s:['Выбери картинку БЕЗ людей: питомцы, природа, игрушки, арт.','Хочешь — опиши, что должно происходить.','Отметь галочку и нажми «Оживить картинку».','Оплати — видео через 1–3 минуты.']},
-    cartoon:{t:'Мультфильм из фото',s:['Загрузи фото с человеком (своё или с его согласия).','Опиши сюжет мультфильма.','Выбери формат и длительность.','Оплати, затем нажми «Сделать арт», потом «Оживить арт в видео».']},
+    create:{t:'Создать видео',s:['Опиши видео словами. Кнопка «✨ Улучшить описание» превратит твой черновик в кинематографичный промпт.','Выбери формат кадра (📐) и длительность (от 5 до 30 сек).','Хочешь — прикрепи изображение (📎): питомец или персонаж станет героем сцены.','Отметь галочку согласия и нажми «Создать видео».','Оплати — ⚡ Seedance 2.5 создаст ролик за 1–5 минут.']},
+    home:{t:'Главная страница',s:['Нажми «Поехали?» — откроется витрина всех услуг.','Выбери карточку услуги — попадёшь на её страницу.','Дальше подсказки будут на самой странице услуги.']},
+    photo:{t:'Оживи картинку',s:['Услуга объединена с «Создать видео»: загрузи изображение и опиши сцену.']},
+    cartoon:{t:'Мультфильм из фото',s:['Загрузи фото с человеком (своё или с его согласия).','Опиши сюжет мультфильма.','Выбери формат и длительность.','Оплати, затем нажми «Сделать арт», потом «Оживить арт в видео». Оба шага включены в цену.']},
     avatar:{t:'Говорящий аватар',s:['Загрузи фото — лицо крупно (своё или с согласия).','Выбери озвучку: текст (напиши и выбери голос) или своё аудио.','Выбери ориентацию видео.','Оплати — видео через 1–5 минут.']},
     motion:{t:'Моушен контроль',s:['Загрузи фото персонажа (своё или с согласия).','Загрузи видео с движением (MP4, до 20 МБ, до 30 сек).','Выбери длительность.','Оплати — персонаж повторит движения через 1–5 минут.']},
     lipsync:{t:'Липсинк (дубляж)',s:['Загрузи видео с человеком (своё или с согласия).','Загрузи свою озвучку (MP3/WAV, до 5 МБ).','Выбери длительность.','Оплати — губы синхронизируются с твоим голосом за 1–5 минут.']}
@@ -20,8 +23,8 @@
     ['Как оплатить?','Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — одна оплата за один заказ.'],
     ['Когда придёт видео?','Через 1–5 минут после оплаты видео появится на странице. Скачивай кнопкой «Скачать видео» — выкладывай куда хочешь.'],
     ['Сколько хранится видео?','7 дней на сервере. Скачай его сразу — потом оно удалится без возможности восстановления.'],
-    ['А если видео не пришло из-за сбоя?','Напиши в MAX: проверим чек и запустим генерацию заново или вернём деньги по оферте.'],
-    ['Можно фото с людьми?','В «Оживи картинку» и в «Создать видео» с картинкой-референсом — нет (защита от дипфейков). В мультфильме, аватаре, моушене и липсинке — можно, но только своё или с согласия человека.']
+    ['А если видео не пришло из-за сбоя?','Напиши в MAX (ссылка внизу страницы): проверим чек и запустим генерацию заново или вернём деньги по оферте.'],
+    ['Можно фото с людьми?','В «Создать видео» изображение людей как основу не пропускаем (защита от дипфейков). Для людей есть «Мультфильм», «Аватар», «Моушен» и «Липсинк» — только своё фото или с согласия человека.']
   ];
 
   var fl=document.createElement('link');
@@ -56,13 +59,62 @@
   +'#hwInline{display:block;width:100%;margin-top:10px;padding:10px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}';
   document.head.appendChild(st);
 
+  function closeWelcomeGlobal(){
+    var m=document.getElementById('welcomeModal');
+    if(m)m.classList.remove('open');
+    try{localStorage.setItem('seedgen_welcomed','1');}catch(e){}
+  }
+
+  var wb=document.querySelector('.welcome-box');
+  if(wb&&!wb.getAttribute('data-new')){
+    wb.setAttribute('data-new','1');
+    wb.innerHTML='<button class="welcome-close" id="hwWelClose">✕</button>'
+      +'<h2>🎬 Мурзик уже танцует</h2>'
+      +'<p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>'
+      +'<div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>'
+      +'<button id="hwWelGo">Поехали?</button>';
+    wb.querySelector('#hwWelClose').onclick=closeWelcomeGlobal;
+    wb.querySelector('#hwWelGo').onclick=closeWelcomeGlobal;
+  }
+
   function fixFooter(){
     var ft=document.querySelector('footer');
     if(!ft)return;
     ft.innerHTML=ft.innerHTML.replace('Малкова Ольга Аркадьевна','Малкова О. А.');
-    ft.innerHTML+='<br><a href="'+MAXURL+'" target="_blank" rel="noopener">💬 Написать в MAX — поддержка</a>';
+    if(ft.innerHTML.indexOf('Написать в MAX')===-1){
+      ft.innerHTML+='<br><a href="'+MAXURL+'" target="_blank" rel="noopener">💬 Написать в MAX — поддержка</a>';
+    }
   }
   fixFooter();
+
+  function fixMenu(){
+    var as=document.querySelectorAll('nav .links a, .sidebar a');
+    for(var i=0;i<as.length;i++){
+      var a=as[i];
+      var href=a.getAttribute('href')||'';
+      var txt=(a.textContent||'').trim();
+      if(href==='/'&&txt.indexOf('Генерация')!==-1){
+        a.textContent=a.textContent.replace('Генерация','Главная');
+      }
+      if(href==='/photo.html'){
+        a.parentNode.removeChild(a);
+      }
+    }
+    var links=document.querySelector('nav .links');
+    if(links&&!links.querySelector('a[href="/gen.html"]')){
+      var na=document.createElement('a');
+      na.href='/gen.html';na.textContent='Создать видео';
+      if(links.firstChild){links.insertBefore(na,links.firstChild);}else{links.appendChild(na);}
+    }
+    var sb=document.querySelector('.sidebar');
+    if(sb&&!sb.querySelector('a[href="/gen.html"]')){
+      var nb=document.createElement('a');
+      nb.href='/gen.html';nb.textContent='📝 Создать видео';
+      var sc=sb.querySelector('.sidebar-close');
+      if(sc&&sc.nextSibling){sb.insertBefore(nb,sc.nextSibling);}else{sb.appendChild(nb);}
+    }
+  }
+  fixMenu();
 
   var payBtn=null;
   var btns=document.querySelectorAll('button');
@@ -70,16 +122,16 @@
     var t=btns[i].textContent||'';
     if(/Оплатить|Создать видео|Сгенерировать|Оживить картинку/.test(t)){payBtn=btns[i];break;}
   }
-  if(payBtn){
+  if(payBtn&&!document.getElementById('trustBlock')&&!document.querySelector('.trust')){
     var trust=document.createElement('div');
     trust.id='trustBlock';
-    trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a><br>💬 Есть вопрос до оплаты? <a href="'+MAXURL+'" target="_blank" rel="noopener">Напиши в MAX</a> — ответим быстро.';
+    trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a>';
     payBtn.parentNode.insertBefore(trust,payBtn);
   }
 
   if(key==='cartoon'||key==='avatar'||key==='motion'||key==='lipsync'){
     var drop=document.querySelector('.drop');
-    if(drop){
+    if(drop&&!drop.parentNode.querySelector('.hwNote')){
       var cn=document.createElement('div');
       cn.className='hwNote';
       cn.textContent='🛡 Загружай только своё фото/видео или материал человека, который дал согласие на его использование.';
@@ -87,19 +139,8 @@
     }
   }
 
-  if(key==='cartoon'){
-    var sc=document.getElementById('stepsCard');
-    if(sc){
-      var fn=document.createElement('div');
-      fn.className='hwNote';
-      fn.style.cssText='margin:0 0 12px;padding:10px 12px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:10px';
-      fn.textContent='После оплаты запусти шаги по очереди: сначала «Сделать арт», затем «Оживить арт в видео». Оба шага уже включены в цену.';
-      sc.insertBefore(fn,sc.firstChild);
-    }
-  }
-
   var m=document.createElement('div');m.id='hwModal';
-  var d=DATA[key];
+  var d=DATA[key]||DATA.create;
   var html='<button id="hwClose">✕</button><h3>❓ '+d.t+' — как это работает</h3><ol>';
   for(var j=0;j<d.s.length;j++)html+='<li>'+d.s[j]+'</li>';
   html+='</ol><h4>Частые вопросы</h4>';
@@ -126,19 +167,19 @@
     payBtn.parentNode.insertBefore(ib,payBtn);
   }
 
-  var links=document.querySelector('.links');
-  if(links){
-    var a=document.createElement('a');
-    a.href='/help.html';a.textContent='❓ Помощь';
-    links.appendChild(a);
+  var links2=document.querySelector('nav .links');
+  if(links2&&!links2.querySelector('a[href="/help.html"]')){
+    var ha=document.createElement('a');
+    ha.href='/help.html';ha.textContent='❓ Помощь';
+    links2.appendChild(ha);
   }
 
-  if(key==='gen'){
+  if(key==='create'){
     var tb=document.querySelector('.toolbar');
-    if(tb){
+    if(tb&&!tb.parentNode.querySelector('.hwNote')){
       var w=document.createElement('div');
       w.className='hwNote';
-      w.textContent='⚠️ Картинка-референс с людьми не пройдёт — нейросеть защищает людей от дипфейков. Используй: питомцев, природу, игрушки, арт.';
+      w.textContent='⚠️ Изображение с людьми как основу не пропускаем — нейросеть защищает людей от дипфейков. Для людей есть «Мультфильм», «Аватар», «Моушен», «Липсинк».';
       tb.parentNode.insertBefore(w,tb.nextSibling);
     }
   }
