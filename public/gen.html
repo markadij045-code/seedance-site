@@ -55,7 +55,7 @@ textarea:focus{border-color:#A3E635}
 .prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
 .warnline{margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5}
 .modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.mode{flex:1;min-width:90px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
+.mode{flex:1;min-width:90px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;user-select:none}
 .mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
 .trust{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}
 .trust a{color:#A3E635;text-decoration:none}
@@ -79,7 +79,8 @@ footer a{color:#9ca3af;text-decoration:none}
 .welcome-box h2 .lime{color:#A3E635}
 .welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
 .welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
-.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:0}
+.welcome-box .welcome-close{width:auto;padding:0;background:none;margin-top:0}
 .welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
@@ -90,8 +91,8 @@ footer a{color:#9ca3af;text-decoration:none}
   <div class="welcome-box">
     <button class="welcome-close" onclick="closeWelcome()">✕</button>
     <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
-    <p>Нейросеть снимает для тебя кино: оживи фото, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
-    <div class="gift">🎁 Новичкам: начни с доступных услуг — «Оживи картинку» и «Моушен» от 199 ₽</div>
+    <p>Нейросеть снимает для тебя кино.</p>
+    <div class="gift">🎁 Загрузка...</div>
     <button onclick="closeWelcome()">Начать создавать</button>
   </div>
 </div>
@@ -99,8 +100,8 @@ footer a{color:#9ca3af;text-decoration:none}
 <nav>
   <div class="logo"><span>▶</span> SeedGen</div>
   <div class="links">
+    <a href="/">Главная</a>
     <a class="active" href="/gen.html">Создать видео</a>
-    <a href="/photo.html">Оживи картинку</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a href="/avatar.html">Аватар</a>
     <a href="/motion.html">Моушен</a>
@@ -112,8 +113,8 @@ footer a{color:#9ca3af;text-decoration:none}
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/">🏠 Главная</a>
   <a href="/gen.html">📝 Создать видео</a>
-  <a href="/photo.html">🐱 Оживи картинку</a>
   <a href="/cartoon.html">🎭 Мультфильм</a>
   <a href="/avatar.html">🗣 Аватар</a>
   <a href="/motion.html">🎮 Моушен</a>
@@ -133,9 +134,9 @@ footer a{color:#9ca3af;text-decoration:none}
     <span id="aistat"></span>
   </div>
 
-  <label style="margin-top:20px">Формат кадра и картинка-пример</label>
+  <label style="margin-top:20px">Формат кадра и изображение</label>
   <div class="toolbar">
-    <label class="tool tool-attach" title="Картинка-пример (необязательно)">📎 Картинка<input type="file" id="refInput" accept="image/*"></label>
+    <label class="tool tool-attach" title="Загрузить изображение (необязательно)">📎 Загрузить изображение<input type="file" id="refInput" accept="image/*"></label>
     <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
     <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
     <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
@@ -149,19 +150,18 @@ footer a{color:#9ca3af;text-decoration:none}
     <button type="button" onclick="removeRef()">✕</button>
   </div>
   <div class="prog" id="refProg"><i></i></div>
-  <div class="warnline">⚠️ Картинка с людьми не пройдёт — нейросеть защищает людей от дипфейков. Используй: питомцев, природу, игрушки, арт.</div>
 
   <label style="margin-top:20px">Длительность и цена</label>
   <div class="modes" id="durModes">
-    <div class="mode active" onclick="setSec(this,5)">5 сек<br><b>199 ₽</b></div>
-    <div class="mode" onclick="setSec(this,10)">10 сек<br><b>349 ₽</b></div>
-    <div class="mode" onclick="setSec(this,15)">15 сек<br><b>499 ₽</b></div>
-    <div class="mode" onclick="setSec(this,20)">20 сек<br><b>649 ₽</b></div>
-    <div class="mode" onclick="setSec(this,25)">25 сек<br><b>799 ₽</b></div>
-    <div class="mode" onclick="setSec(this,30)">30 сек<br><b>949 ₽</b></div>
+    <div class="mode" data-sec="5" onclick="setSec(this,5)">5 сек<br><b>199 ₽</b></div>
+    <div class="mode" data-sec="10" onclick="setSec(this,10)">10 сек<br><b>349 ₽</b></div>
+    <div class="mode" data-sec="15" onclick="setSec(this,15)">15 сек<br><b>499 ₽</b></div>
+    <div class="mode" data-sec="20" onclick="setSec(this,20)">20 сек<br><b>649 ₽</b></div>
+    <div class="mode" data-sec="25" onclick="setSec(this,25)">25 сек<br><b>799 ₽</b></div>
+    <div class="mode" data-sec="30" onclick="setSec(this,30)">30 сек<br><b>949 ₽</b></div>
   </div>
 
-  <div class="trust">🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a><br>💬 Есть вопрос до оплаты? <a href="https://max.ru/u/f9LHodD0cOK8_N1RfXgxLPzGiumem7bZA3oTYU5i0BAV5PK6dj7huMZRGGQ" target="_blank" rel="noopener">Напиши в MAX</a> — ответим быстро.</div>
+  <div class="trust">🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
 
   <div class="agree"><label><input type="checkbox" id="agree"><span>Я принимаю условия <a href="/legal.html#offer">публичной оферты</a> и даю согласие на <a href="/legal.html#policy">обработку персональных данных</a></span></label></div>
 
@@ -202,10 +202,15 @@ var btn=document.getElementById('btn');
 var statusEl=document.getElementById('status');
 function setStatus(t){statusEl.textContent=t;}
 
+function markSec(s){
+  document.querySelectorAll('#durModes .mode').forEach(function(x){
+    x.classList.toggle('active',x.getAttribute('data-sec')===String(s));
+  });
+}
+
 function setSec(el,s){
   seconds=s;
-  document.querySelectorAll('#durModes .mode').forEach(function(x){x.classList.remove('active');});
-  el.classList.add('active');
+  markSec(s);
   btn.textContent='Создать видео — '+PRICES[s]+' ₽';
   saveDraft();
 }
@@ -235,15 +240,13 @@ function saveDraft(){
     if(s.aspect)pickAspect(s.aspect);
     if(s.seconds&&PRICES[s.seconds]){
       seconds=s.seconds;
-      document.querySelectorAll('#durModes .mode').forEach(function(x){
-        x.classList.toggle('active',x.textContent.indexOf(s.seconds+' сек')!==-1);
-      });
-      btn.textContent='Создать видео — '+PRICES[s.seconds]+' ₽';
+      markSec(seconds);
+      btn.textContent='Создать видео — '+PRICES[seconds]+' ₽';
     }
     if(s.refImage){
       refImageData=s.refImage;
       document.getElementById('refImg').src='data:image/jpeg;base64,'+s.refImage;
-      document.getElementById('refName').textContent='картинка из черновика';
+      document.getElementById('refName').textContent='изображение из черновика';
       document.getElementById('refBox').style.display='flex';
     }
   }catch(e){}
@@ -257,7 +260,7 @@ document.getElementById('refInput').addEventListener('change',function(e){
   var prog=document.getElementById('refProg');
   var bar=prog.querySelector('i');
   prog.style.display='block';bar.style.width='0%';
-  setStatus('Обрабатываем картинку...');
+  setStatus('Обрабатываем изображение...');
   var reader=new FileReader();
   reader.onprogress=function(ev){
     if(ev.total>0){bar.style.width=Math.round(ev.loaded/ev.total*70)+'%';}
@@ -327,11 +330,6 @@ btn.addEventListener('click',function(){
     .then(function(data){
       if(data.error){throw new Error(data.error);}
       saveDraft();
-      try{
-        var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
-        s.paymentId=data.paymentId;
-        localStorage.setItem('seedgen_gen_draft',JSON.stringify(s));
-      }catch(e){}
       window.location.href=data.confirmationUrl;
     })
     .catch(function(e){
@@ -392,7 +390,7 @@ function poll(taskId){
           })
           .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
       }else{
-        setStatus('Оплата не завершена. Твой текст и настройки сохранены ниже — проверь и нажми кнопку ещё раз.');
+        setStatus('Оплата не завершена. Твой текст и настройки сохранены — проверь и нажми кнопку ещё раз.');
         btn.disabled=false;
       }
     })
