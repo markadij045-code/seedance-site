@@ -12,16 +12,27 @@ export default async function handler(req, res) {
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
   const MOTION_PRICES = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
+  const CARTOON_PRICES = { 5: 299, 10: 449, 15: 599, 20: 749, 25: 899, 30: 1049 };
+
+  // Размеры кадра по ключу формата (соответствует CometAPI)
+  const SIZE_MAP = {
+    '21:9': '1920x816',
+    '16:9': '1280x720',
+    '4:3':  '1024x768',
+    '1:1':  '720x720',
+    '3:4':  '768x1024',
+    '9:16': '720x1280'
+  };
 
   const SERVICES = {
     text2video: { price: 199, maxSeconds: 10 },
     text30:     { price: 999, maxSeconds: 30 },
     animate:    { price: 199, maxSeconds: 10, needsImage: true },
     toon:       { price: 299, maxSeconds: 10, needsImage: true },
-    cartoon:    { price: 299, maxSeconds: 10, needsImage: true },
-    avatar:     { price: 499, maxSeconds: 10, needsImage: true },
+    cartoon:    { prices: CARTOON_PRICES, maxSeconds: 30, needsImage: true },
+    avatar:     { price: 499, maxSeconds: 60, needsImage: true },
     motion:     { maxSeconds: 30, needsImage: true, needsVideo: true, prices: MOTION_PRICES },
-    lipsync:    { price: 199, maxSeconds: 10, needsVideo: true, needsAudio: true }
+    lipsync:    { price: 199, maxSeconds: 30, needsVideo: true, needsAudio: true }
   };
 
   const service = body.service || 'text2video';
@@ -32,7 +43,7 @@ export default async function handler(req, res) {
 
   let seconds = parseInt(body.seconds, 10);
   if (cfg.prices) {
-    if (!seconds) seconds = 10;
+    if (!seconds) seconds = (service === 'cartoon') ? 5 : 10;
     if (!cfg.prices[seconds]) {
       const keys = Object.keys(cfg.prices).map(Number).sort(function(a, b) { return a - b; });
       seconds = keys.reduce(function(p, c) { return Math.abs(c - seconds) < Math.abs(p - seconds) ? c : p; });
@@ -75,14 +86,15 @@ export default async function handler(req, res) {
   }
 
   const prompt = String(body.prompt || '').trim();
-  const orientation = body.orientation || '9:16';
+  const aspect = body.aspect || '16:9';
+  const size = SIZE_MAP[aspect] || '1280x720';
   const model = process.env.SEEDANCE_MODEL || 'seedance-2-5';
 
   if (!cfg.needsImage && !cfg.needsVideo && !prompt) {
     return res.status(400).json({ error: 'Нужен промпт' });
   }
 
-  let img = null, vid = null, aud = null;
+  let img = null, vid = null, aud = null, refImg = null;
   if (cfg.needsImage) {
     if (!body.image) return res.status(400).json({ error: 'Нужно загрузить картинку' });
     img = await resolveMedia(body.image, 'image');
@@ -97,6 +109,13 @@ export default async function handler(req, res) {
     if (!body.audio) return res.status(400).json({ error: 'Нужно загрузить аудио' });
     aud = await resolveMedia(body.audio, 'audio');
     if (aud.error) return res.status(400).json({ error: aud.error });
+  }
+  // Необязательная картинка-референс для text2video
+  if (service === 'text2video' || service === 'text30') {
+    if (body.refImage) {
+      refImg = await resolveMedia(body.refImage, 'image');
+      if (refImg.error) refImg = null; // молча игнорируем плохой референс
+    }
   }
 
   try {
@@ -133,7 +152,7 @@ export default async function handler(req, res) {
     // === Все видео-услуги ===
     const form = new FormData();
     form.append('seconds', String(seconds));
-    form.append('size', orientation);
+    form.append('size', size);
 
     if (service === 'avatar') {
       form.append('model', model);
@@ -146,19 +165,25 @@ export default async function handler(req, res) {
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
 
     } else if (service === 'motion') {
-      form.append('model', model);
+      // Kling Motion Control (не Seedance!)
+      form.append('model', 'kling-video');
       form.append('prompt', prompt || 'The character from the image performs the exact same movements and speech as in the reference video');
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
       form.append('video_reference', new Blob([vid.buffer], { type: vid.mime }), 'motion.mp4');
 
     } else if (service === 'lipsync') {
-      form.append('model', 'kling_advanced_lip_syn');
+      // Kling advanced lip-sync (упрощённый вызов через общий эндпоинт)
+      form.append('model', 'kling-advanced-lip-sync');
       form.append('video', new Blob([vid.buffer], { type: vid.mime }), 'video.mp4');
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
 
     } else {
+      // text2video / text30 — Seedance
       form.append('model', model);
       form.append('prompt', prompt);
+      if (refImg) {
+        form.append('input_reference', new Blob([refImg.buffer], { type: refImg.mime }), 'ref.jpg');
+      }
     }
 
     const r = await fetch('https://api.cometapi.com/v1/videos', {
