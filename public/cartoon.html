@@ -32,10 +32,9 @@ h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
 .sub{color:#9ca3af;text-align:center;max-width:520px;margin-bottom:20px}
 .card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
 label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
-.drop{display:block;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
+.drop{display:block;position:relative;overflow:hidden;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
 .drop:hover{border-color:#A3E635;color:#fff}
 .drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.drop{position:relative;overflow:hidden}
 .modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
 .mode{flex:1;min-width:70px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;user-select:none}
 .mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
@@ -107,7 +106,7 @@ footer a{color:#9ca3af;text-decoration:none}
 <p class="sub">Шаг 1 — превратим фото в мультяшный арт в стиле Pixar. Шаг 2 — оживим его в видео по твоему сценарию. Одна оплата — оба шага.</p>
 <div class="card">
 <label>Выбери фото с человеком (JPG/PNG)</label>
-<label class="drop" id="dropZone">📷 Выбрать фото<input type="file" id="file" accept="image/*"></label>
+<label class="drop">📷 Выбрать фото<input type="file" id="file" accept="image/*"></label>
 <img id="preview"/>
 <div class="prog" id="prog"><i></i></div>
 <button class="del" id="fileDel" style="display:none" type="button">✖ Удалить фото</button>
@@ -127,12 +126,12 @@ footer a{color:#9ca3af;text-decoration:none}
 
 <label style="margin-top:20px">Длительность видео</label>
 <div class="modes" id="durModes">
-  <div class="mode active" onclick="setSec(this,5)">5 сек<br><b>299 ₽</b></div>
-  <div class="mode" onclick="setSec(this,10)">10 сек<br><b>449 ₽</b></div>
-  <div class="mode" onclick="setSec(this,15)">15 сек<br><b>599 ₽</b></div>
-  <div class="mode" onclick="setSec(this,20)">20 сек<br><b>749 ₽</b></div>
-  <div class="mode" onclick="setSec(this,25)">25 сек<br><b>899 ₽</b></div>
-  <div class="mode" onclick="setSec(this,30)">30 сек<br><b>1049 ₽</b></div>
+  <div class="mode" data-sec="5" onclick="setSec(this,5)">5 сек<br><b>299 ₽</b></div>
+  <div class="mode" data-sec="10" onclick="setSec(this,10)">10 сек<br><b>449 ₽</b></div>
+  <div class="mode" data-sec="15" onclick="setSec(this,15)">15 сек<br><b>599 ₽</b></div>
+  <div class="mode" data-sec="20" onclick="setSec(this,20)">20 сек<br><b>749 ₽</b></div>
+  <div class="mode" data-sec="25" onclick="setSec(this,25)">25 сек<br><b>899 ₽</b></div>
+  <div class="mode" data-sec="30" onclick="setSec(this,30)">30 сек<br><b>1049 ₽</b></div>
 </div>
 
 <button id="payBtn">Оплатить мультфильм — 299 ₽</button>
@@ -189,17 +188,26 @@ var activePaymentId=null;
 
 function getPrompt(){return document.getElementById('actPrompt').value.trim();}
 
+function markSec(s){
+  document.querySelectorAll('#durModes .mode').forEach(function(x){
+    x.classList.toggle('active',x.getAttribute('data-sec')===String(s));
+  });
+}
+function markAspect(a){
+  document.querySelectorAll('#aspectModes .mode').forEach(function(x){
+    x.classList.toggle('active',x.textContent.trim()===a);
+  });
+}
+
 function setAspect(el,a){
   aspect=a;
-  document.querySelectorAll('#aspectModes .mode').forEach(function(x){x.classList.remove('active');});
-  el.classList.add('active');
+  markAspect(a);
   saveDraft();
 }
 
 function setSec(el,s){
   seconds=s;
-  document.querySelectorAll('#durModes .mode').forEach(function(x){x.classList.remove('active');});
-  el.classList.add('active');
+  markSec(s);
   payBtn.textContent='Оплатить мультфильм — '+PRICES[s]+' ₽';
   saveDraft();
 }
@@ -218,35 +226,43 @@ function shrink(dataUrl,cb){
   img.src=dataUrl;
 }
 
+function saveDraft(){
+  try{
+    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId,seconds:seconds,aspect:aspect,act:getPrompt()}));
+  }catch(e){}
+}
+
+function showSteps(msg){
+  payBtn.style.display='none';
+  stepsCard.style.display='block';
+  document.getElementById('statusPay').textContent=msg;
+}
+
+function checkPayment(pid,onPaid,onNotPaid){
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.paid){onPaid();}else{onNotPaid();}
+    })
+    .catch(function(){onNotPaid();});
+}
+
 try{
   var saved=localStorage.getItem('seedgen_cartoon_draft');
   if(saved){
     var s=JSON.parse(saved);
     imageData=s.image||null;
     if(s.act){document.getElementById('actPrompt').value=s.act;}
-    if(s.aspect){
-      aspect=s.aspect;
-      var ab=document.querySelectorAll('#aspectModes .mode');
-      var order=['21:9','16:9','4:3','1:1','3:4','9:16'];
-      var idx=order.indexOf(aspect);
-      ab.forEach(function(x){x.classList.remove('active');});
-      if(idx>=0&&ab[idx])ab[idx].classList.add('active');
-    }
+    if(s.aspect){aspect=s.aspect;markAspect(aspect);}
     if(s.seconds&&PRICES[s.seconds]){
       seconds=s.seconds;
+      markSec(seconds);
       payBtn.textContent='Оплатить мультфильм — '+PRICES[seconds]+' ₽';
-      var db=document.querySelectorAll('#durModes .mode');
-      db.forEach(function(x){x.classList.toggle('active',x.textContent.indexOf(s.seconds+' сек')!==-1);});
     }
     if(s.image){
       preview.src='data:image/jpeg;base64,'+s.image;
       preview.style.display='block';
       document.getElementById('fileDel').style.display='block';
-    }
-    if(s.paymentId){
-      activePaymentId=s.paymentId;
-      payBtn.style.display='none';
-      stepsCard.style.display='block';
     }
     if(s.toon){
       toonJpeg=s.toon;
@@ -255,6 +271,24 @@ try{
       document.getElementById('btn2').style.display='block';
       document.getElementById('toonDel').style.display='block';
       document.getElementById('status1').textContent='Арт готов! ✅ Жми шаг 2';
+    }
+    if(s.paymentId){
+      var pid0=s.paymentId;
+      payBtn.disabled=true;
+      document.getElementById('statusPay').textContent='Проверяем прошлую оплату...';
+      checkPayment(pid0,function(){
+        activePaymentId=pid0;
+        showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+      },function(){
+        activePaymentId=null;
+        try{
+          var d=JSON.parse(localStorage.getItem('seedgen_cartoon_draft')||'{}');
+          d.paymentId=null;
+          localStorage.setItem('seedgen_cartoon_draft',JSON.stringify(d));
+        }catch(e){}
+        payBtn.disabled=false;
+        document.getElementById('statusPay').textContent='Прошлая оплата не завершена. Фото и сюжет сохранены — можешь оплатить ещё раз.';
+      });
     }
   }
 }catch(e){}
@@ -288,12 +322,6 @@ fileInput.addEventListener('change',function(){
   reader.readAsDataURL(f);
 });
 document.getElementById('actPrompt').addEventListener('input',function(){saveDraft();});
-
-function saveDraft(){
-  try{
-    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId,seconds:seconds,aspect:aspect,act:getPrompt()}));
-  }catch(e){}
-}
 
 document.getElementById('fileDel').onclick=function(){
   imageData=null;
@@ -415,31 +443,19 @@ function poll(taskId,b){
   var paymentId=params.get('paymentId');
   if(!paymentId){return;}
   if(activePaymentId===paymentId){
-    payBtn.style.display='none';
-    stepsCard.style.display='block';
-    document.getElementById('statusPay').textContent='Оплата прошла! ✅ Жми "Сделать арт"';
+    showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
     return;
   }
   payBtn.disabled=true;
   document.getElementById('statusPay').textContent='Проверяем оплату...';
-  fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.paid){
-        activePaymentId=paymentId;
-        saveDraft();
-        payBtn.style.display='none';
-        stepsCard.style.display='block';
-        document.getElementById('statusPay').textContent='Оплата прошла! ✅ Жми "Сделать арт"';
-      }else{
-        document.getElementById('statusPay').textContent='Оплата не завершена. Твоё фото и сюжет сохранены — проверь и нажми кнопку ещё раз.';
-        payBtn.disabled=false;
-      }
-    })
-    .catch(function(e){
-      document.getElementById('statusPay').textContent='Ошибка: '+e.message;
-      payBtn.disabled=false;
-    });
+  checkPayment(paymentId,function(){
+    activePaymentId=paymentId;
+    saveDraft();
+    showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+  },function(){
+    document.getElementById('statusPay').textContent='Оплата не завершена. Фото и сюжет сохранены — можешь оплатить ещё раз.';
+    payBtn.disabled=false;
+  });
 })();
 </script>
 
