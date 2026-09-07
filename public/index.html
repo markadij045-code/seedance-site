@@ -7,7 +7,6 @@
 <meta property="og:title" content="SeedGen — нейросеть снимет для тебя кино">
 <meta property="og:description" content="Опиши словами — получи видео за 2–5 минут. Оживи фото, мультфильм, аватар, мем с танцем. От 199 ₽">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://seedgen.ru/cat-knight-dance.mp4.mp4">
 <meta property="og:url" content="https://seedgen.ru/">
 <meta name="twitter:card" content="summary_large_image">
 <style>
@@ -290,7 +289,6 @@ footer a:hover{color:#A3E635}
 </footer>
 
 <script>
-// Приветственное окно
 function showWelcome(){
   if(!localStorage.getItem('seedgen_welcomed')){
     setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
@@ -302,7 +300,6 @@ function closeWelcome(){
 }
 showWelcome();
 
-// Сайдбар на мобильных
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarBackdrop').classList.toggle('open');
@@ -506,5 +503,6 @@ function poll(taskId){
   },true);
 })();
 </script>
+<script src="/help-widget.js"></script>
 </body>
 </html>
