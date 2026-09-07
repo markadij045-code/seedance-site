@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Создать видео — SeedGen</title>
+<meta property="og:title" content="Создать видео из текста — SeedGen">
+<meta property="og:description" content="Опиши сцену словами — Seedance 2.5 снимет ролик. От 199 ₽">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
+.logo{font-weight:700;font-size:1.15rem}
+.logo span{color:#A3E635}
+.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
+.links a:hover{color:#A3E635}
+.links a.active{color:#A3E635;font-weight:700}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
+.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
+.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
+.sidebar.open{right:0}
+.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px}
+.sidebar a:hover{background:rgba(163,230,53,0.1)}
+.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
+.sidebar-backdrop.open{display:block}
+h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
+.badge{display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:.8rem;font-weight:700;padding:4px 12px;border-radius:999px;margin:0 0 12px}
+.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:20px}
+.mini{width:100%;max-width:640px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.mini span{background:#101308;border:1px solid #232a18;border-radius:999px;padding:6px 14px;color:#9ca3af;font-size:.8rem}
+.card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
+label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
+textarea{width:100%;min-height:110px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
+textarea:focus{border-color:#A3E635}
+.airow{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.aibtn{padding:10px 18px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;font-weight:600;cursor:pointer}
+.aibtn:disabled{opacity:.5;cursor:not-allowed}
+#aistat{color:#9ca3af;font-size:.85rem}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0;padding:12px;background:#0b0e07;border:1px solid #262d16;border-radius:14px}
+.tool{background:#101308;border:1px solid #262d16;border-radius:10px;padding:8px 14px;color:#c3c9b4;font-size:.85rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.tool:hover{border-color:#A3E635;color:#A3E635}
+.tool.active{background:rgba(163,230,53,0.15);border-color:#A3E635;color:#A3E635}
+.tool-attach{position:relative;overflow:hidden}
+.tool-attach input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.refbox{display:none;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.3);border-radius:10px}
+.refbox img{width:40px;height:40px;border-radius:8px;object-fit:cover}
+.refbox span{color:#c3c9b4;font-size:.85rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.refbox button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1.1rem}
+.prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
+.prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
+.warnline{margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5}
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.mode{flex:1;min-width:90px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
+.mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
+.trust{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}
+.trust a{color:#A3E635;text-decoration:none}
+.agree{margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5}
+.agree label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:0}
+.agree input{width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto}
+.agree a{color:#A3E635}
+button.pay{margin-top:16px;width:100%;padding:16px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
+button.pay:disabled{opacity:.5;cursor:not-allowed}
+.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:.85rem}
+#status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
+#result{margin-top:16px;display:none}
+#result video{width:100%;border-radius:12px}
+footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
+footer a{color:#9ca3af;text-decoration:none}
+.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
+.welcome-modal.open{display:flex}
+.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
+.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
+.welcome-box h2 .lime{color:#A3E635}
+.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
+.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
+.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
+@media(max-width:768px){.links{display:none}.burger{display:block}}
+</style>
+</head>
+<body>
+
+<div class="welcome-modal" id="welcomeModal">
+  <div class="welcome-box">
+    <button class="welcome-close" onclick="closeWelcome()">✕</button>
+    <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
+    <p>Нейросеть снимает для тебя кино: оживи фото, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
+    <div class="gift">🎁 Новичкам: начни с доступных услуг — «Оживи картинку» и «Моушен» от 199 ₽</div>
+    <button onclick="closeWelcome()">Начать создавать</button>
+  </div>
+</div>
+
+<nav>
+  <div class="logo"><span>▶</span> SeedGen</div>
+  <div class="links">
+    <a class="active" href="/gen.html">Создать видео</a>
+    <a href="/photo.html">Оживи картинку</a>
+    <a href="/cartoon.html">Мультфильм</a>
+    <a href="/avatar.html">Аватар</a>
+    <a href="/motion.html">Моушен</a>
+    <a href="/lipsync.html">Липсинк</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
+  </div>
+  <button class="burger" onclick="toggleSidebar()">☰</button>
+</nav>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/gen.html">📝 Создать видео</a>
+  <a href="/photo.html">🐱 Оживи картинку</a>
+  <a href="/cartoon.html">🎭 Мультфильм</a>
+  <a href="/avatar.html">🗣 Аватар</a>
+  <a href="/motion.html">🎮 Моушен</a>
+  <a href="/lipsync.html">💬 Липсинк</a>
+</div>
+
+<h1>📝 Создать видео</h1>
+<div style="text-align:center"><span class="badge">⚡ Seedance 2.5</span></div>
+<p class="sub">Опиши сцену словами — нейросеть снимет по ней ролик</p>
+<div class="mini"><span>1. Опиши</span><span>2. Оплати</span><span>3. Видео через 1–5 минут</span></div>
+
+<div class="card">
+  <label for="prompt">Опиши, какое видео хочешь:</label>
+  <textarea id="prompt" placeholder="Например: кот в скафандре летит сквозь звёздное поле, кинематографичный стиль"></textarea>
+  <div class="airow">
+    <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
+    <span id="aistat"></span>
+  </div>
+
+  <label style="margin-top:20px">Формат кадра и картинка-пример</label>
+  <div class="toolbar">
+    <label class="tool tool-attach" title="Картинка-пример (необязательно)">📎 Картинка<input type="file" id="refInput" accept="image/*"></label>
+    <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
+    <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
+    <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
+    <div class="tool" onclick="pickAspect('1:1')" data-aspect="1:1">📐 1:1</div>
+    <div class="tool" onclick="pickAspect('3:4')" data-aspect="3:4">📐 3:4</div>
+    <div class="tool" onclick="pickAspect('9:16')" data-aspect="9:16">📐 9:16</div>
+  </div>
+  <div class="refbox" id="refBox">
+    <img id="refImg" src="" alt="">
+    <span id="refName"></span>
+    <button type="button" onclick="removeRef()">✕</button>
+  </div>
+  <div class="prog" id="refProg"><i></i></div>
+  <div class="warnline">⚠️ Картинка с людьми не пройдёт — нейросеть защищает людей от дипфейков. Используй: питомцев, природу, игрушки, арт.</div>
+
+  <label style="margin-top:20px">Длительность и цена</label>
+  <div class="modes" id="durModes">
+    <div class="mode active" onclick="setSec(this,5)">5 сек<br><b>199 ₽</b></div>
+    <div class="mode" onclick="setSec(this,10)">10 сек<br><b>349 ₽</b></div>
+    <div class="mode" onclick="setSec(this,15)">15 сек<br><b>499 ₽</b></div>
+    <div class="mode" onclick="setSec(this,20)">20 сек<br><b>649 ₽</b></div>
+    <div class="mode" onclick="setSec(this,25)">25 сек<br><b>799 ₽</b></div>
+    <div class="mode" onclick="setSec(this,30)">30 сек<br><b>949 ₽</b></div>
+  </div>
+
+  <div class="trust">🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a><br>💬 Есть вопрос до оплаты? <a href="https://max.ru/u/f9LHodD0cOK8_N1RfXgxLPzGiumem7bZA3oTYU5i0BAV5PK6dj7huMZRGGQ" target="_blank" rel="noopener">Напиши в MAX</a> — ответим быстро.</div>
+
+  <div class="agree"><label><input type="checkbox" id="agree"><span>Я принимаю условия <a href="/legal.html#offer">публичной оферты</a> и даю согласие на <a href="/legal.html#policy">обработку персональных данных</a></span></label></div>
+
+  <button class="pay" id="btn">Создать видео — 199 ₽</button>
+  <div class="paymethods">
+    <span>💳 Карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
+  </div>
+  <div id="status"></div>
+  <div id="result"><video id="video" controls></video></div>
+</div>
+
+<footer>
+  Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
+  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
+</footer>
+
+<script>
+function showWelcome(){
+  if(!localStorage.getItem('seedgen_welcomed')){
+    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
+  }
+}
+function closeWelcome(){
+  document.getElementById('welcomeModal').classList.remove('open');
+  localStorage.setItem('seedgen_welcomed','1');
+}
+showWelcome();
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+
+var PRICES={5:199,10:349,15:499,20:649,25:799,30:949};
+var seconds=5;
+var aspect='16:9';
+var refImageData=null;
+var btn=document.getElementById('btn');
+var statusEl=document.getElementById('status');
+function setStatus(t){statusEl.textContent=t;}
+
+function setSec(el,s){
+  seconds=s;
+  document.querySelectorAll('#durModes .mode').forEach(function(x){x.classList.remove('active');});
+  el.classList.add('active');
+  btn.textContent='Создать видео — '+PRICES[s]+' ₽';
+}
+function pickAspect(a){
+  aspect=a;
+  document.querySelectorAll('.tool[data-aspect]').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-aspect')===a);
+  });
+}
+
+document.getElementById('refInput').addEventListener('change',function(e){
+  var f=e.target.files[0];
+  if(!f)return;
+  var prog=document.getElementById('refProg');
+  var bar=prog.querySelector('i');
+  prog.style.display='block';bar.style.width='0%';
+  setStatus('Обрабатываем картинку...');
+  var reader=new FileReader();
+  reader.onprogress=function(ev){
+    if(ev.total>0){bar.style.width=Math.round(ev.loaded/ev.total*70)+'%';}
+  };
+  reader.onload=function(){
+    bar.style.width='85%';
+    var img=new Image();
+    img.onload=function(){
+      var max=1024,w=img.width,h=img.height;
+      if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
+      var c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      var d=c.toDataURL('image/jpeg',0.85);
+      refImageData=d.split(',')[1];
+      document.getElementById('refImg').src=d;
+      document.getElementById('refName').textContent=f.name;
+      document.getElementById('refBox').style.display='flex';
+      bar.style.width='100%';
+      setTimeout(function(){prog.style.display='none';},600);
+      setStatus('');
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(f);
+});
+function removeRef(){
+  refImageData=null;
+  document.getElementById('refInput').value='';
+  document.getElementById('refBox').style.display='none';
+}
+
+document.getElementById('aiBtn').addEventListener('click',function(){
+  var t=document.getElementById('prompt').value.trim();
+  if(t.length<10){alert('Напиши хотя бы пару слов своими словами — улучшатель сделает из них красивый промпт');return;}
+  var used=parseInt(localStorage.getItem('seedgen_ai_used')||'0',10);
+  if(used>=5){alert('Лимит 5 улучшений за визит исчерпан. Но и твой текст уже хорош!');return;}
+  var b=document.getElementById('aiBtn');
+  var st=document.getElementById('aistat');
+  b.disabled=true;st.textContent='Улучшаем... ⏳';
+  fetch('/api/prompt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:t})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      b.disabled=false;
+      if(d.error){st.textContent='Не удалось улучшить, попробуй ещё раз';return;}
+      document.getElementById('prompt').value=d.prompt;
+      localStorage.setItem('seedgen_ai_used',String(used+1));
+      st.textContent='Готово! ✨';
+      setTimeout(function(){st.textContent='';},3000);
+    })
+    .catch(function(){
+      b.disabled=false;st.textContent='Не удалось улучшить, попробуй ещё раз';
+    });
+});
+
+btn.addEventListener('click',function(){
+  var prompt=document.getElementById('prompt').value.trim();
+  if(!prompt){alert('Опиши видео или нажми «✨ Улучшить описание» после пары своих слов');return;}
+  if(!document.getElementById('agree').checked){alert('Сначала отметь согласие с офертой ⚠️');return;}
+  btn.disabled=true;
+  setStatus('Создаём платёж...');
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'text2video',seconds:seconds,prompt:prompt,aspect:aspect})})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){throw new Error(data.error);}
+      try{localStorage.setItem('seedgen_gen_draft',JSON.stringify({prompt:prompt,aspect:aspect,seconds:seconds,refImage:refImageData,paymentId:data.paymentId}));}catch(e){}
+      window.location.href=data.confirmationUrl;
+    })
+    .catch(function(e){
+      setStatus('Ошибка: '+e.message);
+      btn.disabled=false;
+    });
+});
+
+function poll(taskId){
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.status==='succeeded'){
+          clearInterval(timer);
+          document.getElementById('video').src=d.videoUrl;
+          document.getElementById('result').style.display='block';
+          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          btn.disabled=false;
+        }else if(d.status==='failed'){
+          clearInterval(timer);
+          setStatus('Ошибка генерации: '+(d.error||'попробуй другой запрос'));
+          btn.disabled=false;
+        }else{
+          setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
+        }
+      })
+      .catch(function(){});
+  },5000);
+}
+
+(function(){
+  var pid=new URLSearchParams(window.location.search).get('paymentId');
+  if(!pid)return;
+  var savedTask=localStorage.getItem('seedgen_gen_task_'+pid);
+  if(savedTask){btn.disabled=true;setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');poll(savedTask);return;}
+  btn.disabled=true;
+  setStatus('Проверяем оплату...');
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.paid&&data.taskId){
+        localStorage.setItem('seedgen_gen_task_'+pid,data.taskId);
+        setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
+        poll(data.taskId);
+      }else if(data.paid){
+        var draft=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
+        var payload={service:'text2video',paymentId:pid,prompt:draft.prompt||'',aspect:draft.aspect||'16:9',seconds:draft.seconds||5};
+        if(draft.refImage)payload.refImage=draft.refImage;
+        setStatus('Оплата прошла! Запускаем генерацию...');
+        fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+          .then(function(r){return r.json();})
+          .then(function(d){
+            if(d.error){throw new Error(d.error);}
+            localStorage.setItem('seedgen_gen_task_'+pid,d.taskId);
+            setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
+            poll(d.taskId);
+          })
+          .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+      }else{
+        setStatus('Оплата не завершена');
+        btn.disabled=false;
+      }
+    })
+    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+})();
+</script>
+<script src="/help-widget.js"></script>
+</body>
+</html>
