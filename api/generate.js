@@ -14,7 +14,6 @@ export default async function handler(req, res) {
   const MOTION_PRICES = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
   const CARTOON_PRICES = { 5: 299, 10: 449, 15: 599, 20: 749, 25: 899, 30: 1049 };
 
-  // Размеры кадра по ключу формата (соответствует CometAPI)
   const SIZE_MAP = {
     '21:9': '1920x816',
     '16:9': '1280x720',
@@ -55,7 +54,6 @@ export default async function handler(req, res) {
 
   const expectedPrice = cfg.prices ? cfg.prices[seconds] : cfg.price;
 
-  // === ЗАЩИТА: нужен оплаченный платёж на нужную сумму ===
   if (!isAdmin) {
     const paymentId = body.paymentId;
     if (!paymentId) {
@@ -110,25 +108,24 @@ export default async function handler(req, res) {
     aud = await resolveMedia(body.audio, 'audio');
     if (aud.error) return res.status(400).json({ error: aud.error });
   }
-  // Необязательная картинка-референс для text2video
   if (service === 'text2video' || service === 'text30') {
     if (body.refImage) {
       refImg = await resolveMedia(body.refImage, 'image');
-      if (refImg.error) refImg = null; // молча игнорируем плохой референс
+      if (refImg.error) refImg = null;
     }
   }
 
   try {
-    // === МУЛЬТФИЛЬМ (арт в стиле Pixar) — Gemini ===
     if (service === 'toon' || service === 'cartoon') {
       const userScene = String(body.prompt || '').trim();
       const stylePrompt = 'Transform this photo into a 3D animated movie character in Pixar style. Keep the person recognizable but clearly cartoonish. Bright friendly colors, clean simple background.' + (userScene ? ' Scene and action: ' + userScene : '');
+      const geminiAspect = (['1:1','16:9','9:16','4:3','3:4','21:9'].indexOf(aspect) !== -1) ? aspect : '1:1';
       const r = await fetch('https://api.cometapi.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent', {
         method: 'POST',
         headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: stylePrompt }, { inlineData: { mimeType: img.mime, data: img.buffer.toString('base64') } }] }],
-          generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: '1:1' } }
+          generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: geminiAspect } }
         })
       });
       const data = await r.json();
@@ -150,7 +147,6 @@ export default async function handler(req, res) {
       return res.json({ image: finalImage.data, mime: finalImage.mimeType || 'image/png' });
     }
 
-    // === Все видео-услуги ===
     const form = new FormData();
     form.append('seconds', String(seconds));
     form.append('size', size);
@@ -166,20 +162,17 @@ export default async function handler(req, res) {
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
 
     } else if (service === 'motion') {
-      // Kling Motion Control
       form.append('model', 'kling-video');
       form.append('prompt', prompt || 'The character from the image performs the exact same movements and speech as in the reference video');
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
       form.append('video_reference', new Blob([vid.buffer], { type: vid.mime }), 'motion.mp4');
 
     } else if (service === 'lipsync') {
-      // Kling advanced lip-sync
       form.append('model', 'kling-advanced-lip-sync');
       form.append('video', new Blob([vid.buffer], { type: vid.mime }), 'video.mp4');
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
 
     } else {
-      // text2video / text30 — Seedance
       form.append('model', model);
       form.append('prompt', prompt);
       if (refImg) {
@@ -211,7 +204,6 @@ export default async function handler(req, res) {
   }
 }
 
-// === Принимает base64 (старые страницы) ИЛИ ссылку из Blob (новые) ===
 async function resolveMedia(value, kind) {
   const limits = { image: 10 * 1024 * 1024, video: 20 * 1024 * 1024, audio: 5 * 1024 * 1024 };
   try {
