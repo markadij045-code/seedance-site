@@ -121,7 +121,8 @@ export default async function handler(req, res) {
   try {
     // === МУЛЬТФИЛЬМ (арт в стиле Pixar) — Gemini ===
     if (service === 'toon' || service === 'cartoon') {
-      const stylePrompt = 'Transform this photo into a 3D animated movie character in Pixar style. Keep the person recognizable but clearly cartoonish. Bright friendly colors, clean simple background.';
+      const userScene = String(body.prompt || '').trim();
+      const stylePrompt = 'Transform this photo into a 3D animated movie character in Pixar style. Keep the person recognizable but clearly cartoonish. Bright friendly colors, clean simple background.' + (userScene ? ' Scene and action: ' + userScene : '');
       const r = await fetch('https://api.cometapi.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent', {
         method: 'POST',
         headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
@@ -165,14 +166,14 @@ export default async function handler(req, res) {
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
 
     } else if (service === 'motion') {
-      // Kling Motion Control (не Seedance!)
+      // Kling Motion Control
       form.append('model', 'kling-video');
       form.append('prompt', prompt || 'The character from the image performs the exact same movements and speech as in the reference video');
       form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
       form.append('video_reference', new Blob([vid.buffer], { type: vid.mime }), 'motion.mp4');
 
     } else if (service === 'lipsync') {
-      // Kling advanced lip-sync (упрощённый вызов через общий эндпоинт)
+      // Kling advanced lip-sync
       form.append('model', 'kling-advanced-lip-sync');
       form.append('video', new Blob([vid.buffer], { type: vid.mime }), 'video.mp4');
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
