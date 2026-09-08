@@ -4,8 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Говорящий аватар — SeedGen</title>
-<meta property="og:title" content="Говорящий аватар — фото говорит твоим голосом">
-<meta property="og:description" content="Загрузи фото и текст или аудио — нейросеть оживит его. 499 ₽">
+<meta property="og:title" content="Говорящий аватар — фото оживает и говорит">
+<meta property="og:description" content="Загрузи фото — нейросеть оживит его: мимика, губы и движения как в живой речи. 499 ₽">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
@@ -29,21 +29,19 @@ nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:
 .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
 .sidebar-backdrop.open{display:block}
 h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
-.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:24px}
+.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:16px}
+.soon{width:100%;max-width:640px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);color:#93c5fd;border-radius:12px;padding:12px 16px;margin:12px 0;font-size:.9rem;text-align:center;line-height:1.6}
+.soon b{color:#bfdbfe}
 .card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
 label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
-textarea{width:100%;min-height:90px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
-textarea:focus{border-color:#A3E635}
-.drop{display:block;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
+.drop{display:block;position:relative;overflow:hidden;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
 .drop:hover{border-color:#A3E635;color:#fff}
-.modes{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
-.mode{flex:1;min-width:130px;padding:12px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem}
-.mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
+.drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
+.prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
 .orient{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
-.orient .mode{flex:0 0 auto;padding:10px 18px;min-width:auto}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
-.row span{color:#9ca3af;font-size:.9rem}
-select{background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff;padding:8px 12px;font-size:.95rem}
+.orient .mode{flex:0 0 auto;padding:12px 22px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.95rem;user-select:none}
+.orient .mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
 .btn{margin-top:16px;width:100%;padding:15px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
@@ -51,8 +49,7 @@ select{background:#0b0e07;border:1px solid #262d16;border-radius:10px;color:#fff
 #status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
-.hidden{display:none}
-img.prev{max-width:140px;border-radius:12px;margin-top:10px}
+img.prev{max-width:140px;border-radius:12px;margin-top:10px;display:none}
 .del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem;width:auto}
 .del:hover{background:rgba(127,29,29,.45);color:#fff}
 .how{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-top:8px}
@@ -65,8 +62,11 @@ footer a{color:#9ca3af;text-decoration:none}
 .welcome-box h2 .lime{color:#A3E635}
 .welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
 .welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
-.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:0}
+.welcome-box .welcome-close{width:auto;padding:0;background:none;margin-top:0}
 .welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
+.notice{margin:14px 0;padding:14px 16px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:12px;color:#93c5fd;font-size:.9rem;line-height:1.6}
+.notice b{color:#bfdbfe}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
@@ -75,18 +75,18 @@ footer a{color:#9ca3af;text-decoration:none}
 <div class="welcome-modal" id="welcomeModal">
   <div class="welcome-box">
     <button class="welcome-close" onclick="closeWelcome()">✕</button>
-    <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
-    <p>Нейросеть снимает для тебя кино: оживи фото, сделай мультфильм, аватар или мем с танцем. Всё за 2–5 минут, без монтажа.</p>
-    <div class="gift">🎁 Новичкам — акция на первый месяц: все услуги от 199 ₽</div>
-    <button onclick="closeWelcome()">Начать создавать</button>
+    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
+    <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
+    <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
+    <button onclick="closeWelcome()">Поехали?</button>
   </div>
 </div>
 
 <nav>
   <div class="logo"><span>▶</span> SeedGen</div>
   <div class="links">
-    <a href="/">Генерация</a>
-    <a href="/photo.html">Оживи картинку</a>
+    <a href="/">Главная</a>
+    <a href="/gen.html">Создать видео</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a class="active" href="/avatar.html">Аватар</a>
     <a href="/motion.html">Моушен</a>
@@ -98,8 +98,8 @@ footer a{color:#9ca3af;text-decoration:none}
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-  <a href="/">📝 Генерация</a>
-  <a href="/photo.html">🐱 Оживи картинку</a>
+  <a href="/">🏠 Главная</a>
+  <a href="/gen.html">📝 Создать видео</a>
   <a href="/cartoon.html">🎭 Мультфильм</a>
   <a href="/avatar.html">🗣 Аватар</a>
   <a href="/motion.html">🎮 Моушен</a>
@@ -107,48 +107,23 @@ footer a{color:#9ca3af;text-decoration:none}
 </div>
 
 <h1>🗣 Говорящий аватар</h1>
-<p class="sub">Загрузи фото + текст или своё аудио — нейросеть синхронизирует губы и мимику</p>
+<p class="sub">Загрузи фото — нейросеть оживит его: человек будет говорить, моргать и двигаться, как в живой речи</p>
+<div class="soon">✨ <b>Скоро (аватар v2):</b> озвучка твоим текстом и голосом — аватар будет говорить именно твоими словами. Сейчас аватар говорит «от себя»: мимика и губы как в живой речи.</div>
 
 <div class="card">
-  <label>Шаг 1. Загрузите фото (лицо крупно)</label>
-  <label class="drop" for="photo">📷 Выбрать фото<input type="file" id="photo" accept="image/*" hidden></label>
-  <img class="prev hidden" id="photoPrev">
-  <button class="del hidden" id="photoDel" type="button">✖ Удалить фото</button>
+  <label>Шаг 1. Загрузи фото (лицо крупно)</label>
+  <label class="drop">📷 Выбрать фото<input type="file" id="photo" accept="image/*"></label>
+  <img class="prev" id="photoPrev">
+  <div class="prog" id="photoProg"><i></i></div>
+  <button class="del" id="photoDel" type="button" style="display:none">✖ Удалить фото</button>
 </div>
 
 <div class="card">
-  <label>Шаг 2. Режим озвучки</label>
-  <div class="modes">
-    <div class="mode active" id="mText" onclick="setMode('text')">✍️ Текст в речь</div>
-    <div class="mode" id="mAudio" onclick="setMode('audio')">🎙 Своё аудио</div>
-  </div>
-  <div id="textBlock">
-    <textarea id="txt" placeholder="Введите текст, который скажет аватар..."></textarea>
-    <div class="row">
-      <span>Язык:</span>
-      <select id="lang"><option value="ru">Русский</option><option value="en">English</option></select>
-      <span>Голос:</span>
-      <select id="voice">
-        <option value="f-soft">Женский — мягкий</option>
-        <option value="f-pro">Женский — диктор</option>
-        <option value="m-calm">Мужской — спокойный</option>
-        <option value="m-energy">Мужской — энергичный</option>
-      </select>
-    </div>
-  </div>
-  <div id="audioBlock" class="hidden">
-    <label class="drop" for="aud">🎵 Выбрать аудио (mp3/wav, до 60 сек)<input type="file" id="aud" accept="audio/*" hidden></label>
-    <div id="audName" style="color:#9ca3af;font-size:.9rem;margin-top:8px"></div>
-    <button class="del hidden" id="audDel" type="button">✖ Удалить аудио</button>
-  </div>
-</div>
-
-<div class="card">
-  <label>Шаг 3. Ориентация видео</label>
-  <div class="orient">
-    <div class="mode active" onclick="setOr(this,'9:16')">📱 9:16</div>
-    <div class="mode" onclick="setOr(this,'16:9')">💻 16:9</div>
-    <div class="mode" onclick="setOr(this,'1:1')">⬜ 1:1</div>
+  <label>Шаг 2. Формат видео</label>
+  <div class="orient" id="orientModes">
+    <div class="mode active" data-or="9:16" onclick="setOr(this,'9:16')">📱 9:16</div>
+    <div class="mode" data-or="16:9" onclick="setOr(this,'16:9')">💻 16:9</div>
+    <div class="mode" data-or="1:1" onclick="setOr(this,'1:1')">⬜ 1:1</div>
   </div>
 </div>
 
@@ -160,7 +135,7 @@ footer a{color:#9ca3af;text-decoration:none}
 <div id="result"><video id="video" controls></video></div>
 
 <div class="card">
-  <div class="how"><b>Как это работает:</b> нейросеть синтезирует голос (или берёт ваше аудио) и оживляет фото — губы, мимика и движения синхронизируются с речью. Готовое видео появится на странице в течение 1–5 минут после оплаты.<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит, что деньги пришли, и сразу запускает видео. Тебе ничего нажимать не надо.<br><b>🔒 Не перепутает ли меня с кем-то?</b> Нет. У каждого платежа свой номер, как у чека. Сайт находит твой чек и делает видео из твоего фото.<br><b>🤔 А если видео не пришло?</b> Напиши нам — проверим твой чек и сделаем вручную. Деньги не пропадут.</div>
+  <div class="how"><b>Как это работает:</b> нейросеть оживляет фото — губы, мимика и движения головы становятся как в живой речи. Аватар говорит «от себя» (без твоего текста): это естественная имитация разговора. Готовое видео появится на странице в течение 1–5 минут после оплаты.<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит, что деньги пришли, и сразу запускает видео. Тебе ничего нажимать не надо.<br><b>🔒 Не перепутает ли меня с кем-то?</b> Нет. У каждого платежа свой номер, как у чека. Сайт находит твой чек и делает видео из твоего фото.<br><b>🤔 А если видео не пришло?</b> Напиши нам — проверим твой чек и сделаем вручную. Деньги не пропадут.</div>
 </div>
 
 <footer>
@@ -184,275 +159,187 @@ function toggleSidebar(){
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
-var imageData=null;
-var audioData=null;
-var currentMode='text';
-var orientation='9:16';
-var btn=document.getElementById('btn');
-var statusEl=document.getElementById('status');
+var imageData = null;
+var orientation = '9:16';
+var btn = document.getElementById('btn');
+var statusEl = document.getElementById('status');
+function setStatus(t){ statusEl.textContent = t; }
 
-function setMode(m){
-  currentMode=m;
-  document.getElementById('mText').classList.toggle('active', m==='text');
-  document.getElementById('mAudio').classList.toggle('active', m==='audio');
-  document.getElementById('textBlock').classList.toggle('hidden', m!=='text');
-  document.getElementById('audioBlock').classList.toggle('hidden', m!=='audio');
+function setOr(el, or){
+  orientation = or;
+  document.querySelectorAll('#orientModes .mode').forEach(function(x){
+    x.classList.toggle('active', x.getAttribute('data-or') === or);
+  });
+  saveDraft();
 }
-function setOr(el,or){
-  orientation=or;
-  el.parentElement.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active');});
-  el.classList.add('active');
-}
-
-function setStatus(t){statusEl.textContent=t;}
-
-try{
-  var saved=localStorage.getItem('seedgen_avatar_draft');
-  if(saved){
-    var s=JSON.parse(saved);
-    if(s.image){
-      imageData=s.image;
-      document.getElementById('photoPrev').src='data:image/jpeg;base64,'+s.image;
-      document.getElementById('photoPrev').classList.remove('hidden');
-      document.getElementById('photoDel').classList.remove('hidden');
-    }
-    if(s.text){
-      document.getElementById('txt').value=s.text;
-    }
-    if(s.mode==='audio'){
-      setMode('audio');
-      if(s.audio){
-        audioData=s.audio;
-        document.getElementById('audName').textContent='🎵 аудио загружено';
-        document.getElementById('audDel').classList.remove('hidden');
-      }
-    }
-    if(s.orientation){
-      orientation=s.orientation;
-      document.querySelectorAll('.orient .mode').forEach(function(x){x.classList.remove('active');});
-      var orButtons=document.querySelectorAll('.orient .mode');
-      if(orButtons[0]&&s.orientation==='9:16')orButtons[0].classList.add('active');
-      if(orButtons[1]&&s.orientation==='16:9')orButtons[1].classList.add('active');
-      if(orButtons[2]&&s.orientation==='1:1')orButtons[2].classList.add('active');
-    }
-    if(s.voice)document.getElementById('voice').value=s.voice;
-    if(s.language)document.getElementById('lang').value=s.language;
-  }
-}catch(e){}
 
 function saveDraft(){
   try{
-    var draft={};
-    if(imageData)draft.image=imageData;
-    if(currentMode==='text'){
-      draft.mode='text';
-      var t=document.getElementById('txt').value.trim();
-      if(t)draft.text=t;
-      draft.voice=document.getElementById('voice').value;
-      draft.language=document.getElementById('lang').value;
-    }else{
-      draft.mode='audio';
-      if(audioData)draft.audio=audioData;
-    }
-    draft.orientation=orientation;
-    localStorage.setItem('seedgen_avatar_draft',JSON.stringify(draft));
+    localStorage.setItem('seedgen_avatar_draft', JSON.stringify({ image: imageData, orientation: orientation }));
   }catch(e){}
 }
 
-document.getElementById('photo').onchange=function(e){
-  var f=e.target.files[0]; if(!f)return;
-  var reader=new FileReader();
-  reader.onload=function(){
-    var img=new Image();
-    img.onload=function(){
-      var max=1024,w=img.width,h=img.height;
-      if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
-      var c=document.createElement('canvas');
-      c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      var d=c.toDataURL('image/jpeg',0.85);
-      imageData=d.split(',')[1];
-      document.getElementById('photoPrev').src=d;
-      document.getElementById('photoPrev').classList.remove('hidden');
-      document.getElementById('photoDel').classList.remove('hidden');
+try{
+  var s = JSON.parse(localStorage.getItem('seedgen_avatar_draft') || 'null');
+  if(s){
+    if(s.image){
+      imageData = s.image;
+      document.getElementById('photoPrev').src = 'data:image/jpeg;base64,' + s.image;
+      document.getElementById('photoPrev').style.display = 'block';
+      document.getElementById('photoDel').style.display = 'block';
+    }
+    if(s.orientation){
+      orientation = s.orientation;
+      setOr(null, orientation);
+    }
+  }
+}catch(e){}
+
+document.getElementById('photo').onchange = function(e){
+  var f = e.target.files[0]; if(!f) return;
+  if(f.type.indexOf('image/') !== 0){ alert('Нужно изображение JPG или PNG'); return; }
+  if(f.size > 10*1024*1024){ alert('Файл больше 10 МБ. Выбери фото поменьше.'); return; }
+  var prog = document.getElementById('photoProg');
+  var bar = prog.querySelector('i');
+  prog.style.display = 'block'; bar.style.width = '10%';
+  setStatus('Обрабатываем фото...');
+  var reader = new FileReader();
+  reader.onprogress = function(ev){
+    if(ev.total > 0){ bar.style.width = Math.round(10 + ev.loaded/ev.total*60) + '%'; }
+  };
+  reader.onload = function(){
+    bar.style.width = '80%';
+    var img = new Image();
+    img.onload = function(){
+      var max = 1024, w = img.width, h = img.height;
+      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      var d = c.toDataURL('image/jpeg', 0.85);
+      imageData = d.split(',')[1];
+      document.getElementById('photoPrev').src = d;
+      document.getElementById('photoPrev').style.display = 'block';
+      document.getElementById('photoDel').style.display = 'block';
+      bar.style.width = '100%';
+      setTimeout(function(){ prog.style.display = 'none'; }, 600);
+      setStatus('');
       saveDraft();
     };
-    img.src=reader.result;
+    img.src = reader.result;
   };
   reader.readAsDataURL(f);
 };
-document.getElementById('photoDel').onclick=function(){
-  imageData=null;
-  document.getElementById('photo').value='';
-  document.getElementById('photoPrev').classList.add('hidden');
-  this.classList.add('hidden');
-  saveDraft();
-};
-document.getElementById('txt').oninput=function(){saveDraft();};
-document.getElementById('voice').onchange=function(){saveDraft();};
-document.getElementById('lang').onchange=function(){saveDraft();};
-
-document.getElementById('aud').onchange=function(e){
-  var f=e.target.files[0]; if(!f)return;
-  if(f.size>5*1024*1024){alert('Аудио больше 5 МБ. Выбери файл короче.');return;}
-  var url=URL.createObjectURL(f);
-  var probe=new Audio();
-  probe.src=url;
-  probe.addEventListener('loadedmetadata',function(){
-    var dur=probe.duration;
-    URL.revokeObjectURL(url);
-    if(dur>60){alert('Аудио длиннее 60 секунд. Выбери файл короче.');return;}
-    var reader=new FileReader();
-    reader.onload=function(){
-      audioData=reader.result.split(',')[1];
-      document.getElementById('audName').textContent='🎵 '+f.name;
-      document.getElementById('audDel').classList.remove('hidden');
-      saveDraft();
-    };
-    reader.readAsDataURL(f);
-  });
-  probe.addEventListener('error',function(){
-    URL.revokeObjectURL(url);
-    alert('Не удалось прочитать аудиофайл');
-  });
-};
-document.getElementById('audDel').onclick=function(){
-  audioData=null;
-  document.getElementById('aud').value='';
-  document.getElementById('audName').textContent='';
-  this.classList.add('hidden');
+document.getElementById('photoDel').onclick = function(){
+  imageData = null;
+  document.getElementById('photo').value = '';
+  document.getElementById('photoPrev').style.display = 'none';
+  this.style.display = 'none';
   saveDraft();
 };
 
-document.querySelectorAll('.orient .mode').forEach(function(b){
-  b.addEventListener('click',function(){saveDraft();});
-});
-document.getElementById('mText').addEventListener('click',function(){saveDraft();});
-document.getElementById('mAudio').addEventListener('click',function(){saveDraft();});
-
-btn.addEventListener('click',function(){
-  if(!imageData){alert('Сначала загрузите фото');return;}
-
-  var payload={service:'avatar',orientation:orientation,image:imageData};
-  if(currentMode==='text'){
-    var t=document.getElementById('txt').value.trim();
-    if(!t){alert('Введите текст для озвучки');return;}
-    payload.prompt=t;
-    payload.language=document.getElementById('lang').value;
-    payload.voice=document.getElementById('voice').value;
-  }else{
-    if(!audioData){alert('Сначала загрузите аудио');return;}
-    payload.audio=audioData;
-  }
-
+btn.addEventListener('click', function(){
+  if(!imageData){ alert('Сначала загрузи фото'); return; }
   saveDraft();
-  btn.disabled=true;
+  btn.disabled = true;
   setStatus('Создаём платёж...');
-  fetch('/api/pay',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({service:'avatar'})
-  })
-    .then(function(r){return r.json();})
+  fetch('/api/pay', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service: 'avatar' }) })
+    .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data.error){throw new Error(data.error);}
-      window.location.href=data.confirmationUrl;
+      if(data.error){ throw new Error(data.error); }
+      window.location.href = data.confirmationUrl;
     })
     .catch(function(e){
-      setStatus('Ошибка: '+e.message);
-      btn.disabled=false;
+      setStatus('Ошибка: ' + e.message);
+      btn.disabled = false;
     });
 });
 
 function poll(taskId){
-  var timer=setInterval(function(){
-    fetch('/api/status?taskId='+encodeURIComponent(taskId))
-      .then(function(r){return r.json();})
+  var timer = setInterval(function(){
+    fetch('/api/status?taskId=' + encodeURIComponent(taskId))
+      .then(function(r){ return r.json(); })
       .then(function(d){
-        if(d.status==='succeeded'){
+        if(d.status === 'succeeded'){
           clearInterval(timer);
-          document.getElementById('video').src=d.videoUrl;
-          document.getElementById('result').style.display='block';
-          setStatus('Готово! ✅');
-          btn.disabled=false;
-          try{localStorage.removeItem('seedgen_avatar_draft');}catch(e){}
-        }else if(d.status==='failed'){
+          document.getElementById('video').src = d.videoUrl;
+          document.getElementById('result').style.display = 'block';
+          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          btn.disabled = false;
+          try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
+        }else if(d.status === 'failed'){
           clearInterval(timer);
-          setStatus('Ошибка: '+(d.error||'попробуй другое фото'));
-          btn.disabled=false;
+          setStatus('Ошибка: ' + (d.error || 'попробуй другое фото'));
+          btn.disabled = false;
         }else{
           setStatus('Создаём аватар... 1–5 минут ⏳');
         }
       })
       .catch(function(){});
-  },5000);
+  }, 5000);
 }
 
 (function(){
-  var params=new URLSearchParams(window.location.search);
-  var paymentId=params.get('paymentId');
-  if(!paymentId)return;
+  var paymentId = new URLSearchParams(window.location.search).get('paymentId');
+  if(!paymentId) return;
 
-  var savedTask=localStorage.getItem('seedgen_avatar_task_'+paymentId);
+  var savedTask = localStorage.getItem('seedgen_avatar_task_' + paymentId);
   if(savedTask){
-    btn.disabled=true;
+    btn.disabled = true;
     setStatus('Создаём аватар... 1–5 минут ⏳');
     poll(savedTask);
     return;
   }
 
-  btn.disabled=true;
+  btn.disabled = true;
   setStatus('Проверяем оплату...');
-  fetch('/api/check-payment?paymentId='+encodeURIComponent(paymentId))
-    .then(function(r){return r.json();})
+  fetch('/api/check-payment?paymentId=' + encodeURIComponent(paymentId))
+    .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.paid){
-        var draft=JSON.parse(localStorage.getItem('seedgen_avatar_draft')||'{}');
-        var payload={
-          service:'avatar',
-          paymentId:paymentId,
-          orientation:draft.orientation||'9:16',
-          image:draft.image
-        };
-        if(draft.mode==='audio'){
-          payload.audio=draft.audio;
+        if(imageData){
+          setStatus('Оплата прошла! Запускаем генерацию...');
+          return fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ service: 'avatar', paymentId: paymentId, image: imageData, aspect: orientation })
+          });
         }else{
-          payload.prompt=draft.text;
-          payload.language=draft.language;
-          payload.voice=draft.voice;
+          var notice = document.createElement('div');
+          notice.className = 'notice';
+          notice.innerHTML = '⚠ <b>Оплата прошла!</b> Фото нужно прикрепить заново — нажми кнопку ещё раз после загрузки.';
+          btn.parentNode.insertBefore(notice, btn);
+          setStatus('Загрузи фото и нажми кнопку ещё раз.');
+          btn.textContent = 'Запустить генерацию (оплачено)';
+          btn.disabled = false;
+          return null;
         }
-
-        setStatus('Оплата прошла! Запускаем генерацию...');
-        return fetch('/api/generate',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(payload)
-        });
       }else{
-        setStatus('Оплата не завершена');
-        btn.disabled=false;
+        setStatus('Оплата не завершена. Фото и настройки сохранены — можешь оплатить ещё раз.');
+        btn.disabled = false;
+        return null;
       }
     })
     .then(function(r){
-      if(!r)return;
+      if(!r) return;
       return r.json();
     })
     .then(function(data){
-      if(!data)return;
+      if(!data) return;
       if(data.error){
-        setStatus('Ошибка генерации: '+data.error);
-        btn.disabled=false;
+        setStatus('Ошибка генерации: ' + data.error);
+        btn.disabled = false;
         return;
       }
       if(data.taskId){
-        localStorage.setItem('seedgen_avatar_task_'+paymentId,data.taskId);
+        localStorage.setItem('seedgen_avatar_task_' + paymentId, data.taskId);
         setStatus('Создаём аватар... 1–5 минут ⏳');
         poll(data.taskId);
       }
     })
     .catch(function(e){
-      setStatus('Ошибка: '+e.message);
-      btn.disabled=false;
+      setStatus('Ошибка: ' + e.message);
+      btn.disabled = false;
     });
 })();
 </script>
@@ -460,29 +347,29 @@ function poll(taskId){
 <script>
 (function(){
   function addAgree(){
-    var btns=document.querySelectorAll('button');
-    for(var i=0;i<btns.length;i++){
-      var t=btns[i].textContent||'';
-      if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)&&!document.getElementById('agreeWrap')){
-        var wrap=document.createElement('div');
-        wrap.id='agreeWrap';
-        wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
-        wrap.innerHTML='<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
-        btns[i].parentNode.insertBefore(wrap,btns[i]);
+    var btns = document.querySelectorAll('button');
+    for(var i = 0; i < btns.length; i++){
+      var t = btns[i].textContent || '';
+      if(/Оплатить|Создать видео|Сгенерировать|Запустить генерацию/.test(t) && !document.getElementById('agreeWrap')){
+        var wrap = document.createElement('div');
+        wrap.id = 'agreeWrap';
+        wrap.style.cssText = 'margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
+        wrap.innerHTML = '<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
+        btns[i].parentNode.insertBefore(wrap, btns[i]);
         break;
       }
     }
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',addAgree);}else{addAgree();}
-  document.addEventListener('click',function(e){
-    var b=e.target.closest?e.target.closest('button'):null;
-    if(!b)return;
-    var t=b.textContent||'';
-    if(/Оплатить|Сгенерировать|Оживить картинку/.test(t)){
-      var c=document.getElementById('agree');
-      if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', addAgree); }else{ addAgree(); }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if(!b) return;
+    var t = b.textContent || '';
+    if(/Оплатить|Создать видео|Сгенерировать|Запустить генерацию/.test(t)){
+      var c = document.getElementById('agree');
+      if(c && !c.checked){ e.preventDefault(); e.stopPropagation(); alert('Сначала отметь согласие с офертой ⚠️'); }
     }
-  },true);
+  }, true);
 })();
 </script>
 <script src="/help-widget.js"></script>
