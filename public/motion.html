@@ -241,7 +241,7 @@ function probeVideo(f, maxSec, cb){
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_motion_draft', JSON.stringify({ image: imageData, seconds: seconds }));
+    localStorage.setItem('seedgen_motion_draft', JSON.stringify({ image: imageData, seconds: seconds, video: videoData }));
   }catch(e){}
 }
 
@@ -259,6 +259,11 @@ try{
       document.getElementById('preview').src = 'data:image/jpeg;base64,' + s.image;
       document.getElementById('preview').style.display = 'block';
       document.getElementById('photoDel').style.display = 'block';
+    }
+    if(s.video){
+      videoData = s.video;
+      document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
+      document.getElementById('vidDel').style.display = 'block';
     }
     if(s.seconds && s.seconds >= 5 && s.seconds <= 30){
       seconds = s.seconds;
@@ -438,7 +443,7 @@ btn.addEventListener('click', function(){
           if(!videoData) missing.push('видео');
           var notice = document.createElement('div');
           notice.className = 'notice';
-          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — большие файлы не хранятся в черновике. Фото и настройки сохранены.';
+          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — ссылка на файл устарела. Настройки сохранены.';
           btn.parentNode.insertBefore(notice, btn);
           setStatus('Прикрепи ' + missing.join(' и ') + ' и нажми кнопку ещё раз.');
           btn.textContent = 'Запустить генерацию (оплачено)';
