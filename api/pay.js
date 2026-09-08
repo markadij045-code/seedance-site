@@ -12,60 +12,29 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const service = body.service || 'text2video';
   const prompt = body.prompt || '';
-  let seconds = String(body.seconds || '');
 
-  // Единая таблица 6 тарифов (для text2video, motion, cartoon, lipsync)
-  const T6 = {
-    '5':  '199.00',
-    '10': '349.00',
-    '15': '499.00',
-    '20': '649.00',
-    '25': '799.00',
-    '30': '949.00'
-  };
-
-  // Цены мультфильма (отдельные)
-  const CARTOON = {
-    '5':  '299.00',
-    '10': '449.00',
-    '15': '599.00',
-    '20': '749.00',
-    '25': '899.00',
-    '30': '1049.00'
-  };
-
-  // Фиксированные услуги
-  const FIX = {
-    'text30': { amount: '999.00', desc: 'Видео до 30 секунд SeedGen' },
-    'animate': { amount: '199.00', desc: 'Оживи картинку SeedGen' },
-    'avatar':  { amount: '499.00', desc: 'Говорящий аватар SeedGen' }
-  };
+  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299 };
+  const PER_SEC = 30;
+  let seconds = parseInt(body.seconds, 10);
 
   let price;
-  if (service === 'text2video') {
-    const s = T6[seconds] ? seconds : '5';
-    seconds = s;
-    price = { amount: T6[s], desc: 'Создать видео ' + s + ' сек SeedGen' };
-  } else if (service === 'motion') {
-    const s = T6[seconds] ? seconds : '10';
-    seconds = s;
-    price = { amount: T6[s], desc: 'Моушен контроль ' + s + ' сек SeedGen' };
-  } else if (service === 'cartoon') {
-    const s = CARTOON[seconds] ? seconds : '5';
-    seconds = s;
-    price = { amount: CARTOON[s], desc: 'Мультфильм из фото ' + s + ' сек SeedGen' };
-  } else if (service === 'lipsync') {
-    const s = T6[seconds] ? seconds : '5';
-    seconds = s;
-    price = { amount: T6[s], desc: 'Липсинк (дубляж) ' + s + ' сек SeedGen' };
+  if (service === 'avatar') {
+    seconds = 0;
+    price = { amount: '499.00', desc: 'Говорящий аватар SeedGen' };
+  } else if (BASE[service]) {
+    if (!seconds || seconds < 5) seconds = 5;
+    if (seconds > 30) seconds = 30;
+    const amount = BASE[service] + (seconds - 5) * PER_SEC;
+    const names = { text2video: 'Создать видео', motion: 'Моушен контроль', lipsync: 'Липсинк (дубляж)', cartoon: 'Мультфильм из фото' };
+    price = { amount: amount + '.00', desc: names[service] + ', ' + seconds + ' сек SeedGen' };
   } else {
-    price = FIX[service] || { amount: '199.00', desc: 'Видео SeedGen' };
+    seconds = 5;
+    price = { amount: '199.00', desc: 'Видео SeedGen' };
   }
 
   const returnUrls = {
     'text2video': 'https://seedgen.ru/gen.html',
-    'text30':     'https://seedgen.ru/gen.html',
-    'animate':    'https://seedgen.ru/photo.html',
+    'animate':    'https://seedgen.ru/gen.html',
     'cartoon':    'https://seedgen.ru/cartoon.html',
     'avatar':     'https://seedgen.ru/avatar.html',
     'motion':     'https://seedgen.ru/motion.html',
@@ -88,7 +57,7 @@ export default async function handler(req, res) {
         capture: true,
         confirmation: { type: 'redirect', return_url: returnUrl },
         description: price.desc,
-        metadata: { service: service, prompt: prompt, seconds: seconds }
+        metadata: { service: service, prompt: prompt, seconds: String(seconds) }
       })
     });
     const data = await r.json();
