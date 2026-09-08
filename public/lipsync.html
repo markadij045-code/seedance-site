@@ -268,7 +268,7 @@ function probeAudio(f, maxSec, cb){
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_lipsync_draft', JSON.stringify({ seconds: seconds }));
+    localStorage.setItem('seedgen_lipsync_draft', JSON.stringify({ seconds: seconds, video: videoData, audio: audioData }));
   }catch(e){}
 }
 
@@ -281,6 +281,16 @@ slider.addEventListener('input', function(){
 try{
   var s = JSON.parse(localStorage.getItem('seedgen_lipsync_draft') || 'null');
   if(s){
+    if(s.video){
+      videoData = s.video;
+      document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
+      document.getElementById('vidDel').style.display = 'block';
+    }
+    if(s.audio){
+      audioData = s.audio;
+      document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
+      document.getElementById('audDel').style.display = 'block';
+    }
     if(s.seconds && s.seconds >= 5 && s.seconds <= 30){
       seconds = s.seconds;
       slider.value = seconds;
@@ -438,7 +448,7 @@ btn.addEventListener('click', function(){
           if(!audioData) missing.push('аудио');
           var notice = document.createElement('div');
           notice.className = 'notice';
-          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — большие файлы не хранятся в черновике. Настройки сохранены.';
+          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — ссылка на файл устарела. Настройки сохранены.';
           btn.parentNode.insertBefore(notice, btn);
           setStatus('Прикрепи ' + missing.join(' и ') + ' и нажми кнопку ещё раз.');
           btn.textContent = 'Запустить генерацию (оплачено)';
