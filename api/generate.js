@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     animate: { image: true },
     toon: { image: true },
     cartoon: { image: true },
-    avatar: { image: true },
+    avatar: { image: true, audio: true },
     motion: { image: true, video: true },
     lipsync: { video: true, audio: true }
   };
@@ -36,7 +36,8 @@ export default async function handler(req, res) {
   let expectedPrice;
   if (service === 'avatar') {
     expectedPrice = 499;
-    seconds = 60;
+    if (!seconds || seconds < 1) seconds = 1;
+    if (seconds > 30) seconds = 30;
   } else if (BASE[service]) {
     if (!seconds || seconds < 5) seconds = 5;
     if (seconds > 30) seconds = 30;
@@ -128,9 +129,10 @@ export default async function handler(req, res) {
     form.append('size', size);
 
     if (service === 'avatar') {
-      form.append('model', model);
-      form.append('prompt', 'The person speaks naturally, slight head movements and expressions');
-      form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'avatar.jpg');
+      form.append('model', 'kling-avatar-image2video');
+      form.append('image', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
+      form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
+      form.append('mode', 'std');
     } else if (service === 'animate') {
       form.append('model', model);
       form.append('prompt', prompt || 'The scene comes alive: natural smooth motion, gentle camera movement');
