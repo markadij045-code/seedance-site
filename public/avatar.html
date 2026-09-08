@@ -211,8 +211,15 @@ function safeFileName(prefix, f, defExt){
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_avatar_draft', JSON.stringify({ image: imageData, orientation: orientation, seconds: audioSec }));
+    localStorage.setItem('seedgen_avatar_draft', JSON.stringify({ image: imageData, orientation: orientation, seconds: audioSec, audio: audioData }));
   }catch(e){}
+}
+
+function showAudioInfo(){
+  if(!audioSec) return;
+  var info = document.getElementById('audioInfo');
+  info.style.display = 'block';
+  info.innerHTML = '⏱ Твоя озвучка: <b>' + audioSec + ' сек</b> — столько же будет длиться видео. Цена фиксированная: <b>499 ₽</b> за озвучку до 30 секунд.';
 }
 
 try{
@@ -225,6 +232,13 @@ try{
       document.getElementById('photoDel').style.display = 'block';
     }
     if(s.orientation){ setOr(null, s.orientation); }
+    if(s.audio){
+      audioData = s.audio;
+      audioSec = s.seconds || 0;
+      document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
+      document.getElementById('audDel').style.display = 'block';
+      showAudioInfo();
+    }
   }
 }catch(e){}
 
@@ -313,9 +327,7 @@ document.getElementById('aud').onchange = function(e){
       audioSec = Math.min(30, Math.max(1, Math.ceil(dur)));
       document.getElementById('audName').textContent = '🎵 ' + f.name + ' — загружено ✅';
       document.getElementById('audDel').style.display = 'block';
-      var info = document.getElementById('audioInfo');
-      info.style.display = 'block';
-      info.innerHTML = '⏱ Твоя озвучка: <b>' + audioSec + ' сек</b> — столько же будет длиться видео. Цена фиксированная: <b>499 ₽</b> за озвучку до 30 секунд.';
+      showAudioInfo();
       bar.style.width = '100%';
       setTimeout(function(){ prog.style.display = 'none'; }, 600);
       setStatus('');
@@ -419,7 +431,7 @@ btn.addEventListener('click', function(){
           if(!audioData) missing.push('аудио');
           var notice = document.createElement('div');
           notice.className = 'notice';
-          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — большие файлы не хранятся в черновике. Фото и формат сохранены.';
+          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — ссылка на файл устарела. Фото и формат сохранены.';
           btn.parentNode.insertBefore(notice, btn);
           setStatus('Прикрепи ' + missing.join(' и ') + ' и нажми кнопку ещё раз.');
           btn.textContent = 'Запустить генерацию (оплачено)';
