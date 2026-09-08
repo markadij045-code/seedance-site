@@ -9,42 +9,42 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
-  const T6 = { 5: 199, 10: 349, 15: 499, 20: 649, 25: 799, 30: 949 };
-  const CARTOON = { 5: 299, 10: 449, 15: 599, 20: 749, 25: 899, 30: 1049 };
+  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299 };
+  const PER_SEC = 30;
 
   const SIZE_MAP = {
     '21:9': '1920x816', '16:9': '1280x720', '4:3': '1024x768',
     '1:1': '720x720', '3:4': '768x1024', '9:16': '720x1280'
   };
 
-  const SERVICES = {
-    text2video: { prices: T6, maxSeconds: 30 },
-    text30:     { price: 999, maxSeconds: 30 },
-    animate:    { price: 199, maxSeconds: 10, needsImage: true },
-    toon:       { price: 299, maxSeconds: 10, needsImage: true },
-    cartoon:    { prices: CARTOON, maxSeconds: 30, needsImage: true },
-    avatar:     { price: 499, maxSeconds: 60, needsImage: true },
-    motion:     { prices: T6, maxSeconds: 30, needsImage: true, needsVideo: true },
-    lipsync:    { prices: T6, maxSeconds: 30, needsVideo: true, needsAudio: true }
+  const NEEDS = {
+    text2video: {},
+    animate: { image: true },
+    toon: { image: true },
+    cartoon: { image: true },
+    avatar: { image: true },
+    motion: { image: true, video: true },
+    lipsync: { video: true, audio: true }
   };
 
-  const service = body.service || 'text2video';
-  const cfg = SERVICES[service];
-  if (!cfg) return res.status(400).json({ error: 'Неизвестная услуга' });
+  let service = body.service || 'text2video';
+  if (service === 'text30') service = 'text2video';
+  const needs = NEEDS[service];
+  if (!needs) return res.status(400).json({ error: 'Неизвестная услуга' });
 
   let seconds = parseInt(body.seconds, 10);
-  if (cfg.prices) {
-    if (!seconds) seconds = 5;
-    if (!cfg.prices[seconds]) {
-      const keys = Object.keys(cfg.prices).map(Number).sort(function(a, b) { return a - b; });
-      seconds = keys.reduce(function(p, c) { return Math.abs(c - seconds) < Math.abs(p - seconds) ? c : p; });
-    }
+  let expectedPrice;
+  if (service === 'avatar') {
+    expectedPrice = 499;
+    seconds = 60;
+  } else if (BASE[service]) {
+    if (!seconds || seconds < 5) seconds = 5;
+    if (seconds > 30) seconds = 30;
+    expectedPrice = BASE[service] + (seconds - 5) * PER_SEC;
   } else {
-    if (!seconds) seconds = (service === 'text30') ? 30 : 5;
+    seconds = 5;
+    expectedPrice = 199;
   }
-  if (seconds > cfg.maxSeconds) seconds = cfg.maxSeconds;
-
-  const expectedPrice = cfg.prices ? cfg.prices[seconds] : cfg.price;
 
   if (!isAdmin) {
     const paymentId = body.paymentId;
@@ -71,31 +71,29 @@ export default async function handler(req, res) {
   const size = SIZE_MAP[aspect] || '1280x720';
   const model = process.env.SEEDANCE_MODEL || 'seedance-2-5';
 
-  if (!cfg.needsImage && !cfg.needsVideo && !prompt) {
+  if (service === 'text2video' && !prompt) {
     return res.status(400).json({ error: 'Нужен промпт' });
   }
 
   let img = null, vid = null, aud = null, refImg = null;
-  if (cfg.needsImage) {
+  if (needs.image) {
     if (!body.image) return res.status(400).json({ error: 'Нужно загрузить картинку' });
     img = await resolveMedia(body.image, 'image');
     if (img.error) return res.status(400).json({ error: img.error });
   }
-  if (cfg.needsVideo) {
+  if (needs.video) {
     if (!body.video) return res.status(400).json({ error: 'Нужно загрузить видео' });
     vid = await resolveMedia(body.video, 'video');
     if (vid.error) return res.status(400).json({ error: vid.error });
   }
-  if (cfg.needsAudio) {
+  if (needs.audio) {
     if (!body.audio) return res.status(400).json({ error: 'Нужно загрузить аудио' });
     aud = await resolveMedia(body.audio, 'audio');
     if (aud.error) return res.status(400).json({ error: aud.error });
   }
-  if (service === 'text2video' || service === 'text30') {
-    if (body.refImage) {
-      refImg = await resolveMedia(body.refImage, 'image');
-      if (refImg.error) refImg = null;
-    }
+  if (service === 'text2video' && body.refImage) {
+    refImg = await resolveMedia(body.refImage, 'image');
+    if (refImg.error) refImg = null;
   }
 
   try {
