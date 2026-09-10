@@ -69,6 +69,7 @@ footer a{color:#9ca3af;text-decoration:none}
 .welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
 .notice{margin:14px 0;padding:14px 16px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:12px;color:#93c5fd;font-size:.9rem;line-height:1.6}
 .notice b{color:#bfdbfe}
+.draftBadge{display:inline-block;margin:8px 0;padding:6px 12px;background:rgba(163,230,53,0.1);border:1px solid rgba(163,230,53,0.3);border-radius:999px;color:#A3E635;font-size:.8rem;font-weight:600}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
@@ -118,6 +119,7 @@ footer a{color:#9ca3af;text-decoration:none}
   <img class="prev" id="photoPrev">
   <div class="prog" id="photoProg"><i></i></div>
   <button class="del" id="photoDel" type="button" style="display:none">✖ Удалить фото</button>
+  <div id="photoDraftBadge"></div>
 </div>
 
 <div class="card">
@@ -127,6 +129,7 @@ footer a{color:#9ca3af;text-decoration:none}
   <div class="prog" id="audProg"><i></i></div>
   <div class="audioinfo" id="audioInfo"></div>
   <button class="del" id="audDel" type="button" style="display:none">✖ Удалить аудио</button>
+  <div id="audioDraftBadge"></div>
 </div>
 
 <div class="card">
@@ -211,8 +214,31 @@ function safeFileName(prefix, f, defExt){
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_avatar_draft', JSON.stringify({ image: imageData, orientation: orientation, seconds: audioSec, audio: audioData }));
+    localStorage.setItem('seedgen_avatar_draft', JSON.stringify({
+      image: imageData,
+      orientation: orientation,
+      seconds: audioSec,
+      audio: audioData,
+      savedAt: Date.now()
+    }));
   }catch(e){}
+}
+
+function clearDraft(){
+  try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
+}
+
+function showDraftBadge(which, text){
+  var id = which + 'DraftBadge';
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = '<span class="draftBadge">💾 ' + text + '</span>';
+}
+
+function hideDraftBadge(which){
+  var id = which + 'DraftBadge';
+  var el = document.getElementById(id);
+  if(el) el.innerHTML = '';
 }
 
 function showAudioInfo(){
@@ -220,6 +246,13 @@ function showAudioInfo(){
   var info = document.getElementById('audioInfo');
   info.style.display = 'block';
   info.innerHTML = '⏱ Твоя озвучка: <b>' + audioSec + ' сек</b> — столько же будет длиться видео. Цена фиксированная: <b>499 ₽</b> за озвучку до 30 секунд.';
+}
+
+function checkUrlAlive(url, cb){
+  if(!url){ cb(false); return; }
+  fetch(url, {method: 'HEAD', mode: 'no-cors'})
+    .then(function(){ cb(true); })
+    .catch(function(){ cb(false); });
 }
 
 try{
@@ -230,14 +263,25 @@ try{
       document.getElementById('photoPrev').src = 'data:image/jpeg;base64,' + s.image;
       document.getElementById('photoPrev').style.display = 'block';
       document.getElementById('photoDel').style.display = 'block';
+      showDraftBadge('photo', 'Черновик сохранён');
     }
     if(s.orientation){ setOr(null, s.orientation); }
     if(s.audio){
-      audioData = s.audio;
       audioSec = s.seconds || 0;
-      document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
-      document.getElementById('audDel').style.display = 'block';
-      showAudioInfo();
+      checkUrlAlive(s.audio, function(alive){
+        if(alive){
+          audioData = s.audio;
+          document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
+          document.getElementById('audDel').style.display = 'block';
+          showAudioInfo();
+          showDraftBadge('audio', 'Черновик сохранён');
+        }else{
+          document.getElementById('audName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик аудио устарел — нужно прикрепить заново</span>';
+          audioData = null;
+          audioSec = 0;
+          hideDraftBadge('audio');
+        }
+      });
     }
   }
 }catch(e){}
@@ -272,6 +316,7 @@ document.getElementById('photo').onchange = function(e){
       setTimeout(function(){ prog.style.display = 'none'; }, 600);
       setStatus('');
       saveDraft();
+      showDraftBadge('photo', 'Черновик сохранён');
     };
     img.src = reader.result;
   };
@@ -282,6 +327,7 @@ document.getElementById('photoDel').onclick = function(){
   document.getElementById('photo').value = '';
   document.getElementById('photoPrev').style.display = 'none';
   this.style.display = 'none';
+  hideDraftBadge('photo');
   saveDraft();
 };
 
@@ -332,6 +378,7 @@ document.getElementById('aud').onchange = function(e){
       setTimeout(function(){ prog.style.display = 'none'; }, 600);
       setStatus('');
       saveDraft();
+      showDraftBadge('audio', 'Черновик сохранён');
     }).catch(function(err){
       clearTimeout(timeoutId);
       prog.style.display = 'none';
@@ -350,6 +397,7 @@ document.getElementById('audDel').onclick = function(){
   document.getElementById('audName').textContent = '';
   document.getElementById('audioInfo').style.display = 'none';
   this.style.display = 'none';
+  hideDraftBadge('audio');
   saveDraft();
 };
 
@@ -364,7 +412,7 @@ function poll(taskId){
           document.getElementById('result').style.display = 'block';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
           btn.disabled = false;
-          try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
+          clearDraft();
         }else if(d.status === 'failed'){
           clearInterval(timer);
           setStatus('Ошибка: ' + (d.error || 'попробуй другое фото и аудио'));
@@ -391,7 +439,7 @@ function callGenerate(pid){
 
 btn.addEventListener('click', function(){
   if(!imageData){ alert('Сначала загрузи фото'); return; }
-  if(!audioData){ alert('Сначала загрузи озвучку'); return; }
+  if(!audioData){ alert('Сначала загрузи озвучку (или обнови черновик — возможно, файл устарел)'); return; }
   btn.disabled = true;
   if(paidReturn){
     setStatus('Запускаем генерацию...');
