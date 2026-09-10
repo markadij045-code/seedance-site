@@ -53,10 +53,6 @@ textarea:focus{border-color:#A3E635}
 .refbox button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1.1rem}
 .prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
 .prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
-.warnline{margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5}
-.modes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.mode{flex:1;min-width:90px;padding:12px 8px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;user-select:none}
-.mode.active{border-color:#A3E635;color:#fff;background:#161a0e}
 .trust{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}
 .trust a{color:#A3E635;text-decoration:none}
 .agree{margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5}
@@ -82,6 +78,17 @@ footer a{color:#9ca3af;text-decoration:none}
 .welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:0}
 .welcome-box .welcome-close{width:auto;padding:0;background:none;margin-top:0}
 .welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
+.slider-wrap{background:#0b0e07;border:1px solid #262d16;border-radius:14px;padding:18px 20px;margin-top:8px}
+.slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.slider-val{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.slider-val .unit{font-size:1rem;color:#9ca3af;font-weight:400;margin-left:4px}
+.slider-price{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#A3E635}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;background:#262d16;border-radius:999px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635;transition:transform .15s ease}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635}
+.slider-ticks{display:flex;justify-content:space-between;color:#5b6152;font-size:.75rem;margin-top:6px}
+.slider-hint{color:#5b6152;font-size:.8rem;text-align:center;margin-top:10px}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
@@ -152,13 +159,16 @@ footer a{color:#9ca3af;text-decoration:none}
   <div class="prog" id="refProg"><i></i></div>
 
   <label style="margin-top:20px">Длительность и цена</label>
-  <div class="modes" id="durModes">
-    <div class="mode" data-sec="5" onclick="setSec(this,5)">5 сек<br><b>199 ₽</b></div>
-    <div class="mode" data-sec="10" onclick="setSec(this,10)">10 сек<br><b>349 ₽</b></div>
-    <div class="mode" data-sec="15" onclick="setSec(this,15)">15 сек<br><b>499 ₽</b></div>
-    <div class="mode" data-sec="20" onclick="setSec(this,20)">20 сек<br><b>649 ₽</b></div>
-    <div class="mode" data-sec="25" onclick="setSec(this,25)">25 сек<br><b>799 ₽</b></div>
-    <div class="mode" data-sec="30" onclick="setSec(this,30)">30 сек<br><b>949 ₽</b></div>
+  <div class="slider-wrap">
+    <div class="slider-row">
+      <div class="slider-val"><span id="secVal">5</span><span class="unit">сек</span></div>
+      <div class="slider-price"><span id="priceVal">199</span> ₽</div>
+    </div>
+    <input type="range" id="slider" min="5" max="30" step="5" value="5">
+    <div class="slider-ticks">
+      <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
+    </div>
+    <div class="slider-hint">Тяни бегунок — цена пересчитывается</div>
   </div>
 
   <div class="trust">🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
@@ -194,208 +204,216 @@ function toggleSidebar(){
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
-var PRICES={5:199,10:349,15:499,20:649,25:799,30:949};
-var seconds=5;
-var aspect='16:9';
-var refImageData=null;
-var btn=document.getElementById('btn');
-var statusEl=document.getElementById('status');
-function setStatus(t){statusEl.textContent=t;}
+var PRICES = {5:199, 10:349, 15:499, 20:649, 25:799, 30:949};
+var seconds = 5;
+var aspect = '16:9';
+var refImageData = null;
+var btn = document.getElementById('btn');
+var statusEl = document.getElementById('status');
+var slider = document.getElementById('slider');
+var secVal = document.getElementById('secVal');
+var priceVal = document.getElementById('priceVal');
 
-function markSec(s){
-  document.querySelectorAll('#durModes .mode').forEach(function(x){
-    x.classList.toggle('active',x.getAttribute('data-sec')===String(s));
-  });
+function setStatus(t){ statusEl.textContent = t; }
+
+function updatePriceDisplay(){
+  var p = PRICES[seconds] || 199;
+  secVal.textContent = seconds;
+  priceVal.textContent = p;
+  btn.textContent = 'Создать видео — ' + p + ' ₽';
 }
 
-function setSec(el,s){
-  seconds=s;
-  markSec(s);
-  btn.textContent='Создать видео — '+PRICES[s]+' ₽';
-  saveDraft();
-}
 function pickAspect(a){
-  aspect=a;
+  aspect = a;
   document.querySelectorAll('.tool[data-aspect]').forEach(function(el){
-    el.classList.toggle('active',el.getAttribute('data-aspect')===a);
+    el.classList.toggle('active', el.getAttribute('data-aspect') === a);
   });
   saveDraft();
 }
+
 function saveDraft(){
   try{
-    var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
-    s.prompt=document.getElementById('prompt').value;
-    s.aspect=aspect;
-    s.seconds=seconds;
-    s.refImage=refImageData;
-    localStorage.setItem('seedgen_gen_draft',JSON.stringify(s));
+    var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
+    s.prompt = document.getElementById('prompt').value;
+    s.aspect = aspect;
+    s.seconds = seconds;
+    s.refImage = refImageData;
+    localStorage.setItem('seedgen_gen_draft', JSON.stringify(s));
   }catch(e){}
 }
+
+slider.addEventListener('input', function(){
+  seconds = parseInt(slider.value, 10);
+  updatePriceDisplay();
+  saveDraft();
+});
 
 (function restoreDraft(){
   try{
-    var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'null');
-    if(!s)return;
-    if(s.prompt)document.getElementById('prompt').value=s.prompt;
-    if(s.aspect)pickAspect(s.aspect);
-    if(s.seconds&&PRICES[s.seconds]){
-      seconds=s.seconds;
-      markSec(seconds);
-      btn.textContent='Создать видео — '+PRICES[seconds]+' ₽';
+    var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || 'null');
+    if(!s) return;
+    if(s.prompt) document.getElementById('prompt').value = s.prompt;
+    if(s.aspect) pickAspect(s.aspect);
+    if(s.seconds && PRICES[s.seconds]){
+      seconds = s.seconds;
+      slider.value = seconds;
     }
     if(s.refImage){
-      refImageData=s.refImage;
-      document.getElementById('refImg').src='data:image/jpeg;base64,'+s.refImage;
-      document.getElementById('refName').textContent='изображение из черновика';
-      document.getElementById('refBox').style.display='flex';
+      refImageData = s.refImage;
+      document.getElementById('refImg').src = 'data:image/jpeg;base64,' + s.refImage;
+      document.getElementById('refName').textContent = 'изображение из черновика';
+      document.getElementById('refBox').style.display = 'flex';
     }
-  }catch(e){}
+    updatePriceDisplay();
+  }catch(e){ updatePriceDisplay(); }
 })();
 
-document.getElementById('prompt').addEventListener('input',saveDraft);
+document.getElementById('prompt').addEventListener('input', saveDraft);
 
-document.getElementById('refInput').addEventListener('change',function(e){
-  var f=e.target.files[0];
-  if(!f)return;
-  var prog=document.getElementById('refProg');
-  var bar=prog.querySelector('i');
-  prog.style.display='block';bar.style.width='0%';
+document.getElementById('refInput').addEventListener('change', function(e){
+  var f = e.target.files[0];
+  if(!f) return;
+  var prog = document.getElementById('refProg');
+  var bar = prog.querySelector('i');
+  prog.style.display = 'block'; bar.style.width = '0%';
   setStatus('Обрабатываем изображение...');
-  var reader=new FileReader();
-  reader.onprogress=function(ev){
-    if(ev.total>0){bar.style.width=Math.round(ev.loaded/ev.total*70)+'%';}
+  var reader = new FileReader();
+  reader.onprogress = function(ev){
+    if(ev.total > 0){ bar.style.width = Math.round(ev.loaded/ev.total*70) + '%'; }
   };
-  reader.onload=function(){
-    bar.style.width='85%';
-    var img=new Image();
-    img.onload=function(){
-      var max=1024,w=img.width,h=img.height;
-      if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
-      var c=document.createElement('canvas');
-      c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      var d=c.toDataURL('image/jpeg',0.85);
-      refImageData=d.split(',')[1];
-      document.getElementById('refImg').src=d;
-      document.getElementById('refName').textContent=f.name;
-      document.getElementById('refBox').style.display='flex';
-      bar.style.width='100%';
-      setTimeout(function(){prog.style.display='none';},600);
+  reader.onload = function(){
+    bar.style.width = '85%';
+    var img = new Image();
+    img.onload = function(){
+      var max = 1024, w = img.width, h = img.height;
+      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      var d = c.toDataURL('image/jpeg', 0.85);
+      refImageData = d.split(',')[1];
+      document.getElementById('refImg').src = d;
+      document.getElementById('refName').textContent = f.name;
+      document.getElementById('refBox').style.display = 'flex';
+      bar.style.width = '100%';
+      setTimeout(function(){ prog.style.display = 'none'; }, 600);
       setStatus('');
       saveDraft();
     };
-    img.src=reader.result;
+    img.src = reader.result;
   };
   reader.readAsDataURL(f);
 });
 function removeRef(){
-  refImageData=null;
-  document.getElementById('refInput').value='';
-  document.getElementById('refBox').style.display='none';
+  refImageData = null;
+  document.getElementById('refInput').value = '';
+  document.getElementById('refBox').style.display = 'none';
   saveDraft();
 }
 
-document.getElementById('aiBtn').addEventListener('click',function(){
-  var t=document.getElementById('prompt').value.trim();
-  if(t.length<10){alert('Напиши хотя бы пару слов своими словами — улучшатель сделает из них красивый промпт');return;}
-  var used=parseInt(localStorage.getItem('seedgen_ai_used')||'0',10);
-  if(used>=5){alert('Лимит 5 улучшений за визит исчерпан. Но и твой текст уже хорош!');return;}
-  var b=document.getElementById('aiBtn');
-  var st=document.getElementById('aistat');
-  b.disabled=true;st.textContent='Улучшаем... ⏳';
-  fetch('/api/prompt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:t})})
-    .then(function(r){return r.json();})
+document.getElementById('aiBtn').addEventListener('click', function(){
+  var t = document.getElementById('prompt').value.trim();
+  if(t.length < 10){ alert('Напиши хотя бы пару слов своими словами — улучшатель сделает из них красивый промпт'); return; }
+  var used = parseInt(localStorage.getItem('seedgen_ai_used') || '0', 10);
+  if(used >= 5){ alert('Лимит 5 улучшений за визит исчерпан. Но и твой текст уже хорош!'); return; }
+  var b = document.getElementById('aiBtn');
+  var st = document.getElementById('aistat');
+  b.disabled = true; st.textContent = 'Улучшаем... ⏳';
+  fetch('/api/prompt', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:t})})
+    .then(function(r){ return r.json(); })
     .then(function(d){
-      b.disabled=false;
-      if(d.error){st.textContent='Не удалось улучшить, попробуй ещё раз';return;}
-      document.getElementById('prompt').value=d.prompt;
-      localStorage.setItem('seedgen_ai_used',String(used+1));
+      b.disabled = false;
+      if(d.error){ st.textContent = 'Не удалось улучшить, попробуй ещё раз'; return; }
+      document.getElementById('prompt').value = d.prompt;
+      localStorage.setItem('seedgen_ai_used', String(used+1));
       saveDraft();
-      st.textContent='Готово! ✨';
-      setTimeout(function(){st.textContent='';},3000);
+      st.textContent = 'Готово! ✨';
+      setTimeout(function(){ st.textContent = ''; }, 3000);
     })
     .catch(function(){
-      b.disabled=false;st.textContent='Не удалось улучшить, попробуй ещё раз';
+      b.disabled = false; st.textContent = 'Не удалось улучшить, попробуй ещё раз';
     });
 });
 
-btn.addEventListener('click',function(){
-  var prompt=document.getElementById('prompt').value.trim();
-  if(!prompt){alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»');return;}
-  if(!document.getElementById('agree').checked){alert('Сначала отметь согласие с офертой ⚠️');return;}
-  btn.disabled=true;
+btn.addEventListener('click', function(){
+  var prompt = document.getElementById('prompt').value.trim();
+  if(!prompt){ alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»'); return; }
+  if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
+  btn.disabled = true;
   setStatus('Создаём платёж...');
-  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'text2video',seconds:seconds,prompt:prompt,aspect:aspect})})
-    .then(function(r){return r.json();})
+  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'text2video', seconds:seconds, prompt:prompt, aspect:aspect})})
+    .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data.error){throw new Error(data.error);}
+      if(data.error){ throw new Error(data.error); }
       saveDraft();
-      window.location.href=data.confirmationUrl;
+      window.location.href = data.confirmationUrl;
     })
     .catch(function(e){
-      setStatus('Ошибка: '+e.message);
-      btn.disabled=false;
+      setStatus('Ошибка: ' + e.message);
+      btn.disabled = false;
     });
 });
 
 function poll(taskId){
-  var timer=setInterval(function(){
-    fetch('/api/status?taskId='+encodeURIComponent(taskId))
-      .then(function(r){return r.json();})
+  var timer = setInterval(function(){
+    fetch('/api/status?taskId=' + encodeURIComponent(taskId))
+      .then(function(r){ return r.json(); })
       .then(function(d){
-        if(d.status==='succeeded'){
+        if(d.status === 'succeeded'){
           clearInterval(timer);
-          document.getElementById('video').src=d.videoUrl;
-          document.getElementById('result').style.display='block';
+          document.getElementById('video').src = d.videoUrl;
+          document.getElementById('result').style.display = 'block';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
-          btn.disabled=false;
-        }else if(d.status==='failed'){
+          btn.disabled = false;
+        }else if(d.status === 'failed'){
           clearInterval(timer);
-          setStatus('Ошибка генерации: '+(d.error||'попробуй другой запрос'));
-          btn.disabled=false;
+          setStatus('Ошибка генерации: ' + (d.error || 'попробуй другой запрос'));
+          btn.disabled = false;
         }else{
           setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
         }
       })
       .catch(function(){});
-  },5000);
+  }, 5000);
 }
 
 (function(){
-  var pid=new URLSearchParams(window.location.search).get('paymentId');
-  if(!pid)return;
-  var savedTask=localStorage.getItem('seedgen_gen_task_'+pid);
-  if(savedTask){btn.disabled=true;setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');poll(savedTask);return;}
-  btn.disabled=true;
+  var pid = new URLSearchParams(window.location.search).get('paymentId');
+  if(!pid) return;
+  var savedTask = localStorage.getItem('seedgen_gen_task_' + pid);
+  if(savedTask){ btn.disabled = true; setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳'); poll(savedTask); return; }
+  btn.disabled = true;
   setStatus('Проверяем оплату...');
-  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
-    .then(function(r){return r.json();})
+  fetch('/api/check-payment?paymentId=' + encodeURIComponent(pid))
+    .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data.paid&&data.taskId){
-        localStorage.setItem('seedgen_gen_task_'+pid,data.taskId);
+      if(data.paid && data.taskId){
+        localStorage.setItem('seedgen_gen_task_' + pid, data.taskId);
         setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
         poll(data.taskId);
       }else if(data.paid){
-        var draft=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'{}');
-        var payload={service:'text2video',paymentId:pid,prompt:draft.prompt||'',aspect:draft.aspect||'16:9',seconds:draft.seconds||5};
-        if(draft.refImage)payload.refImage=draft.refImage;
+        var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
+        var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5};
+        if(draft.refImage) payload.refImage = draft.refImage;
         setStatus('Оплата прошла! Запускаем генерацию...');
-        fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-          .then(function(r){return r.json();})
+        fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
+          .then(function(r){ return r.json(); })
           .then(function(d){
-            if(d.error){throw new Error(d.error);}
-            localStorage.setItem('seedgen_gen_task_'+pid,d.taskId);
+            if(d.error){ throw new Error(d.error); }
+            localStorage.setItem('seedgen_gen_task_' + pid, d.taskId);
             setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
             poll(d.taskId);
           })
-          .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+          .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
       }else{
         setStatus('Оплата не завершена. Твой текст и настройки сохранены — проверь и нажми кнопку ещё раз.');
-        btn.disabled=false;
+        btn.disabled = false;
       }
     })
-    .catch(function(e){setStatus('Ошибка: '+e.message);btn.disabled=false;});
+    .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
 })();
+
+updatePriceDisplay();
 </script>
 <script src="/help-widget.js"></script>
 </body>
