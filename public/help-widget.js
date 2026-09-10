@@ -1,5 +1,5 @@
 (function(){
-  // ⚙️ УПРАВЛЕНИЕ ЗАПУСКОМ: true = заглушка (оплаты не проходят), false = рабочий режим
+  // ⚙️ УПРАВЛЕНИЕ ЗАПУСКОМ: true = заглушка (оплаты НЕ проходят), false = рабочий режим
   var LAUNCH_MODE = true;
   var LAUNCH_MESSAGE = 'Запуск сайта совсем скоро! 🚀 Оплата откроется в ближайшие дни. А пока можешь потестить интерфейс — нажми кнопку и увидишь, как будет работать.';
 
@@ -13,6 +13,21 @@
   else if(path.indexOf('motion')!==-1)key='motion';
   else if(path.indexOf('lipsync')!==-1)key='lipsync';
   else if(path==='/')key='home';
+
+  // 🔒 ЗАГЛУШКА ОПЛАТ: перехват на самом раннем уровне — раньше, чем кнопка успеет создать платёж
+  if(LAUNCH_MODE){
+    document.addEventListener('click', function(e){
+      var b=e.target&&e.target.closest?e.target.closest('button'):null;
+      if(!b)return;
+      var t=b.textContent||'';
+      if(/Оплатить|Создать видео|Сгенерировать|Оживить картинку|Запустить генерацию/.test(t)){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        alert(LAUNCH_MESSAGE);
+      }
+    }, true);
+  }
 
   var DATA={
     create:{t:'Создать видео',s:['Опиши видео словами. Кнопка «✨ Улучшить описание» превратит твой черновик в кинематографичный промпт.','Выбери формат кадра (📐) и длительность (от 5 до 30 сек).','Хочешь — прикрепи изображение (📎): питомец или персонаж станет героем сцены.','Отметь галочку согласия и нажми «Создать видео».','Оплати — ⚡ Seedance 2.5 создаст ролик за 1–5 минут.']},
@@ -134,21 +149,12 @@
     payBtn.parentNode.insertBefore(trust,payBtn);
   }
 
-  // 🔒 ЗАГЛУШКА: при LAUNCH_MODE=true перехватываем клик по кнопке оплаты
-  if(LAUNCH_MODE && payBtn){
-    payBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      alert(LAUNCH_MESSAGE);
-    }, true);
-    // Добавляем визуальный бейдж над кнопкой
-    if(!document.getElementById('launchBadge')){
-      var badge=document.createElement('div');
-      badge.id='launchBadge';
-      badge.className='launchBadge';
-      badge.innerHTML='🚧 <b>Сайт готовится к запуску</b><br>Оплата откроется в ближайшие дни. Пока можешь потестить интерфейс — всё работает, кроме оплаты.';
-      payBtn.parentNode.insertBefore(badge, payBtn);
-    }
+  if(LAUNCH_MODE && payBtn && !document.getElementById('launchBadge')){
+    var badge=document.createElement('div');
+    badge.id='launchBadge';
+    badge.className='launchBadge';
+    badge.innerHTML='🚧 <b>Сайт готовится к запуску</b><br>Оплата откроется в ближайшие дни. Пока можешь потестить интерфейс — всё работает, кроме оплаты.';
+    payBtn.parentNode.insertBefore(badge, payBtn);
   }
 
   if(key==='cartoon'||key==='avatar'||key==='motion'||key==='lipsync'){
