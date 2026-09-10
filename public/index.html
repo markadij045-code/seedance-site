@@ -13,10 +13,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
 .hero{position:relative;width:100%;height:100vh;min-height:700px;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1}
-.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);z-index:2}
+.hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:brightness(0.65)}
+.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.85) 100%);z-index:2}
 nav{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;z-index:100;background:rgba(0,0,0,0.1);backdrop-filter:blur(20px);transition:all 0.3s ease}
-nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
+nav.scrolled{background:rgba(0,0,0,0.85);padding:16px 48px}
 .logo{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
 .logo span{color:#A3E635}
 .links{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
@@ -40,19 +40,47 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .hero-content p{font-size:clamp(1.1rem, 2vw, 1.4rem);color:rgba(255,255,255,0.85);line-height:1.5;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto;font-weight:400}
 .hero-cta{display:inline-block;padding:18px 48px;background:#fff;color:#000;font-size:1.1rem;font-weight:600;border-radius:999px;text-decoration:none;transition:all 0.3s ease;border:none}
 .hero-cta:hover{transform:scale(1.05);background:#A3E635}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:3;color:rgba(255,255,255,0.6);font-size:0.85rem;text-align:center;animation:bounce 2.2s infinite}
+.hero-scroll span{display:block;font-size:1.4rem;margin-top:4px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-10px)}}
 .main-content{width:100%;max-width:1200px;margin:0 auto;padding:120px 48px}
 .section{margin-bottom:120px;opacity:0;transform:translateY(30px);transition:all 0.8s ease}
 .section.visible{opacity:1;transform:translateY(0)}
 .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:48px;margin-bottom:32px;backdrop-filter:blur(10px)}
 .card h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:2rem;font-weight:700;margin-bottom:32px;letter-spacing:-0.02em}
-.how3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-.step{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;text-align:center}
+.card .lead{color:rgba(255,255,255,0.65);font-size:1.05rem;line-height:1.6;margin:-20px 0 32px;max-width:640px}
+
+.how4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.step{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 20px;text-align:center;position:relative;transition:all 0.3s}
+.step:hover{border-color:rgba(163,230,53,0.4);transform:translateY(-4px)}
 .step .num{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#A3E635;color:#000;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:14px}
-.step h3{font-size:1.1rem;margin-bottom:8px}
-.step p{color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.6}
-@media(max-width:768px){.how3{grid-template-columns:1fr}}
-.shop{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.step .em{font-size:1.5rem;display:block;margin-bottom:6px}
+.step h3{font-size:1.05rem;margin-bottom:8px}
+.step p{color:rgba(255,255,255,0.65);font-size:0.88rem;line-height:1.6}
+.step.free{background:linear-gradient(135deg, rgba(163,230,53,0.08), rgba(59,130,246,0.08));border-color:rgba(163,230,53,0.3)}
+@media(max-width:900px){.how4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.how4{grid-template-columns:1fr}}
+
+.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+.trust-item{background:rgba(163,230,53,0.05);border:1px solid rgba(163,230,53,0.2);border-radius:14px;padding:20px;text-align:center}
+.trust-item .chk{color:#A3E635;font-size:1.6rem;display:block;margin-bottom:8px}
+.trust-item h4{font-size:0.95rem;margin-bottom:6px}
+.trust-item p{color:rgba(255,255,255,0.55);font-size:0.82rem;line-height:1.5}
+@media(max-width:900px){.trust-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.trust-grid{grid-template-columns:1fr}}
+
+.ideas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.idea{display:block;padding:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;text-decoration:none;color:#fff;transition:all 0.25s}
+.idea:hover{border-color:#A3E635;background:rgba(163,230,53,0.05);transform:translateY(-3px)}
+.idea .em{font-size:1.5rem;display:block;margin-bottom:8px}
+.idea h4{font-size:0.95rem;margin-bottom:6px;color:#fff}
+.idea p{color:rgba(255,255,255,0.55);font-size:0.82rem;line-height:1.5}
+.idea .tag{display:inline-block;margin-top:8px;font-size:0.7rem;color:#A3E635;font-weight:600}
+@media(max-width:900px){.ideas{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.ideas{grid-template-columns:1fr}}
+
+.shop{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .shop-card{position:relative;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;text-decoration:none;color:#fff;transition:all 0.25s ease;display:block}
 .shop-card:hover{border-color:#A3E635;transform:translateY(-4px);box-shadow:0 12px 32px rgba(163,230,53,0.12)}
 .shop-card .em{font-size:2rem;display:block;margin-bottom:10px}
@@ -63,18 +91,12 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 .shop-card .seed{display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:8px}
 @media(max-width:900px){.shop{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.shop{grid-template-columns:1fr}}
+
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .grid-item{position:relative;border-radius:16px;overflow:hidden;background:#000}
 .grid video{width:100%;display:block;cursor:pointer}
 .grid p{color:rgba(255,255,255,0.6);font-size:0.9rem;text-align:center;margin-top:12px}
-@media(max-width:768px){
-  .grid{grid-template-columns:1fr}
-  nav{padding:16px 24px}
-  .links{display:none}
-  .burger{display:block}
-  .main-content{padding:80px 24px}
-  .card{padding:32px 24px}
-}
+
 .price{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.08);gap:16px}
 .price:last-child{border-bottom:none}
 .price span{color:rgba(255,255,255,0.8);font-size:1rem}
@@ -86,6 +108,7 @@ nav.scrolled{background:rgba(0,0,0,0.8);padding:16px 48px}
 footer{padding:48px 24px;color:rgba(255,255,255,0.4);font-size:0.85rem;text-align:center;line-height:1.7;border-top:1px solid rgba(255,255,255,0.08)}
 footer a{color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.2s ease}
 footer a:hover{color:#A3E635}
+
 .welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
 .welcome-modal.open{display:flex}
 .welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
@@ -95,6 +118,17 @@ footer a:hover{color:#A3E635}
 .welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
 .welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
 .welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
+
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  .links{display:none}
+  .burger{display:block}
+  .main-content{padding:80px 24px}
+  .card{padding:32px 24px}
+  .card h2{font-size:1.6rem}
+  .hero{min-height:600px}
+  .section{margin-bottom:80px}
+}
 </style>
 </head>
 <body>
@@ -102,22 +136,23 @@ footer a:hover{color:#A3E635}
 <div class="welcome-modal" id="welcomeModal">
   <div class="welcome-box">
     <button class="welcome-close" onclick="closeWelcome()">✕</button>
-    <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
-    <p>Нейросеть снимает для тебя кино.</p>
-    <div class="gift">🎁 Загрузка...</div>
-    <button onclick="closeWelcome()">Начать создавать</button>
+    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
+    <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
+    <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
+    <button onclick="closeWelcome()">Поехали?</button>
   </div>
 </div>
 
 <section class="hero">
-  <video class="hero-video" autoplay muted loop playsinline>
-    <source src="/cat-knight-dance.mp4.mp4" type="video/mp4">
+  <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="/cat-knight-dance.jpg">
+    <source src="/cat-knight-dance.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
   <nav id="navbar">
     <div class="logo"><span>▶</span> SeedGen</div>
     <div class="links">
       <a href="#services">Все услуги</a>
+      <a href="#ideas">Готовые идеи</a>
       <a href="#examples">Примеры</a>
       <a href="#price">Цены</a>
       <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
@@ -133,6 +168,7 @@ footer a:hover{color:#A3E635}
     <a href="/avatar.html">🗣 Аватар</a>
     <a href="/motion.html">🎮 Моушен</a>
     <a href="/lipsync.html">💬 Липсинк</a>
+    <a href="#ideas" onclick="toggleSidebar()">💡 Готовые идеи</a>
     <a href="#examples" onclick="toggleSidebar()">🖼 Примеры</a>
     <a href="#price" onclick="toggleSidebar()">💰 Цены</a>
   </div>
@@ -141,6 +177,7 @@ footer a:hover{color:#A3E635}
     <p>Опиши словами — получи видео. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
     <a href="#services" class="hero-cta">Поехали?</a>
   </div>
+  <div class="hero-scroll">листай<span>↓</span></div>
 </section>
 
 <div class="main-content">
@@ -148,10 +185,25 @@ footer a:hover{color:#A3E635}
 <div class="section">
   <div class="card">
     <h2>Как это работает</h2>
-    <div class="how3">
-      <div class="step"><span class="num">1</span><h3>Опиши или загрузи</h3><p>Текст, фото или видео — смотря какую услугу выбрал. Подсказки встроены в каждую страницу.</p></div>
-      <div class="step"><span class="num">2</span><h3>Оплати удобно</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек официальный, от самозанятой. Без подписок.</p></div>
-      <div class="step"><span class="num">3</span><h3>Получи видео</h3><p>Через 1–5 минут видео появится на странице. Смотри там же и скачивай кнопкой.</p></div>
+    <p class="lead">Четыре простых шага от идеи до готового видео. Интерфейс можно потрогать заранее — ничего не сломается.</p>
+    <div class="how4">
+      <div class="step free"><span class="num">1</span><span class="em">👀</span><h3>Попробуй интерфейс</h3><p>Открой любую услугу, потяни бегунок, почитай подсказки. Без оплаты.</p></div>
+      <div class="step"><span class="num">2</span><span class="em">✍️</span><h3>Опиши или загрузи</h3><p>Текст, фото или видео — смотря какую услугу выбрал. AI улучшит промпт.</p></div>
+      <div class="step"><span class="num">3</span><span class="em">💳</span><h3>Оплати удобно</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек официальный, без подписок.</p></div>
+      <div class="step"><span class="num">4</span><span class="em">🎬</span><h3>Получи видео</h3><p>Через 1–5 минут ролик появится на странице. Скачивай и делись.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="card">
+    <h2>🛡 Гарантии и безопасность</h2>
+    <p class="lead">Работаем официально. Всё прозрачно, всё задокументировано.</p>
+    <div class="trust-grid">
+      <div class="trust-item"><span class="chk">✓</span><h4>Самозанятая</h4><p>Официальный статус, ИНН 420900493994</p></div>
+      <div class="trust-item"><span class="chk">✓</span><h4>Чеки по 54-ФЗ</h4><p>Приходят на почту сразу после оплаты</p></div>
+      <div class="trust-item"><span class="chk">✓</span><h4>Возврат при сбое</h4><p>Если нейросеть подвела — вернём деньги или перегенерируем</p></div>
+      <div class="trust-item"><span class="chk">✓</span><h4>Хранение 7 дней</h4><p>Скачай результат в течение недели без потерь</p></div>
     </div>
   </div>
 </div>
@@ -172,15 +224,60 @@ footer a:hover{color:#A3E635}
   </div>
 </div>
 
+<div class="section" id="ideas">
+  <div class="card">
+    <h2>💡 Готовые идеи — жми и начинай</h2>
+    <p class="lead">Не знаешь, что сгенерировать? Вот шесть проверенных идей. Клик — и промпт подставится автоматически.</p>
+    <div class="ideas">
+      <a class="idea" href="/gen.html?prompt=Кот-рыцарь%20в%20сияющих%20доспехах%20скачет%20на%20единороге%20через%20радужное%20облако%2C%20эпичный%20кинематографичный%20стиль">
+        <span class="em">🐱⚔️</span>
+        <h4>Кот-рыцарь на единороге</h4>
+        <p>Эпичная сцена для соцсетей или поздравления</p>
+        <span class="tag">→ Создать видео</span>
+      </a>
+      <a class="idea" href="/motion.html">
+        <span class="em">💃</span>
+        <h4>Танцующий питомец</h4>
+        <p>Загрузи фото кота и видео с танцем — он повторит</p>
+        <span class="tag">→ Моушен контроль</span>
+      </a>
+      <a class="idea" href="/cartoon.html">
+        <span class="em">🎭</span>
+        <h4>Я в стиле Pixar</h4>
+        <p>Своё фото превратится в мультяшный арт</p>
+        <span class="tag">→ Мультфильм</span>
+      </a>
+      <a class="idea" href="/lipsync.html">
+        <span class="em">🗣</span>
+        <h4>Заставь сказать мем</h4>
+        <p>Видео с человеком + своя озвучка = вирусный мем</p>
+        <span class="tag">→ Липсинк</span>
+      </a>
+      <a class="idea" href="/gen.html?prompt=Закат%20над%20Токио%2C%20летящий%20дрон%20снимает%20небоскрёбы%20с%20неоновой%20подсветкой%2C%20кинематографичный%20стиль">
+        <span class="em">🌆</span>
+        <h4>Токио на закате</h4>
+        <p>Кинематографичный пролёт дрона над городом</p>
+        <span class="tag">→ Создать видео</span>
+      </a>
+      <a class="idea" href="/avatar.html">
+        <span class="em">🗣</span>
+        <h4>Говорящая открытка</h4>
+        <p>Фото близкого + твоё поздравление голосом</p>
+        <span class="tag">→ Говорящий аватар</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <div class="section" id="examples">
   <div class="card">
     <h2>Примеры работ</h2>
     <p class="steps" style="text-align:center;margin-bottom:32px">Все эти видео сгенерированы нейросетью из одной фразы</p>
     <div class="grid">
-      <div class="grid-item"><video src="/cat-city.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
-      <div class="grid-item"><video src="/cat-space.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
-      <div class="grid-item"><video src="/cat-dance.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
-      <div class="grid-item"><video src="/cat-knight.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-city.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-space.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-dance.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-knight.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
     </div>
     <p class="steps" style="text-align:center;margin-top:16px"><a href="/examples.html" style="color:#A3E635">→ Все примеры в галерее</a></p>
   </div>
@@ -194,10 +291,6 @@ footer a:hover{color:#A3E635}
     <div class="price"><span>🗣 Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
     <div class="price"><span>🎮 Моушен контроль (фото + видео с движением, до 30 сек)</span><b>от 199 ₽</b></div>
     <div class="price"><span>💬 Липсинк / дубляж (видео + твоя озвучка, до 30 сек)</span><b>от 199 ₽</b></div>
-    <h2 style="margin-top:48px">Как получить заказ</h2>
-    <p class="steps">1. Опиши видео или загрузи фото и оплати заказ.<br>
-    2. Нейросеть сгенерирует видео в течение 1–5 минут.<br>
-    3. Готовое видео появится на странице. Скачай его в течение 7 дней — потом оно удалится с сервера.</p>
   </div>
 </div>
 
@@ -234,6 +327,21 @@ var observer=new IntersectionObserver(function(entries){
   });
 },{threshold:0.1});
 document.querySelectorAll('.section').forEach(function(s){observer.observe(s);});
+
+// Подстановка промптов из "Готовых идей" в localStorage для gen.html
+document.querySelectorAll('.idea[href^="/gen.html?prompt="]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var match = a.getAttribute('href').match(/[?&]prompt=([^&]+)/);
+    if(match){
+      try{
+        var prompt = decodeURIComponent(match[1]);
+        var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
+        draft.prompt = prompt;
+        localStorage.setItem('seedgen_gen_draft', JSON.stringify(draft));
+      }catch(e){}
+    }
+  });
+});
 </script>
 <script src="/help-widget.js"></script>
 </body>
