@@ -70,15 +70,18 @@ nav.scrolled{background:rgba(0,0,0,0.85);padding:16px 48px}
 @media(max-width:900px){.trust-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.trust-grid{grid-template-columns:1fr}}
 
-.ideas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.idea{display:block;padding:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;text-decoration:none;color:#fff;transition:all 0.25s}
-.idea:hover{border-color:#A3E635;background:rgba(163,230,53,0.05);transform:translateY(-3px)}
-.idea .em{font-size:1.5rem;display:block;margin-bottom:8px}
-.idea h4{font-size:0.95rem;margin-bottom:6px;color:#fff}
-.idea p{color:rgba(255,255,255,0.55);font-size:0.82rem;line-height:1.5}
-.idea .tag{display:inline-block;margin-top:8px;font-size:0.7rem;color:#A3E635;font-weight:600}
-@media(max-width:900px){.ideas{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.ideas{grid-template-columns:1fr}}
+.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.ai-pair{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.ai-pair .before{color:rgba(255,255,255,0.55);font-size:0.9rem;line-height:1.5;font-style:italic}
+.ai-pair .arrow{color:#A3E635;font-size:1.1rem}
+.ai-pair .after{color:#e5e7eb;font-size:0.9rem;line-height:1.6}
+.ai-pair .lbl{font-size:0.7rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#6b7a58;margin-bottom:4px;display:block}
+.ai-pair .lbl.lime{color:#A3E635}
+.ai-cta{text-align:center}
+.ai-cta a{display:inline-block;padding:16px 40px;background:#A3E635;color:#000;font-size:1rem;font-weight:700;border-radius:999px;text-decoration:none;transition:all 0.3s ease}
+.ai-cta a:hover{transform:scale(1.05)}
+.ai-note{color:rgba(255,255,255,0.5);font-size:0.85rem;text-align:center;margin-top:12px}
+@media(max-width:900px){.ai-grid{grid-template-columns:1fr}}
 
 .shop{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .shop-card{position:relative;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;text-decoration:none;color:#fff;transition:all 0.25s ease;display:block}
@@ -144,7 +147,7 @@ footer a:hover{color:#A3E635}
 </div>
 
 <section class="hero">
-  <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="/cat-knight-dance.jpg">
+  <video class="hero-video" autoplay muted loop playsinline preload="metadata">
     <source src="/cat-knight-dance.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
@@ -152,7 +155,7 @@ footer a:hover{color:#A3E635}
     <div class="logo"><span>▶</span> SeedGen</div>
     <div class="links">
       <a href="#services">Все услуги</a>
-      <a href="#ideas">Готовые идеи</a>
+      <a href="#ai">AI-помощник</a>
       <a href="#examples">Примеры</a>
       <a href="#price">Цены</a>
       <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
@@ -168,7 +171,7 @@ footer a:hover{color:#A3E635}
     <a href="/avatar.html">🗣 Аватар</a>
     <a href="/motion.html">🎮 Моушен</a>
     <a href="/lipsync.html">💬 Липсинк</a>
-    <a href="#ideas" onclick="toggleSidebar()">💡 Готовые идеи</a>
+    <a href="#ai" onclick="toggleSidebar()">✨ AI-помощник</a>
     <a href="#examples" onclick="toggleSidebar()">🖼 Примеры</a>
     <a href="#price" onclick="toggleSidebar()">💰 Цены</a>
   </div>
@@ -224,48 +227,29 @@ footer a:hover{color:#A3E635}
   </div>
 </div>
 
-<div class="section" id="ideas">
+<div class="section" id="ai">
   <div class="card">
-    <h2>💡 Готовые идеи — жми и начинай</h2>
-    <p class="lead">Не знаешь, что сгенерировать? Вот шесть проверенных идей. Клик — и промпт подставится автоматически.</p>
-    <div class="ideas">
-      <a class="idea" href="/gen.html?prompt=Кот-рыцарь%20в%20сияющих%20доспехах%20скачет%20на%20единороге%20через%20радужное%20облако%2C%20эпичный%20кинематографичный%20стиль">
-        <span class="em">🐱⚔️</span>
-        <h4>Кот-рыцарь на единороге</h4>
-        <p>Эпичная сцена для соцсетей или поздравления</p>
-        <span class="tag">→ Создать видео</span>
-      </a>
-      <a class="idea" href="/motion.html">
-        <span class="em">💃</span>
-        <h4>Танцующий питомец</h4>
-        <p>Загрузи фото кота и видео с танцем — он повторит</p>
-        <span class="tag">→ Моушен контроль</span>
-      </a>
-      <a class="idea" href="/cartoon.html">
-        <span class="em">🎭</span>
-        <h4>Я в стиле Pixar</h4>
-        <p>Своё фото превратится в мультяшный арт</p>
-        <span class="tag">→ Мультфильм</span>
-      </a>
-      <a class="idea" href="/lipsync.html">
-        <span class="em">🗣</span>
-        <h4>Заставь сказать мем</h4>
-        <p>Видео с человеком + своя озвучка = вирусный мем</p>
-        <span class="tag">→ Липсинк</span>
-      </a>
-      <a class="idea" href="/gen.html?prompt=Закат%20над%20Токио%2C%20летящий%20дрон%20снимает%20небоскрёбы%20с%20неоновой%20подсветкой%2C%20кинематографичный%20стиль">
-        <span class="em">🌆</span>
-        <h4>Токио на закате</h4>
-        <p>Кинематографичный пролёт дрона над городом</p>
-        <span class="tag">→ Создать видео</span>
-      </a>
-      <a class="idea" href="/avatar.html">
-        <span class="em">🗣</span>
-        <h4>Говорящая открытка</h4>
-        <p>Фото близкого + твоё поздравление голосом</p>
-        <span class="tag">→ Говорящий аватар</span>
-      </a>
+    <h2>✨ AI-помощник встроен бесплатно</h2>
+    <p class="lead">Не знаешь, как красиво описать сцену? Напиши пару слов своими словами — кнопка «Улучшить описание» превратит их в кинематографичный промпт. Вот живые примеры:</p>
+    <div class="ai-grid">
+      <div class="ai-pair">
+        <div><span class="lbl">Ты написал</span><div class="before">«кот в скафандре»</div></div>
+        <div class="arrow">↓</div>
+        <div><span class="lbl lime">AI сделал</span><div class="after">«Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре, кинематографичное освещение»</div></div>
+      </div>
+      <div class="ai-pair">
+        <div><span class="lbl">Ты написал</span><div class="before">«собака бежит по пляжу»</div></div>
+        <div class="arrow">↓</div>
+        <div><span class="lbl lime">AI сделал</span><div class="after">«Радостный золотистый ретривер бежит по утреннему пляжу в замедленной съёмке, брызги песка сверкают на солнце, камера снята с нижней точки»</div></div>
+      </div>
+      <div class="ai-pair">
+        <div><span class="lbl">Ты написал</span><div class="before">«город ночью»</div></div>
+        <div class="arrow">↓</div>
+        <div><span class="lbl lime">AI сделал</span><div class="after">«Ночной мегаполис после дождя: неоновые вывески отражаются в мокром асфальте, камера плавно спускается между небоскрёбами, стиль киберпанк»</div></div>
+      </div>
     </div>
+    <div class="ai-cta"><a href="/gen.html">Попробовать помощника — бесплатно</a></div>
+    <div class="ai-note">5 бесплатных улучшений за визит, без оплаты и регистрации</div>
   </div>
 </div>
 
@@ -327,21 +311,6 @@ var observer=new IntersectionObserver(function(entries){
   });
 },{threshold:0.1});
 document.querySelectorAll('.section').forEach(function(s){observer.observe(s);});
-
-// Подстановка промптов из "Готовых идей" в localStorage для gen.html
-document.querySelectorAll('.idea[href^="/gen.html?prompt="]').forEach(function(a){
-  a.addEventListener('click', function(e){
-    var match = a.getAttribute('href').match(/[?&]prompt=([^&]+)/);
-    if(match){
-      try{
-        var prompt = decodeURIComponent(match[1]);
-        var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
-        draft.prompt = prompt;
-        localStorage.setItem('seedgen_gen_draft', JSON.stringify(draft));
-      }catch(e){}
-    }
-  });
-});
 </script>
 <script src="/help-widget.js"></script>
 </body>
