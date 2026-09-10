@@ -1,4 +1,8 @@
 (function(){
+  // ⚙️ УПРАВЛЕНИЕ ЗАПУСКОМ: true = заглушка (оплаты не проходят), false = рабочий режим
+  var LAUNCH_MODE = true;
+  var LAUNCH_MESSAGE = 'Запуск сайта совсем скоро! 🚀 Оплата откроется в ближайшие дни. А пока можешь потестить интерфейс — нажми кнопку и увидишь, как будет работать.';
+
   var MAXURL='https://max.ru/u/f9LHodD0cOK8_N1RfXgxLPzGiumem7bZA3oTYU5i0BAV5PK6dj7huMZRGGQ';
   var path=location.pathname;
   var key='gen';
@@ -56,7 +60,8 @@
   +'#hwBox .faq b{color:#d1d5db}'
   +'#hwClose{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer}'
   +'#hwBox a{color:#A3E635}'
-  +'#hwInline{display:block;width:100%;margin-top:10px;padding:10px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}';
+  +'#hwInline{display:block;width:100%;margin-top:10px;padding:10px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}'
+  +'.launchBadge{margin:10px 0 0;padding:10px 14px;background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.4);border-radius:12px;color:#ffb066;font-size:.9rem;text-align:center;line-height:1.5}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -127,6 +132,23 @@
     trust.id='trustBlock';
     trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a>';
     payBtn.parentNode.insertBefore(trust,payBtn);
+  }
+
+  // 🔒 ЗАГЛУШКА: при LAUNCH_MODE=true перехватываем клик по кнопке оплаты
+  if(LAUNCH_MODE && payBtn){
+    payBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      alert(LAUNCH_MESSAGE);
+    }, true);
+    // Добавляем визуальный бейдж над кнопкой
+    if(!document.getElementById('launchBadge')){
+      var badge=document.createElement('div');
+      badge.id='launchBadge';
+      badge.className='launchBadge';
+      badge.innerHTML='🚧 <b>Сайт готовится к запуску</b><br>Оплата откроется в ближайшие дни. Пока можешь потестить интерфейс — всё работает, кроме оплаты.';
+      payBtn.parentNode.insertBefore(badge, payBtn);
+    }
   }
 
   if(key==='cartoon'||key==='avatar'||key==='motion'||key==='lipsync'){
@@ -211,10 +233,4 @@
       payBtn.parentNode.insertBefore(wrap,payBtn);
     }
   });
-  document.addEventListener('click',function(e){
-    var b=e.target.closest?e.target.closest('button'):null;
-    if(!b||b!==payBtn)return;
-    var c=document.getElementById('agree');
-    if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
-  },true);
 })();
