@@ -63,6 +63,17 @@ footer a{color:#9ca3af;text-decoration:none}
 .welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
 .welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
 .welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
+.slider-wrap{background:#0b0e07;border:1px solid #262d16;border-radius:14px;padding:18px 20px;margin-top:8px}
+.slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.slider-val{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.slider-val .unit{font-size:1rem;color:#9ca3af;font-weight:400;margin-left:4px}
+.slider-price{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#A3E635}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;background:#262d16;border-radius:999px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635;transition:transform .15s ease}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635}
+.slider-ticks{display:flex;justify-content:space-between;color:#5b6152;font-size:.75rem;margin-top:6px}
+.slider-hint{color:#5b6152;font-size:.8rem;text-align:center;margin-top:10px}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
@@ -125,13 +136,16 @@ footer a{color:#9ca3af;text-decoration:none}
 </div>
 
 <label style="margin-top:20px">Длительность видео</label>
-<div class="modes" id="durModes">
-  <div class="mode" data-sec="5" onclick="setSec(this,5)">5 сек<br><b>299 ₽</b></div>
-  <div class="mode" data-sec="10" onclick="setSec(this,10)">10 сек<br><b>449 ₽</b></div>
-  <div class="mode" data-sec="15" onclick="setSec(this,15)">15 сек<br><b>599 ₽</b></div>
-  <div class="mode" data-sec="20" onclick="setSec(this,20)">20 сек<br><b>749 ₽</b></div>
-  <div class="mode" data-sec="25" onclick="setSec(this,25)">25 сек<br><b>899 ₽</b></div>
-  <div class="mode" data-sec="30" onclick="setSec(this,30)">30 сек<br><b>1049 ₽</b></div>
+<div class="slider-wrap">
+  <div class="slider-row">
+    <div class="slider-val"><span id="secVal">5</span><span class="unit">сек</span></div>
+    <div class="slider-price"><span id="priceVal">299</span> ₽</div>
+  </div>
+  <input type="range" id="slider" min="5" max="30" step="5" value="5">
+  <div class="slider-ticks">
+    <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
+  </div>
+  <div class="slider-hint">Тяни бегунок — цена пересчитывается</div>
 </div>
 
 <button id="payBtn">Оплатить мультфильм — 299 ₽</button>
@@ -182,17 +196,15 @@ var fileInput=document.getElementById('file');
 var preview=document.getElementById('preview');
 var payBtn=document.getElementById('payBtn');
 var stepsCard=document.getElementById('stepsCard');
+var slider=document.getElementById('slider');
+var secVal=document.getElementById('secVal');
+var priceVal=document.getElementById('priceVal');
 var imageData=null;
 var toonJpeg=null;
 var activePaymentId=null;
 
 function getPrompt(){return document.getElementById('actPrompt').value.trim();}
 
-function markSec(s){
-  document.querySelectorAll('#durModes .mode').forEach(function(x){
-    x.classList.toggle('active',x.getAttribute('data-sec')===String(s));
-  });
-}
 function markAspect(a){
   document.querySelectorAll('#aspectModes .mode').forEach(function(x){
     x.classList.toggle('active',x.textContent.trim()===a);
@@ -205,12 +217,18 @@ function setAspect(el,a){
   saveDraft();
 }
 
-function setSec(el,s){
-  seconds=s;
-  markSec(s);
-  payBtn.textContent='Оплатить мультфильм — '+PRICES[s]+' ₽';
-  saveDraft();
+function updatePriceDisplay(){
+  var p=PRICES[seconds]||299;
+  secVal.textContent=seconds;
+  priceVal.textContent=p;
+  payBtn.textContent='Оплатить мультфильм — '+p+' ₽';
 }
+
+slider.addEventListener('input',function(){
+  seconds=parseInt(slider.value,10);
+  updatePriceDisplay();
+  saveDraft();
+});
 
 function shrink(dataUrl,cb){
   var img=new Image();
@@ -256,8 +274,7 @@ try{
     if(s.aspect){aspect=s.aspect;markAspect(aspect);}
     if(s.seconds&&PRICES[s.seconds]){
       seconds=s.seconds;
-      markSec(seconds);
-      payBtn.textContent='Оплатить мультфильм — '+PRICES[seconds]+' ₽';
+      slider.value=seconds;
     }
     if(s.image){
       preview.src='data:image/jpeg;base64,'+s.image;
@@ -292,6 +309,7 @@ try{
     }
   }
 }catch(e){}
+updatePriceDisplay();
 
 fileInput.addEventListener('change',function(){
   var f=fileInput.files[0];
