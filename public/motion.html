@@ -78,6 +78,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 
 .notice{margin:14px 0;padding:14px 16px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:12px;color:#93c5fd;font-size:.9rem;line-height:1.6}
 .notice b{color:#bfdbfe}
+.draftBadge{display:inline-block;margin:8px 0;padding:6px 12px;background:rgba(163,230,53,0.1);border:1px solid rgba(163,230,53,0.3);border-radius:999px;color:#A3E635;font-size:.8rem;font-weight:600}
 </style>
 </head>
 <body>
@@ -126,6 +127,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
   <img id="preview"/>
   <div class="prog" id="photoProg"><i></i></div>
   <button class="del" id="photoDel" type="button" style="display:none">✖ Удалить фото</button>
+  <div id="photoDraftBadge"></div>
 </div>
 
 <div class="card">
@@ -134,6 +136,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
   <div class="fname" id="vidName"></div>
   <div class="prog" id="vidProg"><i></i></div>
   <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
+  <div id="videoDraftBadge"></div>
 </div>
 
 <div class="card">
@@ -241,8 +244,37 @@ function probeVideo(f, maxSec, cb){
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_motion_draft', JSON.stringify({ image: imageData, seconds: seconds, video: videoData }));
+    localStorage.setItem('seedgen_motion_draft', JSON.stringify({
+      image: imageData,
+      seconds: seconds,
+      video: videoData,
+      savedAt: Date.now()
+    }));
   }catch(e){}
+}
+
+function clearDraft(){
+  try{ localStorage.removeItem('seedgen_motion_draft'); }catch(e){}
+}
+
+function showDraftBadge(which, text){
+  var id = which + 'DraftBadge';
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = '<span class="draftBadge">💾 ' + text + '</span>';
+}
+
+function hideDraftBadge(which){
+  var id = which + 'DraftBadge';
+  var el = document.getElementById(id);
+  if(el) el.innerHTML = '';
+}
+
+function checkUrlAlive(url, cb){
+  if(!url){ cb(false); return; }
+  fetch(url, {method: 'HEAD', mode: 'no-cors'})
+    .then(function(){ cb(true); })
+    .catch(function(){ cb(false); });
 }
 
 slider.addEventListener('input', function(){
@@ -259,11 +291,21 @@ try{
       document.getElementById('preview').src = 'data:image/jpeg;base64,' + s.image;
       document.getElementById('preview').style.display = 'block';
       document.getElementById('photoDel').style.display = 'block';
+      showDraftBadge('photo', 'Черновик сохранён');
     }
     if(s.video){
-      videoData = s.video;
-      document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
-      document.getElementById('vidDel').style.display = 'block';
+      checkUrlAlive(s.video, function(alive){
+        if(alive){
+          videoData = s.video;
+          document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
+          document.getElementById('vidDel').style.display = 'block';
+          showDraftBadge('video', 'Черновик сохранён');
+        }else{
+          document.getElementById('vidName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик видео устарел — нужно прикрепить заново</span>';
+          videoData = null;
+          hideDraftBadge('video');
+        }
+      });
     }
     if(s.seconds && s.seconds >= 5 && s.seconds <= 30){
       seconds = s.seconds;
@@ -303,6 +345,7 @@ document.getElementById('photo').onchange = function(e){
       setTimeout(function(){ prog.style.display = 'none'; }, 600);
       setStatus('');
       saveDraft();
+      showDraftBadge('photo', 'Черновик сохранён');
     };
     img.src = reader.result;
   };
@@ -311,7 +354,9 @@ document.getElementById('photo').onchange = function(e){
 document.getElementById('photoDel').onclick = function(){
   imageData = null; this.style.display = 'none';
   document.getElementById('preview').style.display = 'none';
-  document.getElementById('photo').value = ''; saveDraft();
+  document.getElementById('photo').value = '';
+  hideDraftBadge('photo');
+  saveDraft();
 };
 
 document.getElementById('vid').onchange = function(e){
@@ -349,6 +394,7 @@ function uploadVideo(f){
     setTimeout(function(){ prog.style.display = 'none'; }, 600);
     setStatus('');
     saveDraft();
+    showDraftBadge('video', 'Черновик сохранён');
   }).catch(function(err){
     clearTimeout(timeoutId);
     prog.style.display = 'none';
@@ -363,7 +409,9 @@ function uploadVideo(f){
 document.getElementById('vidDel').onclick = function(){
   videoData = null; this.style.display = 'none';
   document.getElementById('vidName').textContent = '';
-  document.getElementById('vid').value = ''; saveDraft();
+  document.getElementById('vid').value = '';
+  hideDraftBadge('video');
+  saveDraft();
 };
 
 function poll(taskId){
@@ -377,6 +425,7 @@ function poll(taskId){
           document.getElementById('result').style.display = 'block';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
           btn.disabled = false;
+          clearDraft();
         }else if(d.status === 'failed'){
           clearInterval(timer);
           setStatus('Ошибка: ' + (d.error || 'попробуй другие фото и видео'));
@@ -403,7 +452,7 @@ function callGenerate(pid){
 
 btn.addEventListener('click', function(){
   if(!imageData){ alert('Сначала загрузи фото'); return; }
-  if(!videoData){ alert('Сначала загрузи видео'); return; }
+  if(!videoData){ alert('Сначала загрузи видео (или обнови черновик — возможно, файл устарел)'); return; }
   btn.disabled = true;
   if(paidReturn){
     setStatus('Запускаем генерацию...');
