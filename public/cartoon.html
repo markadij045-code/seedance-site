@@ -121,6 +121,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 </div>
 
 <h1>🎭 Мультфильм из фото</h1>
+<div style="text-align:center"><span style="display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:.8rem;font-weight:700;padding:4px 12px;border-radius:999px;margin:0 0 12px">⚡ Seedance 2.5 · оживление на шаге 2</span></div>
 <p class="sub">Шаг 1 — превратим фото в мультяшный арт в стиле Pixar. Шаг 2 — оживим его в видео по твоему сценарию. Одна оплата — оба шага.</p>
 <div class="card">
 <label>Выбери фото с человеком (JPG/PNG)</label>
@@ -156,7 +157,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
     <div class="slider-val"><span id="secVal">5</span><span class="unit">сек</span></div>
     <div class="slider-price"><span id="priceVal">299</span> ₽</div>
   </div>
-  <input type="range" id="slider" min="5" max="30" step="5" value="5">
+  <input type="range" id="slider" min="5" max="30" step="1" value="5">
   <div class="slider-ticks">
     <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
   </div>
@@ -204,7 +205,6 @@ function toggleSidebar(){
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
-var PRICES={5:299,10:449,15:599,20:749,25:899,30:1049};
 var SURCHARGE={'480p':0,'720p':200,'1080p':300};
 var seconds=5;
 var aspect='16:9';
@@ -244,7 +244,7 @@ function setQuality(q){
 }
 
 function updatePriceDisplay(){
-  var p=(PRICES[seconds]||299)+SURCHARGE[quality];
+  var p=299+(seconds-5)*30+SURCHARGE[quality];
   secVal.textContent=seconds;
   priceVal.textContent=p;
   payBtn.textContent='Оплатить мультфильм — '+p+' ₽';
@@ -323,7 +323,7 @@ try{
     if(s.act){document.getElementById('actPrompt').value=s.act;}
     if(s.aspect){aspect=s.aspect;markAspect(aspect);}
     if(s.quality&&SURCHARGE[s.quality]!==undefined){quality=s.quality;}
-    if(s.seconds&&PRICES[s.seconds]){
+    if(s.seconds&&s.seconds>=5&&s.seconds<=30){
       seconds=s.seconds;
       slider.value=seconds;
     }
