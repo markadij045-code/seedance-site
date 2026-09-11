@@ -74,6 +74,13 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635}
 .slider-ticks{display:flex;justify-content:space-between;color:#5b6152;font-size:.75rem;margin-top:6px}
 .slider-hint{color:#5b6152;font-size:.8rem;text-align:center;margin-top:10px}
+.qwrap{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.qmode{flex:1 1 150px;padding:12px 14px;border-radius:14px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;line-height:1.4}
+.qmode b{display:block;color:#fff;font-size:.95rem;margin-bottom:2px}
+.qmode .qp{color:#A3E635;font-size:.8rem;font-weight:700}
+.qmode.active{border-color:#A3E635;background:rgba(163,230,53,0.1);color:#fff}
+.qmode.active b{color:#A3E635}
+.qnote{color:#5b6152;font-size:.8rem;text-align:center;margin-top:8px}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
@@ -135,6 +142,14 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
   <div class="mode" onclick="setAspect(this,'9:16')">9:16</div>
 </div>
 
+<label style="margin-top:20px">Качество видео</label>
+<div class="qwrap">
+  <div class="qmode active" data-q="480p" onclick="setQuality('480p')"><b>📺 480p</b>базовое<span class="qp">включено в цену</span></div>
+  <div class="qmode" data-q="720p" onclick="setQuality('720p')"><b>🎬 720p</b>чёткое HD<span class="qp">+200 ₽</span></div>
+  <div class="qmode" data-q="1080p" onclick="setQuality('1080p')"><b>✨ 1080p</b>Full HD<span class="qp">+300 ₽</span></div>
+</div>
+<div class="qnote">1080p = генерация 720p + улучшение качества, поэтому готовность на ~1 минуту дольше</div>
+
 <label style="margin-top:20px">Длительность видео</label>
 <div class="slider-wrap">
   <div class="slider-row">
@@ -190,8 +205,10 @@ function toggleSidebar(){
 }
 
 var PRICES={5:299,10:449,15:599,20:749,25:899,30:1049};
+var SURCHARGE={'480p':0,'720p':200,'1080p':300};
 var seconds=5;
 var aspect='16:9';
+var quality='480p';
 var fileInput=document.getElementById('file');
 var preview=document.getElementById('preview');
 var payBtn=document.getElementById('payBtn');
@@ -217,8 +234,17 @@ function setAspect(el,a){
   saveDraft();
 }
 
+function setQuality(q){
+  quality=q;
+  document.querySelectorAll('.qmode').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-q')===q);
+  });
+  updatePriceDisplay();
+  saveDraft();
+}
+
 function updatePriceDisplay(){
-  var p=PRICES[seconds]||299;
+  var p=(PRICES[seconds]||299)+SURCHARGE[quality];
   secVal.textContent=seconds;
   priceVal.textContent=p;
   payBtn.textContent='Оплатить мультфильм — '+p+' ₽';
@@ -246,7 +272,7 @@ function shrink(dataUrl,cb){
 
 function saveDraft(){
   try{
-    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId,seconds:seconds,aspect:aspect,act:getPrompt()}));
+    localStorage.setItem('seedgen_cartoon_draft',JSON.stringify({image:imageData,toon:toonJpeg,paymentId:activePaymentId,seconds:seconds,aspect:aspect,quality:quality,act:getPrompt()}));
   }catch(e){}
 }
 
@@ -265,6 +291,30 @@ function checkPayment(pid,onPaid,onNotPaid){
     .catch(function(){onNotPaid();});
 }
 
+function chainKey(pid){return 'seedgen_cartoon_chain_'+pid;}
+function getChain(pid){
+  try{return JSON.parse(localStorage.getItem(chainKey(pid))||'null');}catch(e){return null;}
+}
+function setChain(pid,obj){
+  try{localStorage.setItem(chainKey(pid),JSON.stringify(obj));}catch(e){}
+}
+function clearChain(pid){
+  try{localStorage.removeItem(chainKey(pid));}catch(e){}
+}
+
+function resumeIfChain(pid){
+  var ch=getChain(pid);
+  if(ch&&ch.taskId){
+    showSteps('Генерация уже идёт — возобновили после перезагрузки страницы ✅');
+    document.getElementById('btn1').disabled=true;
+    document.getElementById('btn2').disabled=true;
+    document.getElementById('btn2').style.display='block';
+    poll(ch.taskId,ch.stage||'base',ch.baseVideoUrl||null);
+    return true;
+  }
+  return false;
+}
+
 try{
   var saved=localStorage.getItem('seedgen_cartoon_draft');
   if(saved){
@@ -272,6 +322,7 @@ try{
     imageData=s.image||null;
     if(s.act){document.getElementById('actPrompt').value=s.act;}
     if(s.aspect){aspect=s.aspect;markAspect(aspect);}
+    if(s.quality&&SURCHARGE[s.quality]!==undefined){quality=s.quality;}
     if(s.seconds&&PRICES[s.seconds]){
       seconds=s.seconds;
       slider.value=seconds;
@@ -289,13 +340,18 @@ try{
       document.getElementById('toonDel').style.display='block';
       document.getElementById('status1').textContent='Арт готов! ✅ Жми шаг 2';
     }
+    document.querySelectorAll('.qmode').forEach(function(el){
+      el.classList.toggle('active',el.getAttribute('data-q')===quality);
+    });
     if(s.paymentId){
       var pid0=s.paymentId;
       payBtn.disabled=true;
       document.getElementById('statusPay').textContent='Проверяем прошлую оплату...';
       checkPayment(pid0,function(){
         activePaymentId=pid0;
-        showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+        if(!resumeIfChain(pid0)){
+          showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+        }
       },function(){
         activePaymentId=null;
         try{
@@ -371,7 +427,7 @@ payBtn.addEventListener('click',function(){
   if(!getPrompt()){alert('Опиши, что происходит в мультфильме');return;}
   payBtn.disabled=true;
   document.getElementById('statusPay').textContent='Создаём платёж...';
-  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'cartoon',seconds:seconds,prompt:getPrompt()})})
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'cartoon',seconds:seconds,prompt:getPrompt(),aspect:aspect,quality:quality})})
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.error){throw new Error(data.error);}
@@ -420,11 +476,12 @@ document.getElementById('btn2').addEventListener('click',function(){
   var b=document.getElementById('btn2');
   b.disabled=true;
   document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
-  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:activePaymentId,image:toonJpeg,seconds:seconds,aspect:aspect,prompt:getPrompt()||'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion'})})
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:activePaymentId,image:toonJpeg,seconds:seconds,aspect:aspect,quality:quality,prompt:getPrompt()||'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion'})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error){throw new Error(d.error);}
-      poll(d.taskId,b);
+      setChain(activePaymentId,{taskId:d.taskId,stage:'base',baseVideoUrl:null,upscale:!!d.upscale});
+      poll(d.taskId,'base',null);
     })
     .catch(function(e){
       document.getElementById('status2').textContent='Ошибка: '+e.message;
@@ -432,24 +489,66 @@ document.getElementById('btn2').addEventListener('click',function(){
     });
 });
 
-function poll(taskId,b){
+function startUpscale(baseVideoUrl){
+  document.getElementById('status2').textContent='✨ Улучшаем качество до 1080p... ещё около минуты ⏳';
+  fetch('/api/upscale',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({videoUrl:baseVideoUrl})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){throw new Error(d.error);}
+      setChain(activePaymentId,{taskId:d.taskId,stage:'upscale',baseVideoUrl:baseVideoUrl,upscale:true});
+      poll(d.taskId,'upscale',baseVideoUrl);
+    })
+    .catch(function(e){
+      document.getElementById('video').src=baseVideoUrl;
+      document.getElementById('result').style.display='block';
+      document.getElementById('status2').textContent='⚠️ Улучшение до 1080p сейчас недоступно ('+e.message+'). Вот готовое видео в 720p — напиши в поддержку, вернём разницу или улучшим вручную.';
+      document.getElementById('btn2').disabled=false;
+      clearChain(activePaymentId);
+    });
+}
+
+function poll(taskId,stage,baseVideoUrl){
   var timer=setInterval(function(){
     fetch('/api/status?taskId='+encodeURIComponent(taskId))
       .then(function(r){return r.json();})
       .then(function(d){
         if(d.status==='succeeded'){
           clearInterval(timer);
-          document.getElementById('video').src=d.videoUrl;
-          document.getElementById('result').style.display='block';
-          document.getElementById('status2').textContent='Готово! ✅ Скачай видео в течение 7 дней.';
-          b.disabled=false;
-          try{localStorage.removeItem('seedgen_cartoon_draft');}catch(e){}
+          if(stage==='upscale'){
+            document.getElementById('video').src=d.videoUrl;
+            document.getElementById('result').style.display='block';
+            document.getElementById('status2').textContent='Готово! ✅ Full HD 1080p. Скачай видео в течение 7 дней.';
+            document.getElementById('btn2').disabled=false;
+            clearChain(activePaymentId);
+            try{localStorage.removeItem('seedgen_cartoon_draft');}catch(e){}
+          }else{
+            var ch=getChain(activePaymentId);
+            if(ch&&ch.upscale&&ch.stage==='base'){
+              startUpscale(d.videoUrl);
+            }else{
+              document.getElementById('video').src=d.videoUrl;
+              document.getElementById('result').style.display='block';
+              document.getElementById('status2').textContent='Готово! ✅ Скачай видео в течение 7 дней.';
+              document.getElementById('btn2').disabled=false;
+              clearChain(activePaymentId);
+              try{localStorage.removeItem('seedgen_cartoon_draft');}catch(e){}
+            }
+          }
         }else if(d.status==='failed'){
           clearInterval(timer);
-          document.getElementById('status2').textContent='Ошибка: '+(d.error||'попробуй другое фото');
-          b.disabled=false;
+          if(stage==='upscale'&&baseVideoUrl){
+            document.getElementById('video').src=baseVideoUrl;
+            document.getElementById('result').style.display='block';
+            document.getElementById('status2').textContent='⚠️ Улучшение до 1080p не удалось. Вот готовое видео в 720p — напиши в поддержку, вернём разницу.';
+            document.getElementById('btn2').disabled=false;
+            clearChain(activePaymentId);
+          }else{
+            document.getElementById('status2').textContent='Ошибка: '+(d.error||'попробуй другое фото');
+            document.getElementById('btn2').disabled=false;
+            clearChain(activePaymentId);
+          }
         }else{
-          document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
+          document.getElementById('status2').textContent=(stage==='upscale')?'✨ Улучшаем качество до 1080p... ещё около минуты ⏳':'Оживляем... 1–3 минуты ⏳';
         }
       })
       .catch(function(){});
@@ -461,7 +560,9 @@ function poll(taskId,b){
   var paymentId=params.get('paymentId');
   if(!paymentId){return;}
   if(activePaymentId===paymentId){
-    showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+    if(!resumeIfChain(paymentId)){
+      showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+    }
     return;
   }
   payBtn.disabled=true;
@@ -469,7 +570,9 @@ function poll(taskId,b){
   checkPayment(paymentId,function(){
     activePaymentId=paymentId;
     saveDraft();
-    showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+    if(!resumeIfChain(paymentId)){
+      showSteps('Оплата прошла! ✅ Жми "Сделать арт"');
+    }
   },function(){
     document.getElementById('statusPay').textContent='Оплата не завершена. Фото и сюжет сохранены — можешь оплатить ещё раз.';
     payBtn.disabled=false;
@@ -498,7 +601,7 @@ function poll(taskId,b){
     var b=e.target.closest?e.target.closest('button'):null;
     if(!b)return;
     var t=b.textContent||'';
-    if(/Оплатить|Создать видео|Сгенерировать/.test(t)){
+    if(/Оплатить|Сгенерировать/.test(t)){
       var c=document.getElementById('agree');
       if(c&&!c.checked){e.preventDefault();e.stopPropagation();alert('Сначала отметь согласие с офертой ⚠️');}
     }
