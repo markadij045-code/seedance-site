@@ -13,9 +13,14 @@ export default async function handler(req, res) {
   const service = body.service || 'text2video';
   const prompt = body.prompt || '';
 
-  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299 };
+  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299, animate: 299 };
   const PER_SEC = 30;
+  const QUALITY_SURCHARGE = { '480p': 0, '720p': 200, '1080p': 300 };
+  const QUALITY_SERVICES = { text2video: true, cartoon: true, animate: true };
+
   let seconds = parseInt(body.seconds, 10);
+  let quality = (body.quality === '720p' || body.quality === '1080p') ? body.quality : '480p';
+  const surcharge = QUALITY_SERVICES[service] ? QUALITY_SURCHARGE[quality] : 0;
 
   let price;
   if (service === 'avatar') {
@@ -24,9 +29,10 @@ export default async function handler(req, res) {
   } else if (BASE[service]) {
     if (!seconds || seconds < 5) seconds = 5;
     if (seconds > 30) seconds = 30;
-    const amount = BASE[service] + (seconds - 5) * PER_SEC;
-    const names = { text2video: 'Создать видео', motion: 'Моушен контроль', lipsync: 'Липсинк (дубляж)', cartoon: 'Мультфильм из фото' };
-    price = { amount: amount + '.00', desc: names[service] + ', ' + seconds + ' сек SeedGen' };
+    const amount = BASE[service] + (seconds - 5) * PER_SEC + surcharge;
+    const names = { text2video: 'Создать видео', motion: 'Моушен контроль', lipsync: 'Липсинк (дубляж)', cartoon: 'Мультфильм из фото', animate: 'Мультфильм: оживление' };
+    const qLabel = (QUALITY_SERVICES[service] && quality !== '480p') ? ', ' + quality : '';
+    price = { amount: amount + '.00', desc: names[service] + ', ' + seconds + ' сек' + qLabel + ' SeedGen' };
   } else {
     seconds = 5;
     price = { amount: '199.00', desc: 'Видео SeedGen' };
@@ -34,7 +40,7 @@ export default async function handler(req, res) {
 
   const returnUrls = {
     'text2video': 'https://seedgen.ru/gen.html',
-    'animate':    'https://seedgen.ru/gen.html',
+    'animate':    'https://seedgen.ru/cartoon.html',
     'cartoon':    'https://seedgen.ru/cartoon.html',
     'avatar':     'https://seedgen.ru/avatar.html',
     'motion':     'https://seedgen.ru/motion.html',
@@ -57,7 +63,7 @@ export default async function handler(req, res) {
         capture: true,
         confirmation: { type: 'redirect', return_url: returnUrl },
         description: price.desc,
-        metadata: { service: service, prompt: prompt, seconds: String(seconds) }
+        metadata: { service: service, prompt: prompt, seconds: String(seconds), quality: quality }
       })
     });
     const data = await r.json();
