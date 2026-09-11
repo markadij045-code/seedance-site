@@ -99,6 +99,7 @@ nav.scrolled{background:rgba(0,0,0,0.85);padding:16px 48px}
 .grid-item{position:relative;border-radius:16px;overflow:hidden;background:#000}
 .grid video{width:100%;display:block;cursor:pointer}
 .grid p{color:rgba(255,255,255,0.6);font-size:0.9rem;text-align:center;margin-top:12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
 
 .price{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.08);gap:16px}
 .price:last-child{border-bottom:none}
@@ -191,7 +192,7 @@ footer a:hover{color:#A3E635}
     <p class="lead">Четыре простых шага от идеи до готового видео. Интерфейс можно потрогать заранее — ничего не сломается.</p>
     <div class="how4">
       <div class="step free"><span class="num">1</span><span class="em">👀</span><h3>Попробуй интерфейс</h3><p>Открой любую услугу, потяни бегунок, почитай подсказки. Без оплаты.</p></div>
-      <div class="step"><span class="num">2</span><span class="em">✍️</span><h3>Опиши или загрузи</h3><p>Текст, фото или видео — смотря какую услугу выбрал. AI улучшит промпт.</p></div>
+      <div class="step"><span class="num">2</span><span class="em">✍️</span><h3>Опиши или загрузи</h3><p>Текст, фото или видео — смотря какую услугу выбрал. Плюс длительность и качество. AI улучшит промпт.</p></div>
       <div class="step"><span class="num">3</span><span class="em">💳</span><h3>Оплати удобно</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек официальный, без подписок.</p></div>
       <div class="step"><span class="num">4</span><span class="em">🎬</span><h3>Получи видео</h3><p>Через 1–5 минут ролик появится на странице. Скачивай и делись.</p></div>
     </div>
@@ -215,8 +216,8 @@ footer a:hover{color:#A3E635}
   <div class="card">
     <h2>Все услуги</h2>
     <div class="shop">
-      <a class="shop-card" href="/gen.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">📝</span><h3>Создать видео</h3><p>Опиши сцену словами или загрузи изображение — нейросеть снимет ролик</p><b>от 199 ₽</b></a>
-      <a class="shop-card" href="/cartoon.html"><span class="em">🎭</span><h3>Мультфильм</h3><p>Твоё фото в стиле Pixar с твоим сюжетом</p><b>от 299 ₽</b></a>
+      <a class="shop-card" href="/gen.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">📝</span><h3>Создать видео</h3><p>Опиши сцену словами или загрузи изображение — нейросеть снимет ролик. Качество на выбор: 480p–1080p</p><b>от 199 ₽</b></a>
+      <a class="shop-card" href="/cartoon.html"><span class="em">🎭</span><h3>Мультфильм</h3><p>Твоё фото в стиле Pixar с твоим сюжетом. Качество на выбор: 480p–1080p</p><b>от 299 ₽</b></a>
       <a class="shop-card" href="/avatar.html"><span class="em">🗣</span><h3>Говорящий аватар</h3><p>Фото говорит твоим текстом или голосом</p><b>499 ₽</b></a>
       <a class="shop-card" href="/motion.html"><span class="hit">🔥 хит</span><span class="em">🎮</span><h3>Моушен контроль</h3><p>Персонаж повторяет танец и речь из видео</p><b>от 199 ₽</b></a>
       <a class="shop-card" href="/lipsync.html"><span class="hit">🔥 хит</span><span class="em">💬</span><h3>Липсинк</h3><p>Человек в видео говорит твоими словами</p><b>от 199 ₽</b></a>
@@ -256,12 +257,12 @@ footer a:hover{color:#A3E635}
 <div class="section" id="examples">
   <div class="card">
     <h2>Примеры работ</h2>
-    <p class="steps" style="text-align:center;margin-bottom:32px">Все эти видео сгенерированы нейросетью из одной фразы</p>
+    <p class="steps" style="text-align:center;margin-bottom:32px">Все эти видео сгенерированы нейросетью из одной фразы. Играют сами при прокрутке, нажми — встанут на паузу.</p>
     <div class="grid">
-      <div class="grid-item"><video src="/cat-city.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
-      <div class="grid-item"><video src="/cat-space.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
-      <div class="grid-item"><video src="/cat-dance.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
-      <div class="grid-item"><video src="/cat-knight.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video></div>
+      <div class="grid-item"><video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video></div>
+      <div class="grid-item"><video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video></div>
+      <div class="grid-item"><video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video></div>
+      <div class="grid-item"><video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video></div>
     </div>
     <p class="steps" style="text-align:center;margin-top:16px"><a href="/examples.html" style="color:#A3E635">→ Все примеры в галерее</a></p>
   </div>
@@ -270,11 +271,12 @@ footer a:hover{color:#A3E635}
 <div class="section" id="price">
   <div class="card">
     <h2>Цены</h2>
-    <div class="price"><span>📝 Создать видео (5–30 сек, Seedance 2.5)</span><b>199–949 ₽</b></div>
-    <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar, до 30 сек)</span><b>от 299 ₽</b></div>
+    <div class="price"><span>📝 Создать видео (5–30 сек, Seedance 2.5) · качество на выбор 480p / 720p / 1080p</span><b>199–1249 ₽</b></div>
+    <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar, до 30 сек) · качество на выбор 480p / 720p / 1080p</span><b>299–1349 ₽</b></div>
     <div class="price"><span>🗣 Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
     <div class="price"><span>🎮 Моушен контроль (фото + видео с движением, до 30 сек)</span><b>от 199 ₽</b></div>
     <div class="price"><span>💬 Липсинк / дубляж (видео + твоя озвучка, до 30 сек)</span><b>от 199 ₽</b></div>
+    <p class="steps" style="margin-top:16px;font-size:.9rem;color:rgba(255,255,255,0.55)">✨ 1080p = генерация 720p + автоматическое улучшение качества, готовность около минуты дольше. Полная таблица цен — в <a href="/legal.html#offer" style="color:#A3E635">оферте</a>.</p>
   </div>
 </div>
 
@@ -311,6 +313,25 @@ var observer=new IntersectionObserver(function(entries){
   });
 },{threshold:0.1});
 document.querySelectorAll('.section').forEach(function(s){observer.observe(s);});
+
+(function(){
+  var vids=document.querySelectorAll('.grid video');
+  vids.forEach(function(v){
+    v.addEventListener('click',function(){
+      if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
+    });
+  });
+  var vo=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting && en.intersectionRatio>0.4){
+        en.target.play().catch(function(){});
+      }else{
+        en.target.pause();
+      }
+    });
+  },{threshold:[0,0.4,0.8]});
+  vids.forEach(function(v){vo.observe(v);});
+})();
 </script>
 <script src="/help-widget.js"></script>
 </body>
