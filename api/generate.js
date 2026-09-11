@@ -1,3 +1,5 @@
+import { readLedger, writeLedger, getBalance, estimateCost } from '../lib/ledger.js';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -54,8 +56,10 @@ export default async function handler(req, res) {
     expectedPrice = 199;
   }
 
+  let paidAmount = null;
+  const paymentId = body.paymentId;
+
   if (!isAdmin) {
-    const paymentId = body.paymentId;
     if (!paymentId) return res.status(403).json({ error: 'Генерация доступна только после оплаты' });
 
     const shopId = process.env.YOOKASSA_SHOP_ID;
@@ -71,6 +75,26 @@ export default async function handler(req, res) {
     const paid = parseFloat(pdata.amount && pdata.amount.value);
     if (pdata.currency !== 'RUB' || !(paid >= expectedPrice)) {
       return res.status(403).json({ error: 'Сумма оплаты не соответствует выбранной услуге' });
+    }
+    paidAmount = paid;
+  }
+
+  const ledger = await readLedger();
+  if (!ledger.payments) ledger.payments = {};
+  const rec = paymentId ? (ledger.payments[paymentId] || null) : null;
+
+  if (!isAdmin && paymentId) {
+    const TASK_SERVICES = { text2video: true, animate: true, motion: true, lipsync: true, avatar: true };
+    if (TASK_SERVICES[service] && rec && rec.taskId) {
+      return res.json({ taskId: rec.taskId, upscale: !!rec.upscale, cached: true });
+    }
+    if ((service === 'toon' || service === 'cartoon') && rec && (rec.toonCalls || 0) >= 3) {
+      return res.status(403).json({ error: 'Лимит попыток создания арта для этой оплаты исчерпан — напиши в поддержку, поможем' });
+    }
+    const est = estimateCost(service, seconds, quality);
+    const bal = await getBalance();
+    if (bal !== null && bal < est * 1.15) {
+      return res.status(503).json({ error: 'Сервис временно недоступен: недостаточно ресурсов генерации. Твоя оплата сохранена — попробуй через час или напиши в поддержку' });
     }
   }
 
@@ -135,6 +159,13 @@ export default async function handler(req, res) {
 
   try {
     if (service === 'toon' || service === 'cartoon') {
+      if (!isAdmin && paymentId) {
+        const r2 = ledger.payments[paymentId] || (ledger.payments[paymentId] = {});
+        r2.toonCalls = (r2.toonCalls || 0) + 1;
+        r2.service = service;
+        if (paidAmount !== null) r2.amount = paidAmount;
+        await writeLedger(ledger);
+      }
       const userScene = String(body.prompt || '').trim();
       const stylePrompt = 'Transform this photo into a 3D animated movie character in Pixar style. Keep the person recognizable but clearly cartoonish. Bright friendly colors, clean simple background.' + (userScene ? ' Scene and action: ' + userScene : '');
       const geminiAspect = (['1:1','16:9','9:16','4:3','3:4','21:9'].indexOf(aspect) !== -1) ? aspect : '1:1';
@@ -206,6 +237,19 @@ export default async function handler(req, res) {
     if (!r.ok) return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
     const taskId = data.id || data.task_id;
     if (!taskId) return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
+
+    if (!isAdmin && paymentId) {
+      const r2 = ledger.payments[paymentId] || (ledger.payments[paymentId] = {});
+      r2.taskId = taskId;
+      r2.service = service;
+      r2.seconds = seconds;
+      r2.quality = quality;
+      if (paidAmount !== null) r2.amount = paidAmount;
+      r2.upscale = quality === '1080p';
+      r2.createdAt = Date.now();
+      await writeLedger(ledger);
+    }
+
     return res.json({ taskId: taskId, upscale: quality === '1080p' });
   } catch (e) {
     return res.status(500).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
