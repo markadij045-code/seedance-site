@@ -11,10 +11,13 @@ export default async function handler(req, res) {
 
   const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299 };
   const PER_SEC = 30;
+  const QUALITY_SURCHARGE = { '480p': 0, '720p': 200, '1080p': 300 };
+  const SEEDANCE_SERVICES = { text2video: true, animate: true };
 
-  const SIZE_MAP = {
-    '21:9': '1920x816', '16:9': '1280x720', '4:3': '1024x768',
-    '1:1': '720x720', '3:4': '768x1024', '9:16': '720x1280'
+  const SIZE_BY_QUALITY = {
+    '480p': { '21:9': '992x432', '16:9': '854x480', '4:3': '752x560', '1:1': '640x640', '3:4': '560x752', '9:16': '480x854' },
+    '720p': { '21:9': '1470x630', '16:9': '1280x720', '4:3': '1112x834', '1:1': '960x960', '3:4': '834x1112', '9:16': '720x1280' },
+    '1080p': { '21:9': '1470x630', '16:9': '1280x720', '4:3': '1112x834', '1:1': '960x960', '3:4': '834x1112', '9:16': '720x1280' }
   };
 
   const NEEDS = {
@@ -32,6 +35,10 @@ export default async function handler(req, res) {
   const needs = NEEDS[service];
   if (!needs) return res.status(400).json({ error: 'Неизвестная услуга' });
 
+  let quality = (body.quality === '720p' || body.quality === '1080p') ? body.quality : '480p';
+  if (!SEEDANCE_SERVICES[service]) quality = '480p';
+  const surcharge = SEEDANCE_SERVICES[service] ? QUALITY_SURCHARGE[quality] : 0;
+
   let seconds = parseInt(body.seconds, 10);
   let expectedPrice;
   if (service === 'avatar') {
@@ -41,7 +48,7 @@ export default async function handler(req, res) {
   } else if (BASE[service]) {
     if (!seconds || seconds < 5) seconds = 5;
     if (seconds > 30) seconds = 30;
-    expectedPrice = BASE[service] + (seconds - 5) * PER_SEC;
+    expectedPrice = BASE[service] + (seconds - 5) * PER_SEC + surcharge;
   } else {
     seconds = 5;
     expectedPrice = 199;
@@ -69,14 +76,14 @@ export default async function handler(req, res) {
 
   const prompt = String(body.prompt || '').trim();
   const aspect = body.aspect || '16:9';
-  const size = SIZE_MAP[aspect] || '1280x720';
+  const size = (SIZE_BY_QUALITY[quality] && SIZE_BY_QUALITY[quality][aspect]) || SIZE_BY_QUALITY[quality]['16:9'];
   const model = process.env.SEEDANCE_MODEL || 'seedance-2-5';
 
   if (service === 'text2video' && !prompt) {
     return res.status(400).json({ error: 'Нужен промпт' });
   }
 
-  let img = null, vid = null, aud = null, refImg = null;
+  let img = null, vid = null, aud = null;
   if (needs.image) {
     if (!body.image) return res.status(400).json({ error: 'Нужно загрузить картинку' });
     img = await resolveMedia(body.image, 'image');
@@ -92,9 +99,38 @@ export default async function handler(req, res) {
     aud = await resolveMedia(body.audio, 'audio');
     if (aud.error) return res.status(400).json({ error: aud.error });
   }
-  if (service === 'text2video' && body.refImage) {
-    refImg = await resolveMedia(body.refImage, 'image');
-    if (refImg.error) refImg = null;
+
+  var refs = [];
+  var refsIn = Array.isArray(body.refs) ? body.refs.slice(0, 10) : (body.refImage ? [body.refImage] : []);
+  for (var ri = 0; ri < refsIn.length; ri++) {
+    var rr = await resolveMedia(refsIn[ri], 'image');
+    if (rr.error) return res.status(400).json({ error: 'Референс ' + (ri + 1) + ': ' + rr.error });
+    refs.push(rr);
+  }
+
+  var refVid = null;
+  if (body.refVideo && SEEDANCE_SERVICES[service]) {
+    refVid = await resolveMedia(body.refVideo, 'video');
+    if (refVid.error) return res.status(400).json({ error: 'Видео-референс: ' + refVid.error });
+  }
+
+  var refAud = null;
+  if (body.refAudio && SEEDANCE_SERVICES[service]) {
+    if (refs.length === 0 && !refVid && !img) {
+      return res.status(400).json({ error: 'Звук-референс работает только вместе с картинкой или видео' });
+    }
+    refAud = await resolveMedia(body.refAudio, 'audio');
+    if (refAud.error) return res.status(400).json({ error: 'Звук-референс: ' + refAud.error });
+  }
+
+  function withRoles(p, nImages, hasVideo, hasAudio) {
+    if (p.indexOf('@Image') !== -1 || p.indexOf('@Video') !== -1 || p.indexOf('@Audio') !== -1) return p;
+    var parts = [];
+    if (nImages > 0) parts.push(nImages === 1 ? '@Image1 as the visual reference' : '@Image1-@Image' + nImages + ' as visual references');
+    if (hasVideo) parts.push('@Video1 as the camera and motion guide');
+    if (hasAudio) parts.push('@Audio1 as the sound and rhythm guide');
+    if (!parts.length) return p;
+    return p + ' Use ' + parts.join(', ') + '.';
   }
 
   try {
@@ -134,9 +170,14 @@ export default async function handler(req, res) {
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
       form.append('mode', 'std');
     } else if (service === 'animate') {
+      var images2 = [img].concat(refs);
       form.append('model', model);
-      form.append('prompt', prompt || 'The scene comes alive: natural smooth motion, gentle camera movement');
-      form.append('input_reference', new Blob([img.buffer], { type: img.mime }), 'photo.jpg');
+      form.append('prompt', withRoles(prompt || 'The scene comes alive: natural smooth motion, gentle camera movement', images2.length, !!refVid, !!refAud));
+      for (var ai = 0; ai < images2.length; ai++) {
+        form.append('input_reference', new Blob([images2[ai].buffer], { type: images2[ai].mime }), 'ref' + ai + '.jpg');
+      }
+      if (refVid) form.append('reference_videos', new Blob([refVid.buffer], { type: refVid.mime }), 'motionref.mp4');
+      if (refAud) form.append('reference_audios', new Blob([refAud.buffer], { type: refAud.mime }), 'soundref.mp3');
     } else if (service === 'motion') {
       form.append('model', 'kling-video');
       form.append('prompt', prompt || 'The character from the image performs the exact same movements and speech as in the reference video');
@@ -148,8 +189,12 @@ export default async function handler(req, res) {
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
     } else {
       form.append('model', model);
-      form.append('prompt', prompt);
-      if (refImg) form.append('input_reference', new Blob([refImg.buffer], { type: refImg.mime }), 'ref.jpg');
+      form.append('prompt', withRoles(prompt, refs.length, !!refVid, !!refAud));
+      for (var ti = 0; ti < refs.length; ti++) {
+        form.append('input_reference', new Blob([refs[ti].buffer], { type: refs[ti].mime }), 'ref' + ti + '.jpg');
+      }
+      if (refVid) form.append('reference_videos', new Blob([refVid.buffer], { type: refVid.mime }), 'motionref.mp4');
+      if (refAud) form.append('reference_audios', new Blob([refAud.buffer], { type: refAud.mime }), 'soundref.mp3');
     }
 
     const r = await fetch('https://api.cometapi.com/v1/videos', {
@@ -161,14 +206,14 @@ export default async function handler(req, res) {
     if (!r.ok) return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
     const taskId = data.id || data.task_id;
     if (!taskId) return res.status(502).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
-    return res.json({ taskId: taskId });
+    return res.json({ taskId: taskId, upscale: quality === '1080p' });
   } catch (e) {
     return res.status(500).json({ error: 'Не удалось создать видео, попробуйте ещё раз' });
   }
 }
 
 async function resolveMedia(value, kind) {
-  const limits = { image: 10 * 1024 * 1024, video: 20 * 1024 * 1024, audio: 5 * 1024 * 1024 };
+  const limits = { image: 20 * 1024 * 1024, video: 50 * 1024 * 1024, audio: 15 * 1024 * 1024 };
   try {
     if (typeof value === 'string' && value.startsWith('data:')) {
       const comma = value.indexOf(',');
@@ -178,7 +223,8 @@ async function resolveMedia(value, kind) {
       if (kind === 'image') {
         if (header.indexOf('image/png') !== -1) mime = 'image/png';
         else if (header.indexOf('image/jpeg') !== -1 || header.indexOf('image/jpg') !== -1) mime = 'image/jpeg';
-        else return { error: 'Поддерживаются только JPG и PNG' };
+        else if (header.indexOf('image/webp') !== -1) mime = 'image/webp';
+        else return { error: 'Поддерживаются только JPG, PNG и WebP' };
       } else if (kind === 'video') {
         if (header.indexOf('video/webm') !== -1) mime = 'video/webm';
         else if (header.indexOf('video/mp4') !== -1) mime = 'video/mp4';
@@ -208,7 +254,7 @@ async function resolveMedia(value, kind) {
 }
 
 function tooBigMsg(kind) {
-  if (kind === 'video') return 'Видео слишком большое (максимум 20 МБ)';
-  if (kind === 'audio') return 'Аудио слишком большое (максимум 5 МБ)';
-  return 'Файл слишком большой (максимум 10 МБ)';
+  if (kind === 'video') return 'Видео слишком большое (максимум 50 МБ)';
+  if (kind === 'audio') return 'Аудио слишком большое (максимум 15 МБ)';
+  return 'Файл слишком большой (максимум 20 МБ)';
 }
