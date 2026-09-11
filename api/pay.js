@@ -1,3 +1,5 @@
+import { getBalance } from '../lib/ledger.js';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -36,6 +38,12 @@ export default async function handler(req, res) {
   } else {
     seconds = 5;
     price = { amount: '199.00', desc: 'Видео SeedGen' };
+  }
+
+  const minBal = parseFloat(process.env.MIN_BALANCE_USD || '2');
+  const bal = await getBalance();
+  if (bal !== null && bal < minBal) {
+    return res.status(503).json({ error: 'Сервис временно недоступен: пополняем ресурсы генерации. Попробуй через пару часов — деньги не спишутся' });
   }
 
   const returnUrls = {
