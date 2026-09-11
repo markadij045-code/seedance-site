@@ -41,16 +41,36 @@ textarea:focus{border-color:#A3E635}
 .aibtn{padding:10px 18px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;font-weight:600;cursor:pointer}
 .aibtn:disabled{opacity:.5;cursor:not-allowed}
 #aistat{color:#9ca3af;font-size:.85rem}
+.modeswitch{display:flex;gap:8px;justify-content:center;margin:0 0 14px}
+.modeswitch .mbtn{padding:10px 22px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;font-size:.9rem;font-weight:600;cursor:pointer}
+.modeswitch .mbtn.active{border-color:#A3E635;color:#A3E635;background:rgba(163,230,53,0.1)}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0;padding:12px;background:#0b0e07;border:1px solid #262d16;border-radius:14px}
 .tool{background:#101308;border:1px solid #262d16;border-radius:10px;padding:8px 14px;color:#c3c9b4;font-size:.85rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
 .tool:hover{border-color:#A3E635;color:#A3E635}
 .tool.active{background:rgba(163,230,53,0.15);border-color:#A3E635;color:#A3E635}
 .tool-attach{position:relative;overflow:hidden}
 .tool-attach input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.refbox{display:none;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.3);border-radius:10px}
-.refbox img{width:40px;height:40px;border-radius:8px;object-fit:cover}
-.refbox span{color:#c3c9b4;font-size:.85rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.refbox button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1.1rem}
+.qwrap{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.qmode{flex:1 1 150px;padding:12px 14px;border-radius:14px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;line-height:1.4}
+.qmode b{display:block;color:#fff;font-size:.95rem;margin-bottom:2px}
+.qmode .qp{color:#A3E635;font-size:.8rem;font-weight:700}
+.qmode.active{border-color:#A3E635;background:rgba(163,230,53,0.1);color:#fff}
+.qmode.active b{color:#A3E635}
+.qnote{color:#5b6152;font-size:.8rem;text-align:center;margin-top:8px}
+.advblock{display:none}
+.advblock.open{display:block}
+.refslist{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.refslist .ritem{position:relative;width:56px;height:56px;border-radius:10px;overflow:hidden;border:1px solid #262d16}
+.refslist .ritem img{width:100%;height:100%;object-fit:cover}
+.refslist .ritem button{position:absolute;top:0;right:0;background:rgba(0,0,0,0.7);border:none;color:#fca5a5;font-size:.8rem;cursor:pointer;padding:2px 6px}
+.refcounter{color:#5b6152;font-size:.8rem}
+.advrow{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.3);border-radius:10px}
+.advrow span{color:#c3c9b4;font-size:.85rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.advrow button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1rem}
+.advfile{position:relative;overflow:hidden;display:inline-flex}
+.advfile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.morebtn{margin-top:8px;padding:8px 16px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.82rem;cursor:pointer}
+.rolehint{color:#5b6152;font-size:.8rem;line-height:1.5;margin-top:8px}
 .prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
 .prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
 .trust{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}
@@ -134,6 +154,11 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 <div class="mini"><span>1. Опиши</span><span>2. Оплати</span><span>3. Видео через 1–5 минут</span></div>
 
 <div class="card">
+  <div class="modeswitch">
+    <button class="mbtn active" id="modeNov" type="button" onclick="setMode('nov')">🌱 Новичок</button>
+    <button class="mbtn" id="modeAdv" type="button" onclick="setMode('adv')">🎛 Продвинутый</button>
+  </div>
+
   <label for="prompt">Опиши, какое видео хочешь:</label>
   <textarea id="prompt" placeholder="Например: кот в скафандре летит сквозь звёздное поле, кинематографичный стиль"></textarea>
   <div class="airow">
@@ -141,9 +166,27 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
     <span id="aistat"></span>
   </div>
 
+  <div class="advblock" id="advBlock">
+    <label>📎 Референсы: кто и что должно быть в кадре</label>
+    <div class="refslist" id="refsList"></div>
+    <div class="refcounter" id="refCounter"></div>
+    <label class="tool tool-attach" id="addRefTool" style="display:inline-flex;margin-top:8px">➕ Добавить фото<input type="file" id="refAddInput" accept="image/*" multiple></label>
+    <button class="morebtn" id="moreRefsBtn" type="button" onclick="unlockMoreRefs()">Нужно больше? Показать до 10</button>
+    <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон». Нейросеть сохранит внешность и стиль каждого референса.</div>
+
+    <label>🎬 Видео-референс камеры и движения (необязательно)</label>
+    <label class="tool tool-attach" style="display:inline-flex">➕ Добавить видео (MP4, до 15 сек)<input type="file" id="refVideoInput" accept="video/mp4,video/webm"></label>
+    <div class="advrow" id="refVideoRow" style="display:none"><span id="refVideoName"></span><button type="button" onclick="removeRefVideo()">✕</button></div>
+
+    <label>🎵 Звук-референс: музыка и ритм (необязательно)</label>
+    <label class="tool tool-attach" style="display:inline-flex">➕ Добавить звук (MP3/WAV, до 15 сек)<input type="file" id="refAudioInput" accept="audio/*"></label>
+    <div class="advrow" id="refAudioRow" style="display:none"><span id="refAudioName"></span><button type="button" onclick="removeRefAudio()">✕</button></div>
+    <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
+  </div>
+
   <label style="margin-top:20px">Формат кадра и изображение</label>
   <div class="toolbar">
-    <label class="tool tool-attach" title="Загрузить изображение (необязательно)">📎 Загрузить изображение<input type="file" id="refInput" accept="image/*"></label>
+    <label class="tool tool-attach" id="attachTool" title="Загрузить изображение (необязательно)">📎 Загрузить изображение<input type="file" id="refInput" accept="image/*"></label>
     <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
     <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
     <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
@@ -151,12 +194,15 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
     <div class="tool" onclick="pickAspect('3:4')" data-aspect="3:4">📐 3:4</div>
     <div class="tool" onclick="pickAspect('9:16')" data-aspect="9:16">📐 9:16</div>
   </div>
-  <div class="refbox" id="refBox">
-    <img id="refImg" src="" alt="">
-    <span id="refName"></span>
-    <button type="button" onclick="removeRef()">✕</button>
-  </div>
   <div class="prog" id="refProg"><i></i></div>
+
+  <label style="margin-top:20px">Качество видео</label>
+  <div class="qwrap">
+    <div class="qmode active" data-q="480p" onclick="setQuality('480p')"><b>📺 480p</b>базовое<span class="qp">включено в цену</span></div>
+    <div class="qmode" data-q="720p" onclick="setQuality('720p')"><b>🎬 720p</b>чёткое HD<span class="qp">+200 ₽</span></div>
+    <div class="qmode" data-q="1080p" onclick="setQuality('1080p')"><b>✨ 1080p</b>Full HD<span class="qp">+300 ₽</span></div>
+  </div>
+  <div class="qnote">1080p = генерация 720p + улучшение качества, поэтому готовность на ~1 минуту дольше</div>
 
   <label style="margin-top:20px">Длительность и цена</label>
   <div class="slider-wrap">
@@ -188,6 +234,22 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
   <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
 </footer>
 
+<script type="module">
+let uploadFn = null;
+try {
+  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
+  uploadFn = m.upload;
+} catch (e) {
+  try {
+    const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
+    uploadFn = m2.upload;
+  } catch (e2) {
+    console.error('Blob client load failed:', e2);
+  }
+}
+if (uploadFn) window.blobUpload = uploadFn;
+</script>
+
 <script>
 function showWelcome(){
   if(!localStorage.getItem('seedgen_welcomed')){
@@ -205,9 +267,15 @@ function toggleSidebar(){
 }
 
 var PRICES = {5:199, 10:349, 15:499, 20:649, 25:799, 30:949};
+var SURCHARGE = {'480p':0, '720p':200, '1080p':300};
 var seconds = 5;
 var aspect = '16:9';
-var refImageData = null;
+var quality = '480p';
+var mode = 'nov';
+var refs = [];
+var maxRefsAdv = 3;
+var refVideoUrl = null;
+var refAudioUrl = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
@@ -216,8 +284,10 @@ var priceVal = document.getElementById('priceVal');
 
 function setStatus(t){ statusEl.textContent = t; }
 
+function currentMaxRefs(){ return mode === 'adv' ? maxRefsAdv : 1; }
+
 function updatePriceDisplay(){
-  var p = PRICES[seconds] || 199;
+  var p = (PRICES[seconds] || 199) + SURCHARGE[quality];
   secVal.textContent = seconds;
   priceVal.textContent = p;
   btn.textContent = 'Создать видео — ' + p + ' ₽';
@@ -231,15 +301,199 @@ function pickAspect(a){
   saveDraft();
 }
 
+function setQuality(q){
+  quality = q;
+  document.querySelectorAll('.qmode').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-q') === q);
+  });
+  updatePriceDisplay();
+  saveDraft();
+}
+
+function setMode(m){
+  mode = m;
+  document.getElementById('modeNov').classList.toggle('active', m === 'nov');
+  document.getElementById('modeAdv').classList.toggle('active', m === 'adv');
+  document.getElementById('advBlock').classList.toggle('open', m === 'adv');
+  document.getElementById('attachTool').style.display = (m === 'nov') ? 'inline-flex' : 'none';
+  renderRefs();
+  saveDraft();
+}
+
+function unlockMoreRefs(){
+  maxRefsAdv = 10;
+  document.getElementById('moreRefsBtn').style.display = 'none';
+  renderRefs();
+}
+
+function renderRefs(){
+  var list = document.getElementById('refsList');
+  list.innerHTML = '';
+  refs.forEach(function(r, i){
+    var d = document.createElement('div');
+    d.className = 'ritem';
+    d.innerHTML = '<img src="data:image/jpeg;base64,' + r + '"><button type="button" onclick="removeRef(' + i + ')">✕</button>';
+    list.appendChild(d);
+  });
+  var max = currentMaxRefs();
+  document.getElementById('refCounter').textContent = refs.length ? ('Загружено: ' + refs.length + ' из ' + max) : '';
+  document.getElementById('addRefTool').style.display = (mode === 'adv' && refs.length < max) ? 'inline-flex' : 'none';
+  if(mode === 'adv' && maxRefsAdv === 3 && refs.length >= 3){
+    document.getElementById('moreRefsBtn').style.display = 'inline-block';
+  } else {
+    document.getElementById('moreRefsBtn').style.display = 'none';
+  }
+}
+
+function removeRef(i){
+  refs.splice(i, 1);
+  renderRefs();
+  saveDraft();
+}
+
+function addRefBase64(b64){
+  if(refs.length >= currentMaxRefs()){
+    if(mode === 'nov'){ alert('В режиме «Новичок» — одно изображение. Переключись на «Продвинутый», чтобы добавить до 10.'); return; }
+    alert('Достигнут лимит референсов'); return;
+  }
+  refs.push(b64);
+  renderRefs();
+  saveDraft();
+}
+
+function fileToRefBase64(f, cb){
+  var reader = new FileReader();
+  reader.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var max = 1024, w = img.width, h = img.height;
+      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+}
+
+document.getElementById('refAddInput').addEventListener('change', function(e){
+  var files = Array.prototype.slice.call(e.target.files);
+  var idx = 0;
+  function next(){
+    if(idx >= files.length){ e.target.value = ''; return; }
+    var f = files[idx++];
+    if(refs.length >= currentMaxRefs()){ e.target.value = ''; alert('Лимит референсов: ' + currentMaxRefs()); return; }
+    fileToRefBase64(f, function(b64){ addRefBase64(b64); next(); });
+  }
+  next();
+});
+
+document.getElementById('refInput').addEventListener('change', function(e){
+  var f = e.target.files[0];
+  if(!f) return;
+  var prog = document.getElementById('refProg');
+  var bar = prog.querySelector('i');
+  prog.style.display = 'block'; bar.style.width = '30%';
+  fileToRefBase64(f, function(b64){
+    bar.style.width = '100%';
+    setTimeout(function(){ prog.style.display = 'none'; }, 600);
+    refs = [b64];
+    renderRefs();
+    saveDraft();
+  });
+  e.target.value = '';
+});
+
+function probeMedia(f, maxSec, cb){
+  var url = URL.createObjectURL(f);
+  var el = (f.type.indexOf('video/') === 0) ? document.createElement('video') : new Audio();
+  el.preload = 'metadata';
+  el.onloadedmetadata = function(){
+    var d = el.duration;
+    URL.revokeObjectURL(url);
+    if(d > maxSec){ alert('Файл длиннее ' + maxSec + ' секунд. Выбери короче.'); return; }
+    cb();
+  };
+  el.onerror = function(){ URL.revokeObjectURL(url); cb(); };
+  el.src = url;
+}
+
+function safeName(prefix, f, ext){
+  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
+}
+
+function uploadRefMedia(f, kind, cb){
+  if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
+  setStatus('Загружаем ' + (kind === 'video' ? 'видео' : 'звук') + '...');
+  window.blobUpload(safeName('gen-ref-' + kind, f, kind === 'video' ? '.mp4' : '.mp3'), f, { access: 'public', handleUploadUrl: '/api/upload' })
+    .then(function(blob){ setStatus(''); cb(blob.url); })
+    .catch(function(err){ setStatus(''); alert('Не удалось загрузить файл: ' + err.message); });
+}
+
+document.getElementById('refVideoInput').addEventListener('change', function(e){
+  var f = e.target.files[0]; if(!f) return;
+  probeMedia(f, 15, function(){
+    uploadRefMedia(f, 'video', function(url){
+      refVideoUrl = url;
+      document.getElementById('refVideoName').textContent = '🎬 ' + f.name + ' — загружено ✅';
+      document.getElementById('refVideoRow').style.display = 'flex';
+      saveDraft();
+    });
+  });
+  e.target.value = '';
+});
+function removeRefVideo(){
+  refVideoUrl = null;
+  document.getElementById('refVideoRow').style.display = 'none';
+  saveDraft();
+}
+
+document.getElementById('refAudioInput').addEventListener('change', function(e){
+  var f = e.target.files[0]; if(!f) return;
+  probeMedia(f, 15, function(){
+    uploadRefMedia(f, 'audio', function(url){
+      refAudioUrl = url;
+      document.getElementById('refAudioName').textContent = '🎵 ' + f.name + ' — загружено ✅';
+      document.getElementById('refAudioRow').style.display = 'flex';
+      saveDraft();
+    });
+  });
+  e.target.value = '';
+});
+function removeRefAudio(){
+  refAudioUrl = null;
+  document.getElementById('refAudioRow').style.display = 'none';
+  saveDraft();
+}
+
+function checkUrlAlive(url, cb){
+  if(!url){ cb(false); return; }
+  fetch(url, {method: 'HEAD', mode: 'no-cors'}).then(function(){ cb(true); }).catch(function(){ cb(false); });
+}
+
 function saveDraft(){
   try{
     var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
     s.prompt = document.getElementById('prompt').value;
     s.aspect = aspect;
     s.seconds = seconds;
-    s.refImage = refImageData;
+    s.quality = quality;
+    s.mode = mode;
+    s.refs = refs;
+    s.refVideo = refVideoUrl;
+    s.refAudio = refAudioUrl;
     localStorage.setItem('seedgen_gen_draft', JSON.stringify(s));
-  }catch(e){}
+  }catch(e){
+    try{
+      var s2 = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
+      s2.prompt = document.getElementById('prompt').value;
+      s2.aspect = aspect; s2.seconds = seconds; s2.quality = quality; s2.mode = mode;
+      delete s2.refs; delete s2.refVideo; delete s2.refAudio;
+      localStorage.setItem('seedgen_gen_draft', JSON.stringify(s2));
+    }catch(e2){}
+  }
 }
 
 slider.addEventListener('input', function(){
@@ -254,62 +508,39 @@ slider.addEventListener('input', function(){
     if(!s) return;
     if(s.prompt) document.getElementById('prompt').value = s.prompt;
     if(s.aspect) pickAspect(s.aspect);
-    if(s.seconds && PRICES[s.seconds]){
-      seconds = s.seconds;
-      slider.value = seconds;
+    if(s.seconds && PRICES[s.seconds]){ seconds = s.seconds; slider.value = seconds; }
+    if(s.quality && SURCHARGE[s.quality] !== undefined) quality = s.quality;
+    if(s.refs && s.refs.length){ refs = s.refs.slice(0, 10); }
+    else if(s.refImage){ refs = [s.refImage]; }
+    if(s.mode === 'adv') maxRefsAdv = (s.refs && s.refs.length > 3) ? 10 : 3;
+    setMode(s.mode === 'adv' ? 'adv' : 'nov');
+    if(s.refVideo){
+      checkUrlAlive(s.refVideo, function(alive){
+        if(alive){
+          refVideoUrl = s.refVideo;
+          document.getElementById('refVideoName').textContent = '🎬 видео-референс из черновика ✅';
+          document.getElementById('refVideoRow').style.display = 'flex';
+        }
+      });
     }
-    if(s.refImage){
-      refImageData = s.refImage;
-      document.getElementById('refImg').src = 'data:image/jpeg;base64,' + s.refImage;
-      document.getElementById('refName').textContent = 'изображение из черновика';
-      document.getElementById('refBox').style.display = 'flex';
+    if(s.refAudio){
+      checkUrlAlive(s.refAudio, function(alive){
+        if(alive){
+          refAudioUrl = s.refAudio;
+          document.getElementById('refAudioName').textContent = '🎵 звук-референс из черновика ✅';
+          document.getElementById('refAudioRow').style.display = 'flex';
+        }
+      });
     }
+    document.querySelectorAll('.qmode').forEach(function(el){
+      el.classList.toggle('active', el.getAttribute('data-q') === quality);
+    });
+    renderRefs();
     updatePriceDisplay();
   }catch(e){ updatePriceDisplay(); }
 })();
 
 document.getElementById('prompt').addEventListener('input', saveDraft);
-
-document.getElementById('refInput').addEventListener('change', function(e){
-  var f = e.target.files[0];
-  if(!f) return;
-  var prog = document.getElementById('refProg');
-  var bar = prog.querySelector('i');
-  prog.style.display = 'block'; bar.style.width = '0%';
-  setStatus('Обрабатываем изображение...');
-  var reader = new FileReader();
-  reader.onprogress = function(ev){
-    if(ev.total > 0){ bar.style.width = Math.round(ev.loaded/ev.total*70) + '%'; }
-  };
-  reader.onload = function(){
-    bar.style.width = '85%';
-    var img = new Image();
-    img.onload = function(){
-      var max = 1024, w = img.width, h = img.height;
-      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
-      var c = document.createElement('canvas');
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(img, 0, 0, w, h);
-      var d = c.toDataURL('image/jpeg', 0.85);
-      refImageData = d.split(',')[1];
-      document.getElementById('refImg').src = d;
-      document.getElementById('refName').textContent = f.name;
-      document.getElementById('refBox').style.display = 'flex';
-      bar.style.width = '100%';
-      setTimeout(function(){ prog.style.display = 'none'; }, 600);
-      setStatus('');
-      saveDraft();
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(f);
-});
-function removeRef(){
-  refImageData = null;
-  document.getElementById('refInput').value = '';
-  document.getElementById('refBox').style.display = 'none';
-  saveDraft();
-}
 
 document.getElementById('aiBtn').addEventListener('click', function(){
   var t = document.getElementById('prompt').value.trim();
@@ -339,13 +570,14 @@ btn.addEventListener('click', function(){
   var prompt = document.getElementById('prompt').value.trim();
   if(!prompt){ alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»'); return; }
   if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
+  if(refAudioUrl && refs.length === 0 && !refVideoUrl){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; }
   btn.disabled = true;
   setStatus('Создаём платёж...');
-  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'text2video', seconds:seconds, prompt:prompt, aspect:aspect})})
+  saveDraft();
+  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'text2video', seconds:seconds, prompt:prompt, aspect:aspect, quality:quality})})
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ throw new Error(data.error); }
-      saveDraft();
       window.location.href = data.confirmationUrl;
     })
     .catch(function(e){
@@ -354,23 +586,73 @@ btn.addEventListener('click', function(){
     });
 });
 
-function poll(taskId){
+function chainKey(pid){ return 'seedgen_gen_chain_' + pid; }
+function getChain(pid){
+  try{ return JSON.parse(localStorage.getItem(chainKey(pid)) || 'null'); }catch(e){ return null; }
+}
+function setChain(pid, obj){
+  try{ localStorage.setItem(chainKey(pid), JSON.stringify(obj)); }catch(e){}
+}
+function clearChain(pid){
+  try{ localStorage.removeItem(chainKey(pid)); }catch(e){}
+}
+
+function showVideo(url, msg){
+  document.getElementById('video').src = url;
+  document.getElementById('result').style.display = 'block';
+  setStatus(msg);
+  btn.disabled = false;
+}
+
+function startUpscale(pid, baseVideoUrl){
+  setStatus('✨ Улучшаем качество до 1080p... ещё около минуты ⏳');
+  fetch('/api/upscale', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({videoUrl: baseVideoUrl})})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error){ throw new Error(d.error); }
+      setChain(pid, {taskId: d.taskId, stage: 'upscale', baseVideoUrl: baseVideoUrl, upscale: true});
+      poll(d.taskId, 'upscale', baseVideoUrl, pid);
+    })
+    .catch(function(e){
+      showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p сейчас недоступно (' + e.message + '). Вот готовое видео в 720p — напиши в поддержку, вернём разницу или улучшим вручную.');
+      clearChain(pid);
+      try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e2){}
+    });
+}
+
+function poll(taskId, stage, baseVideoUrl, pid){
   var timer = setInterval(function(){
     fetch('/api/status?taskId=' + encodeURIComponent(taskId))
       .then(function(r){ return r.json(); })
       .then(function(d){
         if(d.status === 'succeeded'){
           clearInterval(timer);
-          document.getElementById('video').src = d.videoUrl;
-          document.getElementById('result').style.display = 'block';
-          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
-          btn.disabled = false;
+          if(stage === 'upscale'){
+            showVideo(d.videoUrl, 'Готово! ✅ Full HD 1080p. Скачай видео в течение 7 дней.');
+            clearChain(pid);
+            try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e){}
+          }else{
+            var ch = getChain(pid);
+            if(ch && ch.upscale && ch.stage === 'base'){
+              startUpscale(pid, d.videoUrl);
+            }else{
+              showVideo(d.videoUrl, 'Готово! ✅ Скачай видео в течение 7 дней.');
+              clearChain(pid);
+              try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e){}
+            }
+          }
         }else if(d.status === 'failed'){
           clearInterval(timer);
-          setStatus('Ошибка генерации: ' + (d.error || 'попробуй другой запрос'));
-          btn.disabled = false;
+          if(stage === 'upscale' && baseVideoUrl){
+            showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p не удалось. Вот готовое видео в 720p — напиши в поддержку, вернём разницу.');
+            clearChain(pid);
+          }else{
+            setStatus('Ошибка генерации: ' + (d.error || 'попробуй другой запрос'));
+            btn.disabled = false;
+            clearChain(pid);
+          }
         }else{
-          setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
+          setStatus(stage === 'upscale' ? '✨ Улучшаем качество до 1080p... ещё около минуты ⏳' : '⚡ Seedance 2.5 создаёт твоё видео... ⏳');
         }
       })
       .catch(function(){});
@@ -380,29 +662,36 @@ function poll(taskId){
 (function(){
   var pid = new URLSearchParams(window.location.search).get('paymentId');
   if(!pid) return;
-  var savedTask = localStorage.getItem('seedgen_gen_task_' + pid);
-  if(savedTask){ btn.disabled = true; setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳'); poll(savedTask); return; }
+  var ch = getChain(pid);
+  if(ch && ch.taskId){
+    btn.disabled = true;
+    poll(ch.taskId, ch.stage || 'base', ch.baseVideoUrl || null, pid);
+    return;
+  }
   btn.disabled = true;
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId=' + encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.paid && data.taskId){
-        localStorage.setItem('seedgen_gen_task_' + pid, data.taskId);
+        setChain(pid, {taskId: data.taskId, stage: 'base', baseVideoUrl: null, upscale: false});
         setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
-        poll(data.taskId);
+        poll(data.taskId, 'base', null, pid);
       }else if(data.paid){
         var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
-        var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5};
-        if(draft.refImage) payload.refImage = draft.refImage;
+        var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5, quality:draft.quality || '480p'};
+        if(draft.refs && draft.refs.length) payload.refs = draft.refs;
+        else if(draft.refImage) payload.refImage = draft.refImage;
+        if(draft.refVideo) payload.refVideo = draft.refVideo;
+        if(draft.refAudio) payload.refAudio = draft.refAudio;
         setStatus('Оплата прошла! Запускаем генерацию...');
         fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
           .then(function(r){ return r.json(); })
           .then(function(d){
             if(d.error){ throw new Error(d.error); }
-            localStorage.setItem('seedgen_gen_task_' + pid, d.taskId);
+            setChain(pid, {taskId: d.taskId, stage: 'base', baseVideoUrl: null, upscale: !!d.upscale});
             setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
-            poll(d.taskId);
+            poll(d.taskId, 'base', null, pid);
           })
           .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
       }else{
