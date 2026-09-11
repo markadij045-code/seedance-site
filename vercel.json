@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/cat-city.mp4", "destination": "/cat-city.mp4.mp4" },
+    { "source": "/cat-dance.mp4", "destination": "/cat-dance.mp4.mp4" },
+    { "source": "/cat-knight-dance.mp4", "destination": "/cat-knight-dance.mp4.mp4" },
+    { "source": "/cat-knight.mp4", "destination": "/cat-knight.mp4.mp4" },
+    { "source": "/cat-space.mp4", "destination": "/cat-space.mp4.mp4" }
+  ]
+}
