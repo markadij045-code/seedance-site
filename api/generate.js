@@ -9,10 +9,10 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
-  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299 };
+  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299, animate: 299 };
   const PER_SEC = 30;
   const QUALITY_SURCHARGE = { '480p': 0, '720p': 200, '1080p': 300 };
-  const SEEDANCE_SERVICES = { text2video: true, animate: true };
+  const SEEDANCE_SERVICES = { text2video: true, animate: true, cartoon: true };
 
   const SIZE_BY_QUALITY = {
     '480p': { '21:9': '992x432', '16:9': '854x480', '4:3': '752x560', '1:1': '640x640', '3:4': '560x752', '9:16': '480x854' },
