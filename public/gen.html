@@ -161,7 +161,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 
   <label for="prompt">Опиши, какое видео хочешь:</label>
   <textarea id="prompt" placeholder="Например: кот в скафандре летит сквозь звёздное поле, кинематографичный стиль"></textarea>
-  <div class="airow">
+  <div class="airow" id="airow">
     <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
     <span id="aistat"></span>
   </div>
@@ -316,6 +316,7 @@ function setMode(m){
   document.getElementById('modeAdv').classList.toggle('active', m === 'adv');
   document.getElementById('advBlock').classList.toggle('open', m === 'adv');
   document.getElementById('attachTool').style.display = (m === 'nov') ? 'inline-flex' : 'none';
+  document.getElementById('airow').style.display = (m === 'adv') ? 'none' : 'flex';
   renderRefs();
   saveDraft();
 }
