@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SeedGen Studio — служебная</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:1.8rem;margin:30px 0 8px;color:#A3E635;text-align:center}
+.sub{color:#9ca3af;text-align:center;max-width:520px;margin-bottom:20px;font-size:.9rem}
+.card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
+label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
+input[type=password],textarea,select{width:100%;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;outline:none}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:#A3E635}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.chip{padding:10px 16px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;font-size:.88rem}
+.chip.active{border-color:#A3E635;color:#A3E635;background:rgba(163,230,53,0.1)}
+button.main{margin-top:16px;width:100%;padding:16px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
+button.main:disabled{opacity:.5;cursor:not-allowed}
+button.sec{margin-top:10px;padding:10px 18px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;cursor:pointer}
+#status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center;font-size:.9rem}
+#result{margin-top:16px;display:none;text-align:center}
+#result img{max-width:100%;border-radius:14px;border:1px solid rgba(163,230,53,.3)}
+#result a{display:inline-block;margin-top:12px;color:#A3E635;font-size:.95rem}
+.drop{display:block;position:relative;overflow:hidden;border:2px dashed #262d16;border-radius:14px;padding:16px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0;font-size:.9rem}
+.drop:hover{border-color:#A3E635;color:#fff}
+.drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.refbox{display:none;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.3);border-radius:10px}
+.refbox img{width:40px;height:40px;border-radius:8px;object-fit:cover}
+.refbox span{color:#c3c9b4;font-size:.85rem;flex:1}
+.refbox button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1.1rem}
+.lock{ text-align:center }
+</style>
+</head>
+<body>
+
+<h1>🎛 SeedGen Studio</h1>
+<p class="sub">Служебная панель владельца. Генерация картинок для контента, превью и рекламы. Не для публичного доступа.</p>
+
+<div class="card lock" id="loginCard">
+  <label>Пароль владельца</label>
+  <input type="password" id="pw" placeholder="Введи админ-пароль">
+  <button class="main" id="loginBtn" type="button">Войти</button>
+  <div id="loginStatus"></div>
+</div>
+
+<div class="card" id="studioCard" style="display:none">
+  <label>Модель</label>
+  <select id="model">
+    <option value="nano-banana">🍌 Nano Banana (дёшево, быстро)</option>
+    <option value="nano-banana-2">🍌 Nano Banana 2 (новее, детальнее)</option>
+  </select>
+
+  <label>Промпт</label>
+  <textarea id="prompt" placeholder="Например: логотип видеостудии: минималистичный лаймовый плей-баттон на чёрном фоне, векторный стиль"></textarea>
+  <button class="sec" id="aiBtn" type="button">✨ Улучшить промпт</button>
+
+  <label>Формат</label>
+  <div class="row" id="aspectRow">
+    <div class="chip active" data-a="1:1">1:1</div>
+    <div class="chip" data-a="16:9">16:9</div>
+    <div class="chip" data-a="9:16">9:16</div>
+    <div class="chip" data-a="4:3">4:3</div>
+    <div class="chip" data-a="3:4">3:4</div>
+  </div>
+
+  <label>Референс (необязательно)</label>
+  <label class="drop">📎 Прикрепить фото-референс<input type="file" id="refInput" accept="image/*"></label>
+  <div class="refbox" id="refBox"><img id="refImg" src="" alt=""><span id="refName"></span><button type="button" id="refDel">✕</button></div>
+
+  <button class="main" id="genBtn" type="button">Сгенерить картинку</button>
+  <div id="status"></div>
+  <div id="result"><img id="outImg" src="" alt=""><br><a id="dlLink" href="#" download="seedgen-image.png">⬇ Скачать картинку</a></div>
+</div>
+
+<script>
+var pw = sessionStorage.getItem('seedgen_studio_pw') || '';
+var aspect = '1:1';
+var refData = null;
+
+function setStatus(t){ document.getElementById('status').textContent = t; }
+
+function unlock(){
+  document.getElementById('loginCard').style.display = 'none';
+  document.getElementById('studioCard').style.display = 'block';
+}
+
+if(pw){ unlock(); }
+
+document.getElementById('loginBtn').addEventListener('click', function(){
+  var v = document.getElementById('pw').value;
+  if(!v){ document.getElementById('loginStatus').textContent = 'Введи пароль'; return; }
+  sessionStorage.setItem('seedgen_studio_pw', v);
+  pw = v;
+  fetch('/api/imagine', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({adminPassword:v, prompt:'test', model:'nano-banana', aspect:'1:1'})})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error && d.error.indexOf('доступ') !== -1){
+        sessionStorage.removeItem('seedgen_studio_pw');
+        pw = '';
+        document.getElementById('loginStatus').textContent = 'Неверный пароль';
+        return;
+      }
+      unlock();
+    });
+});
+
+document.querySelectorAll('#aspectRow .chip').forEach(function(c){
+  c.addEventListener('click', function(){
+    aspect = c.getAttribute('data-a');
+    document.querySelectorAll('#aspectRow .chip').forEach(function(x){ x.classList.toggle('active', x === c); });
+  });
+});
+
+document.getElementById('refInput').addEventListener('change', function(e){
+  var f = e.target.files[0]; if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var max = 1024, w = img.width, h = img.height;
+      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      refData = c.toDataURL('image/jpeg', 0.85);
+      document.getElementById('refImg').src = refData;
+      document.getElementById('refName').textContent = f.name;
+      document.getElementById('refBox').style.display = 'flex';
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+  e.target.value = '';
+});
+document.getElementById('refDel').addEventListener('click', function(){
+  refData = null;
+  document.getElementById('refBox').style.display = 'none';
+});
+
+document.getElementById('aiBtn').addEventListener('click', function(){
+  var t = document.getElementById('prompt').value.trim();
+  if(t.length < 5){ setStatus('Напиши пару слов — улучшатель сделает красиво'); return; }
+  setStatus('Улучшаем...');
+  fetch('/api/prompt', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:t})})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error){ setStatus('Не удалось улучшить'); return; }
+      document.getElementById('prompt').value = d.prompt;
+      setStatus('Готово ✨');
+    })
+    .catch(function(){ setStatus('Не удалось улучшить'); });
+});
+
+document.getElementById('genBtn').addEventListener('click', function(){
+  var t = document.getElementById('prompt').value.trim();
+  if(!t){ setStatus('Нужен промпт'); return; }
+  var b = document.getElementById('genBtn');
+  b.disabled = true;
+  setStatus('Рисуем... 10–30 секунд ⏳');
+  var payload = { adminPassword: pw, prompt: t, model: document.getElementById('model').value, aspect: aspect };
+  if(refData) payload.refImage = refData;
+  fetch('/api/imagine', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      b.disabled = false;
+      if(d.error){
+        if(d.error.indexOf('доступ') !== -1){
+          sessionStorage.removeItem('seedgen_studio_pw');
+          location.reload();
+          return;
+        }
+        setStatus('Ошибка: ' + d.error);
+        return;
+      }
+      var url = 'data:' + (d.mime || 'image/png') + ';base64,' + d.image;
+      document.getElementById('outImg').src = url;
+      document.getElementById('dlLink').href = url;
+      document.getElementById('result').style.display = 'block';
+      setStatus('Готово ✅ Модель: ' + d.model);
+    })
+    .catch(function(e){
+      b.disabled = false;
+      setStatus('Ошибка: ' + e.message);
+    });
+});
+</script>
+</body>
+</html>
