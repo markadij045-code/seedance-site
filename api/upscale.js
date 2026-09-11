@@ -1,3 +1,5 @@
+import { getBalance } from '../lib/ledger.js';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -8,6 +10,11 @@ export default async function handler(req, res) {
   const videoUrl = String((req.body || {}).videoUrl || '');
   if (videoUrl.indexOf('http') !== 0) {
     return res.status(400).json({ error: 'Нет видео для улучшения' });
+  }
+
+  const bal = await getBalance();
+  if (bal !== null && bal < 0.18) {
+    return res.status(503).json({ error: 'Улучшение качества временно недоступно: недостаточно ресурсов. Попробуй 720p или напиши в поддержку' });
   }
 
   const form = new FormData();
