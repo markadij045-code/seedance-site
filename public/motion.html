@@ -44,6 +44,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .del:hover{background:rgba(127,29,29,.45);color:#fff}
 #status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
 #preview{display:none;max-width:160px;border-radius:12px;margin-top:12px}
+#vidPreview{display:none;max-width:320px;border-radius:12px;margin-top:12px;background:#000}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
 .fname{color:#9ca3af;font-size:.9rem;margin-top:8px}
@@ -133,6 +134,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 <div class="card">
   <label>Шаг 2. Видео с движением (танец, речь, жесты)</label>
   <label class="drop">🎬 Выбрать видео (MP4, до 20 МБ)<input type="file" id="vid" accept="video/mp4,video/webm"></label>
+  <video id="vidPreview" controls playsinline></video>
   <div class="fname" id="vidName"></div>
   <div class="prog" id="vidProg"><i></i></div>
   <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
@@ -208,6 +210,7 @@ function calcPrice(s){ return BASE_PRICE + (s - 5) * PER_SEC; }
 
 var seconds = 10;
 var imageData = null, videoData = null;
+var localVideoBlobUrl = null;
 var paidReturn = false, paymentIdReturn = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
@@ -277,6 +280,19 @@ function checkUrlAlive(url, cb){
     .catch(function(){ cb(false); });
 }
 
+function showVideoPreview(src){
+  var vp = document.getElementById('vidPreview');
+  vp.src = src;
+  vp.style.display = 'block';
+  vp.load();
+}
+function hideVideoPreview(){
+  var vp = document.getElementById('vidPreview');
+  vp.pause();
+  vp.removeAttribute('src');
+  vp.style.display = 'none';
+}
+
 slider.addEventListener('input', function(){
   seconds = parseInt(slider.value, 10);
   updatePriceDisplay();
@@ -299,6 +315,7 @@ try{
           videoData = s.video;
           document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
           document.getElementById('vidDel').style.display = 'block';
+          showVideoPreview(s.video);
           showDraftBadge('video', 'Черновик сохранён');
         }else{
           document.getElementById('vidName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик видео устарел — нужно прикрепить заново</span>';
@@ -363,7 +380,12 @@ document.getElementById('vid').onchange = function(e){
   var f = e.target.files[0]; if(!f) return;
   if(f.type !== 'video/mp4' && f.type !== 'video/webm'){ alert('Нужно видео в формате MP4'); return; }
   if(f.size > 20*1024*1024){ alert('Видео больше 20 МБ. Выбери ролик короче.'); return; }
-  probeVideo(f, 30, function(){ uploadVideo(f); });
+  probeVideo(f, 30, function(){
+    if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
+    localVideoBlobUrl = URL.createObjectURL(f);
+    showVideoPreview(localVideoBlobUrl);
+    uploadVideo(f);
+  });
 };
 
 function uploadVideo(f){
@@ -395,10 +417,14 @@ function uploadVideo(f){
     setStatus('');
     saveDraft();
     showDraftBadge('video', 'Черновик сохранён');
+    if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
+    showVideoPreview(blob.url);
   }).catch(function(err){
     clearTimeout(timeoutId);
     prog.style.display = 'none';
     setStatus('');
+    hideVideoPreview();
+    if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
     if(timedOut){
       alert('Загрузка видео не началась за 30 секунд. Часто это блокировщик рекламы или VPN — отключи их и попробуй снова.');
     }else{
@@ -411,6 +437,8 @@ document.getElementById('vidDel').onclick = function(){
   document.getElementById('vidName').textContent = '';
   document.getElementById('vid').value = '';
   hideDraftBadge('video');
+  hideVideoPreview();
+  if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
   saveDraft();
 };
 
