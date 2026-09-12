@@ -78,6 +78,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 .notice{margin:14px 0;padding:14px 16px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:12px;color:#93c5fd;font-size:.9rem;line-height:1.6}
 .notice b{color:#bfdbfe}
 .draftBadge{display:inline-block;margin:8px 0;padding:6px 12px;background:rgba(163,230,53,0.1);border:1px solid rgba(163,230,53,0.3);border-radius:999px;color:#A3E635;font-size:.8rem;font-weight:600}
+#vidPreview{display:none;max-width:320px;border-radius:12px;margin-top:12px;background:#000}
+#audPreview{display:none;width:100%;max-width:420px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -123,6 +125,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 <div class="card">
   <label>Шаг 1. Видео с человеком</label>
   <label class="drop">🎬 Выбрать видео (MP4, до 20 МБ)<input type="file" id="vid" accept="video/mp4,video/webm"></label>
+  <video id="vidPreview" controls playsinline></video>
   <div class="fname" id="vidName"></div>
   <div class="prog" id="vidProg"><i></i></div>
   <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
@@ -132,6 +135,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 <div class="card">
   <label>Шаг 2. Твоя озвучка (что должен «сказать» человек)</label>
   <label class="drop">🎵 Выбрать аудио (MP3/WAV, до 5 МБ)<input type="file" id="aud" accept="audio/*"></label>
+  <audio id="audPreview" controls></audio>
   <div class="fname" id="audName"></div>
   <div class="prog" id="audProg"><i></i></div>
   <button class="del" id="audDel" type="button" style="display:none">✖ Удалить аудио</button>
@@ -207,6 +211,7 @@ function calcPrice(s){ return BASE_PRICE + (s - 5) * PER_SEC; }
 
 var seconds = 5;
 var videoData = null, audioData = null;
+var localVideoBlobUrl = null, localAudioBlobUrl = null;
 var paidReturn = false, paymentIdReturn = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
@@ -295,6 +300,31 @@ function checkUrlAlive(url, cb){
   fetch(url, {method: 'HEAD', mode: 'no-cors'}).then(function(){ cb(true); }).catch(function(){ cb(false); });
 }
 
+function showVideoPreview(src){
+  var vp = document.getElementById('vidPreview');
+  vp.src = src;
+  vp.style.display = 'block';
+  vp.load();
+}
+function hideVideoPreview(){
+  var vp = document.getElementById('vidPreview');
+  vp.pause();
+  vp.removeAttribute('src');
+  vp.style.display = 'none';
+}
+function showAudioPreview(src){
+  var ap = document.getElementById('audPreview');
+  ap.src = src;
+  ap.style.display = 'block';
+  ap.load();
+}
+function hideAudioPreview(){
+  var ap = document.getElementById('audPreview');
+  ap.pause();
+  ap.removeAttribute('src');
+  ap.style.display = 'none';
+}
+
 slider.addEventListener('input', function(){
   seconds = parseInt(slider.value, 10);
   updatePriceDisplay();
@@ -310,6 +340,7 @@ try{
           videoData = s.video;
           document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
           document.getElementById('vidDel').style.display = 'block';
+          showVideoPreview(s.video);
           showDraftBadge('video', 'Черновик сохранён');
         }else{
           document.getElementById('vidName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик видео устарел — нужно прикрепить заново</span>';
@@ -324,6 +355,7 @@ try{
           audioData = s.audio;
           document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
           document.getElementById('audDel').style.display = 'block';
+          showAudioPreview(s.audio);
           showDraftBadge('audio', 'Черновик сохранён');
         }else{
           document.getElementById('audName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик озвучки устарел — нужно прикрепить заново</span>';
@@ -345,6 +377,9 @@ document.getElementById('vid').onchange = function(e){
   if(f.type !== 'video/mp4' && f.type !== 'video/webm'){ alert('Нужно видео в формате MP4'); return; }
   if(f.size > 20*1024*1024){ alert('Видео больше 20 МБ. Выбери ролик короче.'); return; }
   probeVideo(f, 30, function(){
+    if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
+    localVideoBlobUrl = URL.createObjectURL(f);
+    showVideoPreview(localVideoBlobUrl);
     if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
     var prog = document.getElementById('vidProg');
     var bar = prog.querySelector('i');
@@ -363,10 +398,14 @@ document.getElementById('vid').onchange = function(e){
         setStatus('');
         saveDraft();
         showDraftBadge('video', 'Черновик сохранён');
+        if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
+        showVideoPreview(blob.url);
       })
       .catch(function(err){
         prog.style.display = 'none';
         setStatus('');
+        hideVideoPreview();
+        if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
         alert('Не удалось загрузить видео: ' + err.message);
       });
   });
@@ -376,6 +415,8 @@ document.getElementById('vidDel').onclick = function(){
   document.getElementById('vidName').textContent = '';
   document.getElementById('vid').value = '';
   hideDraftBadge('video');
+  hideVideoPreview();
+  if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
   saveDraft();
 };
 
@@ -384,6 +425,9 @@ document.getElementById('aud').onchange = function(e){
   if(f.type.indexOf('audio/') !== 0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
   if(f.size > 5*1024*1024){ alert('Аудио больше 5 МБ. Выбери файл короче.'); return; }
   probeAudio(f, 30, function(){
+    if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
+    localAudioBlobUrl = URL.createObjectURL(f);
+    showAudioPreview(localAudioBlobUrl);
     if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
     var prog = document.getElementById('audProg');
     var bar = prog.querySelector('i');
@@ -402,10 +446,14 @@ document.getElementById('aud').onchange = function(e){
         setStatus('');
         saveDraft();
         showDraftBadge('audio', 'Черновик сохранён');
+        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
+        showAudioPreview(blob.url);
       })
       .catch(function(err){
         prog.style.display = 'none';
         setStatus('');
+        hideAudioPreview();
+        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
         alert('Не удалось загрузить аудио: ' + err.message);
       });
   });
@@ -415,6 +463,8 @@ document.getElementById('audDel').onclick = function(){
   document.getElementById('audName').textContent = '';
   document.getElementById('aud').value = '';
   hideDraftBadge('audio');
+  hideAudioPreview();
+  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
   saveDraft();
 };
 
