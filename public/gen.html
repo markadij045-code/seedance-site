@@ -166,10 +166,22 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
     <span id="aistat"></span>
   </div>
 
+  <label style="margin-top:20px">Формат кадра и изображение</label>
+  <div class="toolbar">
+    <label class="tool tool-attach" id="attachTool" title="Загрузить изображение (необязательно)">📎 Загрузить изображение<input type="file" id="refInput" accept="image/*"></label>
+    <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
+    <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
+    <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
+    <div class="tool" onclick="pickAspect('1:1')" data-aspect="1:1">📐 1:1</div>
+    <div class="tool" onclick="pickAspect('3:4')" data-aspect="3:4">📐 3:4</div>
+    <div class="tool" onclick="pickAspect('9:16')" data-aspect="9:16">📐 9:16</div>
+  </div>
+  <div class="prog" id="refProg"><i></i></div>
+  <div class="refslist" id="refsList"></div>
+  <div class="refcounter" id="refCounter"></div>
+
   <div class="advblock" id="advBlock">
     <label>📎 Референсы: кто и что должно быть в кадре</label>
-    <div class="refslist" id="refsList"></div>
-    <div class="refcounter" id="refCounter"></div>
     <label class="tool tool-attach" id="addRefTool" style="display:inline-flex;margin-top:8px">➕ Добавить фото<input type="file" id="refAddInput" accept="image/*" multiple></label>
     <button class="morebtn" id="moreRefsBtn" type="button" onclick="unlockMoreRefs()">Нужно больше? Показать до 10</button>
     <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон». Нейросеть сохранит внешность и стиль каждого референса.</div>
@@ -183,18 +195,6 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
     <div class="advrow" id="refAudioRow" style="display:none"><span id="refAudioName"></span><button type="button" onclick="removeRefAudio()">✕</button></div>
     <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
   </div>
-
-  <label style="margin-top:20px">Формат кадра и изображение</label>
-  <div class="toolbar">
-    <label class="tool tool-attach" id="attachTool" title="Загрузить изображение (необязательно)">📎 Загрузить изображение<input type="file" id="refInput" accept="image/*"></label>
-    <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
-    <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
-    <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
-    <div class="tool" onclick="pickAspect('1:1')" data-aspect="1:1">📐 1:1</div>
-    <div class="tool" onclick="pickAspect('3:4')" data-aspect="3:4">📐 3:4</div>
-    <div class="tool" onclick="pickAspect('9:16')" data-aspect="9:16">📐 9:16</div>
-  </div>
-  <div class="prog" id="refProg"><i></i></div>
 
   <label style="margin-top:20px">Качество видео</label>
   <div class="qwrap">
