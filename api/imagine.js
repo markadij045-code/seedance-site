@@ -19,6 +19,10 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Нет доступа' });
   }
 
+  if (body.verifyOnly) {
+    return res.json({ ok: true });
+  }
+
   const prompt = String(body.prompt || '').trim();
   if (!prompt) return res.status(400).json({ error: 'Нужен промпт' });
 
