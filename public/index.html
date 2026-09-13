@@ -9,282 +9,264 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://seedgen.ru/">
 <meta name="twitter:card" content="summary_large_image">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000;color:#fff;min-height:100vh;overflow-x:hidden}
-.hero{position:relative;width:100%;height:100vh;min-height:700px;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:brightness(0.65)}
-.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.85) 100%);z-index:2}
-nav{position:fixed;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;z-index:100;background:rgba(0,0,0,0.1);backdrop-filter:blur(20px);transition:all 0.3s ease}
-nav.scrolled{background:rgba(0,0,0,0.85);padding:16px 48px}
-.logo{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
-.logo span{color:#A3E635}
-.links{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
-.links a{color:#fff;text-decoration:none;font-size:0.95rem;font-weight:500;opacity:0.8;transition:opacity 0.2s ease}
-.links a:hover{opacity:1}
-.links .pro{color:#6b7a58;cursor:pointer;position:relative}
-.links .pro:hover{color:#A3E635;opacity:1}
-.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#000;font-size:0.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap}
-.links .pro:hover .tip,.links .pro.open .tip{display:block}
-.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;padding:0;line-height:1}
-.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
-.sidebar.open{right:0}
-.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px;transition:background 0.2s}
-.sidebar a:hover{background:rgba(163,230,53,0.1)}
-.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
-.sidebar-backdrop.open{display:block}
-.hero-content{position:relative;z-index:3;text-align:center;max-width:900px;padding:0 24px;animation:fadeUp 1.4s ease-out}
-.hero-content h1{font-family:'Space Grotesk','Inter',sans-serif;font-size:clamp(2.5rem, 6vw, 4.5rem);font-weight:700;line-height:1.05;margin-bottom:24px;letter-spacing:-0.03em}
-.hero-content h1 .lime{color:#A3E635}
-.hero-content p{font-size:clamp(1.1rem, 2vw, 1.4rem);color:rgba(255,255,255,0.85);line-height:1.5;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto;font-weight:400}
-.hero-cta{display:inline-block;padding:18px 48px;background:#fff;color:#000;font-size:1.1rem;font-weight:600;border-radius:999px;text-decoration:none;transition:all 0.3s ease;border:none}
-.hero-cta:hover{transform:scale(1.05);background:#A3E635}
-.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:3;color:rgba(255,255,255,0.6);font-size:0.85rem;text-align:center;animation:bounce 2.2s infinite}
-.hero-scroll span{display:block;font-size:1.4rem;margin-top:4px}
-@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-10px)}}
-.main-content{width:100%;max-width:1200px;margin:0 auto;padding:120px 48px}
-.section{margin-bottom:120px;opacity:0;transform:translateY(30px);transition:all 0.8s ease}
-.section.visible{opacity:1;transform:translateY(0)}
-.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:48px;margin-bottom:32px;backdrop-filter:blur(10px)}
-.card h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:2rem;font-weight:700;margin-bottom:32px;letter-spacing:-0.02em}
-.card .lead{color:rgba(255,255,255,0.65);font-size:1.05rem;line-height:1.6;margin:-20px 0 32px;max-width:640px}
-
-.how4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.step{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 20px;text-align:center;position:relative;transition:all 0.3s}
-.step:hover{border-color:rgba(163,230,53,0.4);transform:translateY(-4px)}
-.step .num{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#A3E635;color:#000;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:14px}
-.step .em{font-size:1.5rem;display:block;margin-bottom:6px}
-.step h3{font-size:1.05rem;margin-bottom:8px}
-.step p{color:rgba(255,255,255,0.65);font-size:0.88rem;line-height:1.6}
-.step.free{background:linear-gradient(135deg, rgba(163,230,53,0.08), rgba(59,130,246,0.08));border-color:rgba(163,230,53,0.3)}
-@media(max-width:900px){.how4{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.how4{grid-template-columns:1fr}}
-
-.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
-.trust-item{background:rgba(163,230,53,0.05);border:1px solid rgba(163,230,53,0.2);border-radius:14px;padding:20px;text-align:center}
-.trust-item .chk{color:#A3E635;font-size:1.6rem;display:block;margin-bottom:8px}
-.trust-item h4{font-size:0.95rem;margin-bottom:6px}
-.trust-item p{color:rgba(255,255,255,0.55);font-size:0.82rem;line-height:1.5}
-@media(max-width:900px){.trust-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.trust-grid{grid-template-columns:1fr}}
-
-.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
-.ai-pair{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.ai-pair .before{color:rgba(255,255,255,0.55);font-size:0.9rem;line-height:1.5;font-style:italic}
-.ai-pair .arrow{color:#A3E635;font-size:1.1rem}
-.ai-pair .after{color:#e5e7eb;font-size:0.9rem;line-height:1.6}
-.ai-pair .lbl{font-size:0.7rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#6b7a58;margin-bottom:4px;display:block}
-.ai-pair .lbl.lime{color:#A3E635}
-.ai-cta{text-align:center}
-.ai-cta a{display:inline-block;padding:16px 40px;background:#A3E635;color:#000;font-size:1rem;font-weight:700;border-radius:999px;text-decoration:none;transition:all 0.3s ease}
-.ai-cta a:hover{transform:scale(1.05)}
-.ai-note{color:rgba(255,255,255,0.5);font-size:0.85rem;text-align:center;margin-top:12px}
-@media(max-width:900px){.ai-grid{grid-template-columns:1fr}}
-
-.shop{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.shop-card{position:relative;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;text-decoration:none;color:#fff;transition:all 0.25s ease;display:block}
-.shop-card:hover{border-color:#A3E635;transform:translateY(-4px);box-shadow:0 12px 32px rgba(163,230,53,0.12)}
-.shop-card .em{font-size:2rem;display:block;margin-bottom:10px}
-.shop-card h3{font-size:1.05rem;margin-bottom:6px}
-.shop-card p{color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.5;margin-bottom:12px}
-.shop-card b{color:#A3E635;font-size:0.95rem}
-.shop-card .hit{position:absolute;top:12px;right:12px;background:#A3E635;color:#000;font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:6px}
-.shop-card .seed{display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:8px}
-@media(max-width:900px){.shop{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.shop{grid-template-columns:1fr}}
-
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.grid-item{position:relative;border-radius:16px;overflow:hidden;background:#000}
-.grid video{width:100%;display:block;cursor:pointer}
-.grid p{color:rgba(255,255,255,0.6);font-size:0.9rem;text-align:center;margin-top:12px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
-
-.price{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.08);gap:16px}
-.price:last-child{border-bottom:none}
-.price span{color:rgba(255,255,255,0.8);font-size:1rem}
-.price b{color:#A3E635;font-size:1.2rem;font-weight:700;white-space:nowrap}
-.steps{color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.8}
-.go-bottom{text-align:center;margin-top:40px}
-.go-bottom a{display:inline-block;padding:18px 48px;background:#fff;color:#000;font-size:1.1rem;font-weight:600;border-radius:999px;text-decoration:none;transition:all 0.3s ease}
-.go-bottom a:hover{transform:scale(1.05);background:#A3E635}
-footer{padding:48px 24px;color:rgba(255,255,255,0.4);font-size:0.85rem;text-align:center;line-height:1.7;border-top:1px solid rgba(255,255,255,0.08)}
-footer a{color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.2s ease}
-footer a:hover{color:#A3E635}
-
-.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
-.welcome-modal.open{display:flex}
-.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
-.welcome-box h2{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.8rem;margin-bottom:16px;color:#fff}
-.welcome-box h2 .lime{color:#A3E635}
-.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
-.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
-.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
-.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
-
-@media(max-width:768px){
-  nav{padding:16px 24px}
-  .links{display:none}
-  .burger{display:block}
-  .main-content{padding:80px 24px}
-  .card{padding:32px 24px}
-  .card h2{font-size:1.6rem}
-  .hero{min-height:600px}
-  .section{margin-bottom:80px}
-}
-</style>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
 <div class="welcome-modal" id="welcomeModal">
   <div class="welcome-box">
     <button class="welcome-close" onclick="closeWelcome()">✕</button>
-    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
+    <h2>🎬 <span class="grad">Мурзик уже танцует</span></h2>
     <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
     <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
     <button onclick="closeWelcome()">Поехали?</button>
   </div>
 </div>
 
+<header class="top">
+  <div class="container nav-in">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
+      SeedGen
+    </a>
+    <nav class="menu">
+      <a href="#services">Услуги</a>
+      <a href="#quality">Качество</a>
+      <a href="#examples">Примеры</a>
+      <a href="#price">Цены</a>
+      <a href="/help.html">Помощь</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="btn btn-primary" href="/gen.html">Создать видео</a>
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+    </div>
+  </div>
+</header>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/gen.html">Создать видео</a>
+  <a href="/cartoon.html">Мультфильм</a>
+  <a href="/avatar.html">Аватар</a>
+  <a href="/motion.html">Моушен</a>
+  <a href="/lipsync.html">Липсинк</a>
+  <a href="/examples.html">Примеры</a>
+  <a href="/help.html">Помощь</a>
+</div>
+
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline preload="metadata">
     <source src="/cat-knight-dance.mp4" type="video/mp4">
   </video>
-  <div class="hero-overlay"></div>
-  <nav id="navbar">
-    <div class="logo"><span>▶</span> SeedGen</div>
-    <div class="links">
-      <a href="#services">Все услуги</a>
-      <a href="#ai">AI-помощник</a>
-      <a href="#examples">Примеры</a>
-      <a href="#price">Цены</a>
-      <span class="pro" onclick="this.classList.toggle('open')">PRO-студия<span class="tip">скоро ✨</span></span>
+  <div class="hero-veil"></div>
+  <div class="hero-in">
+    <div class="eyebrow"><i></i> Seedance 2.5 · Kling · Nano Banana</div>
+    <h1>Нейросеть снимет<br>для тебя <span class="grad">кино</span></h1>
+    <p>Опиши сцену словами — получи готовый ролик за 2–5 минут. Мультфильм из своего фото, говорящий аватар, мем с танцем. Без навыков монтажа.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-lg" href="/gen.html">Создать видео</a>
+      <a class="btn btn-ghost btn-lg" href="#examples">Смотреть примеры</a>
     </div>
-    <button class="burger" onclick="toggleSidebar()">☰</button>
-  </nav>
-  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
-  <div class="sidebar" id="sidebar">
-    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-    <a href="#services" onclick="toggleSidebar()">🎬 Все услуги</a>
-    <a href="/gen.html">📝 Создать видео</a>
-    <a href="/cartoon.html">🎭 Мультфильм</a>
-    <a href="/avatar.html">🗣 Аватар</a>
-    <a href="/motion.html">🎮 Моушен</a>
-    <a href="/lipsync.html">💬 Липсинк</a>
-    <a href="#ai" onclick="toggleSidebar()">✨ AI-помощник</a>
-    <a href="#examples" onclick="toggleSidebar()">🖼 Примеры</a>
-    <a href="#price" onclick="toggleSidebar()">💰 Цены</a>
+    <div class="chips">
+      <span class="chip">⏱ <b>1–5 минут</b> до результата</span>
+      <span class="chip">🎞 <b>480p–1080p</b> на выбор</span>
+      <span class="chip">₽ <b>от 199 ₽</b> без подписки</span>
+    </div>
   </div>
-  <div class="hero-content">
-    <h1>Нейросеть <span class="lime">снимет для тебя кино</span></h1>
-    <p>Опиши словами — получи видео. Сделай мультфильм. Запусти мем с танцем. Всё за 2–5 минут, без навыков монтажа.</p>
-    <a href="#services" class="hero-cta">Поехали?</a>
-  </div>
-  <div class="hero-scroll">листай<span>↓</span></div>
 </section>
 
-<div class="main-content">
-
-<div class="section">
-  <div class="card">
-    <h2>Как это работает</h2>
-    <p class="lead">Четыре простых шага от идеи до готового видео. Интерфейс можно потрогать заранее — ничего не сломается.</p>
-    <div class="how4">
-      <div class="step free"><span class="num">1</span><span class="em">👀</span><h3>Попробуй интерфейс</h3><p>Открой любую услугу, потяни бегунок, почитай подсказки. Без оплаты.</p></div>
-      <div class="step"><span class="num">2</span><span class="em">✍️</span><h3>Опиши или загрузи</h3><p>Текст, фото или видео — смотря какую услугу выбрал. Плюс длительность и качество. AI улучшит промпт.</p></div>
-      <div class="step"><span class="num">3</span><span class="em">💳</span><h3>Оплати удобно</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек официальный, без подписок.</p></div>
-      <div class="step"><span class="num">4</span><span class="em">🎬</span><h3>Получи видео</h3><p>Через 1–5 минут ролик появится на странице. Скачивай и делись.</p></div>
+<section class="sec" id="examples">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Снято нейросетью. Без исключений</h2>
+      <p>Каждое видео ниже создано на SeedGen из одной фразы или одного фото. Наведи курсор — ролик оживёт.</p>
+    </div>
+    <div class="show rv">
+      <div class="show-item"><video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video><div class="show-cap">Гигантский кот в городе — текст → видео</div></div>
+      <div class="show-item"><video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video><div class="show-cap">Кот-пилот в космосе — текст → видео</div></div>
+      <div class="show-item"><video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video><div class="show-cap">Танцующий котёнок — текст → видео</div></div>
+      <div class="show-item"><video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video><div class="show-cap">Кот-рыцарь против дракона — текст → видео</div></div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="section">
-  <div class="card">
-    <h2>🛡 Гарантии и безопасность</h2>
-    <p class="lead">Работаем официально. Всё прозрачно, всё задокументировано.</p>
-    <div class="trust-grid">
-      <div class="trust-item"><span class="chk">✓</span><h4>Самозанятая</h4><p>Официальный статус, ИНН 420900493994</p></div>
-      <div class="trust-item"><span class="chk">✓</span><h4>Чеки по 54-ФЗ</h4><p>Приходят на почту сразу после оплаты</p></div>
-      <div class="trust-item"><span class="chk">✓</span><h4>Возврат при сбое</h4><p>Если нейросеть подвела — вернём деньги или перегенерируем</p></div>
-      <div class="trust-item"><span class="chk">✓</span><h4>Хранение 7 дней</h4><p>Скачай результат в течение недели без потерь</p></div>
+<section class="sec" id="services">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Пять способов снять своё кино</h2>
+      <p>Выбери задачу — остальное нейросеть сделает сама. Одна оплата за один заказ, без подписок.</p>
+    </div>
+    <div class="svc-grid rv">
+      <a class="svc" href="/gen.html">
+        <span class="tag">Seedance 2.5</span>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg></span>
+        <h3>Создать видео</h3>
+        <p>Опиши сцену словами или добавь картинку — нейросеть снимет ролик с нуля.</p>
+        <span class="price">от 199 ₽</span>
+      </a>
+      <a class="svc" href="/cartoon.html">
+        <span class="tag">Seedance 2.5</span>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg></span>
+        <h3>Мультфильм</h3>
+        <p>Твоё фото станет арт-персонажем в стиле Pixar и оживёт по твоему сюжету.</p>
+        <span class="price">от 299 ₽</span>
+      </a>
+      <a class="svc" href="/avatar.html">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></span>
+        <h3>Говорящий аватар</h3>
+        <p>Человек на фото заговорит твоим голосом или текстом — губы синхронно.</p>
+        <span class="price">499 ₽</span>
+      </a>
+      <a class="svc" href="/motion.html">
+        <span class="tag">хит</span>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 0 1 13.6-5.6"/><path d="M20 12a8 8 0 0 1-13.6 5.6"/><path d="M17.5 3v3.5H14"/><path d="M6.5 21v-3.5H10"/></svg></span>
+        <h3>Моушен контроль</h3>
+        <p>Персонаж с фото повторит танец, жесты и речь из твоего видео.</p>
+        <span class="price">от 199 ₽</span>
+      </a>
+      <a class="svc" href="/lipsync.html">
+        <span class="tag">хит</span>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/></svg></span>
+        <h3>Липсинк и дубляж</h3>
+        <p>Человек в видео скажет твоими словами — для переводов и мемов «заставь сказать».</p>
+        <span class="price">от 199 ₽</span>
+      </a>
     </div>
   </div>
-</div>
+</section>
 
-<div class="section" id="services">
-  <div class="card">
-    <h2>Все услуги</h2>
-    <div class="shop">
-      <a class="shop-card" href="/gen.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">📝</span><h3>Создать видео</h3><p>Опиши сцену словами или загрузи изображение — нейросеть снимет ролик. Качество на выбор: 480p–1080p</p><b>от 199 ₽</b></a>
-      <a class="shop-card" href="/cartoon.html"><span class="seed">⚡ Seedance 2.5</span><span class="em">🎭</span><h3>Мультфильм</h3><p>Твоё фото в стиле Pixar с твоим сюжетом, оживление на Seedance 2.5. Качество на выбор: 480p–1080p</p><b>от 299 ₽</b></a>
-      <a class="shop-card" href="/avatar.html"><span class="em">🗣</span><h3>Говорящий аватар</h3><p>Фото говорит твоим текстом или голосом</p><b>499 ₽</b></a>
-      <a class="shop-card" href="/motion.html"><span class="hit">🔥 хит</span><span class="em">🎮</span><h3>Моушен контроль</h3><p>Персонаж повторяет танец и речь из видео</p><b>от 199 ₽</b></a>
-      <a class="shop-card" href="/lipsync.html"><span class="hit">🔥 хит</span><span class="em">💬</span><h3>Липсинк</h3><p>Человек в видео говорит твоими словами</p><b>от 199 ₽</b></a>
+<section class="sec">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Как это работает</h2>
+      <p>Четыре шага от идеи до файла на телефоне. Интерфейс можно потрогать до оплаты.</p>
     </div>
-    <div class="go-bottom">
-      <a href="/gen.html">Поехали?</a>
+    <div class="steps rv">
+      <div class="step"><div class="n">1</div><h3>Опиши или загрузи</h3><p>Текст, фото, видео или озвучка — смотря какую услугу выбрал. AI-помощник улучшит промпт бесплатно.</p></div>
+      <div class="step"><div class="n">2</div><h3>Настрой</h3><p>Длительность до 30 секунд, формат кадра и качество: 480p, 720p или 1080p.</p></div>
+      <div class="step"><div class="n">3</div><h3>Оплати</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек по 54-ФЗ приходит на почту сразу.</p></div>
+      <div class="step"><div class="n">4</div><h3>Скачай</h3><p>Ролик появится на странице через 1–5 минут. Хранится 7 дней — успеет везде выйти.</p></div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="section" id="ai">
-  <div class="card">
-    <h2>✨ AI-помощник встроен бесплатно</h2>
-    <p class="lead">Не знаешь, как красиво описать сцену? Напиши пару слов своими словами — кнопка «Улучшить описание» превратит их в кинематографичный промпт. Вот живые примеры:</p>
-    <div class="ai-grid">
+<section class="sec" id="quality">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Качество под задачу и бюджет</h2>
+      <p>Три тарифа разрешения для видео-услуг. Цена растёт предсказуемо: +30 ₽ за каждую секунду сверх пяти.</p>
+    </div>
+    <div class="tiers rv">
+      <div class="tier">
+        <div class="tname">480p · Базовое</div>
+        <div class="tprice">199 ₽</div>
+        <div class="tdesc">5 секунд. Быстрее всего — для черновиков и мемов.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Генерация за 1–3 минуты</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Все пять услуг доступны</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>+30 ₽ за каждую секунду сверх 5</li>
+        </ul>
+        <a class="btn btn-ghost" href="/gen.html">Выбрать</a>
+      </div>
+      <div class="tier hot">
+        <div class="tname">720p · HD</div>
+        <div class="tprice">399 ₽</div>
+        <div class="tdesc">5 секунд. Чёткая картинка для соцсетей и YouTube.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Стандарт качества для публикаций</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>+200 ₽ к базовой цене</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Готовность 1–5 минут</li>
+        </ul>
+        <a class="btn btn-primary" href="/gen.html">Выбрать</a>
+      </div>
+      <div class="tier">
+        <div class="tname">1080p · Full HD</div>
+        <div class="tprice">499 ₽</div>
+        <div class="tdesc">5 секунд. Максимум детализации с апскейлом.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>720p + автоулучшение качества</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>+300 ₽ к базовой цене</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Готовность на ~1 минуту дольше</li>
+        </ul>
+        <a class="btn btn-ghost" href="/gen.html">Выбрать</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>AI-помощник встроен бесплатно</h2>
+      <p>Не знаешь, как описать сцену красиво? Напиши пару слов — кнопка «Улучшить описание» сделает кинематографичный промпт.</p>
+    </div>
+    <div class="ai-grid rv">
       <div class="ai-pair">
-        <div><span class="lbl">Ты написал</span><div class="before">«кот в скафандре»</div></div>
-        <div class="arrow">↓</div>
-        <div><span class="lbl lime">AI сделал</span><div class="after">«Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре, кинематографичное освещение»</div></div>
+        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">«кот в скафандре»</div></div>
+        <div class="ai-arrow">↓</div>
+        <div><div class="ai-lbl lime">AI сделал</div><div class="ai-after">«Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре»</div></div>
       </div>
       <div class="ai-pair">
-        <div><span class="lbl">Ты написал</span><div class="before">«собака бежит по пляжу»</div></div>
-        <div class="arrow">↓</div>
-        <div><span class="lbl lime">AI сделал</span><div class="after">«Радостный золотистый ретривер бежит по утреннему пляжу в замедленной съёмке, брызги песка сверкают на солнце, камера снята с нижней точки»</div></div>
+        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">«собака бежит по пляжу»</div></div>
+        <div class="ai-arrow">↓</div>
+        <div><div class="ai-lbl lime">AI сделал</div><div class="ai-after">«Золотистый ретривер бежит по утреннему пляжу в замедленной съёмке, брызги песка сверкают на солнце, нижний ракурс»</div></div>
       </div>
       <div class="ai-pair">
-        <div><span class="lbl">Ты написал</span><div class="before">«город ночью»</div></div>
-        <div class="arrow">↓</div>
-        <div><span class="lbl lime">AI сделал</span><div class="after">«Ночной мегаполис после дождя: неоновые вывески отражаются в мокром асфальте, камера плавно спускается между небоскрёбами, стиль киберпанк»</div></div>
+        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">«город ночью»</div></div>
+        <div class="ai-arrow">↓</div>
+        <div><div class="ai-lbl lime">AI сделал</div><div class="ai-after">«Ночной мегаполис после дождя: неон отражается в мокром асфальте, камера плавно спускается между небоскрёбами»</div></div>
       </div>
     </div>
-    <div class="ai-cta"><a href="/gen.html">Попробовать помощника — бесплатно</a></div>
-    <div class="ai-note">5 бесплатных улучшений за визит, без оплаты и регистрации</div>
   </div>
-</div>
+</section>
 
-<div class="section" id="examples">
-  <div class="card">
-    <h2>Примеры работ</h2>
-    <p class="steps" style="text-align:center;margin-bottom:32px">Все эти видео сгенерированы нейросетью из одной фразы. Играют сами при прокрутке, нажми — встанут на паузу.</p>
-    <div class="grid">
-      <div class="grid-item"><video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video></div>
-      <div class="grid-item"><video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video></div>
-      <div class="grid-item"><video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video></div>
-      <div class="grid-item"><video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video></div>
+<section class="sec">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Работаем официально</h2>
+      <p>SeedGen — проект самозанятой Малкова О. А. Всё прозрачно: чеки, оферта, возврат при сбое.</p>
     </div>
-    <p class="steps" style="text-align:center;margin-top:16px"><a href="/examples.html" style="color:#A3E635">→ Все примеры в галерее</a></p>
+    <div class="guar rv">
+      <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9.5 12l2 2 3.5-4"/></svg><h3>Самозанятая</h3><p>Официальный статус, ИНН 420900493994</p></div>
+      <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16"/><path d="M8 15h4"/></svg><h3>Чеки по 54-ФЗ</h3><p>Приходят на почту сразу после оплаты</p></div>
+      <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M9.5 12l2 2 3.5-4"/></svg><h3>Возврат при сбое</h3><p>Не сгенерилось — вернём или перегенерируем</p></div>
+      <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><h3>Хранение 7 дней</h3><p>Скачай результат в течение недели</p></div>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="section" id="price">
-  <div class="card">
-    <h2>Цены</h2>
-    <div class="price"><span>📝 Создать видео (5–30 сек, Seedance 2.5) · качество на выбор 480p / 720p / 1080p</span><b>199–1249 ₽</b></div>
-    <div class="price"><span>🎭 Мультфильм из фото (стиль Pixar, до 30 сек) · качество на выбор 480p / 720p / 1080p</span><b>299–1349 ₽</b></div>
-    <div class="price"><span>🗣 Говорящий аватар (фото + текст или аудио)</span><b>499 ₽</b></div>
-    <div class="price"><span>🎮 Моушен контроль (фото + видео с движением, до 30 сек)</span><b>от 199 ₽</b></div>
-    <div class="price"><span>💬 Липсинк / дубляж (видео + твоя озвучка, до 30 сек)</span><b>от 199 ₽</b></div>
-    <p class="steps" style="margin-top:16px;font-size:.9rem;color:rgba(255,255,255,0.55)">✨ 1080p = генерация 720p + автоматическое улучшение качества, готовность около минуты дольше. Полная таблица цен — в <a href="/legal.html#offer" style="color:#A3E635">оферте</a>.</p>
+<section class="sec" id="price">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Цены без сюрпризов</h2>
+      <p>Полная таблица — в оферте. Здесь главное: платишь один раз за один заказ.</p>
+    </div>
+    <div class="prows rv">
+      <div class="prow"><span>Создать видео · 5–30 сек · Seedance 2.5 · 480p/720p/1080p</span><b>199–1249 ₽</b></div>
+      <div class="prow"><span>Мультфильм из фото · арт Pixar + оживление · до 30 сек</span><b>299–1349 ₽</b></div>
+      <div class="prow"><span>Говорящий аватар · фото + озвучка до 30 сек</span><b>499 ₽</b></div>
+      <div class="prow"><span>Моушен контроль · фото + видео с движением · до 30 сек</span><b>199–949 ₽</b></div>
+      <div class="prow"><span>Липсинк / дубляж · видео + озвучка · до 30 сек</span><b>199–949 ₽</b></div>
+    </div>
   </div>
-</div>
+</section>
 
-</div>
+<section class="sec">
+  <div class="container">
+    <div class="band rv">
+      <h2>Твоё первое видео — через 5 минут</h2>
+      <p>Открой «Создать видео», напиши пару слов и нажми «Улучшить описание». Дальше — магия.</p>
+      <a class="btn btn-primary btn-lg" href="/gen.html">Начать бесплатно с промпта</a>
+    </div>
+  </div>
+</section>
 
 <footer>
-  Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
-  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты и реквизиты</a>
+  <div class="container foot-in">
+    <div>© SeedGen, 2026<br>Самозанятая Малкова О. А., ИНН 420900493994</div>
+    <div><a href="/legal.html#offer">Оферта</a> · <a href="/legal.html#policy">Конфиденциальность</a> · <a href="/legal.html">Реквизиты</a><br><a href="/help.html">Помощь</a> · <a href="/examples.html">Примеры</a></div>
+  </div>
 </footer>
 
 <script>
@@ -302,32 +284,20 @@ function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
-window.addEventListener('scroll',function(){
-  var nav=document.getElementById('navbar');
-  if(window.scrollY>100){nav.classList.add('scrolled');}
-  else{nav.classList.remove('scrolled');}
-});
-var observer=new IntersectionObserver(function(entries){
-  entries.forEach(function(entry){
-    if(entry.isIntersecting){entry.target.classList.add('visible');}
-  });
-},{threshold:0.1});
-document.querySelectorAll('.section').forEach(function(s){observer.observe(s);});
-
 (function(){
-  var vids=document.querySelectorAll('.grid video');
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } });
+  },{threshold:0.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  var vids=document.querySelectorAll('.show-item video');
   vids.forEach(function(v){
-    v.addEventListener('click',function(){
-      if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
-    });
+    v.addEventListener('click',function(){ if(v.paused){v.play().catch(function(){});}else{v.pause();} });
   });
-  var vo=new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      if(en.isIntersecting && en.intersectionRatio>0.4){
-        en.target.play().catch(function(){});
-      }else{
-        en.target.pause();
-      }
+  var vo=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting&&e.intersectionRatio>0.4){e.target.play().catch(function(){});}
+      else{e.target.pause();}
     });
   },{threshold:[0,0.4,0.8]});
   vids.forEach(function(v){vo.observe(v);});
