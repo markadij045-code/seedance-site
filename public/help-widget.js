@@ -13,8 +13,8 @@
   else if(path.indexOf('motion')!==-1)key='motion';
   else if(path.indexOf('lipsync')!==-1)key='lipsync';
   else if(path==='/')key='home';
+  var WS=document.body.hasAttribute('data-ws');
 
-  // 🔒 ЗАГЛУШКА ОПЛАТ: перехват на самом раннем уровне — раньше, чем кнопка успеет создать платёж
   if(LAUNCH_MODE){
     document.addEventListener('click', function(e){
       var b=e.target&&e.target.closest?e.target.closest('button'):null;
@@ -30,7 +30,7 @@
   }
 
   var DATA={
-    create:{t:'Создать видео',s:['Опиши видео словами. Кнопка «✨ Улучшить описание» превратит твой черновик в кинематографичный промпт.','Выбери формат кадра (📐) и длительность (от 5 до 30 сек).','Хочешь — прикрепи изображение (📎): питомец или персонаж станет героем сцены.','Отметь галочку согласия и нажми «Создать видео».','Оплати — ⚡ Seedance 2.5 создаст ролик за 1–5 минут.']},
+    create:{t:'Создать видео',s:['Опиши видео словами. Кнопка «✨ Улучшить описание» превратит твой черновик в кинематографичный промпт.','Выбери формат кадра и длительность (от 5 до 30 сек).','Хочешь — прикрепи изображение: питомец или персонаж станет героем сцены.','Отметь галочку согласия и нажми кнопку оплаты внизу.','Оплати — ⚡ Seedance 2.5 создаст ролик за 1–5 минут.']},
     home:{t:'Главная страница',s:['Нажми «Поехали?» — откроется витрина всех услуг.','Выбери карточку услуги — попадёшь на её страницу.','Дальше подсказки будут на самой странице услуги.']},
     photo:{t:'Оживи картинку',s:['Услуга объединена с «Создать видео»: загрузи изображение и опиши сцену.']},
     cartoon:{t:'Мультфильм из фото',s:['Загрузи фото с человеком (своё или с его согласия).','Опиши сюжет мультфильма.','Выбери формат и длительность.','Оплати, затем нажми «Сделать арт», потом «Оживить арт в видео». Оба шага включены в цену.']},
@@ -40,7 +40,7 @@
   };
   var FAQ=[
     ['Как оплатить?','Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — одна оплата за один заказ.'],
-    ['Когда придёт видео?','Через 1–5 минут после оплаты видео появится на странице. Скачивай кнопкой «Скачать видео» — выкладывай куда хочешь.'],
+    ['Когда придёт видео?','Через 1–5 минут после оплаты видео появится в правой панели. Скачивай кнопкой «Скачать видео» — выкладывай куда хочешь.'],
     ['Сколько хранится видео?','7 дней на сервере. Скачай его сразу — потом оно удалится без возможности восстановления.'],
     ['А если видео не пришло из-за сбоя?','Напиши в MAX (ссылка внизу страницы): проверим чек и запустим генерацию заново или вернём деньги по оферте.'],
     ['Можно фото с людьми?','В «Создать видео» изображение людей как основу не пропускаем (защита от дипфейков). Для людей есть «Мультфильм», «Аватар», «Моушен» и «Липсинк» — только своё фото или с согласия человека.']
@@ -70,7 +70,7 @@
   +'#trustBlock a{color:#A3E635;text-decoration:none}'
   +'.hwNote{margin:10px 0 0;color:#c9cfba;font-size:.85rem;line-height:1.5}'
   +'.hwDl{display:inline-block;margin-top:12px;padding:10px 20px;background:#A3E635;color:#000;border-radius:999px;font-weight:700;text-decoration:none;font-size:.9rem}'
-  +'#hwFloat{position:fixed;right:18px;bottom:18px;z-index:400;width:56px;height:56px;border-radius:50%;background:#A3E635;color:#0a0c08;font-size:1.6rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(163,230,53,.4)}'
+  +'#hwFloat{position:fixed;right:18px;bottom:86px;z-index:400;width:56px;height:56px;border-radius:50%;background:#A3E635;color:#0a0c08;font-size:1.6rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(163,230,53,.4)}'
   +'#hwModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:401;align-items:center;justify-content:center;padding:20px}'
   +'#hwModal.open{display:flex}'
   +'#hwBox{background:#101308;border:1px solid rgba(163,230,53,.4);border-radius:20px;padding:28px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative}'
@@ -114,7 +114,7 @@
   fixFooter();
 
   function fixMenu(){
-    var as=document.querySelectorAll('nav .links a, .sidebar a');
+    var as=document.querySelectorAll('nav .links a, .sidebar a, .menu a');
     for(var i=0;i<as.length;i++){
       var a=as[i];
       var href=a.getAttribute('href')||'';
@@ -148,19 +148,24 @@
     var t=btns[i].textContent||'';
     if(/Оплатить|Создать видео|Сгенерировать|Оживить картинку/.test(t)){payBtn=btns[i];break;}
   }
-  if(payBtn&&!document.getElementById('trustBlock')&&!document.querySelector('.trust')){
+  if(!WS&&payBtn&&!document.getElementById('trustBlock')&&!document.querySelector('.trust')){
     var trust=document.createElement('div');
     trust.id='trustBlock';
     trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a>';
     payBtn.parentNode.insertBefore(trust,payBtn);
   }
 
-  if(LAUNCH_MODE && payBtn && !document.getElementById('launchBadge')){
-    var badge=document.createElement('div');
-    badge.id='launchBadge';
-    badge.className='launchBadge';
-    badge.innerHTML='🚧 <b>Сайт готовится к запуску</b><br>Оплата откроется в ближайшие дни. Пока можешь потестить интерфейс — всё работает, кроме оплаты.';
-    payBtn.parentNode.insertBefore(badge, payBtn);
+  if(LAUNCH_MODE){
+    var badgeHTML='🚧 <b>Сайт готовится к запуску</b><br>Оплата откроется в ближайшие дни. Пока можешь потестить интерфейс — всё работает, кроме оплаты.';
+    var host=document.getElementById('wsNotice');
+    if(host){ host.innerHTML='<div id="launchBadge" class="launchBadge">'+badgeHTML+'</div>'; }
+    else if(!WS&&payBtn&&!document.getElementById('launchBadge')){
+      var badge=document.createElement('div');
+      badge.id='launchBadge';
+      badge.className='launchBadge';
+      badge.innerHTML=badgeHTML;
+      payBtn.parentNode.insertBefore(badge, payBtn);
+    }
   }
 
   if(key==='cartoon'||key==='avatar'||key==='motion'||key==='lipsync'){
@@ -193,7 +198,7 @@
   fb.onclick=open;
   document.body.appendChild(fb);
 
-  if(payBtn){
+  if(!WS&&payBtn){
     var ib=document.createElement('button');
     ib.id='hwInline';ib.type='button';
     ib.textContent='❓ Пошаговая инструкция — для новичков';
@@ -206,16 +211,6 @@
     var ha=document.createElement('a');
     ha.href='/help.html';ha.textContent='❓ Помощь';
     links2.appendChild(ha);
-  }
-
-  if(key==='create'){
-    var tb=document.querySelector('.toolbar');
-    if(tb&&!tb.parentNode.querySelector('.hwNote')){
-      var w=document.createElement('div');
-      w.className='hwNote';
-      w.textContent='⚠️ Изображение с людьми как основу не пропускаем — нейросеть защищает людей от дипфейков. Для людей есть «Мультфильм», «Аватар», «Моушен», «Липсинк».';
-      tb.parentNode.insertBefore(w,tb.nextSibling);
-    }
   }
 
   setInterval(function(){
@@ -237,7 +232,7 @@
   },1000);
 
   window.addEventListener('load',function(){
-    if(payBtn&&!document.getElementById('agreeWrap')){
+    if(!WS&&payBtn&&!document.getElementById('agreeWrap')){
       var wrap=document.createElement('div');
       wrap.id='agreeWrap';
       wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
