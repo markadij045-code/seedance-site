@@ -93,18 +93,26 @@ if(pw){ unlock(); }
 document.getElementById('loginBtn').addEventListener('click', function(){
   var v = document.getElementById('pw').value;
   if(!v){ document.getElementById('loginStatus').textContent = 'Введи пароль'; return; }
-  sessionStorage.setItem('seedgen_studio_pw', v);
-  pw = v;
-  fetch('/api/imagine', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({adminPassword:v, prompt:'test', model:'nano-banana', aspect:'1:1'})})
+  document.getElementById('loginStatus').textContent = 'Проверяем...';
+  fetch('/api/imagine', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({adminPassword:v, verifyOnly:true})})
     .then(function(r){ return r.json(); })
     .then(function(d){
+      if(d.ok){
+        sessionStorage.setItem('seedgen_studio_pw', v);
+        pw = v;
+        unlock();
+        return;
+      }
       if(d.error && d.error.indexOf('доступ') !== -1){
         sessionStorage.removeItem('seedgen_studio_pw');
         pw = '';
         document.getElementById('loginStatus').textContent = 'Неверный пароль';
         return;
       }
-      unlock();
+      document.getElementById('loginStatus').textContent = d.error || 'Ошибка проверки';
+    })
+    .catch(function(){
+      document.getElementById('loginStatus').textContent = 'Сеть недоступна, попробуй ещё раз';
     });
 });
 
