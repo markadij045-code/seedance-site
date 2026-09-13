@@ -86,6 +86,8 @@ button.pay:disabled{opacity:.5;cursor:not-allowed}
 #status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
+#refVideoPreview{display:none;max-width:320px;border-radius:12px;margin-top:10px;background:#000}
+#refAudioPreview{display:none;width:100%;margin-top:10px}
 footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
 footer a{color:#9ca3af;text-decoration:none}
 .welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
@@ -188,10 +190,12 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 
     <label>🎬 Видео-референс камеры и движения (необязательно)</label>
     <label class="tool tool-attach" style="display:inline-flex">➕ Добавить видео (MP4, до 15 сек)<input type="file" id="refVideoInput" accept="video/mp4,video/webm"></label>
+    <video id="refVideoPreview" controls playsinline></video>
     <div class="advrow" id="refVideoRow" style="display:none"><span id="refVideoName"></span><button type="button" onclick="removeRefVideo()">✕</button></div>
 
     <label>🎵 Звук-референс: музыка и ритм (необязательно)</label>
     <label class="tool tool-attach" style="display:inline-flex">➕ Добавить звук (MP3/WAV, до 15 сек)<input type="file" id="refAudioInput" accept="audio/*"></label>
+    <audio id="refAudioPreview" controls></audio>
     <div class="advrow" id="refAudioRow" style="display:none"><span id="refAudioName"></span><button type="button" onclick="removeRefAudio()">✕</button></div>
     <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
   </div>
@@ -276,6 +280,8 @@ var refsAdv = [];
 var maxRefsAdv = 3;
 var refVideoUrl = null;
 var refAudioUrl = null;
+var localRefVideoUrl = null;
+var localRefAudioUrl = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
@@ -435,13 +441,43 @@ function uploadRefMedia(f, kind, cb){
     .catch(function(err){ setStatus(''); alert('Не удалось загрузить файл: ' + err.message); });
 }
 
+function showRefVideoPreview(src){
+  var vp = document.getElementById('refVideoPreview');
+  vp.src = src;
+  vp.style.display = 'block';
+  vp.load();
+}
+function hideRefVideoPreview(){
+  var vp = document.getElementById('refVideoPreview');
+  vp.pause();
+  vp.removeAttribute('src');
+  vp.style.display = 'none';
+}
+function showRefAudioPreview(src){
+  var ap = document.getElementById('refAudioPreview');
+  ap.src = src;
+  ap.style.display = 'block';
+  ap.load();
+}
+function hideRefAudioPreview(){
+  var ap = document.getElementById('refAudioPreview');
+  ap.pause();
+  ap.removeAttribute('src');
+  ap.style.display = 'none';
+}
+
 document.getElementById('refVideoInput').addEventListener('change', function(e){
   var f = e.target.files[0]; if(!f) return;
   probeMedia(f, 15, function(){
+    if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
+    localRefVideoUrl = URL.createObjectURL(f);
+    showRefVideoPreview(localRefVideoUrl);
     uploadRefMedia(f, 'video', function(url){
       refVideoUrl = url;
       document.getElementById('refVideoName').textContent = '🎬 ' + f.name + ' — загружено ✅';
       document.getElementById('refVideoRow').style.display = 'flex';
+      if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
+      showRefVideoPreview(url);
       saveDraft();
     });
   });
@@ -450,16 +486,23 @@ document.getElementById('refVideoInput').addEventListener('change', function(e){
 function removeRefVideo(){
   refVideoUrl = null;
   document.getElementById('refVideoRow').style.display = 'none';
+  hideRefVideoPreview();
+  if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
   saveDraft();
 }
 
 document.getElementById('refAudioInput').addEventListener('change', function(e){
   var f = e.target.files[0]; if(!f) return;
   probeMedia(f, 15, function(){
+    if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
+    localRefAudioUrl = URL.createObjectURL(f);
+    showRefAudioPreview(localRefAudioUrl);
     uploadRefMedia(f, 'audio', function(url){
       refAudioUrl = url;
       document.getElementById('refAudioName').textContent = '🎵 ' + f.name + ' — загружено ✅';
       document.getElementById('refAudioRow').style.display = 'flex';
+      if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
+      showRefAudioPreview(url);
       saveDraft();
     });
   });
@@ -468,6 +511,8 @@ document.getElementById('refAudioInput').addEventListener('change', function(e){
 function removeRefAudio(){
   refAudioUrl = null;
   document.getElementById('refAudioRow').style.display = 'none';
+  hideRefAudioPreview();
+  if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
   saveDraft();
 }
 
@@ -526,6 +571,7 @@ slider.addEventListener('input', function(){
           refVideoUrl = s.refVideo;
           document.getElementById('refVideoName').textContent = '🎬 видео-референс из черновика ✅';
           document.getElementById('refVideoRow').style.display = 'flex';
+          showRefVideoPreview(s.refVideo);
         }
       });
     }
@@ -535,6 +581,7 @@ slider.addEventListener('input', function(){
           refAudioUrl = s.refAudio;
           document.getElementById('refAudioName').textContent = '🎵 звук-референс из черновика ✅';
           document.getElementById('refAudioRow').style.display = 'flex';
+          showRefAudioPreview(s.refAudio);
         }
       });
     }
