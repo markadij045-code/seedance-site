@@ -282,6 +282,7 @@ var refVideoUrl = null;
 var refAudioUrl = null;
 var localRefVideoUrl = null;
 var localRefAudioUrl = null;
+var restoring = false;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
@@ -522,6 +523,7 @@ function checkUrlAlive(url, cb){
 }
 
 function saveDraft(){
+  if(restoring) return;
   try{
     var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
     s.prompt = document.getElementById('prompt').value;
@@ -555,6 +557,7 @@ slider.addEventListener('input', function(){
   try{
     var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || 'null');
     if(!s) return;
+    restoring = true;
     if(s.prompt) document.getElementById('prompt').value = s.prompt;
     if(s.aspect) pickAspect(s.aspect);
     if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
@@ -565,6 +568,12 @@ slider.addEventListener('input', function(){
     else if(s.refs && s.refs.length){ refsAdv = s.refs.slice(0, 10); }
     if(refsAdv.length > 3) maxRefsAdv = 10;
     setMode(s.mode === 'adv' ? 'adv' : 'nov');
+    document.querySelectorAll('.qmode').forEach(function(el){
+      el.classList.toggle('active', el.getAttribute('data-q') === quality);
+    });
+    renderRefs();
+    updatePriceDisplay();
+    restoring = false;
     if(s.refVideo){
       checkUrlAlive(s.refVideo, function(alive){
         if(alive){
@@ -572,6 +581,9 @@ slider.addEventListener('input', function(){
           document.getElementById('refVideoName').textContent = '🎬 видео-референс из черновика ✅';
           document.getElementById('refVideoRow').style.display = 'flex';
           showRefVideoPreview(s.refVideo);
+        }else{
+          refVideoUrl = null;
+          saveDraft();
         }
       });
     }
@@ -582,15 +594,13 @@ slider.addEventListener('input', function(){
           document.getElementById('refAudioName').textContent = '🎵 звук-референс из черновика ✅';
           document.getElementById('refAudioRow').style.display = 'flex';
           showRefAudioPreview(s.refAudio);
+        }else{
+          refAudioUrl = null;
+          saveDraft();
         }
       });
     }
-    document.querySelectorAll('.qmode').forEach(function(el){
-      el.classList.toggle('active', el.getAttribute('data-q') === quality);
-    });
-    renderRefs();
-    updatePriceDisplay();
-  }catch(e){ updatePriceDisplay(); }
+  }catch(e){ restoring = false; updatePriceDisplay(); }
 })();
 
 document.getElementById('prompt').addEventListener('input', saveDraft);
