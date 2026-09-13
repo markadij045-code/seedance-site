@@ -7,74 +7,180 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
-nav{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
+nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
 .logo{font-weight:700;font-size:1.15rem}
 .logo span{color:#A3E635}
+.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
 .links a:hover{color:#A3E635}
+.links a.active{color:#A3E635;font-weight:700}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
+.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
+.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
+.sidebar.open{right:0}
+.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px}
+.sidebar a:hover{background:rgba(163,230,53,0.1)}
+.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
+.sidebar-backdrop.open{display:block}
 h1{font-size:2.2rem;margin:20px 0 8px;color:#A3E635;text-align:center}
-.sub{color:#9ca3af;text-align:center;margin-bottom:32px}
+.sub{color:#9ca3af;text-align:center;margin-bottom:32px;max-width:560px}
 .card{width:100%;max-width:700px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:16px}
 .card h2{color:#A3E635;font-size:1.2rem;margin-bottom:12px}
-.card ol,.card ul{margin-left:20px;color:#d1d5db;line-height:1.8;font-size:.95rem}
+.card ol{margin-left:20px;color:#d1d5db;line-height:1.8;font-size:.95rem}
 .q{margin-bottom:14px}
 .q b{color:#fff;display:block;margin-bottom:4px}
 .q span{color:#9ca3af;font-size:.92rem;line-height:1.6}
+.hint{margin-top:10px;padding:10px 14px;background:rgba(163,230,53,0.05);border:1px solid rgba(163,230,53,0.2);border-radius:10px;color:#c9cfba;font-size:.85rem;line-height:1.5}
 footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
 footer a{color:#9ca3af;text-decoration:none}
+.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
+.welcome-modal.open{display:flex}
+.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
+.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
+.welcome-box h2 .lime{color:#A3E635}
+.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
+.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
+.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
+@media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
 <body>
+
+<div class="welcome-modal" id="welcomeModal">
+  <div class="welcome-box">
+    <button class="welcome-close" onclick="closeWelcome()">✕</button>
+    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
+    <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
+    <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
+    <button onclick="closeWelcome()">Поехали?</button>
+  </div>
+</div>
+
 <nav>
   <div class="logo"><span>▶</span> SeedGen</div>
   <div class="links">
-    <a href="/">Генерация</a>
-    <a href="/photo.html">Оживи картинку</a>
+    <a href="/">Главная</a>
+    <a href="/gen.html">Создать видео</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a href="/avatar.html">Аватар</a>
     <a href="/motion.html">Моушен</a>
     <a href="/lipsync.html">Липсинк</a>
+    <a class="active" href="/help.html">Помощь</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
   </div>
+  <button class="burger" onclick="toggleSidebar()">☰</button>
 </nav>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/">🏠 Главная</a>
+  <a href="/gen.html">📝 Создать видео</a>
+  <a href="/cartoon.html">🎭 Мультфильм</a>
+  <a href="/avatar.html">🗣 Аватар</a>
+  <a href="/motion.html">🎮 Моушен</a>
+  <a href="/lipsync.html">💬 Липсинк</a>
+  <a href="/examples.html">🖼 Примеры</a>
+  <a href="/help.html">❓ Помощь</a>
+</div>
 
 <h1>❓ Помощь</h1>
 <p class="sub">Короткие инструкции по каждой услуге и ответы на частые вопросы</p>
 
 <div class="card">
-  <h2>📝 Видео из текста</h2>
-  <ol><li>Опиши видео словами (или нажми «🎲 Придумай за меня»).</li><li>Выбери формат кадра и длительность.</li><li>Хочешь — прикрепи картинку-пример.</li><li>Оплати — видео готово через 1–5 минут.</li></ol>
+  <h2>📝 Создать видео</h2>
+  <ol>
+    <li>Опиши видео словами (или нажми «✨ Улучшить описание» — AI сделает красиво).</li>
+    <li>Хочешь — прикрепи картинку для визуального стиля.</li>
+    <li>Выбери формат кадра и качество: 480p (базовое), 720p (HD) или 1080p (Full HD).</li>
+    <li>Выбери длительность (5–30 секунд) бегунком.</li>
+    <li>Оплати — видео готово через 1–5 минут.</li>
+  </ol>
+  <div class="hint">💡 Режим «Продвинутый» позволяет загрузить до 10 фото-референсов, видео-референс для движения камеры и звук-референс для ритма.</div>
 </div>
-<div class="card">
-  <h2>🐱 Оживи картинку</h2>
-  <ol><li>Выбери картинку БЕЗ людей: питомцы, природа, арт.</li><li>Хочешь — опиши, что должно происходить.</li><li>Оплати — видео через 1–3 минуты.</li></ol>
-</div>
+
 <div class="card">
   <h2>🎭 Мультфильм из фото</h2>
-  <ol><li>Загрузи фото с человеком.</li><li>Опиши сюжет мультфильма.</li><li>Выбери формат и длительность.</li><li>Оплати → «Сделать арт» → «Оживить арт в видео».</li></ol>
+  <ol>
+    <li>Загрузи фото с человеком.</li>
+    <li>Опиши сюжет мультфильма (что происходит в сцене).</li>
+    <li>Выбери формат и качество (480p / 720p / 1080p).</li>
+    <li>Оплати → «Сделать арт» → «Оживить арт в видео».</li>
+  </ol>
+  <div class="hint">💡 Одна оплата покрывает оба шага: арт в стиле Pixar и видео по твоему сценарию. Длительность — до 30 секунд.</div>
 </div>
+
 <div class="card">
   <h2>🗣 Говорящий аватар</h2>
-  <ol><li>Загрузи фото — лицо крупно.</li><li>Выбери: текст с голосом или своё аудио.</li><li>Выбери ориентацию видео.</li><li>Оплати — видео через 1–5 минут.</li></ol>
+  <ol>
+    <li>Загрузи фото — лицо крупно.</li>
+    <li>Загрузи свою озвучку (MP3/WAV, до 30 секунд, чистый голос).</li>
+    <li>Выбери ориентацию видео: 9:16 (телефон), 16:9 (YouTube) или 1:1 (квадрат).</li>
+    <li>Оплати — видео через 1–5 минут.</li>
+  </ol>
+  <div class="hint">💡 Длина видео = длина твоей озвучки. Цена фиксированная — 499 ₽.</div>
 </div>
+
 <div class="card">
   <h2>🎮 Моушен контроль</h2>
-  <ol><li>Загрузи фото персонажа.</li><li>Загрузи видео с движением (до 30 сек).</li><li>Выбери длительность и оплати.</li></ol>
+  <ol>
+    <li>Загрузи фото персонажа.</li>
+    <li>Загрузи видео с движением (танец, речь, жесты — до 30 секунд).</li>
+    <li>Выбери длительность бегунком.</li>
+    <li>Оплати — персонаж повторит движения с фото.</li>
+  </ol>
+  <div class="hint">💡 Идеально для танцевальных мемов: кот, рыцарь или кто угодно танцует как в твоём видео.</div>
 </div>
+
 <div class="card">
   <h2>💬 Липсинк (дубляж)</h2>
-  <ol><li>Загрузи видео с человеком.</li><li>Загрузи свою озвучку (MP3/WAV, до 5 МБ).</li><li>Оплати — губы синхронизируются с голосом.</li></ol>
+  <ol>
+    <li>Загрузи видео с человеком.</li>
+    <li>Загрузи свою озвучку (MP3/WAV, до 30 секунд).</li>
+    <li>Выбери длительность.</li>
+    <li>Оплати — губы синхронизируются с твоим голосом.</li>
+  </ol>
+  <div class="hint">💡 Подходит для дубляжа, переводов и мемов «заставь сказать».</div>
 </div>
+
 <div class="card">
   <h2>💳 Оплата и возврат</h2>
-  <div class="q"><b>Как оплатить?</b><span>Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — платишь за один заказ.</span></div>
-  <div class="q"><b>Когда придёт видео?</b><span>Через 1–5 минут после оплаты, прямо на странице.</span></div>
+  <div class="q"><b>Как оплатить?</b><span>Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — платишь за один заказ. Чек приходит на почту сразу после оплаты.</span></div>
+  <div class="q"><b>Когда придёт видео?</b><span>Через 1–5 минут после оплаты, прямо на странице. 1080p готовит на ~1 минуту дольше из-за улучшения качества.</span></div>
   <div class="q"><b>А если не получится?</b><span>Напиши нам — проверим чек и сделаем видео вручную или вернём деньги.</span></div>
-  <div class="q"><b>Можно фото с людьми?</b><span>В «Оживи картинку» — нет (защита от дипфейков). В остальных услугах — можно.</span></div>
+  <div class="q"><b>Можно людей в кадре?</b><span>Да, во всех услугах. Главное — у тебя есть согласие изображённого человека (это прописано в оферте).</span></div>
+  <div class="q"><b>Сколько хранить видео?</b><span>7 дней после генерации — успевай скачать. Потом видео удаляется с сервера.</span></div>
+</div>
+
+<div class="card">
+  <h2>🎨 PRO-студия</h2>
+  <p style="color:#9ca3af;line-height:1.7">Расширенный интерфейс с шаблонами, настройками моделей и историей проектов. Скоро будет доступен по запросу.</p>
 </div>
 
 <footer>
   Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
   <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
 </footer>
+
+<script>
+function showWelcome(){
+  if(!localStorage.getItem('seedgen_welcomed')){
+    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
+  }
+}
+function closeWelcome(){
+  document.getElementById('welcomeModal').classList.remove('open');
+  localStorage.setItem('seedgen_welcomed','1');
+}
+showWelcome();
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+</script>
 </body>
 </html>
