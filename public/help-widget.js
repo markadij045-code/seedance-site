@@ -3,6 +3,12 @@
   var LAUNCH_MODE = true;
   var LAUNCH_MESSAGE = 'Запуск сайта совсем скоро! 🚀 Оплата откроется в ближайшие дни. А пока можешь потестить интерфейс — нажми кнопку и увидишь, как будет работать.';
 
+  var MAINURL='https://www.seedgen.ru';
+  var ogu=document.querySelector('meta[property="og:url"]');
+  if(ogu)ogu.setAttribute('content',MAINURL+'/');
+  var can=document.querySelector('link[rel="canonical"]');
+  if(can)can.setAttribute('href',MAINURL+'/');
+
   var MAXURL='https://max.ru/u/f9LHodD0cOK8_N1RfXgxLPzGiumem7bZA3oTYU5i0BAV5PK6dj7huMZRGGQ';
   var path=location.pathname;
   var key='gen';
@@ -112,6 +118,9 @@
     if(ft.innerHTML.indexOf('Написать в MAX')===-1){
       ft.innerHTML+='<br><a href="'+MAXURL+'" target="_blank" rel="noopener">💬 Написать в MAX — поддержка</a>';
     }
+    if(ft.innerHTML.indexOf('www.seedgen.ru')===-1){
+      ft.innerHTML+='<br>Сайт: <a href="'+MAINURL+'/">www.seedgen.ru</a>';
+    }
   }
   fixFooter();
 
@@ -185,7 +194,7 @@
   var html='<button id="hwClose">✕</button><h3>❓ '+d.t+' — как это работает</h3><ol>';
   for(var j=0;j<d.s.length;j++)html+='<li>'+d.s[j]+'</li>';
   html+='</ol><h4>Частые вопросы</h4>';
-  for(var k=0;k<FAQ.length;k++)html+='<div class="faq"><b>'+FAQ[k][0]+'</b><br>'+FAQ[k][1]+'</div>';
+  for(var k=0;k<FAQ.length;k++)html+='<div class="faq"><b>'+FAQ[k][0]'</b><br>'+FAQ[k][1]+'</div>';
   html+='<p class="faq"><a href="/help.html">Все вопросы и ответы →</a></p>';
   m.innerHTML='<div id="hwBox">'+html+'</div>';
   document.body.appendChild(m);
@@ -238,7 +247,7 @@
       var wrap=document.createElement('div');
       wrap.id='agreeWrap';
       wrap.style.cssText='margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
-      wrap.innerHTML='<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
+      wrap.innerHTML='<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer">публичной оферты</a> и даю согласие на <a href="/legal.html#policy">обработку персональных данных</a></span></label>';
       payBtn.parentNode.insertBefore(wrap,payBtn);
     }
   });
