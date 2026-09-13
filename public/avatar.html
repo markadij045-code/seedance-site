@@ -49,6 +49,7 @@ label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
 #result{margin-top:16px;display:none}
 #result video{width:100%;border-radius:12px}
 img.prev{max-width:140px;border-radius:12px;margin-top:10px;display:none}
+#audPreview{display:none;width:100%;margin-top:10px}
 .fname{color:#9ca3af;font-size:.9rem;margin-top:8px}
 .audioinfo{margin-top:10px;padding:12px 14px;background:rgba(163,230,53,.06);border:1px solid rgba(163,230,53,.25);border-radius:12px;color:#c9cfba;font-size:.9rem;line-height:1.6;display:none}
 .audioinfo b{color:#A3E635}
@@ -125,6 +126,7 @@ footer a{color:#9ca3af;text-decoration:none}
 <div class="card">
   <label>Шаг 2. Твоя озвучка (что скажет человек)</label>
   <label class="drop">🎵 Выбрать аудио (MP3/WAV, до 30 сек)<input type="file" id="aud" accept="audio/*"></label>
+  <audio id="audPreview" controls></audio>
   <div class="fname" id="audName"></div>
   <div class="prog" id="audProg"><i></i></div>
   <div class="audioinfo" id="audioInfo"></div>
@@ -193,6 +195,7 @@ var imageData = null;
 var audioData = null;
 var audioSec = 0;
 var orientation = '9:16';
+var localAudioBlobUrl = null;
 var paidReturn = false, paymentIdReturn = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
@@ -248,6 +251,19 @@ function showAudioInfo(){
   info.innerHTML = '⏱ Твоя озвучка: <b>' + audioSec + ' сек</b> — столько же будет длиться видео. Цена фиксированная: <b>499 ₽</b> за озвучку до 30 секунд.';
 }
 
+function showAudPreview(src){
+  var ap = document.getElementById('audPreview');
+  ap.src = src;
+  ap.style.display = 'block';
+  ap.load();
+}
+function hideAudPreview(){
+  var ap = document.getElementById('audPreview');
+  ap.pause();
+  ap.removeAttribute('src');
+  ap.style.display = 'none';
+}
+
 function checkUrlAlive(url, cb){
   if(!url){ cb(false); return; }
   fetch(url, {method: 'HEAD', mode: 'no-cors'})
@@ -274,6 +290,7 @@ try{
           document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
           document.getElementById('audDel').style.display = 'block';
           showAudioInfo();
+          showAudPreview(s.audio);
           showDraftBadge('audio', 'Черновик сохранён');
         }else{
           document.getElementById('audName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик аудио устарел — нужно прикрепить заново</span>';
@@ -349,6 +366,9 @@ document.getElementById('aud').onchange = function(e){
   if(f.type.indexOf('audio/') !== 0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
   if(f.size > 5*1024*1024){ alert('Аудио больше 5 МБ. Выбери файл короче.'); return; }
   probeAudio(f, 30, function(dur){
+    if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
+    localAudioBlobUrl = URL.createObjectURL(f);
+    showAudPreview(localAudioBlobUrl);
     if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
     var prog = document.getElementById('audProg');
     var bar = prog.querySelector('i');
@@ -379,10 +399,14 @@ document.getElementById('aud').onchange = function(e){
       setStatus('');
       saveDraft();
       showDraftBadge('audio', 'Черновик сохранён');
+      if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
+      showAudPreview(blob.url);
     }).catch(function(err){
       clearTimeout(timeoutId);
       prog.style.display = 'none';
       setStatus('');
+      hideAudPreview();
+      if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
       if(timedOut){
         alert('Загрузка не началась за 30 секунд. Отключи VPN/блокировщик рекламы и попробуй снова.');
       }else{
@@ -398,6 +422,8 @@ document.getElementById('audDel').onclick = function(){
   document.getElementById('audioInfo').style.display = 'none';
   this.style.display = 'none';
   hideDraftBadge('audio');
+  hideAudPreview();
+  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
   saveDraft();
 };
 
