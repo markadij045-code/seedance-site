@@ -6,237 +6,208 @@
 <title>Создать видео — SeedGen</title>
 <meta property="og:title" content="Создать видео из текста — SeedGen">
 <meta property="og:description" content="Опиши сцену словами — Seedance 2.5 снимет ролик. От 199 ₽">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
-nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
-.logo{font-weight:700;font-size:1.15rem}
-.logo span{color:#A3E635}
-.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
-.links a:hover{color:#A3E635}
-.links a.active{color:#A3E635;font-weight:700}
-.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
-.links .pro:hover{color:#A3E635}
-.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
-.links .pro:hover .tip,.links .pro.open .tip{display:block}
-.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
-.sidebar.open{right:0}
-.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px}
-.sidebar a:hover{background:rgba(163,230,53,0.1)}
-.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
-.sidebar-backdrop.open{display:block}
-h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
-.badge{display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:.8rem;font-weight:700;padding:4px 12px;border-radius:999px;margin:0 0 12px}
-.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:20px}
-.mini{width:100%;max-width:640px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
-.mini span{background:#101308;border:1px solid #232a18;border-radius:999px;padding:6px 14px;color:#9ca3af;font-size:.8rem}
-.card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
-label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
-textarea{width:100%;min-height:110px;background:#0b0e07;border:1px solid #262d16;border-radius:14px;color:#fff;padding:14px;font-size:1rem;resize:vertical;outline:none}
-textarea:focus{border-color:#A3E635}
+.ws{max-width:1160px;margin:100px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
+.panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
+.psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
+.pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
+.pstep.done{color:var(--lime);border-color:var(--border-lime)}
+.pstep.done i{background:rgba(163,230,53,.15)}
+.pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
+.lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:20px 0 10px}
+textarea.pr{width:100%;min-height:112px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:16px;color:var(--text);padding:14px 16px;font:400 .95rem/1.55 'Inter',sans-serif;resize:vertical;outline:none}
+textarea.pr:focus{border-color:var(--border-lime)}
 .airow{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-.aibtn{padding:10px 18px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.9rem;font-weight:600;cursor:pointer}
-.aibtn:disabled{opacity:.5;cursor:not-allowed}
-#aistat{color:#9ca3af;font-size:.85rem}
-.modeswitch{display:flex;gap:8px;justify-content:center;margin:0 0 14px}
-.modeswitch .mbtn{padding:10px 22px;border-radius:999px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;font-size:.9rem;font-weight:600;cursor:pointer}
-.modeswitch .mbtn.active{border-color:#A3E635;color:#A3E635;background:rgba(163,230,53,0.1)}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0;padding:12px;background:#0b0e07;border:1px solid #262d16;border-radius:14px}
-.tool{background:#101308;border:1px solid #262d16;border-radius:10px;padding:8px 14px;color:#c3c9b4;font-size:.85rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.tool:hover{border-color:#A3E635;color:#A3E635}
-.tool.active{background:rgba(163,230,53,0.15);border-color:#A3E635;color:#A3E635}
-.tool-attach{position:relative;overflow:hidden}
-.tool-attach input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.qwrap{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
-.qmode{flex:1 1 150px;padding:12px 14px;border-radius:14px;border:1px solid #262d16;background:#0b0e07;color:#c3c9b4;cursor:pointer;text-align:center;font-size:.9rem;line-height:1.4}
-.qmode b{display:block;color:#fff;font-size:.95rem;margin-bottom:2px}
-.qmode .qp{color:#A3E635;font-size:.8rem;font-weight:700}
-.qmode.active{border-color:#A3E635;background:rgba(163,230,53,0.1);color:#fff}
-.qmode.active b{color:#A3E635}
-.qnote{color:#5b6152;font-size:.8rem;text-align:center;margin-top:8px}
+.aibtn{padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
+.aibtn:disabled{opacity:.5}
+#aistat{color:var(--muted);font-size:.82rem}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
+.seg button:hover{color:var(--text)}
+.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
+.tile:hover{border-color:var(--border-lime)}
+.tile img,.tile video{width:100%;height:100%;object-fit:cover}
+.tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.74rem;text-align:center;padding:6px;pointer-events:none}
+.tile .add svg{width:20px;height:20px;color:rgba(163,230,53,.6)}
+.tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:2}
+.tile.wide{aspect-ratio:16/9;grid-column:1/-1;background:rgba(0,0,0,.45)}
+.tile.wide video{object-fit:contain}
+.tile.wide .add{flex-direction:row;gap:8px;font-size:.82rem}
+.tname{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;font-size:.68rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile audio{width:100%;position:absolute;bottom:8px;left:0;padding:0 8px}
+.morebtn{margin-top:10px;padding:8px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .8rem 'Inter';cursor:pointer}
+.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
+.srow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.sval{font-family:'Space Grotesk';font-size:1.8rem;font-weight:700;letter-spacing:-.02em}
+.sval small{color:var(--muted);font-size:.9rem;font-weight:500;margin-left:4px}
+.sprice{font-family:'Space Grotesk';font-size:1.35rem;font-weight:700;color:var(--lime)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid #050607;box-shadow:0 0 0 1.5px var(--lime);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid #050607;box-shadow:0 0 0 1.5px var(--lime);cursor:pointer}
+.ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:.7rem;margin-top:7px}
+.tl{display:flex;flex-direction:column;gap:13px;margin:4px 0 18px}
+.tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
+.tl-item.done{color:var(--text)}
+.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
+.tl-item.now{color:var(--text)}
+.tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
+.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);min-height:280px;display:grid;place-items:center;overflow:hidden;padding:14px}
+.outbox video{width:100%;border-radius:14px}
+.ph{text-align:center;color:var(--muted);font-size:.88rem;line-height:1.6;padding:30px}
+.ph svg{width:42px;height:42px;color:rgba(163,230,53,.45);margin:0 auto 12px}
+.trust{margin:16px 0 0;color:var(--muted);font-size:.8rem;line-height:1.6;text-align:center}
+.trust a{color:var(--lime);text-decoration:none}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--border)}
+.bar-in{max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.bar-price{font-family:'Space Grotesk';font-size:1.45rem;font-weight:700;white-space:nowrap}
+.bar-price small{display:block;color:var(--muted);font:.72rem/1.2 'Inter';font-weight:500}
+.agree{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;flex:1;min-width:230px;margin:0}
+.agree input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
+.agree a{color:var(--lime)}
+.bar .btn{margin-left:auto}
+#status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
 .advblock{display:none}
 .advblock.open{display:block}
-.refslist{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-.refslist .ritem{position:relative;width:56px;height:56px;border-radius:10px;overflow:hidden;border:1px solid #262d16}
-.refslist .ritem img{width:100%;height:100%;object-fit:cover}
-.refslist .ritem button{position:absolute;top:0;right:0;background:rgba(0,0,0,0.7);border:none;color:#fca5a5;font-size:.8rem;cursor:pointer;padding:2px 6px}
-.refcounter{color:#5b6152;font-size:.8rem}
-.advrow{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.3);border-radius:10px}
-.advrow span{color:#c3c9b4;font-size:.85rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.advrow button{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:1rem}
-.advfile{position:relative;overflow:hidden;display:inline-flex}
-.advfile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.morebtn{margin-top:8px;padding:8px 16px;border-radius:999px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font-size:.82rem;cursor:pointer}
-.rolehint{color:#5b6152;font-size:.8rem;line-height:1.5;margin-top:8px}
-.prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
-.prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
-.trust{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}
-.trust a{color:#A3E635;text-decoration:none}
-.agree{margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5}
-.agree label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin:0}
-.agree input{width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto}
-.agree a{color:#A3E635}
-button.pay{margin-top:16px;width:100%;padding:16px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
-button.pay:disabled{opacity:.5;cursor:not-allowed}
-.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:.85rem}
-#status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
-#result{margin-top:16px;display:none}
-#result video{width:100%;border-radius:12px}
-#refVideoPreview{display:none;max-width:320px;border-radius:12px;margin-top:10px;background:#000}
-#refAudioPreview{display:none;width:100%;margin-top:10px}
-footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
-footer a{color:#9ca3af;text-decoration:none}
-.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
-.welcome-modal.open{display:flex}
-.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
-.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
-.welcome-box h2 .lime{color:#A3E635}
-.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
-.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
-.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:0}
-.welcome-box .welcome-close{width:auto;padding:0;background:none;margin-top:0}
-.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
-.slider-wrap{background:#0b0e07;border:1px solid #262d16;border-radius:14px;padding:18px 20px;margin-top:8px}
-.slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-.slider-val{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
-.slider-val .unit{font-size:1rem;color:#9ca3af;font-weight:400;margin-left:4px}
-.slider-price{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#A3E635}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;background:#262d16;border-radius:999px;outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635;transition:transform .15s ease}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
-input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635}
-.slider-ticks{display:flex;justify-content:space-between;color:#5b6152;font-size:.75rem;margin-top:6px}
-.slider-hint{color:#5b6152;font-size:.8rem;text-align:center;margin-top:10px}
-@media(max-width:768px){.links{display:none}.burger{display:block}}
+@media(max-width:900px){
+  .ws{grid-template-columns:1fr;margin-top:84px}
+  .bar .btn{margin-left:0;width:100%}
+  .agree{min-width:100%}
+}
 </style>
 </head>
-<body>
+<body data-ws="1">
 
-<div class="welcome-modal" id="welcomeModal">
-  <div class="welcome-box">
-    <button class="welcome-close" onclick="closeWelcome()">✕</button>
-    <h2>👋 <span class="lime">Привет!</span> Это SeedGen</h2>
-    <p>Нейросеть снимает для тебя кино.</p>
-    <div class="gift">🎁 Загрузка...</div>
-    <button onclick="closeWelcome()">Начать создавать</button>
+<header class="top">
+  <div class="container nav-in">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
+      SeedGen
+    </a>
+    <nav class="menu">
+      <a href="/cartoon.html">Мультфильм</a>
+      <a href="/avatar.html">Аватар</a>
+      <a href="/motion.html">Моушен</a>
+      <a href="/lipsync.html">Липсинк</a>
+      <a href="/help.html">Помощь</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="btn btn-ghost" href="/">На главную</a>
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+    </div>
   </div>
-</div>
-
-<nav>
-  <div class="logo"><span>▶</span> SeedGen</div>
-  <div class="links">
-    <a href="/">Главная</a>
-    <a class="active" href="/gen.html">Создать видео</a>
-    <a href="/cartoon.html">Мультфильм</a>
-    <a href="/avatar.html">Аватар</a>
-    <a href="/motion.html">Моушен</a>
-    <a href="/lipsync.html">Липсинк</a>
-    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
-  </div>
-  <button class="burger" onclick="toggleSidebar()">☰</button>
-</nav>
+</header>
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-  <a href="/">🏠 Главная</a>
-  <a href="/gen.html">📝 Создать видео</a>
-  <a href="/cartoon.html">🎭 Мультфильм</a>
-  <a href="/avatar.html">🗣 Аватар</a>
-  <a href="/motion.html">🎮 Моушен</a>
-  <a href="/lipsync.html">💬 Липсинк</a>
+  <a href="/">Главная</a>
+  <a href="/gen.html">Создать видео</a>
+  <a href="/cartoon.html">Мультфильм</a>
+  <a href="/avatar.html">Аватар</a>
+  <a href="/motion.html">Моушен</a>
+  <a href="/lipsync.html">Липсинк</a>
+  <a href="/examples.html">Примеры</a>
+  <a href="/help.html">Помощь</a>
 </div>
 
-<h1>📝 Создать видео</h1>
-<div style="text-align:center"><span class="badge">⚡ Seedance 2.5</span></div>
-<p class="sub">Опиши сцену словами — нейросеть снимет по ней ролик</p>
-<div class="mini"><span>1. Опиши</span><span>2. Оплати</span><span>3. Видео через 1–5 минут</span></div>
+<main class="ws">
+  <section class="panel">
+    <div class="psteps">
+      <span class="pstep active" id="st1"><i>1</i> Описание и файлы</span>
+      <span class="pstep" id="st2"><i>2</i> Оплата</span>
+      <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
+    </div>
 
-<div class="card">
-  <div class="modeswitch">
-    <button class="mbtn active" id="modeNov" type="button" onclick="setMode('nov')">🌱 Новичок</button>
-    <button class="mbtn" id="modeAdv" type="button" onclick="setMode('adv')">🎛 Продвинутый</button>
-  </div>
+    <div class="seg" style="margin-bottom:6px">
+      <button type="button" id="modeNov" class="on" onclick="setMode('nov')">🌱 Новичок</button>
+      <button type="button" id="modeAdv" onclick="setMode('adv')">🎛 Продвинутый</button>
+    </div>
 
-  <label for="prompt">Опиши, какое видео хочешь:</label>
-  <textarea id="prompt" placeholder="Например: кот в скафандре летит сквозь звёздное поле, кинематографичный стиль"></textarea>
-  <div class="airow" id="airow">
-    <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
-    <span id="aistat"></span>
-  </div>
+    <div class="lbl">Опиши, какое видео хочешь</div>
+    <textarea class="pr" id="prompt" placeholder="Например: кот в скафандре летит сквозь звёздное поле, кинематографичный стиль"></textarea>
+    <div class="airow" id="airow">
+      <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
+      <span id="aistat"></span>
+    </div>
 
-  <label style="margin-top:20px">Формат кадра и изображение</label>
-  <div class="toolbar">
-    <label class="tool tool-attach" id="attachTool" title="Загрузить изображение (необязательно)">📎 Загрузить изображение<input type="file" id="refInput" accept="image/*"></label>
-    <div class="tool" onclick="pickAspect('21:9')" data-aspect="21:9">📐 21:9</div>
-    <div class="tool active" onclick="pickAspect('16:9')" data-aspect="16:9">📐 16:9</div>
-    <div class="tool" onclick="pickAspect('4:3')" data-aspect="4:3">📐 4:3</div>
-    <div class="tool" onclick="pickAspect('1:1')" data-aspect="1:1">📐 1:1</div>
-    <div class="tool" onclick="pickAspect('3:4')" data-aspect="3:4">📐 3:4</div>
-    <div class="tool" onclick="pickAspect('9:16')" data-aspect="9:16">📐 9:16</div>
-  </div>
-  <div class="prog" id="refProg"><i></i></div>
-  <div class="refslist" id="refsList"></div>
-  <div class="refcounter" id="refCounter"></div>
+    <div class="lbl">Изображение для стиля <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— необязательно</span></div>
+    <div class="tiles" id="novTiles">
+      <div class="tile" id="novTile"></div>
+    </div>
 
-  <div class="advblock" id="advBlock">
-    <label>📎 Референсы: кто и что должно быть в кадре</label>
-    <label class="tool tool-attach" id="addRefTool" style="display:inline-flex;margin-top:8px">➕ Добавить фото<input type="file" id="refAddInput" accept="image/*" multiple></label>
-    <button class="morebtn" id="moreRefsBtn" type="button" onclick="unlockMoreRefs()">Нужно больше? Показать до 10</button>
-    <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон». Нейросеть сохранит внешность и стиль каждого референса.</div>
+    <div class="advblock" id="advBlock">
+      <div class="lbl">Референсы: кто и что в кадре <span style="font-weight:500;text-transform:none;letter-spacing:0">— до 10 фото</span></div>
+      <div class="tiles" id="refsList"></div>
+      <div class="rolehint" id="refCounter"></div>
+      <button class="morebtn" id="moreRefsBtn" type="button" onclick="unlockMoreRefs()">Нужно больше? Показать до 10</button>
+      <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон».</div>
 
-    <label>🎬 Видео-референс камеры и движения (необязательно)</label>
-    <label class="tool tool-attach" style="display:inline-flex">➕ Добавить видео (MP4, до 15 сек)<input type="file" id="refVideoInput" accept="video/mp4,video/webm"></label>
-    <video id="refVideoPreview" controls playsinline></video>
-    <div class="advrow" id="refVideoRow" style="display:none"><span id="refVideoName"></span><button type="button" onclick="removeRefVideo()">✕</button></div>
+      <div class="lbl">Видео-референс камеры и движения</div>
+      <div class="tiles"><div class="tile wide" id="refVideoTile"></div></div>
 
-    <label>🎵 Звук-референс: музыка и ритм (необязательно)</label>
-    <label class="tool tool-attach" style="display:inline-flex">➕ Добавить звук (MP3/WAV, до 15 сек)<input type="file" id="refAudioInput" accept="audio/*"></label>
-    <audio id="refAudioPreview" controls></audio>
-    <div class="advrow" id="refAudioRow" style="display:none"><span id="refAudioName"></span><button type="button" onclick="removeRefAudio()">✕</button></div>
-    <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
-  </div>
+      <div class="lbl">Звук-референс: музыка и ритм</div>
+      <div class="tiles"><div class="tile wide" id="refAudioTile"></div></div>
+      <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
+    </div>
 
-  <label style="margin-top:20px">Качество видео</label>
-  <div class="qwrap">
-    <div class="qmode active" data-q="480p" onclick="setQuality('480p')"><b>📺 480p</b>базовое<span class="qp">включено в цену</span></div>
-    <div class="qmode" data-q="720p" onclick="setQuality('720p')"><b>🎬 720p</b>чёткое HD<span class="qp">+200 ₽</span></div>
-    <div class="qmode" data-q="1080p" onclick="setQuality('1080p')"><b>✨ 1080p</b>Full HD<span class="qp">+300 ₽</span></div>
-  </div>
-  <div class="qnote">1080p = генерация 720p + улучшение качества, поэтому готовность на ~1 минуту дольше</div>
+    <div class="lbl">Формат кадра</div>
+    <div class="seg" id="aspectRow">
+      <button type="button" data-aspect="21:9" onclick="pickAspect('21:9')">21:9</button>
+      <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
+      <button type="button" data-aspect="4:3" onclick="pickAspect('4:3')">4:3</button>
+      <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
+      <button type="button" data-aspect="3:4" onclick="pickAspect('3:4')">3:4</button>
+      <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
+    </div>
 
-  <label style="margin-top:20px">Длительность и цена</label>
-  <div class="slider-wrap">
-    <div class="slider-row">
-      <div class="slider-val"><span id="secVal">5</span><span class="unit">сек</span></div>
-      <div class="slider-price"><span id="priceVal">199</span> ₽</div>
+    <div class="lbl">Качество</div>
+    <div class="seg" id="qRow">
+      <button type="button" data-q="480p" class="on" onclick="setQuality('480p')">480p · базовое</button>
+      <button type="button" data-q="720p" onclick="setQuality('720p')">720p · HD +200 ₽</button>
+      <button type="button" data-q="1080p" onclick="setQuality('1080p')">1080p · Full HD +300 ₽</button>
+    </div>
+
+    <div class="lbl">Длительность</div>
+    <div class="srow">
+      <div class="sval"><span id="secVal">5</span><small>сек</small></div>
+      <div class="sprice"><span id="priceVal">199</span> ₽</div>
     </div>
     <input type="range" id="slider" min="5" max="30" step="1" value="5">
-    <div class="slider-ticks">
-      <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
+    <div class="ticks"><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span></div>
+  </section>
+
+  <aside class="panel">
+    <div class="tl">
+      <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата — карта, Мир, СБП, SberPay, ЮMoney</div>
+      <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Генерация Seedance 2.5 — 1–5 минут</div>
+      <div class="tl-item" id="tlUp" style="display:none"><span class="tl-dot"></span>Улучшение до 1080p — ещё ~1 минута</div>
     </div>
-    <div class="slider-hint">Тяни бегунок — цена пересчитывается</div>
+    <div class="outbox" id="outbox">
+      <div class="ph">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg>
+        Здесь появится твоё видео.<br>Опиши сцену слева и нажми кнопку оплаты внизу.
+      </div>
+    </div>
+    <div id="wsNotice"></div>
+    <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
+  </aside>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="bar-price"><span id="barPrice">199</span> ₽<small id="barMeta">5 сек · 480p</small></div>
+    <div class="agree" id="agreeWrap"><label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;margin:0"><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label></div>
+    <button class="btn btn-primary btn-lg" id="btn">Создать видео — 199 ₽</button>
+    <div id="status"></div>
   </div>
-
-  <div class="trust">🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
-
-  <div class="agree"><label><input type="checkbox" id="agree"><span>Я принимаю условия <a href="/legal.html#offer">публичной оферты</a> и даю согласие на <a href="/legal.html#policy">обработку персональных данных</a></span></label></div>
-
-  <button class="pay" id="btn">Создать видео — 199 ₽</button>
-  <div class="paymethods">
-    <span>💳 Карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
-  </div>
-  <div id="status"></div>
-  <div id="result"><video id="video" controls></video></div>
 </div>
-
-<footer>
-  Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
-  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
-</footer>
 
 <script type="module">
 let uploadFn = null;
@@ -255,61 +226,60 @@ if (uploadFn) window.blobUpload = uploadFn;
 </script>
 
 <script>
-function showWelcome(){
-  if(!localStorage.getItem('seedgen_welcomed')){
-    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
-  }
-}
-function closeWelcome(){
-  document.getElementById('welcomeModal').classList.remove('open');
-  localStorage.setItem('seedgen_welcomed','1');
-}
-showWelcome();
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
 var SURCHARGE = {'480p':0, '720p':200, '1080p':300};
-var seconds = 5;
-var aspect = '16:9';
-var quality = '480p';
-var mode = 'nov';
-var refNov = null;
-var refsAdv = [];
-var maxRefsAdv = 3;
-var refVideoUrl = null;
-var refAudioUrl = null;
-var localRefVideoUrl = null;
-var localRefAudioUrl = null;
+var seconds = 5, aspect = '16:9', quality = '480p', mode = 'nov';
+var refNov = null, refsAdv = [], maxRefsAdv = 3;
+var refVideoUrl = null, refAudioUrl = null;
+var localRefVideoUrl = null, localRefAudioUrl = null;
 var restoring = false;
+var stage = 'setup';
+var paidSeen = false, baseDone = false, upscaleExpected = false;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
-var secVal = document.getElementById('secVal');
-var priceVal = document.getElementById('priceVal');
 
 function setStatus(t){ statusEl.textContent = t; }
 
 function updatePriceDisplay(){
   var p = 199 + (seconds - 5) * 30 + SURCHARGE[quality];
-  secVal.textContent = seconds;
-  priceVal.textContent = p;
+  document.getElementById('secVal').textContent = seconds;
+  document.getElementById('priceVal').textContent = p;
+  document.getElementById('barPrice').textContent = p;
+  document.getElementById('barMeta').textContent = seconds + ' сек · ' + quality;
   btn.textContent = 'Создать видео — ' + p + ' ₽';
+}
+
+function updateSteps(){
+  var promptOk = document.getElementById('prompt').value.trim().length > 0;
+  var s1 = document.getElementById('st1'), s2 = document.getElementById('st2'), s3 = document.getElementById('st3');
+  var d1 = promptOk, d2 = paidSeen, d3 = (stage === 'done');
+  s1.className = 'pstep' + (d1 ? ' done' : ' active');
+  s2.className = 'pstep' + (d2 ? ' done' : (d1 ? ' active' : ''));
+  s3.className = 'pstep' + (d3 ? ' done' : (d2 ? ' active' : ''));
+  var tp = document.getElementById('tlPay'), tg = document.getElementById('tlGen'), tu = document.getElementById('tlUp');
+  tp.className = 'tl-item' + (paidSeen ? ' done' : (promptOk ? ' now' : ''));
+  tg.className = 'tl-item' + (baseDone ? ' done' : (stage === 'gen' ? ' now' : ''));
+  tu.style.display = upscaleExpected ? 'flex' : 'none';
+  tu.className = 'tl-item' + (stage === 'done' && upscaleExpected ? ' done' : (stage === 'up' ? ' now' : ''));
 }
 
 function pickAspect(a){
   aspect = a;
-  document.querySelectorAll('.tool[data-aspect]').forEach(function(el){
-    el.classList.toggle('active', el.getAttribute('data-aspect') === a);
+  document.querySelectorAll('#aspectRow button').forEach(function(el){
+    el.classList.toggle('on', el.getAttribute('data-aspect') === a);
   });
   saveDraft();
 }
 
 function setQuality(q){
   quality = q;
-  document.querySelectorAll('.qmode').forEach(function(el){
-    el.classList.toggle('active', el.getAttribute('data-q') === q);
+  document.querySelectorAll('#qRow button').forEach(function(el){
+    el.classList.toggle('on', el.getAttribute('data-q') === q);
   });
   updatePriceDisplay();
   saveDraft();
@@ -317,59 +287,71 @@ function setQuality(q){
 
 function setMode(m){
   mode = m;
-  document.getElementById('modeNov').classList.toggle('active', m === 'nov');
-  document.getElementById('modeAdv').classList.toggle('active', m === 'adv');
+  document.getElementById('modeNov').classList.toggle('on', m === 'nov');
+  document.getElementById('modeAdv').classList.toggle('on', m === 'adv');
   document.getElementById('advBlock').classList.toggle('open', m === 'adv');
-  document.getElementById('attachTool').style.display = (m === 'nov') ? 'inline-flex' : 'none';
+  document.getElementById('novTiles').style.display = (m === 'nov') ? 'grid' : 'none';
   document.getElementById('airow').style.display = (m === 'adv') ? 'none' : 'flex';
   renderRefs();
   saveDraft();
 }
 
-function unlockMoreRefs(){
-  maxRefsAdv = 10;
-  renderRefs();
+function unlockMoreRefs(){ maxRefsAdv = 10; renderRefs(); }
+
+var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>';
+
+function renderNovTile(){
+  var t = document.getElementById('novTile');
+  if(refNov){
+    t.innerHTML = '<img src="data:image/jpeg;base64,' + refNov + '"><button class="x" type="button" onclick="removeNovRef()">✕</button>';
+  }else{
+    t.innerHTML = '<span class="add">' + SVG_PLUS + 'Загрузить фото</span><input type="file" id="refInput" accept="image/*">';
+    document.getElementById('refInput').addEventListener('change', onNovFile);
+  }
 }
 
 function renderRefs(){
+  renderNovTile();
   var list = document.getElementById('refsList');
-  var counter = document.getElementById('refCounter');
   list.innerHTML = '';
-  if(mode === 'nov'){
-    if(refNov){
-      var d0 = document.createElement('div');
-      d0.className = 'ritem';
-      d0.innerHTML = '<img src="data:image/jpeg;base64,' + refNov + '"><button type="button" onclick="removeNovRef()">✕</button>';
-      list.appendChild(d0);
-      counter.textContent = 'Загружено: 1 из 1';
-    }else{
-      counter.textContent = '';
+  if(mode === 'adv'){
+    refsAdv.forEach(function(r, i){
+      var d = document.createElement('div');
+      d.className = 'tile';
+      d.innerHTML = '<img src="data:image/jpeg;base64,' + r + '"><button class="x" type="button" onclick="removeAdvRef(' + i + ')">✕</button>';
+      list.appendChild(d);
+    });
+    if(refsAdv.length < maxRefsAdv){
+      var add = document.createElement('div');
+      add.className = 'tile';
+      add.innerHTML = '<span class="add">' + SVG_PLUS + 'Добавить</span><input type="file" id="refAddInput" accept="image/*" multiple>';
+      list.appendChild(add);
+      document.getElementById('refAddInput').addEventListener('change', onAdvFiles);
     }
-    document.getElementById('addRefTool').style.display = 'none';
-    document.getElementById('moreRefsBtn').style.display = 'none';
-    return;
   }
-  refsAdv.forEach(function(r, i){
-    var d = document.createElement('div');
-    d.className = 'ritem';
-    d.innerHTML = '<img src="data:image/jpeg;base64,' + r + '"><button type="button" onclick="removeAdvRef(' + i + ')">✕</button>';
-    list.appendChild(d);
-  });
-  counter.textContent = refsAdv.length ? ('Загружено: ' + refsAdv.length + ' из ' + maxRefsAdv) : '';
-  document.getElementById('addRefTool').style.display = (refsAdv.length < maxRefsAdv) ? 'inline-flex' : 'none';
-  document.getElementById('moreRefsBtn').style.display = (maxRefsAdv === 3 && refsAdv.length >= 3) ? 'inline-block' : 'none';
+  document.getElementById('refCounter').textContent = (mode === 'adv' && refsAdv.length) ? ('Загружено: ' + refsAdv.length + ' из ' + maxRefsAdv) : '';
+  document.getElementById('moreRefsBtn').style.display = (mode === 'adv' && maxRefsAdv === 3 && refsAdv.length >= 3) ? 'inline-block' : 'none';
+  renderMediaTile('refVideoTile', refVideoUrl, localRefVideoUrl, 'video', 'Видео-референс (MP4, до 15 сек)', 'refVideoInput', 'video/mp4,video/webm');
+  renderMediaTile('refAudioTile', refAudioUrl, localRefAudioUrl, 'audio', 'Звук-референс (MP3/WAV, до 15 сек)', 'refAudioInput', 'audio/*');
 }
 
-function removeNovRef(){
-  refNov = null;
-  renderRefs();
-  saveDraft();
+function renderMediaTile(id, url, localUrl, kind, label, inputId, accept){
+  var t = document.getElementById(id);
+  var src = url || localUrl;
+  if(src){
+    if(kind === 'video'){
+      t.innerHTML = '<video src="' + src + '" controls playsinline></video><button class="x" type="button" onclick="removeRefVideo()">✕</button>';
+    }else{
+      t.innerHTML = '<audio src="' + src + '" controls></audio><div class="tname">🎵 звук-референс загружен</div><button class="x" type="button" onclick="removeRefAudio()">✕</button>';
+    }
+  }else{
+    t.innerHTML = '<span class="add">' + SVG_PLUS + label + '</span><input type="file" id="' + inputId + '" accept="' + accept + '">';
+    document.getElementById(inputId).addEventListener('change', kind === 'video' ? onVideoFile : onAudioFile);
+  }
 }
-function removeAdvRef(i){
-  refsAdv.splice(i, 1);
-  renderRefs();
-  saveDraft();
-}
+
+function removeNovRef(){ refNov = null; renderRefs(); saveDraft(); }
+function removeAdvRef(i){ refsAdv.splice(i, 1); renderRefs(); saveDraft(); }
 
 function fileToRefBase64(f, cb){
   var reader = new FileReader();
@@ -388,33 +370,22 @@ function fileToRefBase64(f, cb){
   reader.readAsDataURL(f);
 }
 
-document.getElementById('refAddInput').addEventListener('change', function(e){
+function onNovFile(e){
+  var f = e.target.files[0]; if(!f) return;
+  fileToRefBase64(f, function(b64){ refNov = b64; renderRefs(); saveDraft(); });
+}
+
+function onAdvFiles(e){
   var files = Array.prototype.slice.call(e.target.files);
   var idx = 0;
   function next(){
-    if(idx >= files.length){ e.target.value = ''; return; }
+    if(idx >= files.length){ return; }
     var f = files[idx++];
-    if(refsAdv.length >= maxRefsAdv){ e.target.value = ''; alert('Лимит референсов: ' + maxRefsAdv); return; }
+    if(refsAdv.length >= maxRefsAdv){ alert('Лимит референсов: ' + maxRefsAdv); return; }
     fileToRefBase64(f, function(b64){ refsAdv.push(b64); renderRefs(); saveDraft(); next(); });
   }
   next();
-});
-
-document.getElementById('refInput').addEventListener('change', function(e){
-  var f = e.target.files[0];
-  if(!f) return;
-  var prog = document.getElementById('refProg');
-  var bar = prog.querySelector('i');
-  prog.style.display = 'block'; bar.style.width = '30%';
-  fileToRefBase64(f, function(b64){
-    bar.style.width = '100%';
-    setTimeout(function(){ prog.style.display = 'none'; }, 600);
-    refNov = b64;
-    renderRefs();
-    saveDraft();
-  });
-  e.target.value = '';
-});
+}
 
 function probeMedia(f, maxSec, cb){
   var url = URL.createObjectURL(f);
@@ -442,78 +413,45 @@ function uploadRefMedia(f, kind, cb){
     .catch(function(err){ setStatus(''); alert('Не удалось загрузить файл: ' + err.message); });
 }
 
-function showRefVideoPreview(src){
-  var vp = document.getElementById('refVideoPreview');
-  vp.src = src;
-  vp.style.display = 'block';
-  vp.load();
-}
-function hideRefVideoPreview(){
-  var vp = document.getElementById('refVideoPreview');
-  vp.pause();
-  vp.removeAttribute('src');
-  vp.style.display = 'none';
-}
-function showRefAudioPreview(src){
-  var ap = document.getElementById('refAudioPreview');
-  ap.src = src;
-  ap.style.display = 'block';
-  ap.load();
-}
-function hideRefAudioPreview(){
-  var ap = document.getElementById('refAudioPreview');
-  ap.pause();
-  ap.removeAttribute('src');
-  ap.style.display = 'none';
-}
-
-document.getElementById('refVideoInput').addEventListener('change', function(e){
+function onVideoFile(e){
   var f = e.target.files[0]; if(!f) return;
   probeMedia(f, 15, function(){
-    if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
+    if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); }
     localRefVideoUrl = URL.createObjectURL(f);
-    showRefVideoPreview(localRefVideoUrl);
+    renderRefs();
     uploadRefMedia(f, 'video', function(url){
       refVideoUrl = url;
-      document.getElementById('refVideoName').textContent = '🎬 ' + f.name + ' — загружено ✅';
-      document.getElementById('refVideoRow').style.display = 'flex';
       if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
-      showRefVideoPreview(url);
+      renderRefs();
       saveDraft();
     });
   });
-  e.target.value = '';
-});
+}
 function removeRefVideo(){
   refVideoUrl = null;
-  document.getElementById('refVideoRow').style.display = 'none';
-  hideRefVideoPreview();
   if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
+  renderRefs();
   saveDraft();
 }
 
-document.getElementById('refAudioInput').addEventListener('change', function(e){
+function onAudioFile(e){
   var f = e.target.files[0]; if(!f) return;
   probeMedia(f, 15, function(){
-    if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
+    if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); }
     localRefAudioUrl = URL.createObjectURL(f);
-    showRefAudioPreview(localRefAudioUrl);
+    renderRefs();
     uploadRefMedia(f, 'audio', function(url){
       refAudioUrl = url;
-      document.getElementById('refAudioName').textContent = '🎵 ' + f.name + ' — загружено ✅';
-      document.getElementById('refAudioRow').style.display = 'flex';
       if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
-      showRefAudioPreview(url);
+      renderRefs();
       saveDraft();
     });
   });
-  e.target.value = '';
-});
+}
 function removeRefAudio(){
   refAudioUrl = null;
-  document.getElementById('refAudioRow').style.display = 'none';
-  hideRefAudioPreview();
   if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
+  renderRefs();
   saveDraft();
 }
 
@@ -527,24 +465,10 @@ function saveDraft(){
   try{
     var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
     s.prompt = document.getElementById('prompt').value;
-    s.aspect = aspect;
-    s.seconds = seconds;
-    s.quality = quality;
-    s.mode = mode;
-    s.refNov = refNov;
-    s.refsAdv = refsAdv;
-    s.refVideo = refVideoUrl;
-    s.refAudio = refAudioUrl;
+    s.aspect = aspect; s.seconds = seconds; s.quality = quality; s.mode = mode;
+    s.refNov = refNov; s.refsAdv = refsAdv; s.refVideo = refVideoUrl; s.refAudio = refAudioUrl;
     localStorage.setItem('seedgen_gen_draft', JSON.stringify(s));
-  }catch(e){
-    try{
-      var s2 = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
-      s2.prompt = document.getElementById('prompt').value;
-      s2.aspect = aspect; s2.seconds = seconds; s2.quality = quality; s2.mode = mode;
-      delete s2.refNov; delete s2.refsAdv; delete s2.refVideo; delete s2.refAudio;
-      localStorage.setItem('seedgen_gen_draft', JSON.stringify(s2));
-    }catch(e2){}
-  }
+  }catch(e){}
 }
 
 slider.addEventListener('input', function(){
@@ -552,6 +476,7 @@ slider.addEventListener('input', function(){
   updatePriceDisplay();
   saveDraft();
 });
+document.getElementById('prompt').addEventListener('input', function(){ saveDraft(); updateSteps(); });
 
 (function restoreDraft(){
   try{
@@ -562,48 +487,23 @@ slider.addEventListener('input', function(){
     if(s.aspect) pickAspect(s.aspect);
     if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
     if(s.quality && SURCHARGE[s.quality] !== undefined) quality = s.quality;
-    if(s.refNov){ refNov = s.refNov; }
-    else if(s.refImage){ refNov = s.refImage; }
+    if(s.refNov){ refNov = s.refNov; } else if(s.refImage){ refNov = s.refImage; }
     if(s.refsAdv && s.refsAdv.length){ refsAdv = s.refsAdv.slice(0, 10); }
     else if(s.refs && s.refs.length){ refsAdv = s.refs.slice(0, 10); }
     if(refsAdv.length > 3) maxRefsAdv = 10;
+    document.querySelectorAll('#qRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-q') === quality); });
     setMode(s.mode === 'adv' ? 'adv' : 'nov');
-    document.querySelectorAll('.qmode').forEach(function(el){
-      el.classList.toggle('active', el.getAttribute('data-q') === quality);
-    });
-    renderRefs();
-    updatePriceDisplay();
     restoring = false;
     if(s.refVideo){
-      checkUrlAlive(s.refVideo, function(alive){
-        if(alive){
-          refVideoUrl = s.refVideo;
-          document.getElementById('refVideoName').textContent = '🎬 видео-референс из черновика ✅';
-          document.getElementById('refVideoRow').style.display = 'flex';
-          showRefVideoPreview(s.refVideo);
-        }else{
-          refVideoUrl = null;
-          saveDraft();
-        }
-      });
+      checkUrlAlive(s.refVideo, function(alive){ if(alive){ refVideoUrl = s.refVideo; renderRefs(); } });
     }
     if(s.refAudio){
-      checkUrlAlive(s.refAudio, function(alive){
-        if(alive){
-          refAudioUrl = s.refAudio;
-          document.getElementById('refAudioName').textContent = '🎵 звук-референс из черновика ✅';
-          document.getElementById('refAudioRow').style.display = 'flex';
-          showRefAudioPreview(s.refAudio);
-        }else{
-          refAudioUrl = null;
-          saveDraft();
-        }
-      });
+      checkUrlAlive(s.refAudio, function(alive){ if(alive){ refAudioUrl = s.refAudio; renderRefs(); } });
     }
-  }catch(e){ restoring = false; updatePriceDisplay(); }
+    updatePriceDisplay();
+    updateSteps();
+  }catch(e){ restoring = false; updatePriceDisplay(); updateSteps(); }
 })();
-
-document.getElementById('prompt').addEventListener('input', saveDraft);
 
 document.getElementById('aiBtn').addEventListener('click', function(){
   var t = document.getElementById('prompt').value.trim();
@@ -620,13 +520,11 @@ document.getElementById('aiBtn').addEventListener('click', function(){
       if(d.error){ st.textContent = 'Не удалось улучшить, попробуй ещё раз'; return; }
       document.getElementById('prompt').value = d.prompt;
       localStorage.setItem('seedgen_ai_used', String(used+1));
-      saveDraft();
+      saveDraft(); updateSteps();
       st.textContent = 'Готово! ✨';
       setTimeout(function(){ st.textContent = ''; }, 3000);
     })
-    .catch(function(){
-      b.disabled = false; st.textContent = 'Не удалось улучшить, попробуй ещё раз';
-    });
+    .catch(function(){ b.disabled = false; st.textContent = 'Не удалось улучшить, попробуй ещё раз'; });
 });
 
 btn.addEventListener('click', function(){
@@ -650,24 +548,22 @@ btn.addEventListener('click', function(){
 });
 
 function chainKey(pid){ return 'seedgen_gen_chain_' + pid; }
-function getChain(pid){
-  try{ return JSON.parse(localStorage.getItem(chainKey(pid)) || 'null'); }catch(e){ return null; }
-}
-function setChain(pid, obj){
-  try{ localStorage.setItem(chainKey(pid), JSON.stringify(obj)); }catch(e){}
-}
-function clearChain(pid){
-  try{ localStorage.removeItem(chainKey(pid)); }catch(e){}
-}
+function getChain(pid){ try{ return JSON.parse(localStorage.getItem(chainKey(pid)) || 'null'); }catch(e){ return null; } }
+function setChain(pid, obj){ try{ localStorage.setItem(chainKey(pid), JSON.stringify(obj)); }catch(e){} }
+function clearChain(pid){ try{ localStorage.removeItem(chainKey(pid)); }catch(e){} }
 
 function showVideo(url, msg){
-  document.getElementById('video').src = url;
-  document.getElementById('result').style.display = 'block';
+  document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + url + '"></video></div>';
   setStatus(msg);
+  baseDone = true;
+  stage = 'done';
+  updateSteps();
   btn.disabled = false;
 }
 
 function startUpscale(pid, baseVideoUrl){
+  stage = 'up';
+  updateSteps();
   setStatus('✨ Улучшаем качество до 1080p... ещё около минуты ⏳');
   fetch('/api/upscale', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({videoUrl: baseVideoUrl})})
     .then(function(r){ return r.json(); })
@@ -677,45 +573,45 @@ function startUpscale(pid, baseVideoUrl){
       poll(d.taskId, 'upscale', baseVideoUrl, pid);
     })
     .catch(function(e){
-      showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p сейчас недоступно (' + e.message + '). Вот готовое видео в 720p — напиши в поддержку, вернём разницу или улучшим вручную.');
+      showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p сейчас недоступно (' + e.message + '). Вот готовое видео в 720p — напиши в поддержку, вернём разницу.');
       clearChain(pid);
-      try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e2){}
     });
 }
 
-function poll(taskId, stage, baseVideoUrl, pid){
+function poll(taskId, stg, baseVideoUrl, pid){
   var timer = setInterval(function(){
     fetch('/api/status?taskId=' + encodeURIComponent(taskId))
       .then(function(r){ return r.json(); })
       .then(function(d){
         if(d.status === 'succeeded'){
           clearInterval(timer);
-          if(stage === 'upscale'){
+          if(stg === 'upscale'){
             showVideo(d.videoUrl, 'Готово! ✅ Full HD 1080p. Скачай видео в течение 7 дней.');
             clearChain(pid);
-            try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e){}
           }else{
+            baseDone = true;
             var ch = getChain(pid);
             if(ch && ch.upscale && ch.stage === 'base'){
               startUpscale(pid, d.videoUrl);
             }else{
               showVideo(d.videoUrl, 'Готово! ✅ Скачай видео в течение 7 дней.');
               clearChain(pid);
-              try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e){}
             }
           }
         }else if(d.status === 'failed'){
           clearInterval(timer);
-          if(stage === 'upscale' && baseVideoUrl){
+          if(stg === 'upscale' && baseVideoUrl){
             showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p не удалось. Вот готовое видео в 720p — напиши в поддержку, вернём разницу.');
             clearChain(pid);
           }else{
             setStatus('Ошибка генерации: ' + (d.error || 'попробуй другой запрос'));
+            stage = 'setup';
+            updateSteps();
             btn.disabled = false;
             clearChain(pid);
           }
         }else{
-          setStatus(stage === 'upscale' ? '✨ Улучшаем качество до 1080p... ещё около минуты ⏳' : '⚡ Seedance 2.5 создаёт твоё видео... ⏳');
+          setStatus(stg === 'upscale' ? '✨ Улучшаем качество до 1080p... ещё около минуты ⏳' : '⚡ Seedance 2.5 создаёт твоё видео... ⏳');
         }
       })
       .catch(function(){});
@@ -727,6 +623,10 @@ function poll(taskId, stage, baseVideoUrl, pid){
   if(!pid) return;
   var ch = getChain(pid);
   if(ch && ch.taskId){
+    paidSeen = true;
+    upscaleExpected = !!ch.upscale;
+    stage = (ch.stage === 'upscale') ? 'up' : 'gen';
+    updateSteps();
     btn.disabled = true;
     poll(ch.taskId, ch.stage || 'base', ch.baseVideoUrl || null, pid);
     return;
@@ -737,10 +637,12 @@ function poll(taskId, stage, baseVideoUrl, pid){
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.paid && data.taskId){
+        paidSeen = true; stage = 'gen'; updateSteps();
         setChain(pid, {taskId: data.taskId, stage: 'base', baseVideoUrl: null, upscale: false});
         setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
         poll(data.taskId, 'base', null, pid);
       }else if(data.paid){
+        paidSeen = true; updateSteps();
         var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
         var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5, quality:draft.quality || '480p'};
         if(draft.mode === 'adv'){
@@ -751,11 +653,14 @@ function poll(taskId, stage, baseVideoUrl, pid){
           if(draft.refNov) payload.refImage = draft.refNov;
           else if(draft.refImage) payload.refImage = draft.refImage;
         }
+        upscaleExpected = (payload.quality === '1080p');
         setStatus('Оплата прошла! Запускаем генерацию...');
+        stage = 'gen'; updateSteps();
         fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
           .then(function(r){ return r.json(); })
           .then(function(d){
             if(d.error){ throw new Error(d.error); }
+            upscaleExpected = !!d.upscale;
             setChain(pid, {taskId: d.taskId, stage: 'base', baseVideoUrl: null, upscale: !!d.upscale});
             setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
             poll(d.taskId, 'base', null, pid);
@@ -769,7 +674,9 @@ function poll(taskId, stage, baseVideoUrl, pid){
     .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
 })();
 
+renderRefs();
 updatePriceDisplay();
+updateSteps();
 </script>
 <script src="/help-widget.js"></script>
 </body>
