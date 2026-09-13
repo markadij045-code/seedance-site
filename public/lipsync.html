@@ -4,174 +4,155 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Липсинк (дубляж) — SeedGen</title>
-<meta property="og:title" content="Липсинк — губы синхронно с твоим голосом">
-<meta property="og:description" content="Видео с человеком + твоя озвучка = дубляж и мемы «заставь сказать». От 199 ₽">
+<meta property="og:title" content="Липсинк — человек в видео говорит твоими словами">
+<meta property="og:description" content="Загрузи видео и свою озвучку — губы и мимика синхронизируются с твоим голосом. От 199 ₽">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
-nav{width:100%;max-width:1000px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
-.logo{font-weight:700;font-size:1.15rem}
-.logo span{color:#A3E635}
-.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
-.links a:hover{color:#A3E635}
-.links a.active{color:#A3E635;font-weight:700}
-.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
-.links .pro:hover{color:#A3E635}
-.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
-.links .pro:hover .tip,.links .pro.open .tip{display:block}
-.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
-.sidebar.open{right:0}
-.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px}
-.sidebar a:hover{background:rgba(163,230,53,0.1)}
-.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
-.sidebar-backdrop.open{display:block}
-h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
-.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:16px}
-.warn{width:100%;max-width:640px;background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.4);color:#ffb066;border-radius:12px;padding:12px;margin:12px 0;font-size:.9rem;text-align:center}
-.card{width:100%;max-width:640px;background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:24px;margin-bottom:20px}
-label{display:block;margin:12px 0 8px;color:#c3c9b4;font-size:.95rem}
-.drop{display:block;position:relative;overflow:hidden;border:2px dashed #262d16;border-radius:14px;padding:20px;text-align:center;color:#9ca3af;cursor:pointer;margin:6px 0}
-.drop:hover{border-color:#A3E635;color:#fff}
-.drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.prog{width:100%;height:6px;background:#262d16;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
-.prog i{display:block;height:100%;width:0;background:#A3E635;transition:width .2s}
-button{margin-top:16px;width:100%;padding:14px;border:none;border-radius:999px;background:#A3E635;color:#0a0c08;font-size:1.05rem;font-weight:700;cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-.del{display:block;margin-top:10px;padding:8px 18px;border:1px solid #7f1d1d;border-radius:999px;background:rgba(127,29,29,.2);color:#fca5a5;cursor:pointer;font-size:.85rem;width:auto}
-.del:hover{background:rgba(127,29,29,.45);color:#fff}
-#status{margin-top:12px;min-height:20px;color:#9ca3af;text-align:center}
-#result{margin-top:16px;display:none}
-#result video{width:100%;border-radius:12px}
-.fname{color:#9ca3af;font-size:.9rem;margin-top:8px}
-.paymethods{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.paymethods span{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:6px 14px;color:rgba(255,255,255,0.6);font-size:.85rem}
-.how{color:#9ca3af;font-size:.9rem;line-height:1.7;margin-top:8px}
-footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
-footer a{color:#9ca3af;text-decoration:none}
-.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
-.welcome-modal.open{display:flex}
-.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
-.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
-.welcome-box h2 .lime{color:#A3E635}
-.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
-.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
-.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer;margin-top:0}
-.welcome-box .welcome-close{width:auto;padding:0;background:none;margin-top:0}
-.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
-@media(max-width:768px){.links{display:none}.burger{display:block}}
-
-.slider-wrap{background:#0b0e07;border:1px solid #262d16;border-radius:14px;padding:18px 20px;margin-top:8px}
-.slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-.slider-val{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
-.slider-val .unit{font-size:1rem;color:#9ca3af;font-weight:400;margin-left:4px}
-.slider-price{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#A3E635}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;background:#262d16;border-radius:999px;outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635;transition:transform .15s ease}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
-input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;border-radius:50%;cursor:pointer;border:4px solid #0b0e07;box-shadow:0 0 0 2px #A3E635}
-.slider-ticks{display:flex;justify-content:space-between;color:#5b6152;font-size:.75rem;margin-top:6px}
-.slider-hint{color:#5b6152;font-size:.8rem;text-align:center;margin-top:10px}
-
-.notice{margin:14px 0;padding:14px 16px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:12px;color:#93c5fd;font-size:.9rem;line-height:1.6}
-.notice b{color:#bfdbfe}
-.draftBadge{display:inline-block;margin:8px 0;padding:6px 12px;background:rgba(163,230,53,0.1);border:1px solid rgba(163,230,53,0.3);border-radius:999px;color:#A3E635;font-size:.8rem;font-weight:600}
-#vidPreview{display:none;max-width:320px;border-radius:12px;margin-top:12px;background:#000}
-#audPreview{display:none;width:100%;max-width:420px;margin-top:12px}
+.ws{max-width:1160px;margin:100px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
+.panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
+.psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
+.pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
+.pstep.done{color:var(--lime);border-color:var(--border-lime)}
+.pstep.done i{background:rgba(163,230,53,.15)}
+.pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
+.lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:20px 0 10px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
+.tile:hover{border-color:var(--border-lime)}
+.tile img,.tile video{width:100%;height:100%;object-fit:cover}
+.tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.72rem;text-align:center;padding:6px;pointer-events:none}
+.tile .add svg{width:20px;height:20px;color:rgba(163,230,53,.6)}
+.tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:3}
+.tname{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 5px;font-size:.64rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.playbadge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.playbadge i{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(163,230,53,.55);color:var(--lime);display:grid;place-items:center;font-style:normal;font-size:.72rem}
+.audiotile{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,230,53,.14),rgba(59,130,246,.10))}
+.audiotile svg{width:26px;height:26px;color:var(--lime)}
+.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
+.srow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.sval{font-family:'Space Grotesk';font-size:1.8rem;font-weight:700;letter-spacing:-.02em}
+.sval small{color:var(--muted);font-size:.9rem;font-weight:500;margin-left:4px}
+.sprice{font-family:'Space Grotesk';font-size:1.35rem;font-weight:700;color:var(--lime)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid #050607;box-shadow:0 0 0 1.5px var(--lime);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid #050607;box-shadow:0 0 0 1.5px var(--lime);cursor:pointer}
+.ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:.7rem;margin-top:7px}
+.tl{display:flex;flex-direction:column;gap:13px;margin:4px 0 18px}
+.tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
+.tl-item.done{color:var(--text)}
+.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
+.tl-item.now{color:var(--text)}
+.tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
+.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);min-height:280px;display:grid;place-items:center;overflow:hidden;padding:14px}
+.outbox video{width:100%;border-radius:14px}
+.ph{text-align:center;color:var(--muted);font-size:.88rem;line-height:1.6;padding:30px}
+.ph svg{width:42px;height:42px;color:rgba(163,230,53,.45);margin:0 auto 12px}
+.trust{margin:16px 0 0;color:var(--muted);font-size:.8rem;line-height:1.6;text-align:center}
+.trust a{color:var(--lime);text-decoration:none}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--border)}
+.bar-in{max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.bar-price{font-family:'Space Grotesk';font-size:1.45rem;font-weight:700;white-space:nowrap}
+.bar-price small{display:block;color:var(--muted);font:.72rem/1.2 'Inter';font-weight:500}
+.agree{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;flex:1;min-width:230px;margin:0}
+.agree input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
+.agree a{color:var(--lime)}
+.bar .btn{margin-left:auto}
+#status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
+@media(max-width:900px){
+  .ws{grid-template-columns:1fr;margin-top:84px}
+  .bar .btn{margin-left:0;width:100%}
+  .agree{min-width:100%}
+}
 </style>
 </head>
-<body>
+<body data-ws="1">
 
-<div class="welcome-modal" id="welcomeModal">
-  <div class="welcome-box">
-    <button class="welcome-close" onclick="closeWelcome()">✕</button>
-    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
-    <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
-    <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
-    <button onclick="closeWelcome()">Поехали?</button>
+<header class="top">
+  <div class="container nav-in">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
+      SeedGen
+    </a>
+    <nav class="menu">
+      <a href="/gen.html">Создать видео</a>
+      <a href="/cartoon.html">Мультфильм</a>
+      <a href="/avatar.html">Аватар</a>
+      <a href="/motion.html">Моушен</a>
+      <a href="/help.html">Помощь</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="btn btn-ghost" href="/">На главную</a>
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+    </div>
   </div>
-</div>
-
-<nav>
-  <div class="logo"><span>▶</span> SeedGen</div>
-  <div class="links">
-    <a href="/">Главная</a>
-    <a href="/gen.html">Создать видео</a>
-    <a href="/cartoon.html">Мультфильм</a>
-    <a href="/avatar.html">Аватар</a>
-    <a href="/motion.html">Моушен</a>
-    <a class="active" href="/lipsync.html">Липсинк</a>
-    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
-  </div>
-  <button class="burger" onclick="toggleSidebar()">☰</button>
-</nav>
+</header>
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-  <a href="/">🏠 Главная</a>
-  <a href="/gen.html">📝 Создать видео</a>
-  <a href="/cartoon.html">🎭 Мультфильм</a>
-  <a href="/avatar.html">🗣 Аватар</a>
-  <a href="/motion.html">🎮 Моушен</a>
-  <a href="/lipsync.html">💬 Липсинк</a>
+  <a href="/">Главная</a>
+  <a href="/gen.html">Создать видео</a>
+  <a href="/cartoon.html">Мультфильм</a>
+  <a href="/avatar.html">Аватар</a>
+  <a href="/motion.html">Моушен</a>
+  <a href="/lipsync.html">Липсинк</a>
+  <a href="/examples.html">Примеры</a>
+  <a href="/help.html">Помощь</a>
 </div>
 
-<h1>🗣 Липсинк (дубляж)</h1>
-<p class="sub">Загрузи видео с человеком и свою озвучку — губы и мимика синхронизируются с твоим голосом</p>
-<div class="warn">⚠️ Видео: MP4, до 20 МБ (до 30 секунд), лицо крупно. Аудио: MP3/WAV, до 5 МБ (до 30 секунд).</div>
-
-<div class="card">
-  <label>Шаг 1. Видео с человеком</label>
-  <label class="drop">🎬 Выбрать видео (MP4, до 20 МБ)<input type="file" id="vid" accept="video/mp4,video/webm"></label>
-  <video id="vidPreview" controls playsinline></video>
-  <div class="fname" id="vidName"></div>
-  <div class="prog" id="vidProg"><i></i></div>
-  <button class="del" id="vidDel" type="button" style="display:none">✖ Удалить видео</button>
-  <div id="videoDraftBadge"></div>
-</div>
-
-<div class="card">
-  <label>Шаг 2. Твоя озвучка (что должен «сказать» человек)</label>
-  <label class="drop">🎵 Выбрать аудио (MP3/WAV, до 5 МБ)<input type="file" id="aud" accept="audio/*"></label>
-  <audio id="audPreview" controls></audio>
-  <div class="fname" id="audName"></div>
-  <div class="prog" id="audProg"><i></i></div>
-  <button class="del" id="audDel" type="button" style="display:none">✖ Удалить аудио</button>
-  <div id="audioDraftBadge"></div>
-</div>
-
-<div class="card">
-  <label>Шаг 3. Длительность</label>
-  <div class="slider-wrap">
-    <div class="slider-row">
-      <div class="slider-val"><span id="secVal">5</span><span class="unit">сек</span></div>
-      <div class="slider-price"><span id="priceVal">199</span> ₽</div>
+<main class="ws">
+  <section class="panel">
+    <div class="psteps">
+      <span class="pstep active" id="st1"><i>1</i> Видео и озвучка</span>
+      <span class="pstep" id="st2"><i>2</i> Оплата</span>
+      <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
     </div>
-    <input type="range" id="slider" min="5" max="30" step="1" value="5">
-    <div class="slider-ticks">
-      <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
+
+    <div class="lbl">Видео с человеком (MP4, до 20 МБ, до 30 сек)</div>
+    <div class="tiles"><div class="tile" id="videoTile"></div></div>
+    <div class="rolehint">🛡 Лицо крупно. Загружай только своё видео или видео человека, который дал согласие.</div>
+
+    <div class="lbl">Твоя озвучка (MP3/WAV, до 5 МБ, до 30 сек)</div>
+    <div class="tiles"><div class="tile" id="audioTile"></div></div>
+    <div class="rolehint" id="audioInfo"></div>
+
+    <div class="lbl">Длительность</div>
+    <div class="srow">
+      <div class="sval"><span id="secVal">10</span><small>сек</small></div>
+      <div class="sprice"><span id="priceVal">349</span> ₽</div>
     </div>
-    <div class="slider-hint">Тяни бегунок — цена тикает по 30 ₽ за секунду</div>
+    <input type="range" id="slider" min="5" max="30" step="1" value="10">
+    <div class="ticks"><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span></div>
+  </section>
+
+  <aside class="panel">
+    <div class="tl">
+      <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата — карта, Мир, СБП, SberPay, ЮMoney</div>
+      <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Синхронизация губ с голосом — 1–5 минут</div>
+    </div>
+    <div class="outbox" id="outbox">
+      <div class="ph">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/></svg>
+        Здесь появится твой дубляж.<br>Человек в видео скажет твоими словами.
+      </div>
+    </div>
+    <div id="wsNotice"></div>
+    <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
+  </aside>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="bar-price"><span id="barPrice">349</span> ₽<small id="barMeta">10 сек</small></div>
+    <div class="agree" id="agreeWrap"><label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;margin:0"><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label></div>
+    <button class="btn btn-primary btn-lg" id="btn">Оплатить липсинк — 349 ₽</button>
+    <div id="status"></div>
   </div>
 </div>
-
-<button id="btn">Оплатить липсинк — 199 ₽</button>
-<div class="paymethods">
-  <span>💳 Карты</span><span>Мир</span><span>СБП</span><span>SberPay</span><span>ЮMoney</span>
-</div>
-<div id="status"></div>
-<div id="result"><video id="video" controls></video></div>
-
-<div class="card">
-  <div class="how"><b>Как это работает:</b> нейросеть сравнивает твою озвучку с видео и двигает губы человека синхронно с речью. Подходит для дубляжа, переводов и мемов «заставь сказать».<br><br><b>💳 Оплатил — что дальше?</b> Сайт сам видит оплату и запускает генерацию. Готовое видео появится на странице в течение 1–5 минут.<br><b>🤔 Не пришло видео?</b> Напиши нам — проверим чек и сделаем вручную.</div>
-</div>
-
-<footer>
-  Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
-  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
-</footer>
 
 <script type="module">
 let uploadFn = null;
@@ -190,61 +171,118 @@ if (uploadFn) window.blobUpload = uploadFn;
 </script>
 
 <script>
-function showWelcome(){
-  if(!localStorage.getItem('seedgen_welcomed')){
-    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
-  }
-}
-function closeWelcome(){
-  document.getElementById('welcomeModal').classList.remove('open');
-  localStorage.setItem('seedgen_welcomed','1');
-}
-showWelcome();
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
-var BASE_PRICE = 199;
-var PER_SEC = 30;
-function calcPrice(s){ return BASE_PRICE + (s - 5) * PER_SEC; }
-
-var seconds = 5;
+var seconds = 10;
 var videoData = null, audioData = null;
+var videoNameStr = null, audioNameStr = null;
 var localVideoBlobUrl = null, localAudioBlobUrl = null;
-var paidReturn = false, paymentIdReturn = null;
+var restoring = false;
+var stage = 'setup';
+var paidSeen = false;
+var activePaymentId = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
-var secVal = document.getElementById('secVal');
-var priceVal = document.getElementById('priceVal');
 
 function setStatus(t){ statusEl.textContent = t; }
 
 function updatePriceDisplay(){
-  var p = calcPrice(seconds);
-  secVal.textContent = seconds;
-  priceVal.textContent = p;
-  btn.textContent = 'Оплатить липсинк — ' + p + ' ₽';
+  var p = 199 + (seconds - 5) * 30;
+  document.getElementById('secVal').textContent = seconds;
+  document.getElementById('priceVal').textContent = p;
+  document.getElementById('barPrice').textContent = p;
+  document.getElementById('barMeta').textContent = seconds + ' сек';
+  if(!paidSeen){ btn.textContent = 'Оплатить липсинк — ' + p + ' ₽'; }
 }
 
-function safeFileName(prefix, f, defExt){
-  var m = (f.name || '').match(/\.[a-z0-9]+$/i);
-  var ext = m ? m[0].toLowerCase() : defExt;
-  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
+function updateBar(){
+  var filesOk = !!videoData && !!audioData;
+  if(!paidSeen){
+    updatePriceDisplay();
+    btn.disabled = false;
+  }else if(filesOk && stage !== 'gen' && stage !== 'done'){
+    btn.textContent = 'Запустить генерацию (оплачено)';
+    btn.disabled = false;
+  }else if(stage === 'done'){
+    btn.textContent = 'Готово ✅';
+    btn.disabled = true;
+  }else{
+    btn.textContent = 'Оплачено ✅';
+    btn.disabled = true;
+  }
 }
 
-function uploadFile(f, prefix, defExt, onProgress){
-  var controller = new AbortController();
-  var timedOut = false;
-  var timeoutId = setTimeout(function(){ timedOut = true; controller.abort(); }, 30000);
-  return window.blobUpload(safeFileName(prefix, f, defExt), f, {
-    access: 'public',
-    handleUploadUrl: '/api/upload',
-    abortSignal: controller.signal,
-    onUploadProgress: function(p){ clearTimeout(timeoutId); onProgress(Math.round(p.percentage)); }
-  }).then(function(blob){ clearTimeout(timeoutId); return blob; })
-    .catch(function(err){ clearTimeout(timeoutId); if(timedOut){ throw new Error('загрузка не началась за 30 секунд. Отключи VPN/блокировщик рекламы и попробуй снова.'); } throw err; });
+function updateSteps(){
+  var filesOk = !!videoData && !!audioData;
+  var s1=document.getElementById('st1'),s2=document.getElementById('st2'),s3=document.getElementById('st3');
+  s1.className='pstep'+(filesOk?' done':' active');
+  s2.className='pstep'+(paidSeen?' done':(filesOk?' active':''));
+  s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
+  document.getElementById('tlPay').className='tl-item'+(paidSeen?' done':(filesOk?' now':''));
+  document.getElementById('tlGen').className='tl-item'+(stage==='done'?' done':(stage==='gen'?' now':''));
+}
+
+var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>';
+var SVG_NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
+
+function renderVideoTile(){
+  var t = document.getElementById('videoTile');
+  var src = videoData || localVideoBlobUrl;
+  if(src){
+    t.innerHTML = '<video src="' + src + '" muted playsinline preload="metadata"></video>'
+      + '<span class="playbadge"><i>▶</i></span>'
+      + '<div class="tname">' + (videoNameStr || 'видео с человеком') + '</div>'
+      + '<button class="x" type="button" onclick="removeVideo()">✕</button>';
+    var v = t.querySelector('video');
+    t.querySelector('.playbadge').addEventListener('click', function(){
+      if(v.paused){ v.muted = false; v.play(); } else { v.pause(); v.muted = true; }
+    });
+  }else{
+    t.innerHTML = '<span class="add">' + SVG_PLUS + 'Выбрать видео</span><input type="file" id="videoInput" accept="video/mp4,video/webm">';
+    document.getElementById('videoInput').addEventListener('change', onVideoFile);
+  }
+}
+
+function renderAudioTile(){
+  var t = document.getElementById('audioTile');
+  var src = audioData || localAudioBlobUrl;
+  if(src){
+    t.innerHTML = '<div class="audiotile">' + SVG_NOTE + '</div>'
+      + '<span class="playbadge"><i>▶</i></span>'
+      + '<div class="tname">' + (audioNameStr || 'озвучка') + '</div>'
+      + '<audio src="' + src + '" preload="metadata" style="display:none"></audio>'
+      + '<button class="x" type="button" onclick="removeAudio()">✕</button>';
+    var au = t.querySelector('audio');
+    var pb = t.querySelector('.playbadge');
+    pb.addEventListener('click', function(){
+      if(au.paused){ au.play(); pb.querySelector('i').textContent = '❚'; }
+      else { au.pause(); pb.querySelector('i').textContent = '▶'; }
+    });
+  }else{
+    t.innerHTML = '<span class="add">' + SVG_PLUS + 'Выбрать аудио</span><input type="file" id="audioInput" accept="audio/*">';
+    document.getElementById('audioInput').addEventListener('change', onAudioFile);
+  }
+  var info = document.getElementById('audioInfo');
+  info.textContent = audioSec ? ('⏱ Твоя озвучка: ' + audioSec + ' сек — губы синхронизируются с ней.') : '';
+}
+
+var audioSec = 0;
+
+function removeVideo(){
+  videoData = null; videoNameStr = null;
+  if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
+  renderVideoTile();
+  saveDraft(); updateSteps(); updateBar();
+}
+function removeAudio(){
+  audioData = null; audioSec = 0; audioNameStr = null;
+  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
+  renderAudioTile();
+  saveDraft(); updateSteps(); updateBar();
 }
 
 function probeVideo(f, maxSec, cb){
@@ -269,30 +307,81 @@ function probeAudio(f, maxSec, cb){
     var d = a.duration;
     URL.revokeObjectURL(url);
     if(d > maxSec){ alert('Аудио длиннее ' + maxSec + ' секунд. Выбери файл короче.'); return; }
-    cb();
+    cb(d);
   });
-  a.addEventListener('error', function(){ URL.revokeObjectURL(url); cb(); });
+  a.addEventListener('error', function(){ URL.revokeObjectURL(url); alert('Не удалось прочитать аудиофайл'); });
 }
 
-function saveDraft(){
-  try{
-    localStorage.setItem('seedgen_lipsync_draft', JSON.stringify({ seconds: seconds, video: videoData, audio: audioData, savedAt: Date.now() }));
-  }catch(e){}
+function safeFileName(prefix, f, ext){
+  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
 }
 
-function clearDraft(){
-  try{ localStorage.removeItem('seedgen_lipsync_draft'); }catch(e){}
+function onVideoFile(e){
+  var f = e.target.files[0]; if(!f) return;
+  if(f.type !== 'video/mp4' && f.type !== 'video/webm'){ alert('Нужно видео в формате MP4'); return; }
+  if(f.size > 20*1024*1024){ alert('Видео больше 20 МБ. Выбери ролик короче.'); return; }
+  probeVideo(f, 30, function(){
+    if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); }
+    localVideoBlobUrl = URL.createObjectURL(f);
+    videoNameStr = f.name;
+    renderVideoTile();
+    if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
+    setStatus('Загружаем видео...');
+    var controller = new AbortController();
+    var timedOut = false;
+    var timeoutId = setTimeout(function(){ timedOut = true; controller.abort(); }, 30000);
+    window.blobUpload(safeFileName('lipsync-video', f, '.mp4'), f, {
+      access: 'public',
+      handleUploadUrl: '/api/upload',
+      abortSignal: controller.signal,
+      onUploadProgress: function(p){
+        clearTimeout(timeoutId);
+        setStatus('Загружаем видео: ' + Math.round(p.percentage) + '%');
+      }
+    }).then(function(blob){
+      clearTimeout(timeoutId);
+      videoData = blob.url;
+      if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
+      renderVideoTile();
+      setStatus('');
+      saveDraft(); updateSteps(); updateBar();
+    }).catch(function(err){
+      clearTimeout(timeoutId);
+      setStatus('');
+      if(timedOut){
+        alert('Загрузка видео не началась за 30 секунд. Отключи VPN/блокировщик рекламы и попробуй снова.');
+      }else{
+        alert('Не удалось загрузить видео: ' + err.message);
+      }
+    });
+  });
 }
 
-function showDraftBadge(which, text){
-  var el = document.getElementById(which + 'DraftBadge');
-  if(!el) return;
-  el.innerHTML = '<span class="draftBadge">💾 ' + text + '</span>';
-}
-
-function hideDraftBadge(which){
-  var el = document.getElementById(which + 'DraftBadge');
-  if(el) el.innerHTML = '';
+function onAudioFile(e){
+  var f = e.target.files[0]; if(!f) return;
+  if(f.type.indexOf('audio/') !== 0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
+  if(f.size > 5*1024*1024){ alert('Аудио больше 5 МБ. Выбери файл короче.'); return; }
+  probeAudio(f, 30, function(dur){
+    if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); }
+    localAudioBlobUrl = URL.createObjectURL(f);
+    audioNameStr = f.name;
+    renderAudioTile();
+    if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
+    setStatus('Загружаем аудио...');
+    window.blobUpload(safeFileName('lipsync-audio', f, '.mp3'), f, { access: 'public', handleUploadUrl: '/api/upload' })
+      .then(function(blob){
+        audioData = blob.url;
+        audioSec = Math.min(30, Math.max(1, Math.ceil(dur)));
+        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
+        renderAudioTile();
+        setStatus('');
+        saveDraft(); updateSteps(); updateBar();
+      })
+      .catch(function(err){
+        setStatus('');
+        alert('Не удалось загрузить аудио: ' + err.message);
+      });
+  });
 }
 
 function checkUrlAlive(url, cb){
@@ -300,29 +389,14 @@ function checkUrlAlive(url, cb){
   fetch(url, {method: 'HEAD', mode: 'no-cors'}).then(function(){ cb(true); }).catch(function(){ cb(false); });
 }
 
-function showVideoPreview(src){
-  var vp = document.getElementById('vidPreview');
-  vp.src = src;
-  vp.style.display = 'block';
-  vp.load();
-}
-function hideVideoPreview(){
-  var vp = document.getElementById('vidPreview');
-  vp.pause();
-  vp.removeAttribute('src');
-  vp.style.display = 'none';
-}
-function showAudioPreview(src){
-  var ap = document.getElementById('audPreview');
-  ap.src = src;
-  ap.style.display = 'block';
-  ap.load();
-}
-function hideAudioPreview(){
-  var ap = document.getElementById('audPreview');
-  ap.pause();
-  ap.removeAttribute('src');
-  ap.style.display = 'none';
+function saveDraft(){
+  if(restoring) return;
+  try{
+    localStorage.setItem('seedgen_lipsync_draft', JSON.stringify({
+      video: videoData, audio: audioData, seconds: seconds,
+      videoName: videoNameStr, audioName: audioNameStr, audioSec: audioSec, savedAt: Date.now()
+    }));
+  }catch(e){}
 }
 
 slider.addEventListener('input', function(){
@@ -331,142 +405,51 @@ slider.addEventListener('input', function(){
   saveDraft();
 });
 
-try{
-  var s = JSON.parse(localStorage.getItem('seedgen_lipsync_draft') || 'null');
-  if(s){
+(function restoreDraft(){
+  try{
+    var s = JSON.parse(localStorage.getItem('seedgen_lipsync_draft') || 'null');
+    if(!s) return;
+    restoring = true;
+    videoNameStr = s.videoName || null;
+    audioNameStr = s.audioName || null;
+    audioSec = s.audioSec || 0;
+    if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
+    restoring = false;
+    renderVideoTile();
+    renderAudioTile();
+    updatePriceDisplay(); updateSteps(); updateBar();
     if(s.video){
       checkUrlAlive(s.video, function(alive){
-        if(alive){
-          videoData = s.video;
-          document.getElementById('vidName').textContent = '🎬 видео из черновика восстановлено ✅';
-          document.getElementById('vidDel').style.display = 'block';
-          showVideoPreview(s.video);
-          showDraftBadge('video', 'Черновик сохранён');
-        }else{
-          document.getElementById('vidName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик видео устарел — нужно прикрепить заново</span>';
-          videoData = null;
-          hideDraftBadge('video');
-        }
+        if(alive){ videoData = s.video; renderVideoTile(); updateSteps(); updateBar(); }
+        else{ videoData = null; renderVideoTile(); setStatus('⚠️ Черновик видео устарел — прикрепи видео заново.'); updateSteps(); updateBar(); }
       });
     }
     if(s.audio){
       checkUrlAlive(s.audio, function(alive){
-        if(alive){
-          audioData = s.audio;
-          document.getElementById('audName').textContent = '🎵 озвучка из черновика восстановлена ✅';
-          document.getElementById('audDel').style.display = 'block';
-          showAudioPreview(s.audio);
-          showDraftBadge('audio', 'Черновик сохранён');
-        }else{
-          document.getElementById('audName').innerHTML = '⚠️ <span style="color:#fca5a5">Черновик озвучки устарел — нужно прикрепить заново</span>';
-          audioData = null;
-          hideDraftBadge('audio');
-        }
+        if(alive){ audioData = s.audio; renderAudioTile(); updateSteps(); updateBar(); }
+        else{ audioData = null; audioSec = 0; renderAudioTile(); setStatus('⚠️ Черновик озвучки устарел — прикрепи аудио заново.'); updateSteps(); updateBar(); }
       });
     }
-    if(s.seconds && s.seconds >= 5 && s.seconds <= 30){
-      seconds = s.seconds;
-      slider.value = seconds;
-      updatePriceDisplay();
-    }
-  }
-}catch(e){}
+  }catch(e){ restoring = false; updatePriceDisplay(); updateSteps(); updateBar(); }
+})();
 
-document.getElementById('vid').onchange = function(e){
-  var f = e.target.files[0]; if(!f) return;
-  if(f.type !== 'video/mp4' && f.type !== 'video/webm'){ alert('Нужно видео в формате MP4'); return; }
-  if(f.size > 20*1024*1024){ alert('Видео больше 20 МБ. Выбери ролик короче.'); return; }
-  probeVideo(f, 30, function(){
-    if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
-    localVideoBlobUrl = URL.createObjectURL(f);
-    showVideoPreview(localVideoBlobUrl);
-    if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
-    var prog = document.getElementById('vidProg');
-    var bar = prog.querySelector('i');
-    prog.style.display = 'block'; bar.style.width = '0%';
-    setStatus('Загружаем видео: 0%');
-    uploadFile(f, 'lipsync-video', '.mp4', function(p){
-      bar.style.width = p + '%';
-      setStatus('Загружаем видео: ' + p + '%');
+function callGenerate(pid){
+  stage = 'gen';
+  updateSteps(); updateBar();
+  setStatus('Синхронизируем губы... 1–5 минут ⏳');
+  fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'lipsync', paymentId:pid, video:videoData, audio:audioData, seconds:seconds})})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error){ throw new Error(d.error); }
+      try{ localStorage.setItem('seedgen_lipsync_task_' + pid, d.taskId); }catch(e){}
+      poll(d.taskId);
     })
-      .then(function(blob){
-        videoData = blob.url;
-        document.getElementById('vidName').textContent = '🎬 ' + f.name + ' — загружено ✅';
-        document.getElementById('vidDel').style.display = 'block';
-        bar.style.width = '100%';
-        setTimeout(function(){ prog.style.display = 'none'; }, 600);
-        setStatus('');
-        saveDraft();
-        showDraftBadge('video', 'Черновик сохранён');
-        if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
-        showVideoPreview(blob.url);
-      })
-      .catch(function(err){
-        prog.style.display = 'none';
-        setStatus('');
-        hideVideoPreview();
-        if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
-        alert('Не удалось загрузить видео: ' + err.message);
-      });
-  });
-};
-document.getElementById('vidDel').onclick = function(){
-  videoData = null; this.style.display = 'none';
-  document.getElementById('vidName').textContent = '';
-  document.getElementById('vid').value = '';
-  hideDraftBadge('video');
-  hideVideoPreview();
-  if(localVideoBlobUrl){ URL.revokeObjectURL(localVideoBlobUrl); localVideoBlobUrl = null; }
-  saveDraft();
-};
-
-document.getElementById('aud').onchange = function(e){
-  var f = e.target.files[0]; if(!f) return;
-  if(f.type.indexOf('audio/') !== 0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
-  if(f.size > 5*1024*1024){ alert('Аудио больше 5 МБ. Выбери файл короче.'); return; }
-  probeAudio(f, 30, function(){
-    if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
-    localAudioBlobUrl = URL.createObjectURL(f);
-    showAudioPreview(localAudioBlobUrl);
-    if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
-    var prog = document.getElementById('audProg');
-    var bar = prog.querySelector('i');
-    prog.style.display = 'block'; bar.style.width = '0%';
-    setStatus('Загружаем аудио: 0%');
-    uploadFile(f, 'lipsync-audio', '.mp3', function(p){
-      bar.style.width = p + '%';
-      setStatus('Загружаем аудио: ' + p + '%');
-    })
-      .then(function(blob){
-        audioData = blob.url;
-        document.getElementById('audName').textContent = '🎵 ' + f.name + ' — загружено ✅';
-        document.getElementById('audDel').style.display = 'block';
-        bar.style.width = '100%';
-        setTimeout(function(){ prog.style.display = 'none'; }, 600);
-        setStatus('');
-        saveDraft();
-        showDraftBadge('audio', 'Черновик сохранён');
-        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
-        showAudioPreview(blob.url);
-      })
-      .catch(function(err){
-        prog.style.display = 'none';
-        setStatus('');
-        hideAudioPreview();
-        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
-        alert('Не удалось загрузить аудио: ' + err.message);
-      });
-  });
-};
-document.getElementById('audDel').onclick = function(){
-  audioData = null; this.style.display = 'none';
-  document.getElementById('audName').textContent = '';
-  document.getElementById('aud').value = '';
-  hideDraftBadge('audio');
-  hideAudioPreview();
-  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
-  saveDraft();
-};
+    .catch(function(e){
+      setStatus('Ошибка: ' + e.message);
+      stage = 'setup';
+      updateSteps(); updateBar();
+    });
+}
 
 function poll(taskId){
   var timer = setInterval(function(){
@@ -475,15 +458,16 @@ function poll(taskId){
       .then(function(d){
         if(d.status === 'succeeded'){
           clearInterval(timer);
-          document.getElementById('video').src = d.videoUrl;
-          document.getElementById('result').style.display = 'block';
+          document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + d.videoUrl + '"></video></div>';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
-          btn.disabled = false;
-          clearDraft();
+          stage = 'done';
+          updateSteps(); updateBar();
+          try{ localStorage.removeItem('seedgen_lipsync_draft'); }catch(e){}
         }else if(d.status === 'failed'){
           clearInterval(timer);
-          setStatus('Ошибка: ' + (d.error || 'попробуй другие видео и аудио'));
-          btn.disabled = false;
+          setStatus('Ошибка: ' + (d.error || 'попробуй другие видео и озвучку'));
+          stage = 'setup';
+          updateSteps(); updateBar();
         }else{
           setStatus('Синхронизируем губы... 1–5 минут ⏳');
         }
@@ -492,104 +476,76 @@ function poll(taskId){
   }, 5000);
 }
 
-function callGenerate(pid){
-  fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service: 'lipsync', paymentId: pid, video: videoData, audio: audioData, seconds: seconds }) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.error){ throw new Error(d.error); }
-      try{ localStorage.setItem('seedgen_lipsync_task_' + pid, d.taskId); }catch(e){}
-      setStatus('Синхронизируем губы... 1–5 минут ⏳');
-      poll(d.taskId);
-    })
-    .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
-}
-
 btn.addEventListener('click', function(){
-  if(!videoData){ alert('Сначала загрузи видео (или обнови черновик — возможно, файл устарел)'); return; }
-  if(!audioData){ alert('Сначала загрузи озвучку (или обнови черновик — возможно, файл устарел)'); return; }
-  btn.disabled = true;
-  if(paidReturn){
-    setStatus('Запускаем генерацию...');
-    callGenerate(paymentIdReturn);
+  if(paidSeen && activePaymentId && videoData && audioData && stage !== 'gen' && stage !== 'done'){
+    callGenerate(activePaymentId);
     return;
   }
+  if(!videoData){ alert('Сначала загрузи видео'); return; }
+  if(!audioData){ alert('Сначала загрузи озвучку (или обнови черновик — возможно, файл устарел)'); return; }
+  if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
+  btn.disabled = true;
   setStatus('Создаём платёж...');
-  fetch('/api/pay', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service: 'lipsync', seconds: seconds }) })
+  saveDraft();
+  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'lipsync', seconds:seconds})})
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ throw new Error(data.error); }
+      activePaymentId = data.paymentId;
       saveDraft();
       window.location.href = data.confirmationUrl;
     })
-    .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
+    .catch(function(e){
+      setStatus('Ошибка: ' + e.message);
+      btn.disabled = false;
+    });
 });
 
 (function(){
   var pid = new URLSearchParams(window.location.search).get('paymentId');
   if(!pid) return;
-  paymentIdReturn = pid;
+  activePaymentId = pid;
+  paidSeen = true;
   var savedTask = localStorage.getItem('seedgen_lipsync_task_' + pid);
-  if(savedTask){ btn.disabled = true; setStatus('Синхронизируем губы... 1–5 минут ⏳'); poll(savedTask); return; }
-  btn.disabled = true;
+  if(savedTask){
+    stage = 'gen';
+    updateSteps(); updateBar();
+    setStatus('Синхронизируем губы... 1–5 минут ⏳');
+    poll(savedTask);
+    return;
+  }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId=' + encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.paid){
-        paidReturn = true;
+        saveDraft();
         if(videoData && audioData){
           setStatus('Оплата прошла! Запускаем генерацию...');
           callGenerate(pid);
         }else{
-          var missing = [];
-          if(!videoData) missing.push('видео');
-          if(!audioData) missing.push('аудио');
-          var notice = document.createElement('div');
-          notice.className = 'notice';
-          notice.innerHTML = '⚠ <b>Оплата прошла!</b> ' + missing.join(' и ') + ' нужно прикрепить заново — ссылка на файл устарела. Настройки сохранены.';
-          btn.parentNode.insertBefore(notice, btn);
-          setStatus('Прикрепи ' + missing.join(' и ') + ' и нажми кнопку ещё раз.');
-          btn.textContent = 'Запустить генерацию (оплачено)';
-          btn.disabled = false;
+          setStatus('Оплата прошла! ✅ Прикрепи видео и озвучку — и нажми кнопку внизу ещё раз.');
+          updateSteps(); updateBar();
         }
       }else{
+        paidSeen = false;
+        activePaymentId = null;
         setStatus('Оплата не завершена. Настройки сохранены — можешь оплатить ещё раз.');
-        btn.disabled = false;
+        updateSteps(); updateBar();
       }
     })
-    .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
+    .catch(function(e){
+      paidSeen = false;
+      setStatus('Ошибка: ' + e.message);
+      updateSteps(); updateBar();
+    });
 })();
 
+renderVideoTile();
+renderAudioTile();
 updatePriceDisplay();
-</script>
-
-<script>
-(function(){
-  function addAgree(){
-    var btns = document.querySelectorAll('button');
-    for(var i = 0; i < btns.length; i++){
-      var t = btns[i].textContent || '';
-      if(/Оплатить|Создать видео|Сгенерировать|Запустить генерацию/.test(t) && !document.getElementById('agreeWrap')){
-        var wrap = document.createElement('div');
-        wrap.id = 'agreeWrap';
-        wrap.style.cssText = 'margin:16px 0 0;color:#9ca3af;font-size:.9rem;line-height:1.5';
-        wrap.innerHTML = '<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="agree" style="width:18px;height:18px;margin-top:2px;accent-color:#A3E635;flex:0 0 auto"><span>Я принимаю условия <a href="/legal.html#offer" style="color:#A3E635">публичной оферты</a> и даю согласие на <a href="/legal.html#policy" style="color:#A3E635">обработку персональных данных</a></span></label>';
-        btns[i].parentNode.insertBefore(wrap, btns[i]);
-        break;
-      }
-    }
-  }
-  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', addAgree); }else{ addAgree(); }
-  document.addEventListener('click', function(e){
-    var b = e.target.closest ? e.target.closest('button') : null;
-    if(!b) return;
-    var t = b.textContent || '';
-    if(/Оплатить|Создать видео|Сгенерировать|Запустить генерацию/.test(t)){
-      var c = document.getElementById('agree');
-      if(c && !c.checked){ e.preventDefault(); e.stopPropagation(); alert('Сначала отметь согласие с офертой ⚠️'); }
-    }
-  }, true);
-})();
+updateSteps();
+updateBar();
 </script>
 <script src="/help-widget.js"></script>
 </body>
