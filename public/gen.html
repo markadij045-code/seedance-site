@@ -28,19 +28,19 @@ textarea.pr:focus{border-color:var(--border-lime)}
 .seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
 .seg button:hover{color:var(--text)}
 .seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
 .tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
 .tile:hover{border-color:var(--border-lime)}
 .tile img,.tile video{width:100%;height:100%;object-fit:cover}
 .tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.74rem;text-align:center;padding:6px;pointer-events:none}
+.tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.72rem;text-align:center;padding:6px;pointer-events:none}
 .tile .add svg{width:20px;height:20px;color:rgba(163,230,53,.6)}
-.tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:2}
-.tile.wide{aspect-ratio:16/9;grid-column:1/-1;background:rgba(0,0,0,.45)}
-.tile.wide video{object-fit:contain}
-.tile.wide .add{flex-direction:row;gap:8px;font-size:.82rem}
-.tname{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;font-size:.68rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile audio{width:100%;position:absolute;bottom:8px;left:0;padding:0 8px}
+.tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:3}
+.tname{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 5px;font-size:.64rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.playbadge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.playbadge i{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(163,230,53,.55);color:var(--lime);display:grid;place-items:center;font-style:normal;font-size:.72rem}
+.audiotile{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,230,53,.14),rgba(59,130,246,.10))}
+.audiotile svg{width:26px;height:26px;color:var(--lime)}
 .morebtn{margin-top:10px;padding:8px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .8rem 'Inter';cursor:pointer}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
 .srow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
@@ -150,10 +150,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон».</div>
 
       <div class="lbl">Видео-референс камеры и движения</div>
-      <div class="tiles"><div class="tile wide" id="refVideoTile"></div></div>
+      <div class="tiles"><div class="tile" id="refVideoTile"></div></div>
 
       <div class="lbl">Звук-референс: музыка и ритм</div>
-      <div class="tiles"><div class="tile wide" id="refAudioTile"></div></div>
+      <div class="tiles"><div class="tile" id="refAudioTile"></div></div>
       <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
     </div>
 
@@ -235,6 +235,7 @@ var SURCHARGE = {'480p':0, '720p':200, '1080p':300};
 var seconds = 5, aspect = '16:9', quality = '480p', mode = 'nov';
 var refNov = null, refsAdv = [], maxRefsAdv = 3;
 var refVideoUrl = null, refAudioUrl = null;
+var refVideoNameStr = null, refAudioNameStr = null;
 var localRefVideoUrl = null, localRefAudioUrl = null;
 var restoring = false;
 var stage = 'setup';
@@ -299,6 +300,7 @@ function setMode(m){
 function unlockMoreRefs(){ maxRefsAdv = 10; renderRefs(); }
 
 var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>';
+var SVG_NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
 
 function renderNovTile(){
   var t = document.getElementById('novTile');
@@ -331,8 +333,8 @@ function renderRefs(){
   }
   document.getElementById('refCounter').textContent = (mode === 'adv' && refsAdv.length) ? ('Загружено: ' + refsAdv.length + ' из ' + maxRefsAdv) : '';
   document.getElementById('moreRefsBtn').style.display = (mode === 'adv' && maxRefsAdv === 3 && refsAdv.length >= 3) ? 'inline-block' : 'none';
-  renderMediaTile('refVideoTile', refVideoUrl, localRefVideoUrl, 'video', 'Видео-референс (MP4, до 15 сек)', 'refVideoInput', 'video/mp4,video/webm');
-  renderMediaTile('refAudioTile', refAudioUrl, localRefAudioUrl, 'audio', 'Звук-референс (MP3/WAV, до 15 сек)', 'refAudioInput', 'audio/*');
+  renderMediaTile('refVideoTile', refVideoUrl, localRefVideoUrl, 'video', 'Видео (MP4, до 15 сек)', 'refVideoInput', 'video/mp4,video/webm');
+  renderMediaTile('refAudioTile', refAudioUrl, localRefAudioUrl, 'audio', 'Звук (MP3/WAV, до 15 сек)', 'refAudioInput', 'audio/*');
 }
 
 function renderMediaTile(id, url, localUrl, kind, label, inputId, accept){
@@ -340,9 +342,26 @@ function renderMediaTile(id, url, localUrl, kind, label, inputId, accept){
   var src = url || localUrl;
   if(src){
     if(kind === 'video'){
-      t.innerHTML = '<video src="' + src + '" controls playsinline></video><button class="x" type="button" onclick="removeRefVideo()">✕</button>';
+      t.innerHTML = '<video src="' + src + '" muted playsinline preload="metadata"></video>'
+        + '<span class="playbadge"><i>▶</i></span>'
+        + '<div class="tname">' + (refVideoNameStr || 'видео-референс') + '</div>'
+        + '<button class="x" type="button" onclick="removeRefVideo()">✕</button>';
+      var v = t.querySelector('video');
+      t.querySelector('.playbadge').addEventListener('click', function(){
+        if(v.paused){ v.muted = false; v.play(); } else { v.pause(); v.muted = true; }
+      });
     }else{
-      t.innerHTML = '<audio src="' + src + '" controls></audio><div class="tname">🎵 звук-референс загружен</div><button class="x" type="button" onclick="removeRefAudio()">✕</button>';
+      t.innerHTML = '<div class="audiotile">' + SVG_NOTE + '</div>'
+        + '<span class="playbadge"><i>▶</i></span>'
+        + '<div class="tname">' + (refAudioNameStr || 'звук-референс') + '</div>'
+        + '<audio src="' + src + '" preload="metadata" style="display:none"></audio>'
+        + '<button class="x" type="button" onclick="removeRefAudio()">✕</button>';
+      var au = t.querySelector('audio');
+      var pb = t.querySelector('.playbadge');
+      pb.addEventListener('click', function(){
+        if(au.paused){ au.play(); pb.querySelector('i').textContent = '❚❚'; }
+        else { au.pause(); pb.querySelector('i').textContent = '▶'; }
+      });
     }
   }else{
     t.innerHTML = '<span class="add">' + SVG_PLUS + label + '</span><input type="file" id="' + inputId + '" accept="' + accept + '">';
@@ -418,6 +437,7 @@ function onVideoFile(e){
   probeMedia(f, 15, function(){
     if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); }
     localRefVideoUrl = URL.createObjectURL(f);
+    refVideoNameStr = f.name;
     renderRefs();
     uploadRefMedia(f, 'video', function(url){
       refVideoUrl = url;
@@ -428,7 +448,7 @@ function onVideoFile(e){
   });
 }
 function removeRefVideo(){
-  refVideoUrl = null;
+  refVideoUrl = null; refVideoNameStr = null;
   if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
   renderRefs();
   saveDraft();
@@ -439,6 +459,7 @@ function onAudioFile(e){
   probeMedia(f, 15, function(){
     if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); }
     localRefAudioUrl = URL.createObjectURL(f);
+    refAudioNameStr = f.name;
     renderRefs();
     uploadRefMedia(f, 'audio', function(url){
       refAudioUrl = url;
@@ -449,7 +470,7 @@ function onAudioFile(e){
   });
 }
 function removeRefAudio(){
-  refAudioUrl = null;
+  refAudioUrl = null; refAudioNameStr = null;
   if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
   renderRefs();
   saveDraft();
@@ -466,7 +487,9 @@ function saveDraft(){
     var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
     s.prompt = document.getElementById('prompt').value;
     s.aspect = aspect; s.seconds = seconds; s.quality = quality; s.mode = mode;
-    s.refNov = refNov; s.refsAdv = refsAdv; s.refVideo = refVideoUrl; s.refAudio = refAudioUrl;
+    s.refNov = refNov; s.refsAdv = refsAdv;
+    s.refVideo = refVideoUrl; s.refAudio = refAudioUrl;
+    s.refVideoName = refVideoNameStr; s.refAudioName = refAudioNameStr;
     localStorage.setItem('seedgen_gen_draft', JSON.stringify(s));
   }catch(e){}
 }
@@ -491,6 +514,8 @@ document.getElementById('prompt').addEventListener('input', function(){ saveDraf
     if(s.refsAdv && s.refsAdv.length){ refsAdv = s.refsAdv.slice(0, 10); }
     else if(s.refs && s.refs.length){ refsAdv = s.refs.slice(0, 10); }
     if(refsAdv.length > 3) maxRefsAdv = 10;
+    refVideoNameStr = s.refVideoName || null;
+    refAudioNameStr = s.refAudioName || null;
     document.querySelectorAll('#qRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-q') === quality); });
     setMode(s.mode === 'adv' ? 'adv' : 'nov');
     restoring = false;
