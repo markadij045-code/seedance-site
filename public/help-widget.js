@@ -62,6 +62,8 @@
   +'body{font-family:\'Inter\',-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif}'
   +'h1,h2,h3,h4,.logo{font-family:\'Space Grotesk\',\'Inter\',sans-serif}'
   +'body{background-image:radial-gradient(900px 500px at 85% -100px,rgba(163,230,53,.06),transparent 60%),radial-gradient(700px 500px at -100px 40%,rgba(59,130,246,.05),transparent 60%);background-attachment:fixed}'
+  +'audio{color-scheme:dark}'
+  +'.bar #launchBadge,.bar #hwInline,.bar-in>#launchBadge,.bar-in>#hwInline{display:none!important}'
   +'.warn{background:rgba(163,230,53,.06)!important;border-color:rgba(163,230,53,.25)!important;color:#c9cfba!important}'
   +'button,.mode,.tool,.pill,.new-card,.drop{transition:all .2s ease}'
   +'.links a:hover{color:#e5e7eb!important}'
