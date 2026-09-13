@@ -271,7 +271,8 @@ var seconds = 5;
 var aspect = '16:9';
 var quality = '480p';
 var mode = 'nov';
-var refs = [];
+var refNov = null;
+var refsAdv = [];
 var maxRefsAdv = 3;
 var refVideoUrl = null;
 var refAudioUrl = null;
@@ -282,8 +283,6 @@ var secVal = document.getElementById('secVal');
 var priceVal = document.getElementById('priceVal');
 
 function setStatus(t){ statusEl.textContent = t; }
-
-function currentMaxRefs(){ return mode === 'adv' ? maxRefsAdv : 1; }
 
 function updatePriceDisplay(){
   var p = 199 + (seconds - 5) * 30 + SURCHARGE[quality];
@@ -322,41 +321,45 @@ function setMode(m){
 
 function unlockMoreRefs(){
   maxRefsAdv = 10;
-  document.getElementById('moreRefsBtn').style.display = 'none';
   renderRefs();
 }
 
 function renderRefs(){
   var list = document.getElementById('refsList');
+  var counter = document.getElementById('refCounter');
   list.innerHTML = '';
-  refs.forEach(function(r, i){
+  if(mode === 'nov'){
+    if(refNov){
+      var d0 = document.createElement('div');
+      d0.className = 'ritem';
+      d0.innerHTML = '<img src="data:image/jpeg;base64,' + refNov + '"><button type="button" onclick="removeNovRef()">✕</button>';
+      list.appendChild(d0);
+      counter.textContent = 'Загружено: 1 из 1';
+    }else{
+      counter.textContent = '';
+    }
+    document.getElementById('addRefTool').style.display = 'none';
+    document.getElementById('moreRefsBtn').style.display = 'none';
+    return;
+  }
+  refsAdv.forEach(function(r, i){
     var d = document.createElement('div');
     d.className = 'ritem';
-    d.innerHTML = '<img src="data:image/jpeg;base64,' + r + '"><button type="button" onclick="removeRef(' + i + ')">✕</button>';
+    d.innerHTML = '<img src="data:image/jpeg;base64,' + r + '"><button type="button" onclick="removeAdvRef(' + i + ')">✕</button>';
     list.appendChild(d);
   });
-  var max = currentMaxRefs();
-  document.getElementById('refCounter').textContent = refs.length ? ('Загружено: ' + refs.length + ' из ' + max) : '';
-  document.getElementById('addRefTool').style.display = (mode === 'adv' && refs.length < max) ? 'inline-flex' : 'none';
-  if(mode === 'adv' && maxRefsAdv === 3 && refs.length >= 3){
-    document.getElementById('moreRefsBtn').style.display = 'inline-block';
-  } else {
-    document.getElementById('moreRefsBtn').style.display = 'none';
-  }
+  counter.textContent = refsAdv.length ? ('Загружено: ' + refsAdv.length + ' из ' + maxRefsAdv) : '';
+  document.getElementById('addRefTool').style.display = (refsAdv.length < maxRefsAdv) ? 'inline-flex' : 'none';
+  document.getElementById('moreRefsBtn').style.display = (maxRefsAdv === 3 && refsAdv.length >= 3) ? 'inline-block' : 'none';
 }
 
-function removeRef(i){
-  refs.splice(i, 1);
+function removeNovRef(){
+  refNov = null;
   renderRefs();
   saveDraft();
 }
-
-function addRefBase64(b64){
-  if(refs.length >= currentMaxRefs()){
-    if(mode === 'nov'){ alert('В режиме «Новичок» — одно изображение. Переключись на «Продвинутый», чтобы добавить до 10.'); return; }
-    alert('Достигнут лимит референсов'); return;
-  }
-  refs.push(b64);
+function removeAdvRef(i){
+  refsAdv.splice(i, 1);
   renderRefs();
   saveDraft();
 }
@@ -384,8 +387,8 @@ document.getElementById('refAddInput').addEventListener('change', function(e){
   function next(){
     if(idx >= files.length){ e.target.value = ''; return; }
     var f = files[idx++];
-    if(refs.length >= currentMaxRefs()){ e.target.value = ''; alert('Лимит референсов: ' + currentMaxRefs()); return; }
-    fileToRefBase64(f, function(b64){ addRefBase64(b64); next(); });
+    if(refsAdv.length >= maxRefsAdv){ e.target.value = ''; alert('Лимит референсов: ' + maxRefsAdv); return; }
+    fileToRefBase64(f, function(b64){ refsAdv.push(b64); renderRefs(); saveDraft(); next(); });
   }
   next();
 });
@@ -399,7 +402,7 @@ document.getElementById('refInput').addEventListener('change', function(e){
   fileToRefBase64(f, function(b64){
     bar.style.width = '100%';
     setTimeout(function(){ prog.style.display = 'none'; }, 600);
-    refs = [b64];
+    refNov = b64;
     renderRefs();
     saveDraft();
   });
@@ -481,7 +484,8 @@ function saveDraft(){
     s.seconds = seconds;
     s.quality = quality;
     s.mode = mode;
-    s.refs = refs;
+    s.refNov = refNov;
+    s.refsAdv = refsAdv;
     s.refVideo = refVideoUrl;
     s.refAudio = refAudioUrl;
     localStorage.setItem('seedgen_gen_draft', JSON.stringify(s));
@@ -490,7 +494,7 @@ function saveDraft(){
       var s2 = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
       s2.prompt = document.getElementById('prompt').value;
       s2.aspect = aspect; s2.seconds = seconds; s2.quality = quality; s2.mode = mode;
-      delete s2.refs; delete s2.refVideo; delete s2.refAudio;
+      delete s2.refNov; delete s2.refsAdv; delete s2.refVideo; delete s2.refAudio;
       localStorage.setItem('seedgen_gen_draft', JSON.stringify(s2));
     }catch(e2){}
   }
@@ -510,9 +514,11 @@ slider.addEventListener('input', function(){
     if(s.aspect) pickAspect(s.aspect);
     if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
     if(s.quality && SURCHARGE[s.quality] !== undefined) quality = s.quality;
-    if(s.refs && s.refs.length){ refs = s.refs.slice(0, 10); }
-    else if(s.refImage){ refs = [s.refImage]; }
-    if(s.mode === 'adv') maxRefsAdv = (s.refs && s.refs.length > 3) ? 10 : 3;
+    if(s.refNov){ refNov = s.refNov; }
+    else if(s.refImage){ refNov = s.refImage; }
+    if(s.refsAdv && s.refsAdv.length){ refsAdv = s.refsAdv.slice(0, 10); }
+    else if(s.refs && s.refs.length){ refsAdv = s.refs.slice(0, 10); }
+    if(refsAdv.length > 3) maxRefsAdv = 10;
     setMode(s.mode === 'adv' ? 'adv' : 'nov');
     if(s.refVideo){
       checkUrlAlive(s.refVideo, function(alive){
@@ -570,7 +576,7 @@ btn.addEventListener('click', function(){
   var prompt = document.getElementById('prompt').value.trim();
   if(!prompt){ alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»'); return; }
   if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
-  if(refAudioUrl && refs.length === 0 && !refVideoUrl){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; }
+  if(refAudioUrl && refsAdv.length === 0 && !refVideoUrl && !refNov){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; }
   btn.disabled = true;
   setStatus('Создаём платёж...');
   saveDraft();
@@ -680,10 +686,14 @@ function poll(taskId, stage, baseVideoUrl, pid){
       }else if(data.paid){
         var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
         var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5, quality:draft.quality || '480p'};
-        if(draft.refs && draft.refs.length) payload.refs = draft.refs;
-        else if(draft.refImage) payload.refImage = draft.refImage;
-        if(draft.refVideo) payload.refVideo = draft.refVideo;
-        if(draft.refAudio) payload.refAudio = draft.refAudio;
+        if(draft.mode === 'adv'){
+          if(draft.refsAdv && draft.refsAdv.length) payload.refs = draft.refsAdv;
+          if(draft.refVideo) payload.refVideo = draft.refVideo;
+          if(draft.refAudio) payload.refAudio = draft.refAudio;
+        }else{
+          if(draft.refNov) payload.refImage = draft.refNov;
+          else if(draft.refImage) payload.refImage = draft.refImage;
+        }
         setStatus('Оплата прошла! Запускаем генерацию...');
         fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
           .then(function(r){ return r.json(); })
