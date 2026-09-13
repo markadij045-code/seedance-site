@@ -51,6 +51,12 @@
   fl.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap';
   document.head.appendChild(fl);
 
+  var fi=document.createElement('link');
+  fi.rel='icon';
+  fi.type='image/svg+xml';
+  fi.href='/favicon.svg';
+  document.head.appendChild(fi);
+
   var st=document.createElement('style');
   st.textContent=''
   +'body{font-family:\'Inter\',-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif}'
