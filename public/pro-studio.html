@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>PRO-студия — SeedGen</title>
+<meta name="robots" content="noindex, nofollow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -16,7 +17,6 @@ body{
   flex-direction:column;
 }
 
-/* Верхнее меню */
 .topbar{
   height:56px;
   background:#111;
@@ -30,7 +30,7 @@ body{
 .topbar-left{display:flex;align-items:center;gap:24px}
 .logo{font-weight:700;font-size:1.2rem}
 .logo span{color:#A3E635}
-.nav-menu{display:flex;gap:4px}
+.nav-menu{display:flex;gap:4px;flex-wrap:wrap}
 .nav-item{
   padding:8px 16px;
   background:transparent;
@@ -61,17 +61,17 @@ body{
   font-size:0.85rem;
   cursor:pointer;
   transition:all 0.2s;
+  text-decoration:none;
+  display:inline-block;
 }
 .btn-small:hover{background:#333}
 
-/* Основной layout */
 .main{
   display:flex;
   flex:1;
   overflow:hidden;
 }
 
-/* Левая панель */
 .sidebar-left{
   width:300px;
   background:#0f0f0f;
@@ -113,7 +113,6 @@ body{
   line-height:1.4;
 }
 
-/* Центральная область */
 .center{
   flex:1;
   display:flex;
@@ -231,7 +230,6 @@ body{
   transform:none;
 }
 
-/* Правая панель */
 .sidebar-right{
   width:320px;
   background:#0f0f0f;
@@ -287,7 +285,6 @@ body{
   margin-top:4px;
 }
 
-/* Статус генерации */
 .status-bar{
   position:fixed;
   bottom:0;
@@ -299,6 +296,7 @@ body{
   display:none;
   align-items:center;
   justify-content:space-between;
+  z-index:500;
 }
 .status-bar.show{display:flex}
 .status-text{color:#A3E635;font-weight:600}
@@ -323,7 +321,6 @@ body{
   100%{width:100%}
 }
 
-/* Модальное окно */
 .result-modal{
   position:fixed;
   top:0;
@@ -373,9 +370,71 @@ body{
   flex-wrap:wrap;
 }
 
-/* Скрытые секции */
 .tab-content{display:none}
 .tab-content.active{display:block}
+
+.login-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+  padding:20px;
+}
+.login-modal.hidden{display:none}
+.login-box{
+  background:#1a1a1a;
+  border:1px solid #333;
+  border-radius:24px;
+  padding:40px;
+  max-width:420px;
+  width:100%;
+  text-align:center;
+}
+.login-box h2{
+  font-size:1.6rem;
+  margin-bottom:12px;
+  color:#fff;
+}
+.login-box h2 .lime{color:#A3E635}
+.login-box p{
+  color:#888;
+  margin-bottom:24px;
+  font-size:.9rem;
+  line-height:1.5;
+}
+.login-box input{
+  width:100%;
+  padding:14px 18px;
+  background:#0f0f0f;
+  border:1px solid #333;
+  border-radius:12px;
+  color:#fff;
+  font-size:1rem;
+  outline:none;
+  margin-bottom:12px;
+}
+.login-box input:focus{border-color:#A3E635}
+.login-box button{
+  width:100%;
+  padding:14px;
+  background:#A3E635;
+  color:#000;
+  border:none;
+  border-radius:12px;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+}
+.login-box button:hover{transform:translateY(-1px)}
+.login-err{
+  color:#fca5a5;
+  font-size:.85rem;
+  min-height:20px;
+  margin-bottom:8px;
+}
 
 @media(max-width:1200px){
   .sidebar-left{width:260px}
@@ -384,52 +443,56 @@ body{
 @media(max-width:900px){
   .sidebar-left,.sidebar-right{display:none}
   .workspace{padding:20px}
+  .topbar{flex-wrap:wrap;height:auto;padding:12px}
+  .nav-menu{gap:2px}
+  .nav-item{padding:6px 10px;font-size:.8rem}
 }
 </style>
 </head>
 <body>
 
-<!-- Верхнее меню -->
+<div class="login-modal" id="loginModal">
+  <div class="login-box">
+    <h2>🎛 <span class="lime">PRO-студия</span></h2>
+    <p>Расширенный интерфейс для владельцев. Введи пароль, чтобы войти.</p>
+    <div class="login-err" id="loginErr"></div>
+    <input type="password" id="loginPw" placeholder="Пароль PRO-студии">
+    <button id="loginBtn">Войти</button>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo"><span>▶</span> SeedGen PRO</div>
     <div class="nav-menu">
-      <button class="nav-item active" onclick="switchSection('video')">🎬 Видео</button>
-      <button class="nav-item" onclick="switchSection('image')">🖼 Изображения</button>
-      <button class="nav-item" onclick="switchSection('avatar')">🗣 Аватар</button>
-      <button class="nav-item" onclick="switchSection('audio')"> Аудио</button>
-      <button class="nav-item" onclick="switchSection('motion')">🎮 Motion</button>
-      <button class="nav-item" onclick="switchSection('ai')">🤖 AI-помощник</button>
+      <button class="nav-item active" onclick="switchSection('video', event)">🎬 Видео</button>
+      <button class="nav-item" onclick="switchSection('image', event)">🖼 Изображения</button>
+      <button class="nav-item" onclick="switchSection('avatar', event)">🗣 Аватар</button>
+      <button class="nav-item" onclick="switchSection('audio', event)">🎵 Аудио</button>
+      <button class="nav-item" onclick="switchSection('motion', event)">🎮 Motion</button>
+      <button class="nav-item" onclick="switchSection('ai', event)">🤖 AI-помощник</button>
     </div>
   </div>
   <div class="topbar-right">
-    <div class="balance"> PRO-доступ</div>
-    <button class="btn-small" onclick="showHistory()"> Проекты</button>
+    <div class="balance">PRO-доступ</div>
+    <button class="btn-small" onclick="showHistory()">📁 Проекты</button>
     <a href="/" class="btn-small">← На сайт</a>
   </div>
 </div>
 
-<!-- Основной layout -->
 <div class="main">
-  
-  <!-- Левая панель: Шаблоны -->
   <div class="sidebar-left">
     <div class="sidebar-header">
-      <span id="sidebarTitle"> Шаблоны видео</span>
+      <span id="sidebarTitle">📋 Шаблоны видео</span>
     </div>
-    <div class="templates-list" id="templatesList">
-      <!-- Шаблоны подставляются JS -->
-    </div>
+    <div class="templates-list" id="templatesList"></div>
   </div>
 
-  <!-- Центральная область -->
   <div class="center">
     <div class="workspace">
 
-      <!-- РАЗДЕЛ: ВИДЕО -->
       <div id="section-video" class="tab-content active">
-        <h2 class="section-title"> Генерация видео</h2>
-        
+        <h2 class="section-title">🎬 Генерация видео</h2>
         <div class="prompt-area">
           <textarea id="video-prompt" placeholder="Опишите видео... Например: кот в космическом костюме летит на ракете мимо Земли, кинематографичный стиль, 4K"></textarea>
           <div class="prompt-footer">
@@ -437,38 +500,30 @@ body{
             <button class="generate-btn" id="video-generateBtn" onclick="generateVideo()">🚀 Сгенерировать</button>
           </div>
         </div>
-
         <div id="video-preview" class="preview-container"></div>
       </div>
 
-      <!-- РАЗДЕЛ: ИЗОБРАЖЕНИЯ -->
       <div id="section-image" class="tab-content">
-        <h2 class="section-title"> Генерация изображений</h2>
-        
+        <h2 class="section-title">🖼 Генерация изображений</h2>
         <div class="prompt-area">
           <textarea id="image-prompt" placeholder="Опишите изображение... Например: футуристический город с летающими машинами, неоновые огни, киберпанк стиль"></textarea>
           <div class="prompt-footer">
             <span class="char-count" id="image-charCount">0 / 5000</span>
-            <button class="generate-btn" id="image-generateBtn" onclick="generateImage()"> Сгенерировать</button>
+            <button class="generate-btn" id="image-generateBtn" onclick="generateImage()">🎨 Сгенерировать</button>
           </div>
         </div>
-
         <div id="image-preview" class="preview-container"></div>
       </div>
 
-      <!-- РАЗДЕЛ: АВАТАР -->
       <div id="section-avatar" class="tab-content">
-        <h2 class="section-title"> Говорящий аватар</h2>
-        
+        <h2 class="section-title">🗣 Говорящий аватар</h2>
         <div class="prompt-area">
           <label class="upload-area" for="avatar-upload">
             📷 Загрузить фото (лицо крупно)
             <input type="file" id="avatar-upload" accept="image/*">
           </label>
           <div id="avatar-preview" class="preview-container"></div>
-          
           <textarea id="avatar-text" placeholder="Введите текст, который скажет аватар..." style="margin-top:16px;min-height:80px"></textarea>
-          
           <div class="prompt-footer">
             <span class="char-count" id="avatar-charCount">0 / 5000</span>
             <button class="generate-btn" id="avatar-generateBtn" onclick="generateAvatar()">🎙 Создать аватар</button>
@@ -476,10 +531,8 @@ body{
         </div>
       </div>
 
-      <!-- РАЗДЕЛ: АУДИО -->
       <div id="section-audio" class="tab-content">
         <h2 class="section-title">🎵 Аудио инструменты</h2>
-        
         <div class="prompt-area">
           <textarea id="tts-text" placeholder="Введите текст для озвучки..."></textarea>
           <div class="prompt-footer">
@@ -487,23 +540,18 @@ body{
             <button class="generate-btn" id="tts-generateBtn" onclick="generateTTS()">🔊 Озвучить</button>
           </div>
         </div>
-
         <div id="tts-preview" class="preview-container"></div>
       </div>
 
-      <!-- РАЗДЕЛ: MOTION CONTROL -->
       <div id="section-motion" class="tab-content">
         <h2 class="section-title">🎮 Motion Control</h2>
-        
         <div class="prompt-area">
           <label class="upload-area" for="motion-upload">
             📹 Загрузить видео для управления движением
             <input type="file" id="motion-upload" accept="video/*">
           </label>
           <div id="motion-preview" class="preview-container"></div>
-          
           <textarea id="motion-prompt" placeholder="Опишите, как применить motion control..." style="margin-top:16px;min-height:80px"></textarea>
-          
           <div class="prompt-footer">
             <span class="char-count" id="motion-charCount">0 / 5000</span>
             <button class="generate-btn" id="motion-generateBtn" onclick="generateMotion()">🎬 Применить motion</button>
@@ -511,28 +559,22 @@ body{
         </div>
       </div>
 
-      <!-- РАЗДЕЛ: AI-ПОМОЩНИК -->
       <div id="section-ai" class="tab-content">
-        <h2 class="section-title"> AI-помощник</h2>
-        
+        <h2 class="section-title">🤖 AI-помощник</h2>
         <div class="prompt-area">
           <textarea id="ai-prompt" placeholder="Попросите AI помочь: 'Напиши сценарий для видео о путешествии', 'Придумай 10 идей для YouTube Shorts', 'Улучши этот промпт: ...'"></textarea>
           <div class="prompt-footer">
             <span class="char-count" id="ai-charCount">0 / 10000</span>
-            <button class="generate-btn" id="ai-generateBtn" onclick="generateAI()"> Получить помощь</button>
+            <button class="generate-btn" id="ai-generateBtn" onclick="generateAI()">💡 Получить помощь</button>
           </div>
         </div>
-
         <div id="ai-result" style="background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:20px;margin-top:20px;display:none;white-space:pre-wrap;line-height:1.6"></div>
       </div>
 
     </div>
   </div>
 
-  <!-- Правая панель: Настройки -->
   <div class="sidebar-right">
-    
-    <!-- Настройки для ВИДЕО -->
     <div id="settings-video" class="settings-section active">
       <h3>⚙️ Качество видео</h3>
       <div class="setting-row">
@@ -570,7 +612,6 @@ body{
       </div>
     </div>
 
-    <!-- Настройки для ИЗОБРАЖЕНИЙ -->
     <div id="settings-image" class="settings-section" style="display:none">
       <h3>⚙️ Параметры изображения</h3>
       <div class="setting-row">
@@ -602,7 +643,6 @@ body{
       </div>
     </div>
 
-    <!-- Настройки для АВАТАРА -->
     <div id="settings-avatar" class="settings-section" style="display:none">
       <h3>⚙️ Параметры аватара</h3>
       <div class="setting-row">
@@ -633,7 +673,6 @@ body{
       </div>
     </div>
 
-    <!-- Настройки для АУДИО -->
     <div id="settings-audio" class="settings-section" style="display:none">
       <h3>⚙️ Параметры озвучки</h3>
       <div class="setting-row">
@@ -652,7 +691,6 @@ body{
       </div>
     </div>
 
-    <!-- Настройки для MOTION -->
     <div id="settings-motion" class="settings-section" style="display:none">
       <h3>⚙️ Motion Control</h3>
       <div class="setting-row">
@@ -670,7 +708,6 @@ body{
       </div>
     </div>
 
-    <!-- Общие настройки -->
     <div class="settings-section">
       <h3>🎨 Стиль</h3>
       <div class="setting-row">
@@ -684,114 +721,143 @@ body{
         </select>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- Статус генерации -->
 <div class="status-bar" id="statusBar">
   <span class="status-text" id="statusText">Генерация...</span>
   <div class="progress-bar"><div class="progress-fill"></div></div>
   <button class="btn-small" onclick="cancelGeneration()">Отмена</button>
 </div>
 
-<!-- Модальное окно результата -->
 <div class="result-modal" id="resultModal">
   <div class="result-content">
-    <button class="close-modal" onclick="closeResult()"></button>
+    <button class="close-modal" onclick="closeResult()">✕</button>
     <div id="resultContent"></div>
     <div class="result-actions">
       <button class="btn-small" onclick="downloadResult()">⬇ Скачать</button>
       <button class="btn-small" onclick="useAsReference()">📎 Использовать как референс</button>
-      <button class="btn-small btn-primary" onclick="closeResult()">Новая генерация</button>
+      <button class="btn-small" onclick="closeResult()">Новая генерация</button>
     </div>
   </div>
 </div>
 
 <script>
-// Проверка пароля
-var adminPassword='';
-(function(){
-  var saved=localStorage.getItem('seedgen_pro_access');
-  if(!saved){
-    var pass=prompt('Введите пароль PRO-студии:');
-    if(!pass){window.location.href='/';return;}
-    localStorage.setItem('seedgen_pro_access',pass);
-    adminPassword=pass;
-  }else{
-    adminPassword=saved;
-  }
-})();
+var adminPassword = sessionStorage.getItem('seedgen_pro_pw') || '';
 
-// Шаблоны для разных разделов
-var templates={
-  video:{
-    shorts:{prompt:'Динамичное вертикальное видео для YouTube Shorts, яркие цвета, быстрая смена кадров, современная музыка, цепляющее начало',settings:{aspect:'9:16',duration:'15'}},
-    ad:{prompt:'Профессиональная реклама продукта, стильное освещение, акцент на преимуществах, призыв к действию, премиум качество',settings:{resolution:'1080p',duration:'15'}},
-    greeting:{prompt:'Праздничное поздравление с днём рождения, конфетти, воздушные шары, радостная атмосфера, яркие цвета',settings:{}},
-    cinematic:{prompt:'Профессиональное кино с глубиной резкости, атмосферное освещение, драматичные ракурсы, 4K качество',settings:{resolution:'4k',duration:'30'}},
-    tutorial:{prompt:'Пошаговое обучающее видео, чёткая визуализация каждого шага, инфографика, понятная структура',settings:{}},
-    story:{prompt:'Кинематографичная история с развитием сюжета, эмоциональные моменты, красивая операторская работа',settings:{duration:'30'}}
+function showLoginModal(){
+  document.getElementById('loginModal').classList.remove('hidden');
+  setTimeout(function(){ document.getElementById('loginPw').focus(); }, 100);
+}
+
+function hideLoginModal(){
+  document.getElementById('loginModal').classList.add('hidden');
+}
+
+function verifyPw(pw, onSuccess, onFail){
+  fetch('/api/imagine', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ adminPassword: pw, verifyOnly: true })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok){ onSuccess(); }
+    else { onFail('Неверный пароль'); }
+  })
+  .catch(function(){ onFail('Сеть недоступна'); });
+}
+
+function requireAccess(cb){
+  if(adminPassword){
+    verifyPw(adminPassword, cb, function(){
+      sessionStorage.removeItem('seedgen_pro_pw');
+      adminPassword = '';
+      showLoginModal();
+    });
+    return;
+  }
+  showLoginModal();
+}
+
+document.getElementById('loginBtn').addEventListener('click', function(){
+  var v = document.getElementById('loginPw').value.trim();
+  var err = document.getElementById('loginErr');
+  if(!v){ err.textContent = 'Введи пароль'; return; }
+  err.textContent = 'Проверяем...';
+  verifyPw(v, function(){
+    adminPassword = v;
+    sessionStorage.setItem('seedgen_pro_pw', v);
+    err.textContent = '';
+    hideLoginModal();
+  }, function(msg){
+    err.textContent = msg;
+  });
+});
+
+document.getElementById('loginPw').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ document.getElementById('loginBtn').click(); }
+});
+
+requireAccess(function(){});
+
+var templates = {
+  video: {
+    shorts: {prompt:'Динамичное вертикальное видео для YouTube Shorts, яркие цвета, быстрая смена кадров, современная музыка, цепляющее начало', settings:{aspect:'9:16', duration:'15'}},
+    ad: {prompt:'Профессиональная реклама продукта, стильное освещение, акцент на преимуществах, призыв к действию, премиум качество', settings:{resolution:'1080p', duration:'15'}},
+    greeting: {prompt:'Праздничное поздравление с днём рождения, конфетти, воздушные шары, радостная атмосфера, яркие цвета', settings:{}},
+    cinematic: {prompt:'Профессиональное кино с глубиной резкости, атмосферное освещение, драматичные ракурсы, 4K качество', settings:{resolution:'4k', duration:'30'}},
+    tutorial: {prompt:'Пошаговое обучающее видео, чёткая визуализация каждого шага, инфографика, понятная структура', settings:{}},
+    story: {prompt:'Кинематографичная история с развитием сюжета, эмоциональные моменты, красивая операторская работа', settings:{duration:'30'}}
   },
-  image:{
-    thumbnail:{prompt:'Яркая привлекательная обложка для YouTube видео, контрастные цвета, крупный текст, профессионально'},
-    poster:{prompt:'Кинематографичный постер фильма, драматичное освещение, эпичная композиция'},
-    product:{prompt:'Профессиональная фотография продукта на белом фоне, студийное освещение, высокое качество'},
-    concept:{prompt:'Концепт-арт футуристического города, детализированно, атмосферно, цифровая живопись'}
+  image: {
+    thumbnail: {prompt:'Яркая привлекательная обложка для YouTube видео, контрастные цвета, крупный текст, профессионально'},
+    poster: {prompt:'Кинематографичный постер фильма, драматичное освещение, эпичная композиция'},
+    product: {prompt:'Профессиональная фотография продукта на белом фоне, студийное освещение, высокое качество'},
+    concept: {prompt:'Концепт-арт футуристического города, детализированно, атмосферно, цифровая живопись'}
   },
-  avatar:{
-    greeting:{text:'Привет! Поздравляю тебя с днём рождения! Желаю счастья, здоровья и успехов во всех начинаниях!'},
-    promo:{text:'У нас отличная новость! Только сегодня специальная скидка 50% на все услуги. Успейте воспользоваться!'},
-    tutorial:{text:'Сегодня я покажу вам, как создать потрясающее видео с помощью нейросети. Это очень просто!'}
+  avatar: {
+    greeting: {text:'Привет! Поздравляю тебя с днём рождения! Желаю счастья, здоровья и успехов во всех начинаниях!'},
+    promo: {text:'У нас отличная новость! Только сегодня специальная скидка 50% на все услуги. Успейте воспользоваться!'},
+    tutorial: {text:'Сегодня я покажу вам, как создать потрясающее видео с помощью нейросети. Это очень просто!'}
   }
 };
 
-// Инициализация
 loadTemplates('video');
 
-// Счётчики символов
 ['video','image','avatar','tts','motion','ai'].forEach(function(type){
-  var el=document.getElementById(type+'-prompt')||document.getElementById(type+'-text');
+  var el = document.getElementById(type+'-prompt') || document.getElementById(type+'-text');
   if(el){
-    el.addEventListener('input',function(){
-      var max=type==='video'?35000:5000;
-      document.getElementById(type+'-charCount').textContent=el.value.length+' / '+max;
+    el.addEventListener('input', function(){
+      var max = type==='video' ? 35000 : type==='ai' || type==='tts' ? 10000 : 5000;
+      document.getElementById(type+'-charCount').textContent = el.value.length + ' / ' + max;
     });
   }
 });
 
-// Range values
-document.getElementById('tts-speed').addEventListener('input',function(){
-  document.getElementById('tts-speed-value').textContent=this.value+'x';
+document.getElementById('tts-speed').addEventListener('input', function(){
+  document.getElementById('tts-speed-value').textContent = this.value + 'x';
 });
-document.getElementById('motion-intensity').addEventListener('input',function(){
-  document.getElementById('motion-intensity-value').textContent=this.value;
+document.getElementById('motion-intensity').addEventListener('input', function(){
+  document.getElementById('motion-intensity-value').textContent = this.value;
 });
 
-// Переключение разделов
-function switchSection(section){
-  // Обновляем меню
-  document.querySelectorAll('.nav-item').forEach(function(item){item.classList.remove('active');});
-  event.target.classList.add('active');
-  
-  // Показываем нужную секцию
-  document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+function switchSection(section, ev){
+  document.querySelectorAll('.nav-item').forEach(function(item){ item.classList.remove('active'); });
+  if(ev && ev.target) ev.target.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
   document.getElementById('section-'+section).classList.add('active');
-  
-  // Показываем нужные настройки
   document.querySelectorAll('.settings-section').forEach(function(s){
-    if(s.id!=='settings-video' && s.id.indexOf('global')===-1) s.style.display='none';
+    if(s.id !== 'settings-video' && s.id.indexOf('global') === -1) s.style.display = 'none';
   });
-  var settingsEl=document.getElementById('settings-'+section);
-  if(settingsEl)settingsEl.style.display='block';
-  
-  // Загружаем шаблоны
+  var settingsEl = document.getElementById('settings-'+section);
+  if(settingsEl) settingsEl.style.display = 'block';
   loadTemplates(section);
-  document.getElementById('sidebarTitle').textContent=getSidebarTitle(section);
+  document.getElementById('sidebarTitle').textContent = getSidebarTitle(section);
 }
 
 function getSidebarTitle(section){
-  var titles={
+  var titles = {
     video:'📋 Шаблоны видео',
     image:'🖼 Шаблоны изображений',
     avatar:'🗣 Сценарии аватара',
@@ -799,67 +865,64 @@ function getSidebarTitle(section){
     motion:'🎮 Motion шаблоны',
     ai:'🤖 AI-помощники'
   };
-  return titles[section]||'Шаблоны';
+  return titles[section] || 'Шаблоны';
 }
 
 function loadTemplates(section){
-  var list=document.getElementById('templatesList');
-  list.innerHTML='';
-  
-  var items=templates[section]||{};
+  var list = document.getElementById('templatesList');
+  list.innerHTML = '';
+  var items = templates[section] || {};
   Object.keys(items).forEach(function(key){
-    var item=items[key];
-    var div=document.createElement('div');
-    div.className='template-item';
-    div.innerHTML='<h4>'+key.charAt(0).toUpperCase()+key.slice(1)+'</h4><p>'+(item.prompt||item.text||'').slice(0,80)+'...</p>';
-    div.onclick=function(){useTemplate(section,key);};
+    var item = items[key];
+    var div = document.createElement('div');
+    div.className = 'template-item';
+    div.innerHTML = '<h4>' + key.charAt(0).toUpperCase() + key.slice(1) + '</h4><p>' + (item.prompt || item.text || '').slice(0, 80) + '...</p>';
+    div.onclick = function(){ useTemplate(section, key); };
     list.appendChild(div);
   });
 }
 
-function useTemplate(section,name){
-  var template=templates[section][name];
-  if(!template)return;
-  
-  if(section==='video'){
-    document.getElementById('video-prompt').value=template.prompt;
-    if(template.settings.aspect)document.getElementById('video-aspect').value=template.settings.aspect;
-    if(template.settings.duration)document.getElementById('video-duration').value=template.settings.duration;
-    if(template.settings.resolution)document.getElementById('video-resolution').value=template.settings.resolution;
-  }else if(section==='image'){
-    document.getElementById('image-prompt').value=template.prompt;
-  }else if(section==='avatar'){
-    document.getElementById('avatar-text').value=template.text;
+function useTemplate(section, name){
+  var template = templates[section][name];
+  if(!template) return;
+  if(section === 'video'){
+    document.getElementById('video-prompt').value = template.prompt;
+    if(template.settings.aspect) document.getElementById('video-aspect').value = template.settings.aspect;
+    if(template.settings.duration) document.getElementById('video-duration').value = template.settings.duration;
+    if(template.settings.resolution) document.getElementById('video-resolution').value = template.settings.resolution;
+  } else if(section === 'image'){
+    document.getElementById('image-prompt').value = template.prompt;
+  } else if(section === 'avatar'){
+    document.getElementById('avatar-text').value = template.text;
   }
 }
 
-// Загрузка файлов
 ['avatar','motion'].forEach(function(type){
-  var input=document.getElementById(type+'-upload');
+  var input = document.getElementById(type+'-upload');
   if(input){
-    input.addEventListener('change',function(e){
-      var f=e.target.files[0];
-      if(!f)return;
-      var reader=new FileReader();
-      reader.onload=function(){
-        var container=document.getElementById(type+'-preview');
-        container.innerHTML='';
-        var div=document.createElement('div');
-        div.className='preview-item';
-        if(type==='avatar'){
-          var img=document.createElement('img');
-          img.src=reader.result;
+    input.addEventListener('change', function(e){
+      var f = e.target.files[0];
+      if(!f) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        var container = document.getElementById(type+'-preview');
+        container.innerHTML = '';
+        var div = document.createElement('div');
+        div.className = 'preview-item';
+        if(type === 'avatar'){
+          var img = document.createElement('img');
+          img.src = reader.result;
           div.appendChild(img);
-        }else{
-          var video=document.createElement('video');
-          video.src=reader.result;
-          video.controls=true;
+        } else {
+          var video = document.createElement('video');
+          video.src = reader.result;
+          video.controls = true;
           div.appendChild(video);
         }
-        var remove=document.createElement('button');
-        remove.className='remove-preview';
-        remove.innerHTML='×';
-        remove.onclick=function(){container.innerHTML='';input.value='';};
+        var remove = document.createElement('button');
+        remove.className = 'remove-preview';
+        remove.innerHTML = '×';
+        remove.onclick = function(){ container.innerHTML = ''; input.value = ''; };
         div.appendChild(remove);
         container.appendChild(div);
       };
@@ -868,187 +931,168 @@ function useTemplate(section,name){
   }
 });
 
-// Генерация
-var currentTaskId=null;
-var pollTimer=null;
+var currentTaskId = null;
+var pollTimer = null;
 
 function generateVideo(){
-  var prompt=document.getElementById('video-prompt').value.trim();
-  if(!prompt){alert('Введите описание');return;}
-  
-  var settings={
-    service:'text2video',
-    prompt:prompt,
-    adminPassword:adminPassword,
-    model:document.getElementById('video-model').value,
-    resolution:document.getElementById('video-resolution').value,
-    aspect:document.getElementById('video-aspect').value,
-    duration:document.getElementById('video-duration').value,
-    style:document.getElementById('global-style').value
+  var prompt = document.getElementById('video-prompt').value.trim();
+  if(!prompt){ alert('Введите описание'); return; }
+  var settings = {
+    service: 'text2video',
+    prompt: prompt,
+    adminPassword: adminPassword,
+    model: document.getElementById('video-model').value,
+    resolution: document.getElementById('video-resolution').value,
+    aspect: document.getElementById('video-aspect').value,
+    duration: document.getElementById('video-duration').value,
+    style: document.getElementById('global-style').value
   };
-  
   startGeneration(settings);
 }
 
 function generateImage(){
-  var prompt=document.getElementById('image-prompt').value.trim();
-  if(!prompt){alert('Введите описание');return;}
-  
-  var settings={
-    service:'text2image',
-    prompt:prompt,
-    adminPassword:adminPassword,
-    resolution:document.getElementById('image-resolution').value,
-    count:parseInt(document.getElementById('image-count').value),
-    style:document.getElementById('image-style').value
+  var prompt = document.getElementById('image-prompt').value.trim();
+  if(!prompt){ alert('Введите описание'); return; }
+  var settings = {
+    service: 'text2image',
+    prompt: prompt,
+    adminPassword: adminPassword,
+    resolution: document.getElementById('image-resolution').value,
+    count: parseInt(document.getElementById('image-count').value),
+    style: document.getElementById('image-style').value
   };
-  
   startGeneration(settings);
 }
 
 function generateAvatar(){
-  var text=document.getElementById('avatar-text').value.trim();
-  if(!text){alert('Введите текст');return;}
-  
-  var settings={
-    service:'avatar',
-    prompt:text,
-    adminPassword:adminPassword,
-    voice:document.getElementById('avatar-voice').value,
-    language:document.getElementById('avatar-language').value,
-    orientation:document.getElementById('avatar-orientation').value
+  var text = document.getElementById('avatar-text').value.trim();
+  if(!text){ alert('Введите текст'); return; }
+  var settings = {
+    service: 'avatar',
+    prompt: text,
+    adminPassword: adminPassword,
+    voice: document.getElementById('avatar-voice').value,
+    language: document.getElementById('avatar-language').value,
+    orientation: document.getElementById('avatar-orientation').value
   };
-  
   startGeneration(settings);
 }
 
 function generateTTS(){
-  var text=document.getElementById('tts-text').value.trim();
-  if(!text){alert('Введите текст');return;}
-  
-  var settings={
-    service:'tts',
-    text:text,
-    adminPassword:adminPassword,
-    voice:document.getElementById('tts-voice').value,
-    speed:parseFloat(document.getElementById('tts-speed').value)
+  var text = document.getElementById('tts-text').value.trim();
+  if(!text){ alert('Введите текст'); return; }
+  var settings = {
+    service: 'tts',
+    text: text,
+    adminPassword: adminPassword,
+    voice: document.getElementById('tts-voice').value,
+    speed: parseFloat(document.getElementById('tts-speed').value)
   };
-  
   startGeneration(settings);
 }
 
 function generateMotion(){
-  var prompt=document.getElementById('motion-prompt').value.trim();
-  if(!prompt){alert('Введите описание');return;}
-  
-  var settings={
-    service:'motion-control',
-    prompt:prompt,
-    adminPassword:adminPassword,
-    type:document.getElementById('motion-type').value,
-    intensity:parseInt(document.getElementById('motion-intensity').value)
+  var prompt = document.getElementById('motion-prompt').value.trim();
+  if(!prompt){ alert('Введите описание'); return; }
+  var settings = {
+    service: 'motion-control',
+    prompt: prompt,
+    adminPassword: adminPassword,
+    type: document.getElementById('motion-type').value,
+    intensity: parseInt(document.getElementById('motion-intensity').value)
   };
-  
   startGeneration(settings);
 }
 
 function generateAI(){
-  var prompt=document.getElementById('ai-prompt').value.trim();
-  if(!prompt){alert('Введите запрос');return;}
-  
-  document.getElementById('ai-generateBtn').disabled=true;
-  document.getElementById('ai-result').style.display='block';
-  document.getElementById('ai-result').textContent='Думаю...';
-  
-  fetch('/api/ai-helper',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      prompt:prompt,
-      adminPassword:adminPassword
-    })
+  var prompt = document.getElementById('ai-prompt').value.trim();
+  if(!prompt){ alert('Введите запрос'); return; }
+  document.getElementById('ai-generateBtn').disabled = true;
+  document.getElementById('ai-result').style.display = 'block';
+  document.getElementById('ai-result').textContent = 'Думаю...';
+  fetch('/api/ai-helper', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ prompt: prompt, adminPassword: adminPassword })
   })
-  .then(function(r){return r.json();})
+  .then(function(r){ return r.json(); })
   .then(function(data){
-    if(data.error)throw new Error(data.error);
-    document.getElementById('ai-result').textContent=data.result;
+    if(data.error) throw new Error(data.error);
+    document.getElementById('ai-result').textContent = data.result;
   })
   .catch(function(e){
-    document.getElementById('ai-result').textContent='Ошибка: '+e.message;
+    document.getElementById('ai-result').textContent = 'Ошибка: ' + e.message;
   })
   .finally(function(){
-    document.getElementById('ai-generateBtn').disabled=false;
+    document.getElementById('ai-generateBtn').disabled = false;
   });
 }
 
 function startGeneration(settings){
   document.getElementById('statusBar').classList.add('show');
-  document.getElementById('statusText').textContent='Отправка запроса...';
-  
-  fetch('/api/generate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(settings)
+  document.getElementById('statusText').textContent = 'Отправка запроса...';
+  fetch('/api/generate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(settings)
   })
-  .then(function(r){return r.json();})
+  .then(function(r){ return r.json(); })
   .then(function(data){
-    if(data.error)throw new Error(data.error);
-    currentTaskId=data.taskId;
-    document.getElementById('statusText').textContent='Генерация...';
+    if(data.error) throw new Error(data.error);
+    currentTaskId = data.taskId;
+    document.getElementById('statusText').textContent = 'Генерация...';
     startPolling();
   })
   .catch(function(e){
-    document.getElementById('statusText').textContent='Ошибка: '+e.message;
-    setTimeout(function(){document.getElementById('statusBar').classList.remove('show');},3000);
+    document.getElementById('statusText').textContent = 'Ошибка: ' + e.message;
+    setTimeout(function(){ document.getElementById('statusBar').classList.remove('show'); }, 3000);
   });
 }
 
 function startPolling(){
-  pollTimer=setInterval(function(){
-    fetch('/api/status?taskId='+encodeURIComponent(currentTaskId))
-      .then(function(r){return r.json();})
+  pollTimer = setInterval(function(){
+    fetch('/api/status?taskId=' + encodeURIComponent(currentTaskId))
+      .then(function(r){ return r.json(); })
       .then(function(data){
-        if(data.status==='succeeded'){
+        if(data.status === 'succeeded'){
           clearInterval(pollTimer);
           document.getElementById('statusBar').classList.remove('show');
           showResult(data);
-        }else if(data.status==='failed'){
+        } else if(data.status === 'failed'){
           clearInterval(pollTimer);
-          document.getElementById('statusText').textContent='Ошибка генерации';
-          setTimeout(function(){document.getElementById('statusBar').classList.remove('show');},3000);
+          document.getElementById('statusText').textContent = 'Ошибка генерации';
+          setTimeout(function(){ document.getElementById('statusBar').classList.remove('show'); }, 3000);
         }
       })
       .catch(function(){});
-  },5000);
+  }, 5000);
 }
 
 function cancelGeneration(){
-  if(pollTimer)clearInterval(pollTimer);
+  if(pollTimer) clearInterval(pollTimer);
   document.getElementById('statusBar').classList.remove('show');
 }
 
 function showResult(data){
-  var content=document.getElementById('resultContent');
-  content.innerHTML='';
-  
+  var content = document.getElementById('resultContent');
+  content.innerHTML = '';
   if(data.videoUrl){
-    var video=document.createElement('video');
-    video.src=data.videoUrl;
-    video.controls=true;
+    var video = document.createElement('video');
+    video.src = data.videoUrl;
+    video.controls = true;
     content.appendChild(video);
   }
   if(data.imageUrl){
-    var img=document.createElement('img');
-    img.src=data.imageUrl;
+    var img = document.createElement('img');
+    img.src = data.imageUrl;
     content.appendChild(img);
   }
   if(data.audioUrl){
-    var audio=document.createElement('audio');
-    audio.src=data.audioUrl;
-    audio.controls=true;
+    var audio = document.createElement('audio');
+    audio.src = data.audioUrl;
+    audio.controls = true;
     content.appendChild(audio);
   }
-  
   document.getElementById('resultModal').classList.add('show');
 }
 
