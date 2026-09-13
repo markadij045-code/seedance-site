@@ -81,6 +81,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 .qmode.active{border-color:#A3E635;background:rgba(163,230,53,0.1);color:#fff}
 .qmode.active b{color:#A3E635}
 .qnote{color:#5b6152;font-size:.8rem;text-align:center;margin-top:8px}
+.badge{display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;margin-left:8px;vertical-align:middle}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
@@ -121,7 +122,6 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 </div>
 
 <h1>🎭 Мультфильм из фото</h1>
-<div style="text-align:center"><span style="display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:.8rem;font-weight:700;padding:4px 12px;border-radius:999px;margin:0 0 12px">⚡ Seedance 2.5 · оживление на шаге 2</span></div>
 <p class="sub">Шаг 1 — превратим фото в мультяшный арт в стиле Pixar. Шаг 2 — оживим его в видео по твоему сценарию. Одна оплата — оба шага.</p>
 <div class="card">
 <label>Выбери фото с человеком (JPG/PNG)</label>
@@ -178,7 +178,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;background:#A3E635;bo
 <img id="toon"/>
 <button class="del" id="toonDel" style="display:none" type="button">✖ Удалить арт и начать заново</button>
 
-<label style="margin-top:24px">Шаг 2: оживить в видео</label>
+<label style="margin-top:24px">Шаг 2: оживить в видео <span class="badge">⚡ Seedance 2.5</span></label>
 <button id="btn2" style="display:none">Оживить арт в видео</button>
 <div id="status2"></div>
 <div id="result"><video id="video" controls></video></div>
@@ -475,7 +475,7 @@ document.getElementById('btn2').addEventListener('click',function(){
   if(!activePaymentId){alert('Сначала оплати услугу');return;}
   var b=document.getElementById('btn2');
   b.disabled=true;
-  document.getElementById('status2').textContent='Оживляем... 1–3 минуты ⏳';
+  document.getElementById('status2').textContent='⚡ Seedance 2.5 оживляет арт... 1–3 минуты ⏳';
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'animate',paymentId:activePaymentId,image:toonJpeg,seconds:seconds,aspect:aspect,quality:quality,prompt:getPrompt()||'The cartoon character smiles, blinks and waves at camera, gentle cinematic motion'})})
     .then(function(r){return r.json();})
     .then(function(d){
@@ -548,7 +548,7 @@ function poll(taskId,stage,baseVideoUrl){
             clearChain(activePaymentId);
           }
         }else{
-          document.getElementById('status2').textContent=(stage==='upscale')?'✨ Улучшаем качество до 1080p... ещё около минуты ⏳':'Оживляем... 1–3 минуты ⏳';
+          document.getElementById('status2').textContent=(stage==='upscale')?'✨ Улучшаем качество до 1080p... ещё около минуты ⏳':'⚡ Seedance 2.5 оживляет арт... 1–3 минуты ⏳';
         }
       })
       .catch(function(){});
