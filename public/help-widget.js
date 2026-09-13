@@ -192,9 +192,9 @@
   var m=document.createElement('div');m.id='hwModal';
   var d=DATA[key]||DATA.create;
   var html='<button id="hwClose">✕</button><h3>❓ '+d.t+' — как это работает</h3><ol>';
-  for(var j=0;j<d.s.length;j++)html+='<li>'+d.s[j]+'</li>';
+  for(var j=0;j<d.s.length;j++){html+='<li>'+d.s[j]+'</li>';}
   html+='</ol><h4>Частые вопросы</h4>';
-  for(var k=0;k<FAQ.length;k++)html+='<div class="faq"><b>'+FAQ[k][0]'</b><br>'+FAQ[k][1]+'</div>';
+  for(var k=0;k<FAQ.length;k++){html+='<div class="faq"><b>'+FAQ[k][0]+'</b><br>'+FAQ[k][1]+'</div>';}
   html+='<p class="faq"><a href="/help.html">Все вопросы и ответы →</a></p>';
   m.innerHTML='<div id="hwBox">'+html+'</div>';
   document.body.appendChild(m);
