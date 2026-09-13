@@ -16,6 +16,10 @@ nav{width:100%;max-width:1200px;display:flex;align-items:center;justify-content:
 .links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
 .links a:hover{color:#A3E635}
 .links a.active{color:#A3E635;font-weight:700}
+.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
+.links .pro:hover{color:#A3E635}
+.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
+.links .pro:hover .tip,.links .pro.open .tip{display:block}
 .burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
 .sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
 .sidebar.open{right:0}
@@ -40,74 +44,94 @@ footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-a
 footer a{color:#9ca3af;text-decoration:none}
 .cta{margin:40px 0;text-align:center}
 .cta a{display:inline-block;padding:16px 40px;background:#A3E635;color:#000;text-decoration:none;border-radius:999px;font-weight:700;font-size:1.05rem}
+.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
+.welcome-modal.open{display:flex}
+.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
+.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
+.welcome-box h2 .lime{color:#A3E635}
+.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
+.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
+.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
 @media(max-width:768px){.links{display:none}.burger{display:block}}
 </style>
 </head>
 <body>
 
+<div class="welcome-modal" id="welcomeModal">
+  <div class="welcome-box">
+    <button class="welcome-close" onclick="closeWelcome()">✕</button>
+    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
+    <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
+    <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
+    <button onclick="closeWelcome()">Поехали?</button>
+  </div>
+</div>
+
 <nav>
   <div class="logo"><span>▶</span> SeedGen</div>
   <div class="links">
-    <a href="/">Генерация</a>
-    <a href="/photo.html">Оживи картинку</a>
+    <a href="/">Главная</a>
+    <a href="/gen.html">Создать видео</a>
     <a href="/cartoon.html">Мультфильм</a>
     <a href="/avatar.html">Аватар</a>
     <a href="/motion.html">Моушен</a>
     <a href="/lipsync.html">Липсинк</a>
-    <a class="active" href="/examples.html">Галерея</a>
+    <a class="active" href="/examples.html">Примеры</a>
+    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
   </div>
   <button class="burger" onclick="toggleSidebar()">☰</button>
 </nav>
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-  <a href="/">📝 Генерация</a>
-  <a href="/photo.html">🐱 Оживи картинку</a>
+  <a href="/">🏠 Главная</a>
+  <a href="/gen.html">📝 Создать видео</a>
   <a href="/cartoon.html">🎭 Мультфильм</a>
   <a href="/avatar.html">🗣 Аватар</a>
   <a href="/motion.html">🎮 Моушен</a>
   <a href="/lipsync.html">💬 Липсинк</a>
-  <a href="/examples.html">🖼 Галерея</a>
+  <a href="/examples.html">🖼 Примеры</a>
 </div>
 
 <h1>🖼 Галерея работ</h1>
-<p class="sub">Все эти видео сгенерированы нейросетью из одной фразы или фото. Наведи — увидишь движение.</p>
+<p class="sub">Все эти видео сгенерированы нейросетью из одной фразы или фото. Играют сами при прокрутке, нажми — встанут на паузу.</p>
 
 <div class="gallery">
   <div class="item">
-    <video src="/cat-city.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>
+    <video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video>
     <div class="meta">
       <div class="title">Гигантский кот в городе</div>
       <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/#gen">Сделать такое же →</a>
+      <a class="go" href="/gen.html">Сделать такое же →</a>
     </div>
   </div>
   <div class="item">
-    <video src="/cat-space.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>
+    <video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video>
     <div class="meta">
       <div class="title">Кот-пилот в космосе</div>
       <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/#gen">Сделать такое же →</a>
+      <a class="go" href="/gen.html">Сделать такое же →</a>
     </div>
   </div>
   <div class="item">
-    <video src="/cat-dance.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>
+    <video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video>
     <div class="meta">
       <div class="title">Танцующий котёнок</div>
       <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/#gen">Сделать такое же →</a>
+      <a class="go" href="/gen.html">Сделать такое же →</a>
     </div>
   </div>
   <div class="item">
-    <video src="/cat-knight.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>
+    <video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video>
     <div class="meta">
       <div class="title">Кот-рыцарь против дракона</div>
       <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/#gen">Сделать такое же →</a>
+      <a class="go" href="/gen.html">Сделать такое же →</a>
     </div>
   </div>
   <div class="item">
-    <video src="/cat-knight-dance.mp4.mp4" muted loop preload="metadata" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>
+    <video src="/cat-knight-dance.mp4" muted loop preload="metadata" playsinline></video>
     <div class="meta">
       <div class="title">Рыцарь танцует</div>
       <div class="cat"><span class="tag">моушен</span></div>
@@ -117,7 +141,7 @@ footer a{color:#9ca3af;text-decoration:none}
 </div>
 
 <div class="cta">
-  <a href="/">Создать своё видео →</a>
+  <a href="/gen.html">Создать своё видео →</a>
 </div>
 
 <footer>
@@ -126,11 +150,39 @@ footer a{color:#9ca3af;text-decoration:none}
 </footer>
 
 <script>
+function showWelcome(){
+  if(!localStorage.getItem('seedgen_welcomed')){
+    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
+  }
+}
+function closeWelcome(){
+  document.getElementById('welcomeModal').classList.remove('open');
+  localStorage.setItem('seedgen_welcomed','1');
+}
+showWelcome();
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
+
+(function(){
+  var vids = document.querySelectorAll('.item video');
+  vids.forEach(function(v){
+    v.addEventListener('click', function(){
+      if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
+    });
+  });
+  var vo = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting && en.intersectionRatio > 0.4){
+        en.target.play().catch(function(){});
+      } else {
+        en.target.pause();
+      }
+    });
+  }, {threshold:[0, 0.4, 0.8]});
+  vids.forEach(function(v){ vo.observe(v); });
+})();
 </script>
-<script src="/help-widget.js"></script>
 </body>
 </html>
