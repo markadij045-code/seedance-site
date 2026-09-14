@@ -1,1116 +1,526 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PRO-студия — SeedGen</title>
-<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SeedGen PRO — студия</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:#0a0a0a;
-  color:#fff;
-  height:100vh;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-
-.topbar{
-  height:56px;
-  background:#111;
-  border-bottom:1px solid #222;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 20px;
-  flex-shrink:0;
-}
-.topbar-left{display:flex;align-items:center;gap:24px}
-.logo{font-weight:700;font-size:1.2rem}
-.logo span{color:#A3E635}
-.nav-menu{display:flex;gap:4px;flex-wrap:wrap}
-.nav-item{
-  padding:8px 16px;
-  background:transparent;
-  border:none;
-  color:#888;
-  cursor:pointer;
-  border-radius:8px;
-  font-size:0.9rem;
-  transition:all 0.2s;
-}
-.nav-item:hover{color:#fff;background:#1a1a1a}
-.nav-item.active{color:#A3E635;background:rgba(163,230,53,0.1)}
-.topbar-right{display:flex;gap:12px;align-items:center}
-.balance{
-  background:#1a1a1a;
-  padding:6px 14px;
-  border-radius:8px;
-  font-size:0.9rem;
-  color:#A3E635;
-  font-weight:600;
-}
-.btn-small{
-  padding:8px 16px;
-  background:#222;
-  border:1px solid #333;
-  border-radius:8px;
-  color:#fff;
-  font-size:0.85rem;
-  cursor:pointer;
-  transition:all 0.2s;
-  text-decoration:none;
-  display:inline-block;
-}
-.btn-small:hover{background:#333}
-
-.main{
-  display:flex;
-  flex:1;
-  overflow:hidden;
-}
-
-.sidebar-left{
-  width:300px;
-  background:#0f0f0f;
-  border-right:1px solid #222;
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-}
-.sidebar-header{
-  padding:16px;
-  border-bottom:1px solid #222;
-  font-weight:600;
-  font-size:0.95rem;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.templates-list{padding:12px}
-.template-item{
-  padding:12px;
-  background:#1a1a1a;
-  border:1px solid #2a2a2a;
-  border-radius:8px;
-  margin-bottom:8px;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-.template-item:hover{
-  border-color:#A3E635;
-  background:#1f1f1f;
-}
-.template-item h4{
-  font-size:0.9rem;
-  margin-bottom:4px;
-}
-.template-item p{
-  font-size:0.75rem;
-  color:#888;
-  line-height:1.4;
-}
-
-.center{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-.workspace{
-  flex:1;
-  padding:32px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-}
-.section-title{
-  font-size:1.5rem;
-  margin-bottom:24px;
-  font-weight:700;
-}
-.prompt-area{
-  background:#1a1a1a;
-  border:1px solid #333;
-  border-radius:16px;
-  padding:24px;
-  margin-bottom:24px;
-}
-.prompt-area textarea{
-  width:100%;
-  min-height:100px;
-  background:transparent;
-  border:none;
-  color:#fff;
-  font-size:1rem;
-  resize:vertical;
-  outline:none;
-  font-family:inherit;
-  line-height:1.5;
-}
-.prompt-area textarea::placeholder{color:#666}
-.upload-area{
-  border:2px dashed #333;
-  border-radius:12px;
-  padding:32px;
-  text-align:center;
-  cursor:pointer;
-  margin-bottom:16px;
-  transition:all 0.2s;
-}
-.upload-area:hover{
-  border-color:#A3E635;
-  background:rgba(163,230,53,0.05);
-}
-.upload-area input[type="file"]{display:none}
-.preview-container{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:16px;
-}
-.preview-item{
-  position:relative;
-  width:150px;
-  height:150px;
-  border-radius:8px;
-  overflow:hidden;
-  background:#111;
-}
-.preview-item img,
-.preview-item video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-.remove-preview{
-  position:absolute;
-  top:4px;
-  right:4px;
-  width:24px;
-  height:24px;
-  background:rgba(0,0,0,0.8);
-  border:none;
-  border-radius:50%;
-  color:#fff;
-  cursor:pointer;
-  font-size:1rem;
-  line-height:1;
-}
-.remove-preview:hover{background:#f00}
-.prompt-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:16px;
-  padding-top:16px;
-  border-top:1px solid #333;
-}
-.char-count{color:#666;font-size:0.85rem}
-.generate-btn{
-  padding:12px 32px;
-  background:#A3E635;
-  color:#000;
-  border:none;
-  border-radius:12px;
-  font-size:1rem;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.3s;
-}
-.generate-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(163,230,53,0.3);
-}
-.generate-btn:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  transform:none;
-}
-
-.sidebar-right{
-  width:320px;
-  background:#0f0f0f;
-  border-left:1px solid #222;
-  overflow-y:auto;
-  padding:20px;
-}
-.settings-section{
-  margin-bottom:24px;
-  padding-bottom:24px;
-  border-bottom:1px solid #222;
-}
-.settings-section:last-child{border-bottom:none}
-.settings-section h3{
-  font-size:0.9rem;
-  margin-bottom:16px;
-  color:#aaa;
-  font-weight:600;
-}
-.setting-row{
-  margin-bottom:16px;
-}
-.setting-row label{
-  display:block;
-  font-size:0.85rem;
-  color:#888;
-  margin-bottom:6px;
-}
-.setting-row select,
-.setting-row input[type="text"],
-.setting-row input[type="number"]{
-  width:100%;
-  padding:10px 12px;
-  background:#1a1a1a;
-  border:1px solid #333;
-  border-radius:8px;
-  color:#fff;
-  font-size:0.9rem;
-  outline:none;
-}
-.setting-row select:focus,
-.setting-row input:focus{
-  border-color:#A3E635;
-}
-.setting-row input[type="range"]{
-  width:100%;
-  margin-top:8px;
-}
-.range-value{
-  text-align:right;
-  font-size:0.85rem;
-  color:#A3E635;
-  margin-top:4px;
-}
-
-.status-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#1a1a1a;
-  border-top:1px solid #333;
-  padding:16px 24px;
-  display:none;
-  align-items:center;
-  justify-content:space-between;
-  z-index:500;
-}
-.status-bar.show{display:flex}
-.status-text{color:#A3E635;font-weight:600}
-.progress-bar{
-  flex:1;
-  height:4px;
-  background:#333;
-  border-radius:2px;
-  margin:0 20px;
-  overflow:hidden;
-}
-.progress-fill{
-  height:100%;
-  background:#A3E635;
-  width:0%;
-  transition:width 0.3s;
-  animation:progress 2s infinite;
-}
-@keyframes progress{
-  0%{width:0%}
-  50%{width:70%}
-  100%{width:100%}
-}
-
-.result-modal{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(0,0,0,0.95);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-}
-.result-modal.show{display:flex}
-.result-content{
-  max-width:1000px;
-  width:90%;
-  background:#1a1a1a;
-  border-radius:16px;
-  padding:32px;
-  position:relative;
-  max-height:90vh;
-  overflow-y:auto;
-}
-.result-content video,
-.result-content img{
-  width:100%;
-  border-radius:12px;
-  margin-bottom:20px;
-}
-.close-modal{
-  position:absolute;
-  top:16px;
-  right:16px;
-  width:32px;
-  height:32px;
-  background:#333;
-  border:none;
-  border-radius:50%;
-  color:#fff;
-  font-size:1.2rem;
-  cursor:pointer;
-}
-.result-actions{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-.tab-content{display:none}
-.tab-content.active{display:block}
-
-.login-modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.95);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2000;
-  padding:20px;
-}
-.login-modal.hidden{display:none}
-.login-box{
-  background:#1a1a1a;
-  border:1px solid #333;
-  border-radius:24px;
-  padding:40px;
-  max-width:420px;
-  width:100%;
-  text-align:center;
-}
-.login-box h2{
-  font-size:1.6rem;
-  margin-bottom:12px;
-  color:#fff;
-}
-.login-box h2 .lime{color:#A3E635}
-.login-box p{
-  color:#888;
-  margin-bottom:24px;
-  font-size:.9rem;
-  line-height:1.5;
-}
-.login-box input{
-  width:100%;
-  padding:14px 18px;
-  background:#0f0f0f;
-  border:1px solid #333;
-  border-radius:12px;
-  color:#fff;
-  font-size:1rem;
-  outline:none;
-  margin-bottom:12px;
-}
-.login-box input:focus{border-color:#A3E635}
-.login-box button{
-  width:100%;
-  padding:14px;
-  background:#A3E635;
-  color:#000;
-  border:none;
-  border-radius:12px;
-  font-size:1rem;
-  font-weight:700;
-  cursor:pointer;
-}
-.login-box button:hover{transform:translateY(-1px)}
-.login-err{
-  color:#fca5a5;
-  font-size:.85rem;
-  min-height:20px;
-  margin-bottom:8px;
-}
-
-@media(max-width:1200px){
-  .sidebar-left{width:260px}
-  .sidebar-right{width:280px}
-}
-@media(max-width:900px){
-  .sidebar-left,.sidebar-right{display:none}
-  .workspace{padding:20px}
-  .topbar{flex-wrap:wrap;height:auto;padding:12px}
-  .nav-menu{gap:2px}
-  .nav-item{padding:6px 10px;font-size:.8rem}
-}
+body{background:#050607;color:#e5e7eb;font:400 .95rem/1.5 'Inter',sans-serif;overflow:hidden}
+h1,h2,h3,.logo{font-family:'Space Grotesk','Inter',sans-serif}
+button{font-family:inherit}
+a{color:#A3E635}
+.lime{color:#A3E635}
+.muted{color:#9ca3af}
+/* верхняя панель */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(10,12,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
+.topbar .logo{display:flex;gap:8px;align-items:center;font-weight:700;font-size:1.05rem;color:#fff;white-space:nowrap}
+.navmenu{display:flex;gap:4px;flex-wrap:nowrap;overflow-x:auto}
+.navitem{padding:8px 14px;border:none;background:none;color:#9ca3af;font-size:.9rem;font-weight:600;cursor:pointer;border-radius:10px;white-space:nowrap}
+.navitem:hover{color:#e5e7eb}
+.navitem.active{color:#A3E635}
+.navitem.soon{color:#4b5563;cursor:not-allowed}
+.topright{display:flex;gap:8px;align-items:center}
+.chip{padding:7px 12px;border-radius:999px;border:1px solid rgba(163,230,53,.35);background:rgba(163,230,53,.08);color:#A3E635;font-size:.8rem;font-weight:700;white-space:nowrap}
+.btn-s{padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.85rem;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn-s:hover{border-color:rgba(163,230,53,.5)}
+/* каркас */
+.frame{position:fixed;top:56px;bottom:0;left:0;right:0;display:flex}
+.rail{width:56px;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px;align-items:center;padding:12px 0}
+.rail button{width:38px;height:38px;border-radius:12px;border:none;background:rgba(255,255,255,.06);color:#e5e7eb;font-size:1rem;cursor:pointer}
+.rail button.on{background:rgba(163,230,53,.15);color:#A3E635}
+.leftpanel{width:280px;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;background:#0a0c08}
+.leftpanel.hidden{display:none}
+.ltabs{display:flex;border-bottom:1px solid rgba(255,255,255,.08)}
+.ltab{flex:1;padding:12px 0;border:none;background:none;color:#9ca3af;font-weight:600;font-size:.85rem;cursor:pointer;border-bottom:2px solid transparent}
+.ltab.on{color:#A3E635;border-bottom-color:#A3E635}
+.llist{flex:1;overflow-y:auto;padding:10px}
+.litem{padding:10px 12px;border-radius:12px;cursor:pointer;margin-bottom:6px;border:1px solid transparent}
+.litem:hover{background:rgba(255,255,255,.05)}
+.litem h5{font-size:.85rem;color:#e5e7eb;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.litem p{font-size:.75rem;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.litem .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.dot.ok{background:#A3E635}.dot.gen{background:#f59e0b}.dot.err{background:#ef4444}
+.lempty{color:#6b7280;font-size:.85rem;text-align:center;padding:40px 20px;line-height:1.6}
+/* центр */
+.center{flex:1;display:flex;flex-direction:column;min-width:0}
+.stage{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.micon{font-size:3rem;margin-bottom:10px}
+.mname{font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px}
+.mdesc{max-width:640px;color:#9ca3af;font-size:.92rem;line-height:1.65;margin-bottom:16px}
+.mcaps{color:#d1d5db;font-size:.85rem;font-weight:600;margin-bottom:6px}
+.mcapline{color:#9ca3af;font-size:.85rem}
+.mcapline b{color:#A3E635;font-weight:600}
+/* промпт-бар */
+.pbar{border-top:1px solid rgba(255,255,255,.08);padding:12px 16px;background:#0a0c08}
+.pbox{border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(0,0,0,.4);padding:10px 12px}
+.pbox textarea{width:100%;min-height:64px;max-height:180px;background:none;border:none;outline:none;color:#e5e7eb;font:400 .95rem/1.5 'Inter',sans-serif;resize:vertical}
+.prow{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.pchip{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#9ca3af;font-size:.78rem;font-weight:600;cursor:pointer}
+.pchip:hover{color:#e5e7eb}
+.pcount{margin-left:auto;color:#6b7280;font-size:.75rem}
+.psend{width:38px;height:38px;border-radius:10px;border:none;background:#A3E635;color:#000;font-size:1.05rem;font-weight:800;cursor:pointer}
+.psend:disabled{opacity:.4;cursor:not-allowed}
+.pprice{padding:6px 12px;border-radius:999px;background:rgba(163,230,53,.12);border:1px solid rgba(163,230,53,.4);color:#A3E635;font-weight:700;font-size:.82rem;white-space:nowrap}
+.refrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.refchip{position:relative;width:44px;height:44px;border-radius:10px;overflow:hidden;border:1px solid rgba(163,230,53,.35)}
+.refchip img{width:100%;height:100%;object-fit:cover}
+.refchip button{position:absolute;top:1px;right:1px;width:16px;height:16px;border:none;border-radius:50%;background:rgba(0,0,0,.75);color:#fca5a5;font-size:.6rem;cursor:pointer}
+/* правая панель */
+.rightpanel{width:320px;border-left:1px solid rgba(255,255,255,.07);overflow-y:auto;padding:16px;background:#0a0c08}
+.rblock{border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:12px;background:rgba(255,255,255,.02)}
+.rblock h4{font-size:.85rem;color:#d1d5db;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.rrow{margin-bottom:12px}
+.rrow:last-child{margin-bottom:0}
+.rrow label{display:block;font-size:.78rem;color:#6b7280;margin-bottom:6px}
+.rrow select{width:100%;padding:10px 12px;background:#111410;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#e5e7eb;font-size:.88rem;outline:none}
+.rrow select:focus{border-color:rgba(163,230,53,.5)}
+.toggle{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.toggle .sw{width:40px;height:22px;border-radius:999px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;flex:0 0 auto;transition:.2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on .sw{background:#A3E635}
+.toggle.on .sw::after{left:21px;background:#000}
+.toggle .tt{font-size:.85rem;color:#e5e7eb;font-weight:600}
+.toggle .td{font-size:.75rem;color:#6b7280}
+.resetbtn{width:100%;padding:9px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:none;color:#9ca3af;font-size:.82rem;cursor:pointer}
+.resetbtn:hover{color:#e5e7eb}
+/* статус и модалки */
+.statusbar{position:fixed;left:0;right:0;bottom:0;background:#0a0c08;border-top:1px solid rgba(163,230,53,.3);padding:12px 20px;display:none;align-items:center;gap:16px;z-index:200}
+.statusbar.show{display:flex}
+.statusbar .st{color:#A3E635;font-weight:600;font-size:.9rem;white-space:nowrap}
+.pbar2{flex:1;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.pfill{height:100%;width:40%;background:#A3E635;animation:run 1.6s infinite}
+@keyframes run{0%{margin-left:-40%}100%{margin-left:100%}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:300;padding:20px}
+.modal.show{display:flex}
+.mbox{background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:20px;padding:26px;max-width:860px;width:100%;max-height:88vh;overflow-y:auto;position:relative}
+.mbox video,.mbox img{width:100%;border-radius:14px;margin-bottom:16px}
+.mbox audio{width:100%;margin-bottom:16px}
+.mclose{position:absolute;top:12px;right:14px;border:none;background:none;color:rgba(255,255,255,.5);font-size:1.3rem;cursor:pointer}
+.mactions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.login{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:400;padding:20px}
+.login.hidden{display:none}
+.loginbox{background:#101308;border:1px solid rgba(163,230,53,.35);border-radius:24px;padding:36px;max-width:420px;width:100%;text-align:center}
+.loginbox h2{color:#fff;font-size:1.5rem;margin-bottom:10px}
+.loginbox p{color:#9ca3af;font-size:.88rem;margin-bottom:20px;line-height:1.5}
+.loginbox input{width:100%;padding:13px 16px;background:#050607;border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;font-size:1rem;outline:none;margin-bottom:10px}
+.loginbox input:focus{border-color:#A3E635}
+.loginbox button{width:100%;padding:13px;border:none;border-radius:12px;background:#A3E635;color:#000;font-weight:700;font-size:1rem;cursor:pointer}
+.lerr{color:#fca5a5;font-size:.83rem;min-height:18px;margin-bottom:6px}
+@media(max-width:1100px){.rightpanel{width:260px}.leftpanel{width:230px}}
+@media(max-width:900px){.leftpanel,.rail{display:none}.rightpanel{display:none}}
 </style>
 </head>
 <body>
 
-<div class="login-modal" id="loginModal">
-  <div class="login-box">
+<div class="login" id="login">
+  <div class="loginbox">
     <h2>🎛 <span class="lime">PRO-студия</span></h2>
-    <p>Расширенный интерфейс для владельцев. Введи пароль, чтобы войти.</p>
-    <div class="login-err" id="loginErr"></div>
-    <input type="password" id="loginPw" placeholder="Пароль PRO-студии">
-    <button id="loginBtn">Войти</button>
+    <p>Расширенный интерфейс для владельца. Введи пароль, чтобы войти.</p>
+    <div class="lerr" id="lerr"></div>
+    <input type="password" id="lpw" placeholder="Пароль PRO-студии">
+    <button id="lbtn">Войти</button>
   </div>
 </div>
 
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="logo"><span>▶</span> SeedGen PRO</div>
-    <div class="nav-menu">
-      <button class="nav-item active" onclick="switchSection('video', event)">🎬 Видео</button>
-      <button class="nav-item" onclick="switchSection('image', event)">🖼 Изображения</button>
-      <button class="nav-item" onclick="switchSection('avatar', event)">🗣 Аватар</button>
-      <button class="nav-item" onclick="switchSection('audio', event)">🎵 Аудио</button>
-      <button class="nav-item" onclick="switchSection('motion', event)">🎮 Motion</button>
-      <button class="nav-item" onclick="switchSection('ai', event)">🤖 AI-помощник</button>
-    </div>
+  <div class="logo"><span class="lime">▶</span> SeedGen PRO</div>
+  <div class="navmenu" id="navmenu">
+    <button class="navitem active" data-tab="video">Видео</button>
+    <button class="navitem" data-tab="image">Изображения</button>
+    <button class="navitem soon" data-tab="audio">Аудио · скоро</button>
+    <button class="navitem" data-tab="llm">LLM-студия</button>
+    <button class="navitem soon" data-tab="editor">Редактор · скоро</button>
+    <button class="navitem soon" data-tab="agents">Агенты · скоро</button>
   </div>
-  <div class="topbar-right">
-    <div class="balance">PRO-доступ</div>
-    <button class="btn-small" onclick="showHistory()">📁 Проекты</button>
-    <a href="/" class="btn-small">← На сайт</a>
+  <div class="topright">
+    <span class="chip">PRO-доступ</span>
+    <button class="btn-s" id="toggleLeft">📁 Проекты</button>
+    <a class="btn-s" href="/">← На сайт</a>
   </div>
 </div>
 
-<div class="main">
-  <div class="sidebar-left">
-    <div class="sidebar-header">
-      <span id="sidebarTitle">📋 Шаблоны видео</span>
+<div class="frame">
+  <div class="rail">
+    <button id="railChat" title="Чаты и проекты">💬</button>
+    <button id="railNew" title="Новый проект">➕</button>
+    <button id="railFav" title="Избранное (скоро)">⭐</button>
+  </div>
+
+  <div class="leftpanel" id="leftpanel">
+    <div class="ltabs">
+      <button class="ltab" data-lt="chats">Чаты</button>
+      <button class="ltab on" data-lt="projects">Проекты</button>
+      <button class="ltab" data-lt="tpl">Шаблоны</button>
     </div>
-    <div class="templates-list" id="templatesList"></div>
+    <div class="llist" id="llist"></div>
   </div>
 
   <div class="center">
-    <div class="workspace">
-
-      <div id="section-video" class="tab-content active">
-        <h2 class="section-title">🎬 Генерация видео</h2>
-        <div class="prompt-area">
-          <textarea id="video-prompt" placeholder="Опишите видео... Например: кот в космическом костюме летит на ракете мимо Земли, кинематографичный стиль, 4K"></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="video-charCount">0 / 35000</span>
-            <button class="generate-btn" id="video-generateBtn" onclick="generateVideo()">🚀 Сгенерировать</button>
-          </div>
-        </div>
-        <div id="video-preview" class="preview-container"></div>
-      </div>
-
-      <div id="section-image" class="tab-content">
-        <h2 class="section-title">🖼 Генерация изображений</h2>
-        <div class="prompt-area">
-          <textarea id="image-prompt" placeholder="Опишите изображение... Например: футуристический город с летающими машинами, неоновые огни, киберпанк стиль"></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="image-charCount">0 / 5000</span>
-            <button class="generate-btn" id="image-generateBtn" onclick="generateImage()">🎨 Сгенерировать</button>
-          </div>
-        </div>
-        <div id="image-preview" class="preview-container"></div>
-      </div>
-
-      <div id="section-avatar" class="tab-content">
-        <h2 class="section-title">🗣 Говорящий аватар</h2>
-        <div class="prompt-area">
-          <label class="upload-area" for="avatar-upload">
-            📷 Загрузить фото (лицо крупно)
-            <input type="file" id="avatar-upload" accept="image/*">
-          </label>
-          <div id="avatar-preview" class="preview-container"></div>
-          <textarea id="avatar-text" placeholder="Введите текст, который скажет аватар..." style="margin-top:16px;min-height:80px"></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="avatar-charCount">0 / 5000</span>
-            <button class="generate-btn" id="avatar-generateBtn" onclick="generateAvatar()">🎙 Создать аватар</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="section-audio" class="tab-content">
-        <h2 class="section-title">🎵 Аудио инструменты</h2>
-        <div class="prompt-area">
-          <textarea id="tts-text" placeholder="Введите текст для озвучки..."></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="tts-charCount">0 / 10000</span>
-            <button class="generate-btn" id="tts-generateBtn" onclick="generateTTS()">🔊 Озвучить</button>
-          </div>
-        </div>
-        <div id="tts-preview" class="preview-container"></div>
-      </div>
-
-      <div id="section-motion" class="tab-content">
-        <h2 class="section-title">🎮 Motion Control</h2>
-        <div class="prompt-area">
-          <label class="upload-area" for="motion-upload">
-            📹 Загрузить видео для управления движением
-            <input type="file" id="motion-upload" accept="video/*">
-          </label>
-          <div id="motion-preview" class="preview-container"></div>
-          <textarea id="motion-prompt" placeholder="Опишите, как применить motion control..." style="margin-top:16px;min-height:80px"></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="motion-charCount">0 / 5000</span>
-            <button class="generate-btn" id="motion-generateBtn" onclick="generateMotion()">🎬 Применить motion</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="section-ai" class="tab-content">
-        <h2 class="section-title">🤖 AI-помощник</h2>
-        <div class="prompt-area">
-          <textarea id="ai-prompt" placeholder="Попросите AI помочь: 'Напиши сценарий для видео о путешествии', 'Придумай 10 идей для YouTube Shorts', 'Улучши этот промпт: ...'"></textarea>
-          <div class="prompt-footer">
-            <span class="char-count" id="ai-charCount">0 / 10000</span>
-            <button class="generate-btn" id="ai-generateBtn" onclick="generateAI()">💡 Получить помощь</button>
-          </div>
-        </div>
-        <div id="ai-result" style="background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:20px;margin-top:20px;display:none;white-space:pre-wrap;line-height:1.6"></div>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="sidebar-right">
-    <div id="settings-video" class="settings-section active">
-      <h3>⚙️ Качество видео</h3>
-      <div class="setting-row">
-        <label>Модель</label>
-        <select id="video-model">
-          <option value="seedance-2-5">Seedance 2.5 (лучшее)</option>
-          <option value="seedance-2">Seedance 2.0</option>
-          <option value="standard">Standard</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Разрешение</label>
-        <select id="video-resolution">
-          <option value="720p">720p HD</option>
-          <option value="1080p" selected>1080p Full HD</option>
-          <option value="4k">4K Ultra HD</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Длительность</label>
-        <select id="video-duration">
-          <option value="5">5 секунд</option>
-          <option value="10" selected>10 секунд</option>
-          <option value="15">15 секунд</option>
-          <option value="30">30 секунд</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Соотношение сторон</label>
-        <select id="video-aspect">
-          <option value="16:9" selected>16:9 (горизонтальное)</option>
-          <option value="9:16">9:16 (вертикальное)</option>
-          <option value="1:1">1:1 (квадрат)</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="settings-image" class="settings-section" style="display:none">
-      <h3>⚙️ Параметры изображения</h3>
-      <div class="setting-row">
-        <label>Разрешение</label>
-        <select id="image-resolution">
-          <option value="512x512">512×512</option>
-          <option value="1024x1024" selected>1024×1024</option>
-          <option value="1024x1536">1024×1536 (портрет)</option>
-          <option value="1536x1024">1536×1024 (ландшафт)</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Количество</label>
-        <select id="image-count">
-          <option value="1" selected>1 изображение</option>
-          <option value="2">2 изображения</option>
-          <option value="4">4 изображения</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Стиль</label>
-        <select id="image-style">
-          <option value="realistic">Реалистичный</option>
-          <option value="anime">Аниме</option>
-          <option value="digital-art">Digital Art</option>
-          <option value="photographic">Фотография</option>
-          <option value="cinematic">Кинематограф</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="settings-avatar" class="settings-section" style="display:none">
-      <h3>⚙️ Параметры аватара</h3>
-      <div class="setting-row">
-        <label>Голос</label>
-        <select id="avatar-voice">
-          <option value="f-soft">Женский — мягкий</option>
-          <option value="f-pro">Женский — диктор</option>
-          <option value="m-calm">Мужской — спокойный</option>
-          <option value="m-energy">Мужской — энергичный</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Язык</label>
-        <select id="avatar-language">
-          <option value="ru">Русский</option>
-          <option value="en">English</option>
-          <option value="de">Deutsch</option>
-          <option value="fr">Français</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Ориентация</label>
-        <select id="avatar-orientation">
-          <option value="9:16" selected>9:16 (вертикально)</option>
-          <option value="16:9">16:9 (горизонтально)</option>
-          <option value="1:1">1:1 (квадрат)</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="settings-audio" class="settings-section" style="display:none">
-      <h3>⚙️ Параметры озвучки</h3>
-      <div class="setting-row">
-        <label>Голос</label>
-        <select id="tts-voice">
-          <option value="f-soft">Женский — мягкий</option>
-          <option value="f-pro">Женский — диктор</option>
-          <option value="m-calm">Мужской — спокойный</option>
-          <option value="m-energy">Мужской — энергичный</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Скорость</label>
-        <input type="range" id="tts-speed" min="0.5" max="2" step="0.1" value="1">
-        <div class="range-value" id="tts-speed-value">1.0x</div>
-      </div>
-    </div>
-
-    <div id="settings-motion" class="settings-section" style="display:none">
-      <h3>⚙️ Motion Control</h3>
-      <div class="setting-row">
-        <label>Тип движения</label>
-        <select id="motion-type">
-          <option value="camera">Движение камеры</option>
-          <option value="object">Движение объекта</option>
-          <option value="both">Камера + объект</option>
-        </select>
-      </div>
-      <div class="setting-row">
-        <label>Интенсивность</label>
-        <input type="range" id="motion-intensity" min="1" max="10" value="5">
-        <div class="range-value" id="motion-intensity-value">5</div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <h3>🎨 Стиль</h3>
-      <div class="setting-row">
-        <label>Визуальный стиль</label>
-        <select id="global-style">
-          <option value="cinematic">Кинематографичный</option>
-          <option value="realistic">Реалистичный</option>
-          <option value="anime">Аниме</option>
-          <option value="cartoon">Мультяшный</option>
-          <option value="abstract">Абстрактный</option>
-        </select>
+    <div class="stage" id="stage"></div>
+    <div class="pbar">
+      <div class="pbox">
+        <textarea id="prompt" placeholder="Напишите промпт…"></textarea>
+        <div class="refrow" id="refrow"></div>
+        <div class="prow" id="prow"></div>
       </div>
     </div>
   </div>
+
+  <div class="rightpanel" id="rightpanel"></div>
 </div>
 
-<div class="status-bar" id="statusBar">
-  <span class="status-text" id="statusText">Генерация...</span>
-  <div class="progress-bar"><div class="progress-fill"></div></div>
-  <button class="btn-small" onclick="cancelGeneration()">Отмена</button>
+<div class="statusbar" id="statusbar">
+  <span class="st" id="stext">Генерация…</span>
+  <div class="pbar2"><div class="pfill"></div></div>
+  <button class="btn-s" id="cancelBtn">Отмена</button>
 </div>
 
-<div class="result-modal" id="resultModal">
-  <div class="result-content">
-    <button class="close-modal" onclick="closeResult()">✕</button>
-    <div id="resultContent"></div>
-    <div class="result-actions">
-      <button class="btn-small" onclick="downloadResult()">⬇ Скачать</button>
-      <button class="btn-small" onclick="useAsReference()">📎 Использовать как референс</button>
-      <button class="btn-small" onclick="closeResult()">Новая генерация</button>
+<div class="modal" id="modal">
+  <div class="mbox">
+    <button class="mclose" id="mclose">✕</button>
+    <div id="mcontent"></div>
+    <div class="mactions">
+      <button class="btn-s" id="mdownload">⬇ Скачать</button>
+      <button class="btn-s" id="mref">📎 В референсы</button>
+      <button class="btn-s" id="mnew">Новая генерация</button>
     </div>
   </div>
 </div>
 
 <script>
-var adminPassword = sessionStorage.getItem('seedgen_pro_pw') || '';
-
-function showLoginModal(){
-  document.getElementById('loginModal').classList.remove('hidden');
-  setTimeout(function(){ document.getElementById('loginPw').focus(); }, 100);
+var PW = sessionStorage.getItem('seedgen_pro_pw') || '';
+function verify(pw, ok, fail){
+  fetch('/api/imagine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminPassword:pw,verifyOnly:true})})
+    .then(function(r){return r.json();})
+    .then(function(d){ d.ok?ok():fail('Неверный пароль'); })
+    .catch(function(){ fail('Сеть недоступна'); });
 }
-
-function hideLoginModal(){
-  document.getElementById('loginModal').classList.add('hidden');
+function gate(){
+  if(PW){ verify(PW, function(){ start(); }, function(){ PW=''; sessionStorage.removeItem('seedgen_pro_pw'); document.getElementById('login').classList.remove('hidden'); }); }
+  else { document.getElementById('login').classList.remove('hidden'); }
 }
+document.getElementById('lbtn').onclick=function(){
+  var v=document.getElementById('lpw').value.trim();
+  if(!v){document.getElementById('lerr').textContent='Введи пароль';return;}
+  document.getElementById('lerr').textContent='Проверяем…';
+  verify(v,function(){ PW=v; sessionStorage.setItem('seedgen_pro_pw',v); document.getElementById('login').classList.add('hidden'); start(); },function(m){ document.getElementById('lerr').textContent=m; });
+};
+document.getElementById('lpw').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('lbtn').click();});
 
-function verifyPw(pw, onSuccess, onFail){
-  fetch('/api/imagine', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ adminPassword: pw, verifyOnly: true })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.ok){ onSuccess(); }
-    else { onFail('Неверный пароль'); }
-  })
-  .catch(function(){ onFail('Сеть недоступна'); });
+var TABS={
+  video:{icon:'🎬',name:'Seedance',desc:'Seedance 2.5 снимает цельные сцены до 30 секунд без склейки: модель ведёт действие через смену ракурсов и локаций, сохраняя персонажа и логику. Референсы дают контроль над героем, стилем и всей сценой.',caps:'видео до 30 секунд · до 10 референсов · цельные сцены без склеек',ph:'Напишите промпт и используйте @Image1, @Image2… для референсов',max:35000},
+  image:{icon:'🖼',name:'Nano Banana',desc:'Нашумевшая нейросеть от Google: Gemini Flash 3.0 Banana. Отправьте текстовый запрос или добавьте изображения-источники, чтобы получить аккуратный монтаж и стиль.',caps:'до 4 изображений за запрос · стили · точные размеры',ph:'Опишите изображение…',max:5000},
+  llm:{icon:'🤖',name:'ChatGPT',desc:'GPT-5 Mini сочетает быстрые ответы, хорошее качество и разумный расход ресурсов. Подходит для сценариев, идей и улучшения промптов.',caps:'быстрый чат · уверенные ответы · работа с текстами',ph:'Попросите: «Придумай 10 идей для Shorts», «Улучши промпт: …»',max:10000}
+};
+var MODELS={
+  video:[['seedance-2-5','Seedance 2.5 (лучшее)'],['seedance-2','Seedance 2.0'],['standard','Standard']],
+  image:[['nano-banana-2','Nano Banana 2'],['banana-2-lite','Banana 2 Lite']],
+  llm:[['gpt-5-mini','GPT-5 Mini'],['seedgen-prompt','SeedGen Prompt']]
+};
+var S={'tab':'video','model':{'video':'seedance-2-5','image':'nano-banana-2','llm':'gpt-5-mini'},'quality':'480p','seconds':5,'aspect':'16:9','ires':'1024x1024','icount':1,'istyle':'cinematic','refs':[],'lt':'projects','leftOpen':true};
+var SUR={'480p':0,'720p':200,'1080p':300};
+var started=false;
+function start(){ if(started)return; started=true; render(); }
+
+function price(){ return 199+(S.seconds-5)*30+SUR[S.quality]; }
+
+function render(){
+  renderNav(); renderStage(); renderPrompt(); renderRight(); renderLeft();
 }
-
-function requireAccess(cb){
-  if(adminPassword){
-    verifyPw(adminPassword, cb, function(){
-      sessionStorage.removeItem('seedgen_pro_pw');
-      adminPassword = '';
-      showLoginModal();
-    });
-    return;
-  }
-  showLoginModal();
-}
-
-document.getElementById('loginBtn').addEventListener('click', function(){
-  var v = document.getElementById('loginPw').value.trim();
-  var err = document.getElementById('loginErr');
-  if(!v){ err.textContent = 'Введи пароль'; return; }
-  err.textContent = 'Проверяем...';
-  verifyPw(v, function(){
-    adminPassword = v;
-    sessionStorage.setItem('seedgen_pro_pw', v);
-    err.textContent = '';
-    hideLoginModal();
-  }, function(msg){
-    err.textContent = msg;
+function renderNav(){
+  document.querySelectorAll('.navitem').forEach(function(b){
+    b.classList.toggle('active',b.getAttribute('data-tab')===S.tab);
   });
+}
+document.getElementById('navmenu').addEventListener('click',function(e){
+  var b=e.target.closest('.navitem'); if(!b)return;
+  if(b.classList.contains('soon')){ alert('Этот раздел подключим следом за моделями 🙂'); return; }
+  S.tab=b.getAttribute('data-tab'); S.refs=[]; render();
 });
+document.getElementById('toggleLeft').onclick=function(){ S.leftOpen=!S.leftOpen; document.getElementById('leftpanel').classList.toggle('hidden',!S.leftOpen); };
+document.getElementById('railChat').onclick=function(){ S.leftOpen=true; document.getElementById('leftpanel').classList.remove('hidden'); setLt('projects'); };
+document.getElementById('railNew').onclick=function(){ document.getElementById('prompt').value=''; S.refs=[]; render(); };
+document.getElementById('railFav').onclick=function(){ alert('Избранное появится вместе с базой проектов 🙂'); };
 
-document.getElementById('loginPw').addEventListener('keydown', function(e){
-  if(e.key === 'Enter'){ document.getElementById('loginBtn').click(); }
-});
-
-requireAccess(function(){});
-
-var templates = {
-  video: {
-    shorts: {prompt:'Динамичное вертикальное видео для YouTube Shorts, яркие цвета, быстрая смена кадров, современная музыка, цепляющее начало', settings:{aspect:'9:16', duration:'15'}},
-    ad: {prompt:'Профессиональная реклама продукта, стильное освещение, акцент на преимуществах, призыв к действию, премиум качество', settings:{resolution:'1080p', duration:'15'}},
-    greeting: {prompt:'Праздничное поздравление с днём рождения, конфетти, воздушные шары, радостная атмосфера, яркие цвета', settings:{}},
-    cinematic: {prompt:'Профессиональное кино с глубиной резкости, атмосферное освещение, драматичные ракурсы, 4K качество', settings:{resolution:'4k', duration:'30'}},
-    tutorial: {prompt:'Пошаговое обучающее видео, чёткая визуализация каждого шага, инфографика, понятная структура', settings:{}},
-    story: {prompt:'Кинематографичная история с развитием сюжета, эмоциональные моменты, красивая операторская работа', settings:{duration:'30'}}
-  },
-  image: {
-    thumbnail: {prompt:'Яркая привлекательная обложка для YouTube видео, контрастные цвета, крупный текст, профессионально'},
-    poster: {prompt:'Кинематографичный постер фильма, драматичное освещение, эпичная композиция'},
-    product: {prompt:'Профессиональная фотография продукта на белом фоне, студийное освещение, высокое качество'},
-    concept: {prompt:'Концепт-арт футуристического города, детализированно, атмосферно, цифровая живопись'}
-  },
-  avatar: {
-    greeting: {text:'Привет! Поздравляю тебя с днём рождения! Желаю счастья, здоровья и успехов во всех начинаниях!'},
-    promo: {text:'У нас отличная новость! Только сегодня специальная скидка 50% на все услуги. Успейте воспользоваться!'},
-    tutorial: {text:'Сегодня я покажу вам, как создать потрясающее видео с помощью нейросети. Это очень просто!'}
+function renderStage(){
+  var t=TABS[S.tab];
+  document.getElementById('stage').innerHTML=
+    '<div class="micon">'+t.icon+'</div>'+
+    '<div class="mname">'+t.name+'</div>'+
+    '<div class="mdesc">'+t.desc+'</div>'+
+    '<div class="mcaps">Основные возможности:</div>'+
+    '<div class="mcapline">'+t.caps.split(' · ').map(function(x){return '<b>'+x+'</b>';}).join(' · ')+'</div>';
+}
+function renderPrompt(){
+  var t=TABS[S.tab];
+  var p=document.getElementById('prompt');
+  p.placeholder=t.ph; p.maxLength=t.max;
+  var row=document.getElementById('prow');
+  var html='';
+  if(S.tab==='video'){
+    html+='<button class="pchip" id="attachBtn">📎</button>';
+    html+='<button class="pchip" id="chipAspect">'+S.aspect+'</button>';
+    html+='<button class="pchip" id="chipQ">'+S.quality+'</button>';
+    html+='<button class="pchip" id="chipSec">'+S.seconds+' сек</button>';
+    html+='<span class="pcount"><span id="cnt">'+p.value.length+'</span> / '+t.max+'</span>';
+    html+='<span class="pprice">'+price()+' ₽</span>';
+  }else if(S.tab==='image'){
+    html+='<button class="pchip" id="chipRes">'+S.ires+'</button>';
+    html+='<button class="pchip" id="chipCount">'+S.icount+' шт</button>';
+    html+='<span class="pcount"><span id="cnt">'+p.value.length+'</span> / '+t.max+'</span>';
+  }else{
+    html+='<span class="pcount"><span id="cnt">'+p.value.length+'</span> / '+t.max+'</span>';
   }
+  html+='<button class="psend" id="sendBtn">➤</button>';
+  row.innerHTML=html;
+  renderRefs();
+  var a=document.getElementById('attachBtn');
+  if(a)a.onclick=function(){
+    var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.multiple=true;
+    inp.onchange=function(){ addFiles(inp.files); };
+    inp.click();
+  };
+  var ca=document.getElementById('chipAspect'); if(ca)ca.onclick=cycleAspect;
+  var cq=document.getElementById('chipQ'); if(cq)cq.onclick=cycleQ;
+  var cs=document.getElementById('chipSec'); if(cs)cs.onclick=cycleSec;
+  document.getElementById('sendBtn').onclick=send;
+}
+document.getElementById('prompt').addEventListener('input',function(){
+  var c=document.getElementById('cnt'); if(c)c.textContent=this.value.length;
+});
+var ASPECTS=['16:9','9:16','1:1','4:3','3:4','21:9'];
+var QS=['480p','720p','1080p'];
+var SECS=[5,10,15,20,25,30];
+function cycleAspect(){ S.aspect=ASPECTS[(ASPECTS.indexOf(S.aspect)+1)%ASPECTS.length]; renderPrompt(); }
+function cycleQ(){ S.quality=QS[(QS.indexOf(S.quality)+1)%QS.length]; renderPrompt(); }
+function cycleSec(){ S.seconds=SECS[(SECS.indexOf(S.seconds)+1)%SECS.length]; renderPrompt(); }
+
+function addFiles(files){
+  Array.prototype.slice.call(files).forEach(function(f){
+    if(S.refs.length>=10){alert('До 10 референсов');return;}
+    var r=new FileReader();
+    r.onload=function(){
+      var img=new Image();
+      img.onload=function(){
+        var max=1024,w=img.width,h=img.height;
+        if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
+        var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+        S.refs.push(c.toDataURL('image/jpeg',0.85).split(',')[1]);
+        renderRefs();
+      };
+      img.src=r.result;
+    };
+    r.readAsDataURL(f);
+  });
+}
+function renderRefs(){
+  var box=document.getElementById('refrow');
+  box.innerHTML=S.refs.map(function(b,i){
+    return '<span class="refchip"><img src="data:image/jpeg;base64,'+b+'"><button data-i="'+i+'">✕</button></span>';
+  }).join('');
+  box.querySelectorAll('button').forEach(function(x){
+    x.onclick=function(){ S.refs.splice(parseInt(x.getAttribute('data-i'),10),1); renderRefs(); };
+  });
+}
+
+function renderRight(){
+  var rp=document.getElementById('rightpanel');
+  var h='<div class="rblock"><h4>Выбор модели</h4><div class="rrow"><select id="modelSel">'+
+    MODELS[S.tab].map(function(m){return '<option value="'+m[0]+'"'+(S.model[S.tab]===m[0]?' selected':'')+'>'+m[1]+'</option>';}).join('')+
+    '</select></div></div>';
+  if(S.tab==='video'){
+    h+='<div class="rblock"><h4>🎚 Качество</h4>'+
+      '<div class="rrow"><label>Разрешение</label><select id="qSel">'+QS.map(function(q){var s=SUR[q];return '<option value="'+q+'"'+(S.quality===q?' selected':'')+'>'+q+(s?' +'+s+' ₽':' · базовое')+'</option>';}).join('')+'</select></div>'+
+      '<div class="rrow"><label>Длительность</label><select id="secSel">'+SECS.map(function(s){return '<option value="'+s+'"'+(S.seconds===s?' selected':'')+'>'+s+' секунд</option>';}).join('')+'</select></div>'+
+      '<div class="rrow"><label>Формат</label><select id="aspSel">'+ASPECTS.map(function(a){return '<option value="'+a+'"'+(S.aspect===a?' selected':'')+'>'+a+'</option>';}).join('')+'</select></div>'+
+      '<button class="resetbtn" id="resetV">Сбросить ↺</button></div>';
+  }
+  if(S.tab==='image'){
+    h+='<div class="rblock"><h4>🎚 Параметры</h4>'+
+      '<div class="rrow"><label>Разрешение</label><select id="iresSel"><option value="512x512">512×512</option><option value="1024x1024">1024×1024</option><option value="1024x1536">1024×1536 (портрет)</option><option value="1536x1024">1536×1024 (ландшафт)</option></select></div>'+
+      '<div class="rrow"><label>Количество</label><select id="icountSel"><option value="1">1</option><option value="2">2</option><option value="4">4</option></select></div>'+
+      '<div class="rrow"><label>Стиль</label><select id="istyleSel"><option value="cinematic">Кинематограф</option><option value="realistic">Реализм</option><option value="anime">Аниме</option><option value="digital-art">Digital Art</option><option value="photographic">Фото</option></select></div></div>';
+  }
+  if(S.tab==='llm'){
+    h+='<div class="rblock"><h4>✨ Возможности</h4>'+
+      '<div class="toggle" id="tgThink"><span class="sw"></span><span><span class="tt">Размышление</span><br><span class="td">Модель рассуждает пошагово перед ответом</span></span></div>'+
+      '<div class="toggle on" id="tgPlan"><span class="sw"></span><span><span class="tt">Планирование</span><br><span class="td">Разбивает сложные задачи на план и отслеживает прогресс</span></span></div></div>';
+  }
+  rp.innerHTML=h;
+  var ms=document.getElementById('modelSel'); if(ms)ms.onchange=function(){ S.model[S.tab]=this.value; renderStage(); };
+  var q=document.getElementById('qSel'); if(q){q.value=S.quality;q.onchange=function(){S.quality=this.value;renderPrompt();};}
+  var sc=document.getElementById('secSel'); if(sc){sc.value=String(S.seconds);sc.onchange=function(){S.seconds=parseInt(this.value,10);renderPrompt();};}
+  var as=document.getElementById('aspSel'); if(as){as.value=S.aspect;as.onchange=function(){S.aspect=this.value;renderPrompt();};}
+  var rv=document.getElementById('resetV'); if(rv)rv.onclick=function(){ S.quality='480p';S.seconds=5;S.aspect='16:9'; render(); };
+  var ir=document.getElementById('iresSel'); if(ir){ir.value=S.ires;ir.onchange=function(){S.ires=this.value;renderPrompt();};}
+  var ic=document.getElementById('icountSel'); if(ic){ic.value=String(S.icount);ic.onchange=function(){S.icount=parseInt(this.value,10);renderPrompt();};}
+  var ist=document.getElementById('istyleSel'); if(ist){ist.value=S.istyle;ist.onchange=function(){S.istyle=this.value;};}
+  ['tgThink','tgPlan'].forEach(function(id){ var el=document.getElementById(id); if(el)el.onclick=function(){ el.classList.toggle('on'); }; });
+}
+
+var TPL={
+  video:[['shorts','Shorts','Динамичное вертикальное видео для YouTube Shorts, яркие цвета, быстрая смена кадров, цепляющее начало',{'aspect':'9:16','seconds':15}],
+    ['ad','Ad','Профессиональная реклама продукта, стильное освещение, акцент на преимуществах, призыв к действию',{'quality':'1080p','seconds':15}],
+    ['cinematic','Cinematic','Профессиональное кино с глубиной резкости, атмосферное освещение, драматичные ракурсы',{'quality':'1080p','seconds':30}],
+    ['story','Story','Кинематографичная история с развитием сюжета, эмоциональные моменты, красивая операторская работа',{'seconds':30}]],
+  image:[['thumbnail','Обложка','Яркая привлекательная обложка для YouTube видео, контрастные цвета, крупный текст'],
+    ['poster','Постер','Кинематографичный постер фильма, драматичное освещение, эпичная композиция'],
+    ['product','Продукт','Профессиональная фотография продукта на белом фоне, студийное освещение']],
+  llm:[['ideas','Идеи','Придумай 10 идей для YouTube Shorts про котов'],
+    ['script','Сценарий','Напиши сценарий рекламного ролика на 15 секунд'],
+    ['improve','Улучши','Улучши этот промпт: ']]
+};
+function setLt(lt){ S.lt=lt; document.querySelectorAll('.ltab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lt')===lt);}); renderLeft(); }
+document.querySelectorAll('.ltab').forEach(function(b){ b.onclick=function(){ setLt(b.getAttribute('data-lt')); }; });
+
+function getProjects(){ try{return JSON.parse(localStorage.getItem('seedgen_pro_projects')||'[]');}catch(e){return[];} }
+function saveProjects(p){ localStorage.setItem('seedgen_pro_projects',JSON.stringify(p.slice(0,50))); }
+function getChats(){ try{return JSON.parse(localStorage.getItem('seedgen_pro_chats')||'[]');}catch(e){return[];} }
+function saveChats(c){ localStorage.setItem('seedgen_pro_chats',JSON.stringify(c.slice(0,30))); }
+
+function renderLeft(){
+  var box=document.getElementById('llist');
+  if(S.lt==='projects'){
+    var p=getProjects();
+    if(!p.length){ box.innerHTML='<div class="lempty">Проектов пока нет.<br>Отправьте первую генерацию — и она появится здесь.</div>'; return; }
+    box.innerHTML=p.map(function(it,i){
+      var dot=it.status==='succeeded'?'ok':(it.status==='failed'?'err':'gen');
+      return '<div class="litem" data-i="'+i+'"><h5><span class="dot '+dot+'"></span>'+it.icon+' '+it.title+'</h5><p>'+it.prompt+'</p></div>';
+    }).join('');
+    box.querySelectorAll('.litem').forEach(function(el){
+      el.onclick=function(){ var it=p[parseInt(el.getAttribute('data-i'),10)]; if(it&&it.url){ openResult({videoUrl:it.type==='video'?it.url:null,imageUrl:it.type==='image'?it.url:null,audioUrl:it.type==='audio'?it.url:null}); } };
+    });
+  }else if(S.lt==='chats'){
+    var c=getChats();
+    if(!c.length){ box.innerHTML='<div class="lempty">Чатов пока нет.<br>Напишите сообщение в LLM-студии — и создастся новый чат.</div>'; return; }
+    box.innerHTML=c.map(function(it,i){ return '<div class="litem" data-i="'+i+'"><h5>🤖 '+it.title+'</h5><p>'+it.last+'</p></div>'; }).join('');
+    box.querySelectorAll('.litem').forEach(function(el){
+      el.onclick=function(){ var it=c[parseInt(el.getAttribute('data-i'),10); ]};
+    });
+  }else{
+    var list=TPL[S.tab]||[];
+    if(!list.length){ box.innerHTML='<div class="lempty">Шаблоны для этого раздела появятся скоро.</div>'; return; }
+    box.innerHTML=list.map(function(t,i){ return '<div class="litem" data-i="'+i+'"><h5>'+t[1]+'</h5><p>'+t[2].slice(0,70)+'…</p></div>'; }).join('');
+    box.querySelectorAll('.litem').forEach(function(el){
+      el.onclick=function(){
+        var t=list[parseInt(el.getAttribute('data-i'),10)];
+        document.getElementById('prompt').value=t[2];
+        if(S.tab==='video'&&t[3]){ if(t[3].aspect)S.aspect=t[3].aspect; if(t[3].seconds)S.seconds=t[3].seconds; if(t[3].quality)S.quality=t[3].quality; }
+        render();
+        var c=document.getElementById('cnt'); if(c)c.textContent=t[2].length;
+      };
+    });
+  }
+}
+
+var taskId=null,poll=null,lastUrl=null,lastType=null;
+function send(){
+  var prompt=document.getElementById('prompt').value.trim();
+  if(!prompt){ alert('Напиши промпт 🙂'); return; }
+  if(S.tab==='llm'){ sendAI(prompt); return; }
+  var settings={prompt:prompt,adminPassword:PW};
+  var icon='🎬',type='video';
+  if(S.tab==='video'){
+    settings.service='text2video';
+    settings.model=S.model.video; settings.resolution=S.quality; settings.aspect=S.aspect; settings.duration=S.seconds;
+    if(S.refs.length)settings.refs=S.refs;
+  }else{
+    settings.service='text2image'; icon='🖼'; type='image';
+    settings.model=S.model.image; settings.resolution=S.ires; settings.count=S.icount; settings.style=S.istyle;
+    if(S.refs.length)settings.refs=S.refs;
+  }
+  var p=getProjects();
+  p.unshift({icon:icon,type:type,title:TABS[S.tab].name,prompt:prompt,status:'gen',ts:Date.now(),url:null});
+  saveProjects(p); renderLeft();
+  document.getElementById('statusbar').classList.add('show');
+  document.getElementById('stext').textContent='Отправка запроса…';
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(settings)})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error)throw new Error(d.error);
+      taskId=d.taskId;
+      document.getElementById('stext').textContent='Генерация…';
+      poll=setInterval(function(){
+        fetch('/api/status?taskId='+encodeURIComponent(taskId)).then(function(r){return r.json();}).then(function(st){
+          if(st.status==='succeeded'){
+            clearInterval(poll);poll=null;
+            document.getElementById('statusbar').classList.remove('show');
+            var url=st.videoUrl||st.imageUrl||st.audioUrl||null;
+            var pp=getProjects(); if(pp.length){pp[0].status='succeeded';pp[0].url=url;saveProjects(pp);renderLeft();}
+            openResult(st);
+          }else if(st.status==='failed'){
+            clearInterval(poll);poll=null;
+            document.getElementById('statusbar').classList.remove('show');
+            var pf=getProjects(); if(pf.length){pf[0].status='failed';saveProjects(pf);renderLeft();}
+            alert('Генерация не удалась: '+(st.error||'нейросеть отклонила запрос'));
+          }
+        }).catch(function(){});
+      },5000);
+    })
+    .catch(function(e){
+      document.getElementById('statusbar').classList.remove('show');
+      var pf=getProjects(); if(pf.length){pf[0].status='failed';saveProjects(pf);renderLeft();}
+      alert('Ошибка: '+e.message);
+    });
+}
+document.getElementById('cancelBtn').onclick=function(){ if(poll)clearInterval(poll); poll=null; document.getElementById('statusbar').classList.remove('show'); };
+
+function sendAI(prompt){
+  var btn=document.getElementById('sendBtn'); btn.disabled=true;
+  document.getElementById('statusbar').classList.add('show');
+  document.getElementById('stext').textContent='LLM думает…';
+  fetch('/api/ai-helper',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompt,adminPassword:PW})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      document.getElementById('statusbar').classList.remove('show');
+      btn.disabled=false;
+      var text=d.result||('Ошибка: '+(d.error||'неизвестно'));
+      var c=getChats();
+      c.unshift({title:prompt.slice(0,40),last:text.slice(0,60),ts:Date.now()});
+      saveChats(c); setLt('chats');
+      openResult({aiText:text});
+    })
+    .catch(function(e){ document.getElementById('statusbar').classList.remove('show'); btn.disabled=false; alert('Ошибка: '+e.message); });
+}
+
+function openResult(st){
+  var box=document.getElementById('mcontent');
+  box.innerHTML='';
+  lastUrl=st.videoUrl||st.imageUrl||st.audioUrl||null;
+  lastType=st.videoUrl?'video':(st.imageUrl?'image':(st.audioUrl?'audio':null));
+  if(st.videoUrl){ var v=document.createElement('video');v.src=st.videoUrl;v.controls=true;box.appendChild(v); }
+  if(st.imageUrl){ var im=document.createElement('img');im.src=st.imageUrl;box.appendChild(im); }
+  if(st.audioUrl){ var au=document.createElement('audio');au.src=st.audioUrl;au.controls=true;box.appendChild(au); }
+  if(st.aiText){ var pre=document.createElement('div');pre.style.cssText='white-space:pre-wrap;line-height:1.6;color:#e5e7eb';pre.textContent=st.aiText;box.appendChild(pre); }
+  document.getElementById('modal').classList.add('show');
+}
+document.getElementById('mclose').onclick=function(){document.getElementById('modal').classList.remove('show');};
+document.getElementById('mnew').onclick=function(){document.getElementById('modal').classList.remove('show');document.getElementById('prompt').value='';S.refs=[];render();};
+document.getElementById('mdownload').onclick=function(){ if(lastUrl){window.open(lastUrl,'_blank');}else{alert('Нечего скачивать 🙂');} };
+document.getElementById('mref').onclick=function(){
+  if(!lastUrl||lastType!=='image'){alert('В референсы можно добавить изображение 🙂');return;}
+  fetch(lastUrl).then(function(r){return r.blob();}).then(function(b){
+    var r=new FileReader();
+    r.onload=function(){
+      var img=new Image();
+      img.onload=function(){
+        var max=1024,w=img.width,h=img.height;
+        if(w>max||h>max){var k=Math.min(max/w,max/h);w=Math.round(w*k);h=Math.round(h*k);}
+        var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+        S.refs.push(c.toDataURL('image/jpeg',0.85).split(',')[1]);
+        document.getElementById('modal').classList.remove('show');
+        S.tab='video'; render();
+      };
+      img.src=r.result;
+    };
+    r.readAsDataURL(b);
+  }).catch(function(){alert('Не удалось добавить референс');});
 };
 
-loadTemplates('video');
-
-['video','image','avatar','tts','motion','ai'].forEach(function(type){
-  var el = document.getElementById(type+'-prompt') || document.getElementById(type+'-text');
-  if(el){
-    el.addEventListener('input', function(){
-      var max = type==='video' ? 35000 : type==='ai' || type==='tts' ? 10000 : 5000;
-      document.getElementById(type+'-charCount').textContent = el.value.length + ' / ' + max;
-    });
-  }
-});
-
-document.getElementById('tts-speed').addEventListener('input', function(){
-  document.getElementById('tts-speed-value').textContent = this.value + 'x';
-});
-document.getElementById('motion-intensity').addEventListener('input', function(){
-  document.getElementById('motion-intensity-value').textContent = this.value;
-});
-
-function switchSection(section, ev){
-  document.querySelectorAll('.nav-item').forEach(function(item){ item.classList.remove('active'); });
-  if(ev && ev.target) ev.target.classList.add('active');
-  document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
-  document.getElementById('section-'+section).classList.add('active');
-  document.querySelectorAll('.settings-section').forEach(function(s){
-    if(s.id !== 'settings-video' && s.id.indexOf('global') === -1) s.style.display = 'none';
-  });
-  var settingsEl = document.getElementById('settings-'+section);
-  if(settingsEl) settingsEl.style.display = 'block';
-  loadTemplates(section);
-  document.getElementById('sidebarTitle').textContent = getSidebarTitle(section);
-}
-
-function getSidebarTitle(section){
-  var titles = {
-    video:'📋 Шаблоны видео',
-    image:'🖼 Шаблоны изображений',
-    avatar:'🗣 Сценарии аватара',
-    audio:'🎵 Аудио шаблоны',
-    motion:'🎮 Motion шаблоны',
-    ai:'🤖 AI-помощники'
-  };
-  return titles[section] || 'Шаблоны';
-}
-
-function loadTemplates(section){
-  var list = document.getElementById('templatesList');
-  list.innerHTML = '';
-  var items = templates[section] || {};
-  Object.keys(items).forEach(function(key){
-    var item = items[key];
-    var div = document.createElement('div');
-    div.className = 'template-item';
-    div.innerHTML = '<h4>' + key.charAt(0).toUpperCase() + key.slice(1) + '</h4><p>' + (item.prompt || item.text || '').slice(0, 80) + '...</p>';
-    div.onclick = function(){ useTemplate(section, key); };
-    list.appendChild(div);
-  });
-}
-
-function useTemplate(section, name){
-  var template = templates[section][name];
-  if(!template) return;
-  if(section === 'video'){
-    document.getElementById('video-prompt').value = template.prompt;
-    if(template.settings.aspect) document.getElementById('video-aspect').value = template.settings.aspect;
-    if(template.settings.duration) document.getElementById('video-duration').value = template.settings.duration;
-    if(template.settings.resolution) document.getElementById('video-resolution').value = template.settings.resolution;
-  } else if(section === 'image'){
-    document.getElementById('image-prompt').value = template.prompt;
-  } else if(section === 'avatar'){
-    document.getElementById('avatar-text').value = template.text;
-  }
-}
-
-['avatar','motion'].forEach(function(type){
-  var input = document.getElementById(type+'-upload');
-  if(input){
-    input.addEventListener('change', function(e){
-      var f = e.target.files[0];
-      if(!f) return;
-      var reader = new FileReader();
-      reader.onload = function(){
-        var container = document.getElementById(type+'-preview');
-        container.innerHTML = '';
-        var div = document.createElement('div');
-        div.className = 'preview-item';
-        if(type === 'avatar'){
-          var img = document.createElement('img');
-          img.src = reader.result;
-          div.appendChild(img);
-        } else {
-          var video = document.createElement('video');
-          video.src = reader.result;
-          video.controls = true;
-          div.appendChild(video);
-        }
-        var remove = document.createElement('button');
-        remove.className = 'remove-preview';
-        remove.innerHTML = '×';
-        remove.onclick = function(){ container.innerHTML = ''; input.value = ''; };
-        div.appendChild(remove);
-        container.appendChild(div);
-      };
-      reader.readAsDataURL(f);
-    });
-  }
-});
-
-var currentTaskId = null;
-var pollTimer = null;
-
-function generateVideo(){
-  var prompt = document.getElementById('video-prompt').value.trim();
-  if(!prompt){ alert('Введите описание'); return; }
-  var settings = {
-    service: 'text2video',
-    prompt: prompt,
-    adminPassword: adminPassword,
-    model: document.getElementById('video-model').value,
-    resolution: document.getElementById('video-resolution').value,
-    aspect: document.getElementById('video-aspect').value,
-    duration: document.getElementById('video-duration').value,
-    style: document.getElementById('global-style').value
-  };
-  startGeneration(settings);
-}
-
-function generateImage(){
-  var prompt = document.getElementById('image-prompt').value.trim();
-  if(!prompt){ alert('Введите описание'); return; }
-  var settings = {
-    service: 'text2image',
-    prompt: prompt,
-    adminPassword: adminPassword,
-    resolution: document.getElementById('image-resolution').value,
-    count: parseInt(document.getElementById('image-count').value),
-    style: document.getElementById('image-style').value
-  };
-  startGeneration(settings);
-}
-
-function generateAvatar(){
-  var text = document.getElementById('avatar-text').value.trim();
-  if(!text){ alert('Введите текст'); return; }
-  var settings = {
-    service: 'avatar',
-    prompt: text,
-    adminPassword: adminPassword,
-    voice: document.getElementById('avatar-voice').value,
-    language: document.getElementById('avatar-language').value,
-    orientation: document.getElementById('avatar-orientation').value
-  };
-  startGeneration(settings);
-}
-
-function generateTTS(){
-  var text = document.getElementById('tts-text').value.trim();
-  if(!text){ alert('Введите текст'); return; }
-  var settings = {
-    service: 'tts',
-    text: text,
-    adminPassword: adminPassword,
-    voice: document.getElementById('tts-voice').value,
-    speed: parseFloat(document.getElementById('tts-speed').value)
-  };
-  startGeneration(settings);
-}
-
-function generateMotion(){
-  var prompt = document.getElementById('motion-prompt').value.trim();
-  if(!prompt){ alert('Введите описание'); return; }
-  var settings = {
-    service: 'motion-control',
-    prompt: prompt,
-    adminPassword: adminPassword,
-    type: document.getElementById('motion-type').value,
-    intensity: parseInt(document.getElementById('motion-intensity').value)
-  };
-  startGeneration(settings);
-}
-
-function generateAI(){
-  var prompt = document.getElementById('ai-prompt').value.trim();
-  if(!prompt){ alert('Введите запрос'); return; }
-  document.getElementById('ai-generateBtn').disabled = true;
-  document.getElementById('ai-result').style.display = 'block';
-  document.getElementById('ai-result').textContent = 'Думаю...';
-  fetch('/api/ai-helper', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ prompt: prompt, adminPassword: adminPassword })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if(data.error) throw new Error(data.error);
-    document.getElementById('ai-result').textContent = data.result;
-  })
-  .catch(function(e){
-    document.getElementById('ai-result').textContent = 'Ошибка: ' + e.message;
-  })
-  .finally(function(){
-    document.getElementById('ai-generateBtn').disabled = false;
-  });
-}
-
-function startGeneration(settings){
-  document.getElementById('statusBar').classList.add('show');
-  document.getElementById('statusText').textContent = 'Отправка запроса...';
-  fetch('/api/generate', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(settings)
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if(data.error) throw new Error(data.error);
-    currentTaskId = data.taskId;
-    document.getElementById('statusText').textContent = 'Генерация...';
-    startPolling();
-  })
-  .catch(function(e){
-    document.getElementById('statusText').textContent = 'Ошибка: ' + e.message;
-    setTimeout(function(){ document.getElementById('statusBar').classList.remove('show'); }, 3000);
-  });
-}
-
-function startPolling(){
-  pollTimer = setInterval(function(){
-    fetch('/api/status?taskId=' + encodeURIComponent(currentTaskId))
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if(data.status === 'succeeded'){
-          clearInterval(pollTimer);
-          document.getElementById('statusBar').classList.remove('show');
-          showResult(data);
-        } else if(data.status === 'failed'){
-          clearInterval(pollTimer);
-          document.getElementById('statusText').textContent = 'Ошибка генерации';
-          setTimeout(function(){ document.getElementById('statusBar').classList.remove('show'); }, 3000);
-        }
-      })
-      .catch(function(){});
-  }, 5000);
-}
-
-function cancelGeneration(){
-  if(pollTimer) clearInterval(pollTimer);
-  document.getElementById('statusBar').classList.remove('show');
-}
-
-function showResult(data){
-  var content = document.getElementById('resultContent');
-  content.innerHTML = '';
-  if(data.videoUrl){
-    var video = document.createElement('video');
-    video.src = data.videoUrl;
-    video.controls = true;
-    content.appendChild(video);
-  }
-  if(data.imageUrl){
-    var img = document.createElement('img');
-    img.src = data.imageUrl;
-    content.appendChild(img);
-  }
-  if(data.audioUrl){
-    var audio = document.createElement('audio');
-    audio.src = data.audioUrl;
-    audio.controls = true;
-    content.appendChild(audio);
-  }
-  document.getElementById('resultModal').classList.add('show');
-}
-
-function closeResult(){
-  document.getElementById('resultModal').classList.remove('show');
-}
-
-function downloadResult(){
-  alert('Скачивание...');
-}
-
-function useAsReference(){
-  alert('Добавлено в референсы');
-}
-
-function showHistory(){
-  alert('История проектов будет доступна после подключения базы данных');
-}
+gate();
 </script>
 </body>
 </html>
