@@ -72,7 +72,7 @@
   +'.bar #launchBadge,.bar #hwInline,.bar-in>#launchBadge,.bar-in>#hwInline{display:none!important}'
   +'.warn{background:rgba(163,230,53,.06)!important;border-color:rgba(163,230,53,.25)!important;color:#c9cfba!important}'
   +'button,.mode,.tool,.pill,.new-card,.drop{transition:all .2s ease}'
-  +'.links a:hover{color:#e5e7eb!important}'
+  +'.links a:hover,.menu a:hover{color:#e5e7eb!important}'
   +'::selection{background:#A3E635;color:#000}'
   +'#trustBlock{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.05);border-radius:12px;color:#9ca3af;font-size:.85rem;line-height:1.6;text-align:left}'
   +'#trustBlock a{color:#A3E635;text-decoration:none}'
@@ -131,7 +131,7 @@
   var LABEL={'/':'Главная','/gen.html':'Создать видео','/cartoon.html':'Мультфильм','/avatar.html':'Аватар','/motion.html':'Моушен','/lipsync.html':'Липсинк','/help.html':'Помощь','/pro-studio.html':'PRO-студия'};
 
   function fixMenu(){
-    var as=document.querySelectorAll('nav .links a, .sidebar a, .menu a');
+    var as=document.querySelectorAll('.links a, .sidebar a, .menu a');
     for(var i=0;i<as.length;i++){
       var a=as[i];
       var href=a.getAttribute('href')||'';
@@ -143,13 +143,13 @@
         a.parentNode.removeChild(a);
       }
     }
-    var links=document.querySelector('nav .links');
+    var links=document.querySelector('.links');
     if(links&&!links.querySelector('a[href="/gen.html"]')){
       var na=document.createElement('a');
       na.href='/gen.html';na.textContent='Создать видео';
       if(links.firstChild){links.insertBefore(na,links.firstChild);}else{links.appendChild(na);}
     }
-    var menu=document.querySelector('nav .menu');
+    var menu=document.querySelector('.menu');
     if(menu){
       if(LABEL[path]&&path!=='/help.html'&&!menu.querySelector('a[href="'+path+'"]')){
         var selfA=document.createElement('a');
@@ -187,7 +187,7 @@
         if((sas[w].getAttribute('href')||'')===path){sas[w].classList.add('hwActive');}
       }
     }
-    var l2=document.querySelectorAll('nav .links a');
+    var l2=document.querySelectorAll('.links a');
     for(var e2=0;e2<l2.length;e2++){
       if((l2[e2].getAttribute('href')||'')===path){l2[e2].classList.add('hwActive');}
     }
@@ -258,7 +258,7 @@
     payBtn.parentNode.insertBefore(ib,payBtn);
   }
 
-  var links2=document.querySelector('nav .links');
+  var links2=document.querySelector('.links');
   if(links2&&!links2.querySelector('a[href="/help.html"]')){
     var ha=document.createElement('a');
     ha.href='/help.html';ha.textContent='❓ Помощь';
