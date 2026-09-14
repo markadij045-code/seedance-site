@@ -128,7 +128,22 @@
   }
   fixFooter();
 
-  var LABEL={'/':'Главная','/gen.html':'Создать видео','/cartoon.html':'Мультфильм','/avatar.html':'Аватар','/motion.html':'Моушен','/lipsync.html':'Липсинк','/help.html':'Помощь','/pro-studio.html':'PRO-студия'};
+  var ORDER=[['/gen.html','Создать видео'],['/cartoon.html','Мультфильм'],['/avatar.html','Аватар'],['/motion.html','Моушен'],['/lipsync.html','Липсинк'],['/help.html','Помощь'],['/pro-studio.html','PRO-студия']];
+
+  function ensureOrder(container,withPro){
+    if(!container)return;
+    for(var o=0;o<ORDER.length;o++){
+      var h=ORDER[o][0],t=ORDER[o][1];
+      if(h==='/pro-studio.html'&&!withPro)continue;
+      var el=container.querySelector('a[href="'+h+'"]');
+      if(!el){
+        el=document.createElement('a');
+        el.href=h;el.textContent=t;
+        if(h==='/pro-studio.html')el.style.color='#6b7a58';
+      }
+      container.appendChild(el);
+    }
+  }
 
   function fixMenu(){
     var as=document.querySelectorAll('.links a, .sidebar a, .menu a');
@@ -143,32 +158,8 @@
         a.parentNode.removeChild(a);
       }
     }
-    var links=document.querySelector('.links');
-    if(links&&!links.querySelector('a[href="/gen.html"]')){
-      var na=document.createElement('a');
-      na.href='/gen.html';na.textContent='Создать видео';
-      if(links.firstChild){links.insertBefore(na,links.firstChild);}else{links.appendChild(na);}
-    }
-    var menu=document.querySelector('.menu');
-    if(menu){
-      if(LABEL[path]&&path!=='/help.html'&&!menu.querySelector('a[href="'+path+'"]')){
-        var selfA=document.createElement('a');
-        selfA.href=path;selfA.textContent=LABEL[path];
-        var helpA=menu.querySelector('a[href="/help.html"]');
-        if(helpA){menu.insertBefore(selfA,helpA);}else{menu.appendChild(selfA);}
-      }
-      if(!menu.querySelector('a[href="/pro-studio.html"]')){
-        var pa=document.createElement('a');
-        pa.href='/pro-studio.html';
-        pa.textContent='PRO-студия';
-        pa.style.color='#6b7a58';
-        menu.appendChild(pa);
-      }
-      var mas=menu.querySelectorAll('a');
-      for(var q=0;q<mas.length;q++){
-        if((mas[q].getAttribute('href')||'')===path){mas[q].classList.add('hwActive');}
-      }
-    }
+    ensureOrder(document.querySelector('.links'),false);
+    ensureOrder(document.querySelector('.menu'),true);
     var sb=document.querySelector('.sidebar');
     if(sb){
       if(!sb.querySelector('a[href="/gen.html"]')){
@@ -187,9 +178,9 @@
         if((sas[w].getAttribute('href')||'')===path){sas[w].classList.add('hwActive');}
       }
     }
-    var l2=document.querySelectorAll('.links a');
-    for(var e2=0;e2<l2.length;e2++){
-      if((l2[e2].getAttribute('href')||'')===path){l2[e2].classList.add('hwActive');}
+    var hl=document.querySelectorAll('.links a, .menu a');
+    for(var e2=0;e2<hl.length;e2++){
+      if((hl[e2].getAttribute('href')||'')===path){hl[e2].classList.add('hwActive');}
     }
   }
   fixMenu();
@@ -256,13 +247,6 @@
     ib.textContent='❓ Пошаговая инструкция — для новичков';
     ib.onclick=open;
     payBtn.parentNode.insertBefore(ib,payBtn);
-  }
-
-  var links2=document.querySelector('.links');
-  if(links2&&!links2.querySelector('a[href="/help.html"]')){
-    var ha=document.createElement('a');
-    ha.href='/help.html';ha.textContent='❓ Помощь';
-    links2.appendChild(ha);
   }
 
   setInterval(function(){
