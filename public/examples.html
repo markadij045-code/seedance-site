@@ -1,188 +1,73 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Галерея примеров — SeedGen</title>
-<meta property="og:title" content="Галерея работ SeedGen">
-<meta property="og:description" content="Все видео сгенерированы нейросетью из одной фразы или фото">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SeedGen — Примеры видео</title>
+<meta name="description" content="Реальные примеры видео, сгенерированных на SeedGen: коты, мемы, мультфильмы. Смотри и заказывай такое же.">
+<link rel="stylesheet" href="/style.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0c08;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
-nav{width:100%;max-width:1200px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111408;border:1px solid #232a18;border-radius:999px;padding:12px 22px;margin-bottom:36px}
-.logo{font-weight:700;font-size:1.15rem}
-.logo span{color:#A3E635}
-.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.links a{color:#d1d5db;text-decoration:none;margin-left:16px;font-size:.95rem}
-.links a:hover{color:#A3E635}
-.links a.active{color:#A3E635;font-weight:700}
-.links .pro{position:relative;color:#6b7a58;cursor:pointer;margin-left:16px;font-size:.95rem}
-.links .pro:hover{color:#A3E635}
-.links .pro .tip{display:none;position:absolute;top:130%;left:50%;transform:translateX(-50%);background:#A3E635;color:#0a0c08;font-size:.75rem;font-weight:700;border-radius:8px;padding:4px 10px;white-space:nowrap;z-index:20}
-.links .pro:hover .tip,.links .pro.open .tip{display:block}
-.burger{display:none;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar{position:fixed;top:0;right:-100%;width:280px;height:100%;background:#0a0c08;border-left:1px solid rgba(163,230,53,0.3);padding:60px 24px 24px;z-index:200;transition:right 0.3s ease;display:flex;flex-direction:column;gap:16px}
-.sidebar.open{right:0}
-.sidebar a{color:#fff;text-decoration:none;font-size:1.05rem;padding:12px;border-radius:12px}
-.sidebar a:hover{background:rgba(163,230,53,0.1)}
-.sidebar-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199}
-.sidebar-backdrop.open{display:block}
-h1{font-size:2.2rem;margin:30px 0 8px;color:#A3E635;text-align:center}
-.sub{color:#9ca3af;text-align:center;max-width:560px;margin-bottom:32px}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;width:100%;max-width:1200px;padding:20px}
-.item{background:#101308;border:1px solid rgba(163,230,53,0.2);border-radius:16px;overflow:hidden;transition:transform 0.2s}
-.item:hover{transform:translateY(-4px)}
-.item video{width:100%;display:block;cursor:pointer;aspect-ratio:16/9;object-fit:cover;background:#000}
-.item .meta{padding:14px}
-.item .title{color:#fff;font-size:1rem;font-weight:600;margin-bottom:4px}
-.item .cat{color:#9ca3af;font-size:.85rem}
-.tag{display:inline-block;background:rgba(163,230,53,0.15);color:#A3E635;font-size:.75rem;padding:2px 8px;border-radius:4px;margin-right:4px}
-.go{display:inline-block;margin-top:10px;color:#A3E635;font-size:.85rem;text-decoration:none;font-weight:600}
-.go:hover{text-decoration:underline}
-footer{margin-top:auto;padding:26px 0 10px;color:#5b6152;font-size:.85rem;text-align:center;line-height:1.7}
-footer a{color:#9ca3af;text-decoration:none}
-.cta{margin:40px 0;text-align:center}
-.cta a{display:inline-block;padding:16px 40px;background:#A3E635;color:#000;text-decoration:none;border-radius:999px;font-weight:700;font-size:1.05rem}
-.welcome-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center;padding:20px}
-.welcome-modal.open{display:flex}
-.welcome-box{background:#101308;border:1px solid rgba(163,230,53,0.4);border-radius:24px;padding:40px;max-width:480px;width:100%;text-align:center;position:relative}
-.welcome-box h2{font-size:1.8rem;margin-bottom:16px;color:#fff}
-.welcome-box h2 .lime{color:#A3E635}
-.welcome-box p{color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:20px}
-.welcome-box .gift{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);border-radius:14px;padding:14px;color:#ffb066;font-size:0.95rem;margin-bottom:24px}
-.welcome-box button{width:100%;padding:16px;background:#A3E635;color:#000;border:none;border-radius:999px;font-size:1.05rem;font-weight:700;cursor:pointer}
-.welcome-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer}
-@media(max-width:768px){.links{display:none}.burger{display:block}}
+.ex-main{max-width:1100px;margin:0 auto;padding:40px 20px 60px}
+.ex-main h1{font-size:2rem;color:#fff;margin:0 0 10px}
+.ex-sub{color:#9ca3af;margin:0 0 28px;line-height:1.6}
+.ex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.ex-card{margin:0;background:#101308;border:1px solid rgba(163,230,53,.15);border-radius:16px;overflow:hidden}
+.ex-card video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
+.ex-cap{padding:14px 16px;color:#e5e7eb;font-size:.95rem;line-height:1.5}
+.ex-tags{color:#9ca3af;font-size:.8rem}
+.ex-cta{margin:32px 0 10px;text-align:center}
+.ex-note{color:#6b7280;font-size:.85rem;text-align:center}
+.home-btn{padding:10px 18px;border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#e5e7eb;text-decoration:none;font-size:.9rem;white-space:nowrap}
+footer{padding:28px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer a{color:#A3E635}
 </style>
 </head>
 <body>
-
-<div class="welcome-modal" id="welcomeModal">
-  <div class="welcome-box">
-    <button class="welcome-close" onclick="closeWelcome()">✕</button>
-    <h2>🎬 <span class="lime">Мурзик уже танцует</span></h2>
-    <p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>
-    <div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>
-    <button onclick="closeWelcome()">Поехали?</button>
-  </div>
-</div>
-
-<nav>
-  <div class="logo"><span>▶</span> SeedGen</div>
-  <div class="links">
-    <a href="/">Главная</a>
-    <a href="/gen.html">Создать видео</a>
-    <a href="/cartoon.html">Мультфильм</a>
-    <a href="/avatar.html">Аватар</a>
-    <a href="/motion.html">Моушен</a>
-    <a href="/lipsync.html">Липсинк</a>
-    <a class="active" href="/examples.html">Примеры</a>
-    <span class="pro" onclick="this.classList.toggle('open')">🎛 PRO-студия<span class="tip">скоро ✨</span></span>
-  </div>
-  <button class="burger" onclick="toggleSidebar()">☰</button>
+<header class="bar"><div class="bar-in">
+<a class="logo" href="/">▶ SeedGen</a>
+<nav class="menu">
+<a href="/gen.html">Создать видео</a>
+<a href="/cartoon.html">Мультфильм</a>
+<a href="/avatar.html">Аватар</a>
+<a href="/motion.html">Моушен</a>
+<a href="/lipsync.html">Липсинк</a>
+<a href="/help.html">Помощь</a>
 </nav>
-<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
-<div class="sidebar" id="sidebar">
-  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-  <a href="/">🏠 Главная</a>
-  <a href="/gen.html">📝 Создать видео</a>
-  <a href="/cartoon.html">🎭 Мультфильм</a>
-  <a href="/avatar.html">🗣 Аватар</a>
-  <a href="/motion.html">🎮 Моушен</a>
-  <a href="/lipsync.html">💬 Липсинк</a>
-  <a href="/examples.html">🖼 Примеры</a>
+<a class="home-btn" href="/">На главную</a>
+</div></header>
+
+<main class="ex-main">
+<h1>Примеры работ</h1>
+<p class="ex-sub">Реальные видео, сгенерированные на SeedGen. Звук выключен по умолчанию — включи, если нужно.</p>
+
+<div class="ex-grid">
+<figure class="ex-card">
+<video src="/cat-space.mp4.mp4" controls muted preload="metadata" playsinline></video>
+<figcaption class="ex-cap">Кот-космонавт на орбите<br><span class="ex-tags">Услуга: Создать видео · 5 сек · 480p</span></figcaption>
+</figure>
+<figure class="ex-card">
+<video src="/cat-city.mp4.mp4" controls muted preload="metadata" playsinline></video>
+<figcaption class="ex-cap">Кот гуляет по неоновому городу<br><span class="ex-tags">Услуга: Создать видео · 5 сек · 480p</span></figcaption>
+</figure>
+<figure class="ex-card">
+<video src="/cat-knight.mp4.mp4" controls muted preload="metadata" playsinline></video>
+<figcaption class="ex-cap">Кот-рыцарь в доспехах<br><span class="ex-tags">Услуга: Создать видео · 5 сек · 480p</span></figcaption>
+</figure>
+<figure class="ex-card">
+<video src="/cat-dance.mp4.mp4" controls muted preload="metadata" playsinline></video>
+<figcaption class="ex-cap">Танцующий кот<br><span class="ex-tags">Услуга: Моушен · 5 сек · 480p</span></figcaption>
+</figure>
+<figure class="ex-card">
+<video src="/cat-knight-dance.mp4.mp4" controls muted preload="metadata" playsinline></video>
+<figcaption class="ex-cap">Кот-рыцарь отжигает<br><span class="ex-tags">Услуга: Моушен · 5 сек · 480p</span></figcaption>
+</figure>
 </div>
 
-<h1>🖼 Галерея работ</h1>
-<p class="sub">Все эти видео сгенерированы нейросетью из одной фразы или фото. Играют сами при прокрутке, нажми — встанут на паузу.</p>
+<div class="ex-cta"><a class="btn" href="/gen.html">Хочу такое же — от 199 ₽</a></div>
+<p class="ex-note">Каждое видео сделано из обычного текстового описания за 1–5 минут.</p>
+</main>
 
-<div class="gallery">
-  <div class="item">
-    <video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video>
-    <div class="meta">
-      <div class="title">Гигантский кот в городе</div>
-      <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/gen.html">Сделать такое же →</a>
-    </div>
-  </div>
-  <div class="item">
-    <video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video>
-    <div class="meta">
-      <div class="title">Кот-пилот в космосе</div>
-      <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/gen.html">Сделать такое же →</a>
-    </div>
-  </div>
-  <div class="item">
-    <video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video>
-    <div class="meta">
-      <div class="title">Танцующий котёнок</div>
-      <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/gen.html">Сделать такое же →</a>
-    </div>
-  </div>
-  <div class="item">
-    <video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video>
-    <div class="meta">
-      <div class="title">Кот-рыцарь против дракона</div>
-      <div class="cat"><span class="tag">текст → видео</span></div>
-      <a class="go" href="/gen.html">Сделать такое же →</a>
-    </div>
-  </div>
-  <div class="item">
-    <video src="/cat-knight-dance.mp4" muted loop preload="metadata" playsinline></video>
-    <div class="meta">
-      <div class="title">Рыцарь танцует</div>
-      <div class="cat"><span class="tag">моушен</span></div>
-      <a class="go" href="/motion.html">Сделать такое же →</a>
-    </div>
-  </div>
-</div>
-
-<div class="cta">
-  <a href="/gen.html">Создать своё видео →</a>
-</div>
-
-<footer>
-  Самозанятый Малкова Ольга Аркадьевна, ИНН 420900493994<br>
-  <a href="/legal.html">Оферта</a> · <a href="/legal.html">Политика конфиденциальности</a> · <a href="/legal.html">Контакты</a>
-</footer>
-
-<script>
-function showWelcome(){
-  if(!localStorage.getItem('seedgen_welcomed')){
-    setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
-  }
-}
-function closeWelcome(){
-  document.getElementById('welcomeModal').classList.remove('open');
-  localStorage.setItem('seedgen_welcomed','1');
-}
-showWelcome();
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarBackdrop').classList.toggle('open');
-}
-
-(function(){
-  var vids = document.querySelectorAll('.item video');
-  vids.forEach(function(v){
-    v.addEventListener('click', function(){
-      if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
-    });
-  });
-  var vo = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      if(en.isIntersecting && en.intersectionRatio > 0.4){
-        en.target.play().catch(function(){});
-      } else {
-        en.target.pause();
-      }
-    });
-  }, {threshold:[0, 0.4, 0.8]});
-  vids.forEach(function(v){ vo.observe(v); });
-})();
-</script>
+<footer>© 2026 SeedGen · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></footer>
+<script src="/help-widget.js"></script>
 </body>
 </html>
