@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Личный кабинет — SeedGen</title>
+<meta name="description" content="Аккаунт SeedGen: история заказов, мои ведущие для аватара. Регистрация по желанию — оплата работает и без неё.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
+<style>
+.acc-main{max-width:720px;margin:0 auto;padding:40px 20px 80px;color:#c9cfba}
+.acc-main h1{color:#fff;font-size:1.8rem;margin:0 0 6px}
+.acc-sub{color:#9ca3af;margin:0 0 24px;font-size:.92rem;line-height:1.6}
+.acc-card{border:1px solid rgba(163,230,53,.18);background:#101308;border-radius:20px;padding:24px;margin-bottom:20px}
+.acc-tabs{display:flex;gap:8px;margin-bottom:18px}
+.acc-tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:none;color:#9ca3af;font-weight:600;font-size:.9rem;cursor:pointer}
+.acc-tabs button.on{border-color:rgba(163,230,53,.5);background:rgba(163,230,53,.08);color:#A3E635}
+.acc-card label{display:block;font-size:.8rem;color:#6b7280;margin:12px 0 6px}
+.acc-card input{width:100%;padding:12px 14px;background:#050607;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#fff;font-size:.95rem;outline:none}
+.acc-card input:focus{border-color:#A3E635}
+.acc-btn{width:100%;margin-top:16px;padding:13px;border:none;border-radius:12px;background:#A3E635;color:#000;font-weight:700;font-size:.95rem;cursor:pointer}
+.acc-btn.ghost{background:none;border:1px solid rgba(255,255,255,.16);color:#e5e7eb}
+.acc-err{color:#fca5a5;font-size:.85rem;min-height:20px;margin-top:10px}
+.acc-why{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:rgba(163,230,53,.06);border:1px solid rgba(163,230,53,.18);color:#9ca3af;font-size:.85rem;line-height:1.6}
+.acc-why b{color:#A3E635}
+.pcard{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:14px;margin-bottom:10px}
+.pcard img{width:56px;height:56px;border-radius:10px;object-fit:cover}
+.pcard .pn{color:#e5e7eb;font-weight:600;font-size:.9rem}
+.pcard .pd{color:#6b7280;font-size:.75rem}
+.pcard .pa{margin-left:auto;display:flex;gap:8px}
+.pcard .pa a,.pcard .pa button{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.8rem;cursor:pointer;text-decoration:none}
+.pcard .pa button.del{color:#fca5a5}
+footer{padding:28px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer a{color:#A3E635}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+<a class="logo" href="/">▶ SeedGen</a>
+<nav class="menu">
+<a href="/gen.html">Создать видео</a>
+<a href="/avatar.html">Аватар</a>
+<a href="/help.html">Помощь</a>
+</nav>
+<a class="home-btn" href="/" style="padding:10px 18px;border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#e5e7eb;text-decoration:none;font-size:.9rem">На главную</a>
+</div></header>
+
+<main class="acc-main">
+<h1>Личный кабинет</h1>
+<p class="acc-sub">Регистрация — по желанию: оплатить и получить видео можно и без неё. Аккаунт хранит твоих ведущих и историю заказов на всех устройствах.</p>
+
+<div class="acc-card" id="authBox">
+  <div class="acc-tabs">
+    <button id="tabLogin" class="on">Вход</button>
+    <button id="tabReg">Регистрация</button>
+  </div>
+  <label>E-mail</label>
+  <input type="email" id="fEmail" placeholder="you@mail.ru" autocomplete="email">
+  <label>Пароль</label>
+  <input type="password" id="fPass" placeholder="Минимум 6 символов" autocomplete="current-password">
+  <button class="acc-btn" id="authBtn">Войти</button>
+  <div class="acc-err" id="authErr"></div>
+  <div class="acc-why"><b>Зачем аккаунт:</b> мои ведущие аватара (фото+озвучка в один клик) · история заказов с видео с любого устройства · будущие минуты аватара и промокоды. Пароль храним в виде хеша, лишнего не собираем.</div>
+</div>
+
+<div class="acc-card" id="accBox" style="display:none">
+  <h3 style="color:#A3E635;margin:0 0 6px" id="accEmail"></h3>
+  <p style="color:#6b7280;font-size:.82rem;margin:0 0 16px">Ты вошёл. Ведущие сохраняются с страницы «Аватар» кнопкой «Сохранить как ведущего».</p>
+  <div id="presetsList"></div>
+  <button class="acc-btn ghost" id="logoutBtn">Выйти</button>
+</div>
+</main>
+
+<footer>© 2026 SeedGen · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта</a></footer>
+
+<script>
+var token = localStorage.getItem('seedgen_token') || '';
+var mode = 'login';
+
+function setMode(m){
+  mode = m;
+  document.getElementById('tabLogin').classList.toggle('on', m === 'login');
+  document.getElementById('tabReg').classList.toggle('on', m === 'reg');
+  document.getElementById('authBtn').textContent = (m === 'login') ? 'Войти' : 'Создать аккаунт';
+  document.getElementById('authErr').textContent = '';
+}
+document.getElementById('tabLogin').onclick = function(){ setMode('login'); };
+document.getElementById('tabReg').onclick = function(){ setMode('reg'); };
+
+function api(body, cb){
+  fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+    .then(function(x){ cb(x.ok, x.d); })
+    .catch(function(){ cb(false, {error:'Сеть недоступна'}); });
+}
+
+function showAccount(email){
+  document.getElementById('authBox').style.display = 'none';
+  document.getElementById('accBox').style.display = 'block';
+  document.getElementById('accEmail').textContent = email;
+  loadPresets();
+}
+
+function loadPresets(){
+  api({action:'presets-list', token:token}, function(ok, d){
+    var box = document.getElementById('presetsList');
+    if(!ok){ box.innerHTML = '<p style="color:#6b7280;font-size:.85rem">Ведущих пока нет. Сохрани первого на странице «Аватар».</p>'; return; }
+    if(!d.presets || !d.presets.length){ box.innerHTML = '<p style="color:#6b7280;font-size:.85rem">Ведущих пока нет. Собери связку фото+озвучка на странице «Аватар» и нажми «Сохранить как ведущего».</p>'; return; }
+    box.innerHTML = d.presets.map(function(p){
+      var dt = new Date(p.createdAt || Date.now()).toLocaleDateString('ru-RU');
+      return '<div class="pcard"><img src="data:image/jpeg;base64,' + p.image + '" alt="">'
+        + '<div><div class="pn">' + p.name + '</div><div class="pd">' + dt + ' · ' + (p.orientation || '9:16') + '</div></div>'
+        + '<div class="pa"><a href="/avatar.html?preset=' + p.id + '">Открыть в аватаре</a>'
+        + '<button class="del" data-id="' + p.id + '">Удалить</button></div></div>';
+    }).join('');
+    box.querySelectorAll('.del').forEach(function(b){
+      b.onclick = function(){
+        api({action:'presets-del', token:token, id:b.getAttribute('data-id')}, function(){ loadPresets(); });
+      };
+    });
+  });
+}
+
+document.getElementById('authBtn').onclick = function(){
+  var email = document.getElementById('fEmail').value.trim();
+  var pass = document.getElementById('fPass').value;
+  var err = document.getElementById('authErr');
+  if(!email || !pass){ err.textContent = 'Заполни e-mail и пароль'; return; }
+  err.textContent = 'Секунду…';
+  api({action: mode, email: email, password: pass}, function(ok, d){
+    if(!ok){ err.textContent = d.error || 'Ошибка'; return; }
+    token = d.token;
+    localStorage.setItem('seedgen_token', token);
+    err.textContent = '';
+    showAccount(d.email);
+  });
+};
+
+document.getElementById('logoutBtn').onclick = function(){
+  api({action:'logout', token:token}, function(){
+    localStorage.removeItem('seedgen_token');
+    token = '';
+    document.getElementById('accBox').style.display = 'none';
+    document.getElementById('authBox').style.display = 'block';
+    setMode('login');
+  });
+};
+
+if(token){
+  api({action:'me', token:token}, function(ok, d){
+    if(ok){ showAccount(d.email); } else { localStorage.removeItem('seedgen_token'); token = ''; }
+  });
+}
+</script>
+</body>
+</html>
