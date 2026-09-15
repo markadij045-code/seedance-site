@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Говорящий аватар — SeedGen</title>
 <meta property="og:title" content="Говорящий аватар — фото говорит твоим голосом">
-<meta property="og:description" content="Загрузи фото и свою озвучку — человек заговорит твоими словами с синхронными губами. 499 ₽">
+<meta property="og:description" content="Выбери ведущего или загрузи своё фото, добавь озвучку — человек заговорит твоими словами. 499 ₽">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
@@ -22,14 +22,16 @@
 .seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
 .seg button:hover{color:var(--text)}
 .seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.seg button.soon{opacity:.55;cursor:not-allowed}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
 .tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
 .tile:hover{border-color:var(--border-lime)}
-.tile img{width:100%;height:100%;object-fit:cover}
+.tile img,.tile svg{width:100%;height:100%;object-fit:cover;display:block}
 .tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
 .tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.72rem;text-align:center;padding:6px;pointer-events:none}
 .tile .add svg{width:20px;height:20px;color:rgba(163,230,53,.6)}
 .tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:3}
+.tile.sel{border-color:var(--lime);box-shadow:0 0 0 2px rgba(163,230,53,.35)}
 .tname{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 5px;font-size:.64rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
 .playbadge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
 .playbadge i{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(163,230,53,.55);color:var(--lime);display:grid;place-items:center;font-style:normal;font-size:.72rem}
@@ -40,7 +42,7 @@
 .tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
 .tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
 .tl-item.done{color:var(--text)}
-.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
+.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 10px 10px rgba(163,230,53,.45)}
 .tl-item.now{color:var(--text)}
 .tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
@@ -103,18 +105,23 @@
 <main class="ws">
   <section class="panel">
     <div class="psteps">
-      <span class="pstep active" id="st1"><i>1</i> Фото и озвучка</span>
+      <span class="pstep active" id="st1"><i>1</i> Ведущий и озвучка</span>
       <span class="pstep" id="st2"><i>2</i> Оплата</span>
       <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
     </div>
 
-    <div class="lbl">Фото (лицо крупно)</div>
-    <div class="tiles"><div class="tile" id="photoTile"></div></div>
-    <div class="rolehint">🛡 Загружай только своё фото или фото человека, который дал согласие. Люди разрешены.</div>
+    <div class="lbl">Кто говорит</div>
+    <div class="tiles" id="castRow"></div>
+    <div class="rolehint">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно.</div>
 
-    <div class="lbl">Твоя озвучка (MP3/WAV, до 30 сек, чистый голос)</div>
-    <div class="tiles"><div class="tile" id="audioTile"></div></div>
+    <div class="lbl">Озвучка</div>
+    <div class="seg" id="voiceRow">
+      <button type="button" id="vAudio" class="on">🎙 Своё аудио</button>
+      <button type="button" id="vText" class="soon">✍️ Текст + голос · скоро</button>
+    </div>
+    <div class="tiles" style="margin-top:10px"><div class="tile" id="audioTile"></div></div>
     <div class="rolehint" id="audioInfo"></div>
+    <div class="rolehint">💬 Хочешь длиннее 30 секунд? После запуска длинные ролики будем собирать из фрагментов — как в больших аватар-студиях.</div>
 
     <div class="lbl">Формат видео</div>
     <div class="seg" id="orientRow">
@@ -171,8 +178,16 @@ function toggleSidebar(){
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
+var PRESETS=[
+ {id:0,name:'Ведущая Алина',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#dbeafe"/><path d="M96 512c0-96 72-150 160-150s160 54 160 150z" fill="#1f2937"/><rect x="236" y="290" width="40" height="70" rx="18" fill="#fcd9b8"/><circle cx="256" cy="215" r="92" fill="#fde3c8"/><path d="M164 205c0-70 42-110 92-110s92 40 92 110c0 24-6 46-6 46s2-66-26-86c-20 16-96 20-124 4c-16 20-22 62-22 62s-6-12-6-26z" fill="#3b2a20"/><circle cx="224" cy="220" r="9" fill="#111"/><circle cx="288" cy="220" r="9" fill="#111"/><path d="M232 262c14 12 34 12 48 0" stroke="#b4552d" stroke-width="7" fill="none" stroke-linecap="round"/></svg>'},
+ {id:1,name:'Ведущий Макс',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#e5e7eb"/><path d="M96 512c0-96 72-150 160-150s160 54 160 150z" fill="#374151"/><rect x="236" y="290" width="40" height="70" rx="18" fill="#e8b98a"/><circle cx="256" cy="215" r="90" fill="#eec096"/><path d="M170 190c10-60 46-88 86-88s76 28 86 88c-30-24-60-30-86-30s-56 6-86 30z" fill="#263238"/><path d="M196 240c8 40 30 58 60 58s52-18 60-58c-14 10-34 14-60 14s-46-4-60-14z" fill="#455a64"/><circle cx="224" cy="212" r="9" fill="#111"/><circle cx="288" cy="212" r="9" fill="#111"/><path d="M236 252c12 8 28 8 40 0" stroke="#8d5524" stroke-width="6" fill="none" stroke-linecap="round"/></svg>'},
+ {id:2,name:'Блогер Ева',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#312e81"/><path d="M96 512c0-96 72-150 160-150s160 54 160 150z" fill="#0f172a"/><rect x="236" y="290" width="40" height="70" rx="18" fill="#f5c8a3"/><circle cx="256" cy="215" r="92" fill="#f8d4b2"/><path d="M160 230c-6-90 40-130 96-130s102 40 96 130c-8 40-20 52-20 52s8-70-16-96c-30 18-90 18-120 0c-24 26-16 96-16 96s-14-12-20-52z" fill="#f472b6"/><circle cx="224" cy="220" r="9" fill="#111"/><circle cx="288" cy="220" r="9" fill="#111"/><path d="M230 262c16 14 36 14 52 0" stroke="#c2410c" stroke-width="7" fill="none" stroke-linecap="round"/></svg>'},
+ {id:3,name:'Кот Барсик',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#101308"/><path d="M150 160l26-76 44 52z" fill="#1f2937"/><path d="M362 160l-26-76-44 52z" fill="#1f2937"/><path d="M96 512c0-90 72-140 160-140s160 50 160 140z" fill="#1f2937"/><circle cx="256" cy="235" r="112" fill="#1f2937"/><circle cx="214" cy="215" r="15" fill="#A3E635"/><circle cx="298" cy="215" r="15" fill="#A3E635"/><circle cx="214" cy="215" r="6" fill="#050607"/><circle cx="298" cy="215" r="6" fill="#050607"/><path d="M244 262h24l-12 14z" fill="#f9a8d4"/><path d="M256 276c0 10-10 16-20 16M256 276c0 10 10 16 20 16" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M160 250l-40-6M160 268l-38 8M352 250l40-6M352 268l38 8" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/></svg>'}
+];
+
 var orientation = '9:16';
 var imageData = null, audioData = null, audioSec = 0;
+var presetId = null;
 var audioNameStr = null, localAudioBlobUrl = null;
 var restoring = false;
 var stage = 'setup';
@@ -223,14 +238,56 @@ function setOr(or){
 var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>';
 var SVG_NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
 
-function renderPhotoTile(){
-  var t = document.getElementById('photoTile');
-  if(imageData){
-    t.innerHTML = '<img src="data:image/jpeg;base64,' + imageData + '"><button class="x" type="button" onclick="removePhoto()">✕</button>';
+function svgToPng(svg, cb){
+  var img = new Image();
+  img.onload = function(){
+    var c = document.createElement('canvas');
+    c.width = 512; c.height = 512;
+    c.getContext('2d').drawImage(img, 0, 0, 512, 512);
+    cb(c.toDataURL('image/jpeg', 0.9).split(',')[1]);
+  };
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+function renderCast(){
+  var row = document.getElementById('castRow');
+  row.innerHTML = '';
+  var up = document.createElement('div');
+  up.className = 'tile' + (imageData && presetId === null ? ' sel' : '');
+  if(imageData && presetId === null){
+    up.innerHTML = '<img src="data:image/jpeg;base64,' + imageData + '"><button class="x" type="button" onclick="removePhoto()">✕</button><div class="tname">Твоё фото</div>';
   }else{
-    t.innerHTML = '<span class="add">' + SVG_PLUS + 'Выбрать фото</span><input type="file" id="photoInput" accept="image/*">';
-    document.getElementById('photoInput').addEventListener('change', onPhotoFile);
+    up.innerHTML = '<span class="add">' + SVG_PLUS + 'Своё фото</span><input type="file" id="photoInput" accept="image/*">';
   }
+  row.appendChild(up);
+  if(presetId === null){
+    var inp = up.querySelector('#photoInput');
+    if(inp) inp.addEventListener('change', onPhotoFile);
+  }
+  PRESETS.forEach(function(p){
+    var t = document.createElement('div');
+    t.className = 'tile' + (presetId === p.id ? ' sel' : '');
+    t.innerHTML = p.svg + '<div class="tname">' + p.name + '</div>';
+    t.onclick = function(){ selectPreset(p.id); };
+    row.appendChild(t);
+  });
+}
+
+function selectPreset(id){
+  presetId = id;
+  setStatus('Готовим ведущего...');
+  svgToPng(PRESETS[id].svg, function(b64){
+    imageData = b64;
+    renderCast();
+    setStatus('');
+    saveDraft(); updateSteps(); updateBar();
+  });
+}
+
+function removePhoto(){
+  imageData = null; presetId = null;
+  renderCast();
+  saveDraft(); updateSteps(); updateBar();
 }
 
 function renderAudioTile(){
@@ -256,17 +313,16 @@ function renderAudioTile(){
   info.textContent = audioSec ? ('⏱ Твоя озвучка: ' + audioSec + ' сек — столько же будет длиться видео. Цена фиксированная: 499 ₽.') : '';
 }
 
-function removePhoto(){
-  imageData = null;
-  renderPhotoTile();
-  saveDraft(); updateSteps(); updateBar();
-}
 function removeAudio(){
   audioData = null; audioSec = 0; audioNameStr = null;
   if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
   renderAudioTile();
   saveDraft(); updateSteps(); updateBar();
 }
+
+document.getElementById('vText').onclick=function(){
+  alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон и прикрепи файл — аватар скажет твоими словами.');
+};
 
 function shrink(dataUrl, cb){
   var img = new Image();
@@ -290,7 +346,8 @@ function onPhotoFile(e){
   reader.onload = function(){
     shrink(reader.result, function(d){
       imageData = d.split(',')[1];
-      renderPhotoTile();
+      presetId = null;
+      renderCast();
       setStatus('');
       saveDraft(); updateSteps(); updateBar();
     });
@@ -353,7 +410,7 @@ function saveDraft(){
   if(restoring) return;
   try{
     localStorage.setItem('seedgen_avatar_draft', JSON.stringify({
-      image: imageData, orientation: orientation, seconds: audioSec,
+      image: imageData, orientation: orientation, seconds: audioSec, preset: presetId,
       audio: audioData, audioName: audioNameStr, savedAt: Date.now()
     }));
   }catch(e){}
@@ -365,6 +422,7 @@ function saveDraft(){
     if(!s) return;
     restoring = true;
     imageData = s.image || null;
+    presetId = (s.preset === undefined || s.preset === null) ? null : s.preset;
     if(s.orientation) orientation = s.orientation;
     audioSec = s.seconds || 0;
     audioNameStr = s.audioName || null;
@@ -372,7 +430,7 @@ function saveDraft(){
       el.classList.toggle('on', el.getAttribute('data-or') === orientation);
     });
     restoring = false;
-    renderPhotoTile();
+    renderCast();
     renderAudioTile();
     updateSteps(); updateBar();
     if(s.audio){
@@ -389,7 +447,7 @@ function saveDraft(){
         }
       });
     }
-  }catch(e){ restoring = false; updateSteps(); updateBar(); }
+  }catch(e){ restoring = false; renderCast(); updateSteps(); updateBar(); }
 })();
 
 function callGenerate(pid){
@@ -440,7 +498,7 @@ btn.addEventListener('click', function(){
     callGenerate(activePaymentId);
     return;
   }
-  if(!imageData){ alert('Сначала загрузи фото'); return; }
+  if(!imageData){ alert('Выбери ведущего или загрузи своё фото'); return; }
   if(!audioData){ alert('Сначала загрузи озвучку (или обнови черновик — возможно, файл устарел)'); return; }
   if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
   btn.disabled = true;
@@ -483,7 +541,7 @@ btn.addEventListener('click', function(){
           setStatus('Оплата прошла! Запускаем генерацию...');
           callGenerate(pid);
         }else{
-          setStatus('Оплата прошла! ✅ Прикрепи фото и озвучку — и нажми кнопку внизу ещё раз.');
+          setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку внизу ещё раз.');
           updateSteps(); updateBar();
         }
       }else{
@@ -500,7 +558,7 @@ btn.addEventListener('click', function(){
     });
 })();
 
-renderPhotoTile();
+renderCast();
 renderAudioTile();
 updateSteps();
 updateBar();
