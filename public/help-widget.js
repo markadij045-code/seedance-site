@@ -70,7 +70,8 @@
     ['А если нейросеть отклонила контент?','Деньги вернутся автоматически на ту же карту в течение 1–3 рабочих дней. Подробности — в оферте, раздел «Политика контента и возврата».'],
     ['Можно фото с людьми?','Да, в услугах «Мультфильм», «Аватар», «Моушен» и «Липсинк» — только своё фото или с согласия человека. В «Создать видео» нейросеть сама отсеивает реальные лица по правилам безопасности.'],
     ['Кто такие ведущие-пресеты?','Алина, Макс, Ева и кот Барсик — иллюстрации-заглушки, чтобы попробовать аватар без своего фото. Их можно использовать свободно. После запуска добавим ИИ-ведущих и озвучку текстом.'],
-    ['А если нужно видео длиннее 30 секунд?','После запуска озвучку длиннее 30 секунд будем собирать из фрагментов в один ролик — как в больших аватар-студиях. Цена — за минуту готового видео.']
+    ['А если нужно видео длиннее 30 секунд?','После запуска озвучку длиннее 30 секунд будем собирать из фрагментов в один ролик — как в больших аватар-студиях. Цена — за минуту готового видео.'],
+    ['Зачем регистрация?','По желанию: аккаунт хранит твоих ведущих аватара и историю заказов на всех устройствах. Оплатить и получить видео можно и без неё.']
   ];
 
   var fl=document.createElement('link');
@@ -168,6 +169,19 @@
     }
   }
 
+  function ensureAccBtn(){
+    var host=document.querySelector('.nav-in')||document.querySelector('.bar-in');
+    if(!host||document.getElementById('hwAcc'))return;
+    var t='';
+    try{t=localStorage.getItem('seedgen_token')||'';}catch(e){}
+    var a=document.createElement('a');
+    a.id='hwAcc';
+    a.href='/account.html';
+    a.textContent=t?'👤 Кабинет':'👤 Войти';
+    a.style.cssText='padding:9px 14px;border:1px solid rgba(255,255,255,.16);border-radius:10px;color:#e5e7eb;text-decoration:none;font-size:.88rem;white-space:nowrap';
+    host.appendChild(a);
+  }
+
   function fixMenu(){
     var as=document.querySelectorAll('.links a, .sidebar a, .menu a');
     for(var i=0;i<as.length;i++){
@@ -205,6 +219,7 @@
     for(var e2=0;e2<hl.length;e2++){
       if((hl[e2].getAttribute('href')||'')===path){hl[e2].classList.add('hwActive');}
     }
+    ensureAccBtn();
   }
   fixMenu();
 
@@ -279,39 +294,6 @@
     ib.textContent='❓ Пошаговая инструкция — для новичков';
     ib.onclick=open;
     payBtn.parentNode.insertBefore(ib,payBtn);
-  }
-
-  if(path.indexOf('avatar')!==-1 && typeof window.renderAudioTile==='function'){
-    window.onAudioFile=function(e){
-      var f=e.target.files[0]; if(!f) return;
-      if(f.type.indexOf('audio/')!==0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
-      if(f.size>3*1024*1024){ alert('Выбери аудио до 3 МБ (например, голосовую запись).'); return; }
-      probeAudio(f,30,function(dur){
-        if(window.localAudioBlobUrl){ URL.revokeObjectURL(window.localAudioBlobUrl); }
-        window.localAudioBlobUrl=URL.createObjectURL(f);
-        window.audioNameStr=f.name;
-        renderAudioTile();
-        setStatus('Загружаем аудио...');
-        var reader=new FileReader();
-        reader.onload=function(){
-          var base64=String(reader.result).split(',')[1];
-          fetch('/api/store',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:safeFileName('avatar-audio',f,'.mp3'),base64:base64,contentType:f.type||'audio/mpeg')})
-            .then(function(r){return r.json().then(function(dd){return {ok:r.ok,d:dd};});})
-            .then(function(x){
-              if(!x.ok||!x.d.url){ throw new Error(x.d.error||'Ошибка загрузки'); }
-              window.audioData=x.d.url;
-              window.audioSec=Math.min(30,Math.max(1,Math.ceil(dur)));
-              if(window.localAudioBlobUrl){ URL.revokeObjectURL(window.localAudioBlobUrl); window.localAudioBlobUrl=null; }
-              renderAudioTile();
-              setStatus('');
-              saveDraft(); updateSteps(); updateBar();
-            })
-            .catch(function(err){ setStatus(''); alert('Не удалось загрузить аудио: '+err.message); });
-        };
-        reader.readAsDataURL(f);
-      });
-    };
-    renderAudioTile();
   }
 
   setInterval(function(){
