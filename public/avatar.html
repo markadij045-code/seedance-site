@@ -38,11 +38,13 @@
 .audiotile{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,230,53,.14),rgba(59,130,246,.10))}
 .audiotile svg{width:26px;height:26px;color:var(--lime)}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
+.rolehint a{color:var(--lime)}
+.savebtn{margin-top:10px;padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
 .tl{display:flex;flex-direction:column;gap:13px;margin:4px 0 18px}
 .tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
 .tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
 .tl-item.done{color:var(--text)}
-.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 10px 10px rgba(163,230,53,.45)}
+.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
 .tl-item.now{color:var(--text)}
 .tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
@@ -112,7 +114,12 @@
 
     <div class="lbl">Кто говорит</div>
     <div class="tiles" id="castRow"></div>
+    <button class="savebtn" id="savePresetBtn" type="button" style="display:none">💾 Сохранить как ведущего</button>
     <div class="rolehint">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно.</div>
+
+    <div class="lbl" id="myLbl" style="display:none">Мои ведущие (из аккаунта)</div>
+    <div class="tiles" id="myRow" style="display:none"></div>
+    <div class="rolehint" id="myHint"></div>
 
     <div class="lbl">Озвучка</div>
     <div class="seg" id="voiceRow">
@@ -195,6 +202,9 @@ var paidSeen = false;
 var activePaymentId = null;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
+var token = '';
+try{ token = localStorage.getItem('seedgen_token') || ''; }catch(e){}
+var serverPresets = [];
 
 function setStatus(t){ statusEl.textContent = t; }
 
@@ -214,6 +224,13 @@ function updateBar(){
     btn.textContent = 'Оплачено ✅';
     btn.disabled = true;
   }
+  updateSaveBtn();
+}
+
+function updateSaveBtn(){
+  var b = document.getElementById('savePresetBtn');
+  if(!b) return;
+  b.style.display = (token && imageData && audioData) ? 'inline-block' : 'none';
 }
 
 function updateSteps(){
@@ -289,6 +306,64 @@ function removePhoto(){
   renderCast();
   saveDraft(); updateSteps(); updateBar();
 }
+
+function renderMyRow(){
+  var lbl=document.getElementById('myLbl'),row=document.getElementById('myRow'),hint=document.getElementById('myHint');
+  if(!token){
+    lbl.style.display='none'; row.style.display='none';
+    hint.innerHTML='👤 <a href="/account.html">Войди в аккаунт</a>, чтобы сохранять ведущих и брать их с любого устройства.';
+    return;
+  }
+  lbl.style.display='block'; row.style.display='grid';
+  if(!serverPresets.length){
+    row.innerHTML='';
+    hint.textContent='Сохранённых ведущих пока нет — собери связку выше и нажми «Сохранить как ведущего».';
+    return;
+  }
+  hint.textContent='';
+  row.innerHTML='';
+  serverPresets.forEach(function(p){
+    var t=document.createElement('div');
+    t.className='tile';
+    t.innerHTML='<img src="data:image/jpeg;base64,'+p.image+'"><div class="tname">'+p.name+'</div>';
+    t.onclick=function(){ selectServerPreset(p); };
+    row.appendChild(t);
+  });
+}
+
+function selectServerPreset(p){
+  presetId=null;
+  imageData=p.image;
+  if(p.audio){ audioData=p.audio; audioNameStr=p.audioName||p.name; audioSec=p.seconds||0; }
+  if(p.orientation) orientation=p.orientation;
+  document.querySelectorAll('#orientRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-or')===orientation); });
+  renderCast(); renderAudioTile(); renderMyRow(); updateSteps(); updateBar(); saveDraft();
+}
+
+function loadMyPresets(cb){
+  if(!token){ renderMyRow(); if(cb)cb(); return; }
+  fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'presets-list',token:token})})
+    .then(function(r){return r.json();})
+    .then(function(d){ serverPresets=(d&&d.presets)?d.presets:[]; renderMyRow(); if(cb)cb(); })
+    .catch(function(){ renderMyRow(); if(cb)cb(); });
+}
+
+document.getElementById('savePresetBtn').onclick=function(){
+  if(!token){ location.href='/account.html'; return; }
+  var name=prompt('Имя ведущего (до 40 символов):','Мой ведущий');
+  if(!name) return;
+  setStatus('Сохраняем ведущего...');
+  fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'presets-save',token:token,preset:{name:name,image:imageData,audio:audioData,audioName:audioNameStr,orientation:orientation,seconds:audioSec}})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      setStatus('');
+      if(d.error){ alert(d.error); return; }
+      serverPresets=d.presets||serverPresets;
+      renderMyRow();
+      alert('Ведущий сохранён! Он также доступен в кабинете.');
+    })
+    .catch(function(){ setStatus(''); alert('Не удалось сохранить'); });
+};
 
 function renderAudioTile(){
   var t = document.getElementById('audioTile');
@@ -445,124 +520,4 @@ function saveDraft(){
           setStatus('⚠️ Черновик озвучки устарел — прикрепи аудио заново.');
           updateSteps(); updateBar();
         }
-      });
-    }
-  }catch(e){ restoring = false; renderCast(); updateSteps(); updateBar(); }
-})();
-
-function callGenerate(pid){
-  stage = 'gen';
-  updateSteps(); updateBar();
-  setStatus('Оживляем аватар... 1–5 минут ⏳');
-  fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'avatar', paymentId:pid, image:imageData, audio:audioData, seconds:audioSec, aspect:orientation})})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.error){ throw new Error(d.error); }
-      try{ localStorage.setItem('seedgen_avatar_task_' + pid, d.taskId); }catch(e){}
-      poll(d.taskId);
-    })
-    .catch(function(e){
-      setStatus('Ошибка: ' + e.message);
-      stage = 'setup';
-      updateSteps(); updateBar();
-    });
-}
-
-function poll(taskId){
-  var timer = setInterval(function(){
-    fetch('/api/status?taskId=' + encodeURIComponent(taskId))
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(d.status === 'succeeded'){
-          clearInterval(timer);
-          document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + d.videoUrl + '"></video></div>';
-          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
-          stage = 'done';
-          updateSteps(); updateBar();
-          try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
-        }else if(d.status === 'failed'){
-          clearInterval(timer);
-          setStatus('Ошибка: ' + (d.error || 'попробуй другое фото и аудио'));
-          stage = 'setup';
-          updateSteps(); updateBar();
-        }else{
-          setStatus('Оживляем аватар... 1–5 минут ⏳');
-        }
-      })
-      .catch(function(){});
-  }, 5000);
-}
-
-btn.addEventListener('click', function(){
-  if(paidSeen && activePaymentId && imageData && audioData && stage !== 'gen' && stage !== 'done'){
-    callGenerate(activePaymentId);
-    return;
-  }
-  if(!imageData){ alert('Выбери ведущего или загрузи своё фото'); return; }
-  if(!audioData){ alert('Сначала загрузи озвучку (или обнови черновик — возможно, файл устарел)'); return; }
-  if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
-  btn.disabled = true;
-  setStatus('Создаём платёж...');
-  saveDraft();
-  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'avatar'})})
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data.error){ throw new Error(data.error); }
-      activePaymentId = data.paymentId;
-      saveDraft();
-      window.location.href = data.confirmationUrl;
-    })
-    .catch(function(e){
-      setStatus('Ошибка: ' + e.message);
-      btn.disabled = false;
-    });
-});
-
-(function(){
-  var pid = new URLSearchParams(window.location.search).get('paymentId');
-  if(!pid) return;
-  activePaymentId = pid;
-  paidSeen = true;
-  var savedTask = localStorage.getItem('seedgen_avatar_task_' + pid);
-  if(savedTask){
-    stage = 'gen';
-    updateSteps(); updateBar();
-    setStatus('Оживляем аватар... 1–5 минут ⏳');
-    poll(savedTask);
-    return;
-  }
-  setStatus('Проверяем оплату...');
-  fetch('/api/check-payment?paymentId=' + encodeURIComponent(pid))
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data.paid){
-        saveDraft();
-        if(imageData && audioData){
-          setStatus('Оплата прошла! Запускаем генерацию...');
-          callGenerate(pid);
-        }else{
-          setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку внизу ещё раз.');
-          updateSteps(); updateBar();
-        }
-      }else{
-        paidSeen = false;
-        activePaymentId = null;
-        setStatus('Оплата не завершена. Фото и формат сохранены — можешь оплатить ещё раз.');
-        updateSteps(); updateBar();
-      }
-    })
-    .catch(function(e){
-      paidSeen = false;
-      setStatus('Ошибка: ' + e.message);
-      updateSteps(); updateBar();
-    });
-})();
-
-renderCast();
-renderAudioTile();
-updateSteps();
-updateBar();
-</script>
-<script src="/help-widget.js"></script>
-</body>
-</html>
+     
