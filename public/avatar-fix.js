@@ -14,7 +14,8 @@
       var reader=new FileReader();
       reader.onload=function(){
         var base64=String(reader.result).split(',')[1];
-        fetch('/api/store',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:safeFileName('avatar-audio',f,'.mp3'),base64:base64,contentType:f.type||'audio/mpeg')})
+        var payload={name:safeFileName('avatar-audio',f,'.mp3'),base64:base64,contentType:f.type||'audio/mpeg'};
+        fetch('/api/store',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
           .then(function(r){return r.json().then(function(dd){return {ok:r.ok,d:dd};});})
           .then(function(x){
             if(!x.ok||!x.d.url){ throw new Error(x.d.error||'Ошибка загрузки'); }
