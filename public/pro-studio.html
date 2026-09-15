@@ -14,7 +14,6 @@ button{font-family:inherit}
 a{color:#A3E635}
 .lime{color:#A3E635}
 .muted{color:#9ca3af}
-/* верхняя панель */
 .topbar{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(10,12,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
 .topbar .logo{display:flex;gap:8px;align-items:center;font-weight:700;font-size:1.05rem;color:#fff;white-space:nowrap}
 .navmenu{display:flex;gap:4px;flex-wrap:nowrap;overflow-x:auto}
@@ -26,7 +25,6 @@ a{color:#A3E635}
 .chip{padding:7px 12px;border-radius:999px;border:1px solid rgba(163,230,53,.35);background:rgba(163,230,53,.08);color:#A3E635;font-size:.8rem;font-weight:700;white-space:nowrap}
 .btn-s{padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.85rem;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn-s:hover{border-color:rgba(163,230,53,.5)}
-/* каркас */
 .frame{position:fixed;top:56px;bottom:0;left:0;right:0;display:flex}
 .rail{width:56px;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px;align-items:center;padding:12px 0}
 .rail button{width:38px;height:38px;border-radius:12px;border:none;background:rgba(255,255,255,.06);color:#e5e7eb;font-size:1rem;cursor:pointer}
@@ -44,7 +42,6 @@ a{color:#A3E635}
 .litem .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
 .dot.ok{background:#A3E635}.dot.gen{background:#f59e0b}.dot.err{background:#ef4444}
 .lempty{color:#6b7280;font-size:.85rem;text-align:center;padding:40px 20px;line-height:1.6}
-/* центр */
 .center{flex:1;display:flex;flex-direction:column;min-width:0}
 .stage{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
 .micon{font-size:3rem;margin-bottom:10px}
@@ -53,7 +50,6 @@ a{color:#A3E635}
 .mcaps{color:#d1d5db;font-size:.85rem;font-weight:600;margin-bottom:6px}
 .mcapline{color:#9ca3af;font-size:.85rem}
 .mcapline b{color:#A3E635;font-weight:600}
-/* промпт-бар */
 .pbar{border-top:1px solid rgba(255,255,255,.08);padding:12px 16px;background:#0a0c08}
 .pbox{border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(0,0,0,.4);padding:10px 12px}
 .pbox textarea{width:100%;min-height:64px;max-height:180px;background:none;border:none;outline:none;color:#e5e7eb;font:400 .95rem/1.5 'Inter',sans-serif;resize:vertical}
@@ -68,7 +64,6 @@ a{color:#A3E635}
 .refchip{position:relative;width:44px;height:44px;border-radius:10px;overflow:hidden;border:1px solid rgba(163,230,53,.35)}
 .refchip img{width:100%;height:100%;object-fit:cover}
 .refchip button{position:absolute;top:1px;right:1px;width:16px;height:16px;border:none;border-radius:50%;background:rgba(0,0,0,.75);color:#fca5a5;font-size:.6rem;cursor:pointer}
-/* правая панель */
 .rightpanel{width:320px;border-left:1px solid rgba(255,255,255,.07);overflow-y:auto;padding:16px;background:#0a0c08}
 .rblock{border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:12px;background:rgba(255,255,255,.02)}
 .rblock h4{font-size:.85rem;color:#d1d5db;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
@@ -77,8 +72,8 @@ a{color:#A3E635}
 .rrow label{display:block;font-size:.78rem;color:#6b7280;margin-bottom:6px}
 .rrow select{width:100%;padding:10px 12px;background:#111410;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#e5e7eb;font-size:.88rem;outline:none}
 .rrow select:focus{border-color:rgba(163,230,53,.5)}
-.toggle{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
-.toggle .sw{width:40px;height:22px;border-radius:999px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;flex:0 0 auto;transition:.2s}
+.toggle{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;cursor:pointer}
+.toggle .sw{width:40px;height:22px;border-radius:999px;background:rgba(255,255,255,.15);position:relative;flex:0 0 auto;transition:.2s}
 .toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
 .toggle.on .sw{background:#A3E635}
 .toggle.on .sw::after{left:21px;background:#000}
@@ -86,7 +81,6 @@ a{color:#A3E635}
 .toggle .td{font-size:.75rem;color:#6b7280}
 .resetbtn{width:100%;padding:9px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:none;color:#9ca3af;font-size:.82rem;cursor:pointer}
 .resetbtn:hover{color:#e5e7eb}
-/* статус и модалки */
 .statusbar{position:fixed;left:0;right:0;bottom:0;background:#0a0c08;border-top:1px solid rgba(163,230,53,.3);padding:12px 20px;display:none;align-items:center;gap:16px;z-index:200}
 .statusbar.show{display:flex}
 .statusbar .st{color:#A3E635;font-weight:600;font-size:.9rem;white-space:nowrap}
@@ -195,7 +189,7 @@ var PW = sessionStorage.getItem('seedgen_pro_pw') || '';
 function verify(pw, ok, fail){
   fetch('/api/imagine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminPassword:pw,verifyOnly:true})})
     .then(function(r){return r.json();})
-    .then(function(d){ d.ok?ok():fail('Неверный пароль'); })
+    .then(function(d){ if(d.ok){ok();}else{fail('Неверный пароль');} })
     .catch(function(){ fail('Сеть недоступна'); });
 }
 function gate(){
@@ -391,14 +385,20 @@ function renderLeft(){
       return '<div class="litem" data-i="'+i+'"><h5><span class="dot '+dot+'"></span>'+it.icon+' '+it.title+'</h5><p>'+it.prompt+'</p></div>';
     }).join('');
     box.querySelectorAll('.litem').forEach(function(el){
-      el.onclick=function(){ var it=p[parseInt(el.getAttribute('data-i'),10)]; if(it&&it.url){ openResult({videoUrl:it.type==='video'?it.url:null,imageUrl:it.type==='image'?it.url:null,audioUrl:it.type==='audio'?it.url:null}); } };
+      el.onclick=function(){
+        var it=p[parseInt(el.getAttribute('data-i'),10)];
+        if(it&&it.url){ openResult({videoUrl:it.type==='video'?it.url:null,imageUrl:it.type==='image'?it.url:null,audioUrl:it.type==='audio'?it.url:null}); }
+      };
     });
   }else if(S.lt==='chats'){
     var c=getChats();
     if(!c.length){ box.innerHTML='<div class="lempty">Чатов пока нет.<br>Напишите сообщение в LLM-студии — и создастся новый чат.</div>'; return; }
     box.innerHTML=c.map(function(it,i){ return '<div class="litem" data-i="'+i+'"><h5>🤖 '+it.title+'</h5><p>'+it.last+'</p></div>'; }).join('');
     box.querySelectorAll('.litem').forEach(function(el){
-      el.onclick=function(){ var it=c[parseInt(el.getAttribute('data-i'),10); ]};
+      el.onclick=function(){
+        var it=c[parseInt(el.getAttribute('data-i'),10)];
+        if(it){ openResult({aiText:it.full||it.last}); }
+      };
     });
   }else{
     var list=TPL[S.tab]||[];
@@ -479,7 +479,7 @@ function sendAI(prompt){
       btn.disabled=false;
       var text=d.result||('Ошибка: '+(d.error||'неизвестно'));
       var c=getChats();
-      c.unshift({title:prompt.slice(0,40),last:text.slice(0,60),ts:Date.now()});
+      c.unshift({title:prompt.slice(0,40),last:text.slice(0,60),full:text,ts:Date.now()});
       saveChats(c); setLt('chats');
       openResult({aiText:text});
     })
