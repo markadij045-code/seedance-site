@@ -124,11 +124,13 @@
   +'.hwDropBtn{background:none;border:none;color:#9ca3af;font-size:.95rem;cursor:pointer;padding:8px 10px;font-family:inherit}'
   +'.hwDropBtn:hover{color:#e5e7eb}'
   +'.hwDropBtn.hwActive{color:#fff;font-weight:600}'
-  +'.hwDropMenu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#101308;border:1px solid rgba(163,230,53,.25);border-radius:12px;padding:8px;min-width:230px;z-index:60;flex-direction:column;gap:2px;box-shadow:0 12px 32px rgba(0,0,0,.5)}'
+  +'.hwDropMenu{display:none;position:absolute;top:100%;left:0;background:#101308;border:1px solid rgba(163,230,53,.25);border-radius:12px;padding:8px;min-width:230px;z-index:60;flex-direction:column;gap:2px;box-shadow:0 12px 32px rgba(0,0,0,.5)}'
   +'.hwDrop.open .hwDropMenu,.hwDrop:hover .hwDropMenu{display:flex}'
   +'.hwDropMenu a{display:block;padding:9px 12px;border-radius:8px;color:#e5e7eb;text-decoration:none;font-size:.9rem;white-space:nowrap}'
   +'.hwDropMenu a:hover{background:rgba(163,230,53,.1)}'
-  +'.hwDropMenu a.hwActive{color:#A3E635}';
+  +'.hwDropMenu a.hwActive{color:#A3E635}'
+  +'.hwH1{font-size:2rem;margin:26px 0 6px;color:#fff}'
+  +'.hwH1sub{color:#9ca3af;font-size:.95rem;margin:0 0 18px}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -264,6 +266,20 @@
   }
   fixMenu();
 
+  var NAMES={'/gen.html':'Создать видео','/cartoon.html':'Мультфильм из фото','/avatar.html':'Говорящий аватар','/motion.html':'Моушен контроль','/lipsync.html':'Липсинк / дубляж'};
+  var SUBS={'/gen.html':'Опиши сцену словами — нейросеть снимет ролик за 1–5 минут','/cartoon.html':'Фото превращается в арт Pixar, а арт оживает в видео','/avatar.html':'Фото + озвучка = ведущий, который говорит твоими словами','/motion.html':'Персонаж с фото повторит движения из твоего видео','/lipsync.html':'Губы на видео синхронизируются с твоей озвучкой'};
+  if(NAMES[path]&&!document.querySelector('h1')){
+    var host=document.querySelector('main')||document.querySelector('.container:not(.nav-in):not(.bar-in)')||document.body;
+    var h1=document.createElement('h1');
+    h1.className='hwH1';
+    h1.textContent=NAMES[path];
+    host.insertBefore(h1,host.firstChild);
+    var sub=document.createElement('div');
+    sub.className='hwH1sub';
+    sub.textContent=SUBS[path]||'';
+    host.insertBefore(sub,h1.nextSibling);
+  }
+
   var payBtn=null;
   var btns=document.querySelectorAll('button');
   for(var i=0;i<btns.length;i++){
@@ -286,8 +302,8 @@
 
   if(LAUNCH_MODE){
     var badgeHTML='🚧 <b>Сайт готовится к запуску</b><br>Оплата откроется в ближайшие дни. Пока можешь потестить интерфейс — всё работает, кроме оплаты.';
-    var host=document.getElementById('wsNotice');
-    if(host){ host.innerHTML='<div id="launchBadge" class="launchBadge">'+badgeHTML+'</div>'; }
+    var host2=document.getElementById('wsNotice');
+    if(host2){ host2.innerHTML='<div id="launchBadge" class="launchBadge">'+badgeHTML+'</div>'; }
     else if(!WS&&payBtn&&!document.getElementById('launchBadge')){
       var badge=document.createElement('div');
       badge.id='launchBadge';
