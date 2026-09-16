@@ -89,6 +89,7 @@
   st.textContent=''
   +'body{font-family:\'Inter\',-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif}'
   +'h1,h2,h3,h4,.logo{font-family:\'Space Grotesk\',\'Inter\',sans-serif}'
+  +'.logo{white-space:nowrap}'
   +'body{background-image:radial-gradient(900px 500px at 85% -100px,rgba(163,230,53,.06),transparent 60%),radial-gradient(700px 500px at -100px 40%,rgba(59,130,246,.05),transparent 60%);background-attachment:fixed}'
   +'audio{color-scheme:dark}'
   +'.bar #launchBadge,.bar #hwInline,.bar-in>#launchBadge,.bar-in>#hwInline{display:none!important}'
@@ -118,7 +119,16 @@
   +'.menu a.hwActive{color:#fff!important;font-weight:600;position:relative}'
   +'.menu a.hwActive::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;width:5px;height:5px;border-radius:50%;background:#A3E635}'
   +'.links a.hwActive{color:#fff!important}'
-  +'.sidebar a.hwActive{color:#A3E635!important}';
+  +'.sidebar a.hwActive{color:#A3E635!important}'
+  +'.hwDrop{position:relative;display:inline-block}'
+  +'.hwDropBtn{background:none;border:none;color:#9ca3af;font-size:.95rem;cursor:pointer;padding:8px 10px;font-family:inherit}'
+  +'.hwDropBtn:hover{color:#e5e7eb}'
+  +'.hwDropBtn.hwActive{color:#fff;font-weight:600}'
+  +'.hwDropMenu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#101308;border:1px solid rgba(163,230,53,.25);border-radius:12px;padding:8px;min-width:230px;z-index:60;flex-direction:column;gap:2px;box-shadow:0 12px 32px rgba(0,0,0,.5)}'
+  +'.hwDrop.open .hwDropMenu,.hwDrop:hover .hwDropMenu{display:flex}'
+  +'.hwDropMenu a{display:block;padding:9px 12px;border-radius:8px;color:#e5e7eb;text-decoration:none;font-size:.9rem;white-space:nowrap}'
+  +'.hwDropMenu a:hover{background:rgba(163,230,53,.1)}'
+  +'.hwDropMenu a.hwActive{color:#A3E635}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -132,7 +142,7 @@
     wb.setAttribute('data-new','1');
     wb.innerHTML='<button class="welcome-close" id="hwWelClose">✕</button>'
       +'<h2>🎬 Мурзик уже танцует</h2>'
-      +'<p>SeedGen снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>'
+      +'<p>Ёшкин кот снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>'
       +'<div class="gift">🔥 Хиты: «Моушен» и «Липсинк» — персонаж повторяет твой танец и говорит твоим голосом</div>'
       +'<button id="hwWelGo">Поехали?</button>';
     wb.querySelector('#hwWelClose').onclick=closeWelcomeGlobal;
@@ -183,6 +193,15 @@
   }
 
   function fixMenu(){
+    var hd=document.querySelector('header')||document.querySelector('.top')||document.querySelector('.bar');
+    if(hd){
+      var kill=hd.querySelectorAll('a[href="/gen.html"],a[href="/cartoon.html"],a[href="/avatar.html"],a[href="/motion.html"],a[href="/lipsync.html"],a[href*="#services"],a[href*="#quality"]');
+      for(var k=0;k<kill.length;k++){if(kill[k].parentNode)kill[k].parentNode.removeChild(kill[k]);}
+      var hb=hd.querySelectorAll('button');
+      for(var k3=0;k3<hb.length;k3++){
+        if((hb[k3].textContent||'').trim()==='Создать видео'){hb[k3].parentNode.removeChild(hb[k3]);}
+      }
+    }
     var as=document.querySelectorAll('.links a, .sidebar a, .menu a');
     for(var i=0;i<as.length;i++){
       var a=as[i];
@@ -195,20 +214,42 @@
         a.parentNode.removeChild(a);
       }
     }
+    var menu=document.querySelector('.menu');
+    if(menu&&!menu.querySelector('.hwDrop')){
+      var dd=document.createElement('div');dd.className='hwDrop';
+      var items=[['/gen.html','Создать видео'],['/cartoon.html','Мультфильм из фото'],['/avatar.html','Говорящий аватар'],['/motion.html','Моушен контроль'],['/lipsync.html','Липсинк / дубляж']];
+      var ih='';
+      for(var q=0;q<items.length;q++){ih+='<a href="'+items[q][0]+'">'+items[q][1]+'</a>';}
+      dd.innerHTML='<button type="button" class="hwDropBtn">Услуги ▾</button><div class="hwDropMenu">'+ih+'</div>';
+      menu.insertBefore(dd,menu.firstChild);
+      dd.querySelector('.hwDropBtn').onclick=function(ev){ev.stopPropagation();dd.classList.toggle('open');};
+      document.addEventListener('click',function(){dd.classList.remove('open');});
+    }
+    var svc={'/gen.html':1,'/cartoon.html':1,'/avatar.html':1,'/motion.html':1,'/lipsync.html':1};
+    if(svc[path]){
+      var db2=document.querySelector('.hwDropBtn');if(db2)db2.classList.add('hwActive');
+      var da2=document.querySelector('.hwDropMenu a[href="'+path+'"]');if(da2)da2.classList.add('hwActive');
+    }
+    if(menu){
+      var ml=[['/examples.html','Примеры'],['/help.html','Помощь'],['/pro-studio.html','PRO-студия']];
+      for(var mm=0;mm<ml.length;mm++){
+        if(!menu.querySelector('a[href="'+ml[mm][0]+'"]')){
+          var ma=document.createElement('a');ma.href=ml[mm][0];ma.textContent=ml[mm][1];
+          if(ml[mm][0]==='/pro-studio.html')ma.style.color='#6b7a58';
+          menu.appendChild(ma);
+        }
+      }
+    }
     ensureOrder(document.querySelector('.links'),false);
-    ensureOrder(document.querySelector('.menu'),true);
     var sb=document.querySelector('.sidebar');
     if(sb){
-      if(!sb.querySelector('a[href="/gen.html"]')){
-        var nb=document.createElement('a');
-        nb.href='/gen.html';nb.textContent='📝 Создать видео';
-        var sc=sb.querySelector('.sidebar-close');
-        if(sc&&sc.nextSibling){sb.insertBefore(nb,sc.nextSibling);}else{sb.appendChild(nb);}
-      }
-      if(!sb.querySelector('a[href="/pro-studio.html"]')){
-        var pb=document.createElement('a');
-        pb.href='/pro-studio.html';pb.textContent='🎛 PRO-студия';
-        sb.appendChild(pb);
+      var slist=[['/gen.html','📝 Создать видео'],['/cartoon.html','🎬 Мультфильм из фото'],['/avatar.html','🗣 Говорящий аватар'],['/motion.html','🕺 Моушен контроль'],['/lipsync.html','🎤 Липсинк / дубляж'],['/examples.html','Примеры'],['/help.html','Помощь'],['/pro-studio.html','🎛 PRO-студия']];
+      for(var s2=0;s2<slist.length;s2++){
+        if(!sb.querySelector('a[href="'+slist[s2][0]+'"]')){
+          var sa=document.createElement('a');sa.href=slist[s2][0];sa.textContent=slist[s2][1];
+          if(slist[s2][0]==='/pro-studio.html')sa.style.color='#6b7a58';
+          sb.appendChild(sa);
+        }
       }
       var sas=sb.querySelectorAll('a');
       for(var w=0;w<sas.length;w++){
