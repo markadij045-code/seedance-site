@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /pro-studio.html
+Disallow: /account.html
 
-Sitemap: https://www.seedgen.ru/sitemap.xml
+Sitemap: https://www.yoshkin-kot.online/sitemap.xml
