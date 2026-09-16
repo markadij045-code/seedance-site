@@ -296,18 +296,18 @@
     payBtn.parentNode.insertBefore(ib,payBtn);
   }
 
-  // REBRAND: SeedGen → Ёшкин кот (повторный, догоняет перерисованные куски)
+  // REBRAND: SeedGen → Ёшкин кот (повторный, регистронезависимый)
   function rebrand(){
     function fixText(t){
-      return t.replace(/SeedGen/g,'Ёшкин кот').replace(/www\.seedgen\.ru/g,'www.yoshkin-kot.online').replace(/seedgen\.ru/g,'yoshkin-kot.online');
+      return t.replace(/SeedGen/g,'Ёшкин кот').replace(/seedgen/gi,'Ёшкин кот').replace(/www\.yoshkin-kot\.online/g,'www.yoshkin-kot.online');
     }
-    if(document.title.indexOf('eedgen')!==-1)document.title=fixText(document.title);
+    if(/eedgen/i.test(document.title))document.title=fixText(document.title);
     var ogt=document.querySelector('meta[property="og:title"]');
-    if(ogt&&ogt.content&&ogt.content.indexOf('eedgen')!==-1)ogt.content=fixText(ogt.content);
+    if(ogt&&ogt.content&&/eedgen/i.test(ogt.content))ogt.content=fixText(ogt.content);
     var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null);
     var n;
     while(n=w.nextNode()){
-      if(n.nodeValue.indexOf('eedgen')!==-1)n.nodeValue=fixText(n.nodeValue);
+      if(/eedgen/i.test(n.nodeValue))n.nodeValue=fixText(n.nodeValue);
     }
   }
   rebrand();
