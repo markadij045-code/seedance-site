@@ -3,7 +3,7 @@
   var LAUNCH_MODE = true;
   var LAUNCH_MESSAGE = 'Запуск сайта совсем скоро! 🚀 Оплата откроется в ближайшие дни. А пока можешь потестить интерфейс — нажми кнопку и увидишь, как будет работать.';
 
-  var MAINURL='https://www.seedgen.ru';
+  var MAINURL='https://www.yoshkin-kot.online';
   var ogu=document.querySelector('meta[property="og:url"]');
   if(ogu)ogu.setAttribute('content',MAINURL+'/');
   var can=document.querySelector('link[rel="canonical"]');
@@ -146,8 +146,8 @@
     if(ft.innerHTML.indexOf('Написать в MAX')===-1){
       ft.innerHTML+='<br><a href="'+MAXURL+'" target="_blank" rel="noopener">💬 Написать в MAX — поддержка</a>';
     }
-    if(ft.innerHTML.indexOf('www.seedgen.ru')===-1){
-      ft.innerHTML+='<br>Сайт: <a href="'+MAINURL+'/">www.seedgen.ru</a>';
+    if(ft.innerHTML.indexOf('www.yoshkin-kot.online')===-1){
+      ft.innerHTML+='<br>Сайт: <a href="'+MAINURL+'/">www.yoshkin-kot.online</a>';
     }
   }
   fixFooter();
@@ -295,6 +295,21 @@
     ib.onclick=open;
     payBtn.parentNode.insertBefore(ib,payBtn);
   }
+
+  // REBRAND: SeedGen → Ёшкин кот
+  (function(){
+    function fixText(t){
+      return t.replace(/SeedGen/g,'Ёшкин кот').replace(/www\.seedgen\.ru/g,'www.yoshkin-kot.online').replace(/seedgen\.ru/g,'yoshkin-kot.online');
+    }
+    document.title=fixText(document.title);
+    var ogt=document.querySelector('meta[property="og:title"]');
+    if(ogt&&ogt.content)ogt.content=fixText(ogt.content);
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null);
+    var n;
+    while(n=w.nextNode()){
+      if(n.nodeValue.indexOf('eedgen')!==-1)n.nodeValue=fixText(n.nodeValue);
+    }
+  })();
 
   setInterval(function(){
     var v=document.querySelector('#result video');
