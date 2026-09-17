@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Инструкции — Ёшкин кот</title>
+<meta name="description" content="Как получить лучшее видео: инструкции по всем услугам Ёшкин кот. Формула промпта, примеры, частые ошибки.">
+<link rel="stylesheet" href="/style.css">
+<style>
+.gd{max-width:860px;margin:0 auto;padding:40px 20px 80px;color:#c9cfba;line-height:1.7;font-size:.95rem}
+.gd h1{color:#fff;font-size:2rem;margin:0 0 8px}
+.gd-sub{color:#9ca3af;margin:0 0 20px}
+.gd-note{border:1px solid rgba(163,230,53,.35);background:rgba(163,230,53,.08);border-radius:16px;padding:14px 18px;margin:18px 0;color:#e5e7eb}
+.gd-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.gd-tabs button{padding:9px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#9ca3af;font:600 .87rem 'Inter',sans-serif;cursor:pointer}
+.gd-tabs button.on{border-color:rgba(163,230,53,.5);color:#A3E635;background:rgba(163,230,53,.08)}
+.gd-sec{display:none}
+.gd-sec.on{display:block}
+.gd h3{color:#A3E635;margin:28px 0 8px;font-size:1.1rem}
+.gd h4{color:#fff;margin:18px 0 6px;font-size:.95rem}
+.gd ul{margin:6px 0 0 20px;padding:0}
+.gd li{margin:5px 0}
+.gd .ex{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;margin:8px 0;font-size:.88rem;color:#e5e7eb}
+.gd a{color:#A3E635}
+.bar{position:fixed;left:0;right:0;top:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}
+.bar-in{max-width:1160px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:18px}
+.logo{color:#fff;text-decoration:none;font-weight:700;display:flex;align-items:center;gap:8px}
+.logo svg{width:20px;height:20px}
+.home-btn{margin-left:auto;padding:9px 16px;border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#e5e7eb;text-decoration:none;font-size:.88rem;white-space:nowrap}
+footer{padding:28px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer a{color:#A3E635}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+<a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>Ёшкин кот</a>
+<a class="home-btn" href="/">На главную</a>
+</div></header>
+
+<main class="gd" style="margin-top:70px">
+<h1>Инструкции по услугам</h1>
+<p class="gd-sub">Пять вкладок — по одной на каждую услугу. Ссылка с рабочей страницы открывает сразу свою вкладку.</p>
+
+<div class="gd-note">🎓 Делаете видео впервые? Прочитайте инструкцию перед стартом: от того, как вы напишете промпт, зависит качество видео. Две минуты чтения экономят неудачную генерацию.</div>
+
+<div class="gd-tabs">
+<button type="button" data-tab="video">Видео · Seedance 2.5</button>
+<button type="button" data-tab="cartoon">Мультфильм</button>
+<button type="button" data-tab="avatar">Аватар</button>
+<button type="button" data-tab="motion">Моушен</button>
+<button type="button" data-tab="lipsync">Липсинк</button>
+</div>
+
+<h3>База Seedance 2.5 — пригодится во всех услугах</h3>
+<h4>Формула промпта</h4>
+<ul><li>Кто или что в кадре → где → что делает → камера и свет → стиль.</li><li>Чем конкретнее свет и камера, тем кинематографичнее результат.</li></ul>
+<div class="ex">Было: «кот в скафандре」<br>Стало: «Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре, плавный наезд камеры」</div>
+<h4>Маркеры @</h4>
+<ul><li>Вставь @ в описание, чтобы сослаться на загруженный файл: @Image1 — главный герой, @Video1 — движение камеры, @Audio1 — ритм.</li></ul>
+<h4>Что нейросеть отклонит</h4>
+<ul><li>Реальные лица, знаменитостей и чужой контент в услугах 「Видео」: заказ не выполняется, деньги возвращаются автоматически. Подробности — в <a href="/legal.html#content-policy">оферте</a>.</li><li>В 「Мультфильме」, 「Аватаре」, 「Моушене」и 「Липсинке」люди разрешены: там кадр проходит через арт-преобразование или синхронизацию, а не через прямую генерацию лица.</li></ul>
+<h4>Честная цена</h4>
+<ul><li>Цена видна до оплаты и не меняется молча: 5 сек 480p — 199 ₽, +30 ₽ за каждую секунду сверх пяти, 720p +200 ₽, 1080p +300 ₽.</li></ul>
+
+<section class="gd-sec" id="tab-video">
+<h3>Создать видео · Seedance 2.5</h3>
+<h4>Что загрузить</h4>
+<ul><li>Необязательно: текста достаточно.</li><li>Фото для стиля — иллюстрация, аниме, ИИ-картинка, предмет или пейзаж. Реальные лица — отклоняются.</li><li>Видео-референс — для камеры и движения (MP4, до 15 сек).</li><li>Звук-референс — для музыки и ритма (MP3/WAV, до 15 сек), работает только вместе с фото или видео.</li></ul>
+<h4>Что написать</h4>
+<ul><li>Сцену по формуле выше. Кнопка 「✨ Улучшить описание」бесплатно превратит пару слов в кинематографичный промпт.</li></ul>
+<h4>Пример промпта</h4>
+<div class="ex">「Гигантский пушистый кот идёт по ночному мегаполису, неон отражается в мокром асфальте, камера плавно спускается между зданиями, кинематографичный стиль」</div>
+<h4>Частые ошибки</h4>
+<ul><li>「Просто кот」— без сцены и света нейросеть додумывает сама, и не всегда удачно.</li><li>Реальный человек в фото для стиля — отказ и авто-возврат.</li><li>Сразу десять референсов в первом заказе: начни с текста или одного фото.</li></ul>
+<h4>Что получишь</h4>
+<ul><li>MP4, 5–30 сек, 480p/720p/1080p, формат 16:9 / 9:16 / 1:1.</li><li>Готовность 1–5 минут, хранение 7 дней.</li></ul>
+</section>
+
+<section class="gd-sec" id="tab-cartoon">
+<h3>Мультфильм из фото</h3>
+<h4>Что загрузить</h4>
+<ul><li>Своё фото или фото с согласия человека: здесь реальное лицо не страшно — сначала оно становится артом, потом оживает.</li><li>Лучше всего: одно лицо, анфас, хорошее освещение, без солнцезащитных очков.</li></ul>
+<h4>Что написать</h4>
+<ul><li>Что делает персонаж и где происходит действие. Стиль держим мультяшный, Pixar-подобный.</li></ul>
+<h4>Пример промпта</h4>
+<div class="ex">「Персонаж бежит по крышам на рассвете за бумажным самолётиком, внизу просыпается город, тёплый свет, мультяшный стиль Pixar」</div>
+<h4>Частые ошибки</h4>
+<ul><li>Групповое фото — нейросеть выбирает одного человека непредсказуемо.</li><li>Лицо в профиль или вполоборота — арт теряет сходство.</li></ul>
+<h4>Что получишь</h4>
+<ul><li>Арт-персонаж, похожий на тебя, и ролик до 30 сек с его приключениями.</li></ul>
+</section>
+
+<section class="gd-sec" id="tab-avatar">
+<h3>Говорящий аватар</h3>
+<h4>Что загрузить</h4>
+<ul><li>Фото с одним человеком, лицо анфас, хорошо видно.</li><li>Озвучку: запись своего голоса (MP3/WAV) или просто текст — аватар заговорит синтезированным голосом.</li></ul>
+<h4>Что написать</h4>
+<ul><li>Текст речи и интонацию: 「говорит бодро」, 「читает торжественно」, 「с лёгкой улыбкой」.</li></ul>
+<h4>Пример промпта</h4>
+<div class="ex">「Добрый вечер! Сегодня у нас снова гигантский кот гуляет по ночному городу. Оставайтесь с нами!」— прочитать как ведущий новостей</div>
+<h4>Частые ошибки</h4>
+<ul><li>Несколько лиц в кадре — губы 「прилипают」не к тому человеку.</li><li>Шумная запись голоса — синхрон губ страдает.</li></ul>
+<h4>Что получишь</h4>
+<ul><li>Фото оживает: мимика, покачивания головы и губы синхронно с речью.</li></ul>
+</section>
+
+<section class="gd-sec" id="tab-motion">
+<h3>Моушен контроль</h3>
+<h4>Что загрузить</h4>
+<ul><li>Фото персонажа: человек, животное, мульт-герой.</li><li>Видео с движением: танец, жесты, походка. Один человек в кадре, видно всё тело, камера неподвижна.</li></ul>
+<h4>Что написать</h4>
+<ul><li>Чьё движение берём и что сохранить из внешности персонажа.</li></ul>
+<h4>Пример промпта</h4>
+<div class="ex">「Персонаж с фото повторяет танец из видео один в один, сохраняет пропорции и одежду, фон — ночная улица с неоном」</div>
+<h4>Частые ошибки</h4>
+<ul><li>В видео танцуют несколько человек — нейросеть смешивает движения.</li><li>Камера в исходнике прыгает — движение переносится с рывками.</li></ul>
+<h4>Что получишь</h4>
+<ul><li>Твой персонаж танцует и жестикулирует как человек из референс-видео.</li></ul>
+</section>
+
+<section class="gd-sec" id="tab-lipsync">
+<h3>Липсинк и дубляж</h3>
+<h4>Что загрузить</h4>
+<ul><li>Видео с говорящим человеком, лицо видно.</li><li>Новую речь: аудиозапись или текст на любом языке.</li></ul>
+<h4>Что написать</h4>
+<ul><li>Текст речи или ссылку на аудио через @. Можно указать манеру: 「говорит с улыбкой」.</li></ul>
+<h4>Пример промпта</h4>
+<div class="ex">Видео с блогером + аудио с китайской речью → блогер говорит по-китайски, губы синхронно, интонация сохранена</div>
+<h4>Частые ошибки</h4>
+<ul><li>Лицо надолго отворачивается — на этом куске синхрон сбивается.</li><li>Слишком быстрая речь — губы не успевают.</li></ul>
+<h4>Что получишь</h4>
+<ul><li>Человек в видео говорит твоими словами, губы в такт.</li></ul>
+</section>
+
+<h3>Если что-то пошло не так</h3>
+<ul>
+<li>Нейросеть отклонила контент — деньги возвращаются автоматически на карту оплаты за 1–3 рабочих дня.</li>
+<li>Видео не пришло из-за сбоя — напиши в поддержку (кнопка 「?」внизу справа): вернём или перегенерируем.</li>
+<li>Все правила и реквизиты — в <a href="/legal.html">оферте</a>.</li>
+</ul>
+</main>
+
+<footer>© 2026 Ёшкин кот · Самозанятая Малкова О. А. · ИНН 420900493994</footer>
+
+<script>
+(function(){
+  var btns = document.querySelectorAll('.gd-tabs button');
+  function openTab(id){
+    btns.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-tab') === id); });
+    document.querySelectorAll('.gd-sec').forEach(function(s){ s.classList.toggle('on', s.id === 'tab-' + id); });
+  }
+  var h = (location.hash || '#video').replace('#','');
+  if(!document.getElementById('tab-' + h)) h = 'video';
+  openTab(h);
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var id = b.getAttribute('data-tab');
+      openTab(id);
+      history.replaceState(null, '', '#' + id);
+    });
+  });
+  window.addEventListener('hashchange', function(){
+    var id = location.hash.replace('#','');
+    if(document.getElementById('tab-' + id)) openTab(id);
+  });
+})();
+</script>
+</body>
+</html>
