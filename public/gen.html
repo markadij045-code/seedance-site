@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Создать видео — SeedGen</title>
-<meta property="og:title" content="Создать видео из текста — SeedGen">
+<title>Создать видео — Ёшкин кот</title>
+<meta property="og:title" content="Создать видео из текста — Ёшкин кот">
 <meta property="og:description" content="Опиши сцену словами — Seedance 2.5 снимет ролик. От 199 ₽">
+<meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
@@ -76,20 +77,32 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 #status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
 .advblock{display:none}
 .advblock.open{display:block}
+.sc-wrap{margin:0 0 16px}
+.sc-wrap.hidden{display:none}
+.sc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:10px}
+.sc-title{font-weight:700;font-size:.95rem;color:var(--text)}
+.sc-hint{color:var(--muted);font-size:.72rem;white-space:nowrap}
+.sc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:thin}
+.sc-card{flex:0 0 76%;scroll-snap-align:start;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.3)}
+.sc-card video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.sc-cap{padding:10px 12px 2px;color:var(--muted);font-size:.78rem;line-height:1.45}
+.sc-cap b{color:var(--text);font-weight:600}
+.sc-btn{display:block;margin:10px 12px 12px;padding:9px 14px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .8rem 'Inter';cursor:pointer;width:calc(100% - 24px)}
+.sc-btn:hover{background:rgba(163,230,53,.16)}
 @media(max-width:900px){
   .ws{grid-template-columns:1fr;margin-top:84px}
   .bar .btn{margin-left:0;width:100%}
   .agree{min-width:100%}
+  .sc-card{flex:0 0 86%}
 }
 </style>
-</head>
-<body data-ws="1">
+</head><body data-ws="1">
 
 <header class="top">
   <div class="container nav-in">
     <a class="logo" href="/">
       <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
-      SeedGen
+      Ёшкин кот
     </a>
     <nav class="menu">
       <a href="/cartoon.html">Мультфильм</a>
@@ -126,8 +139,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     </div>
 
     <div class="seg" style="margin-bottom:6px">
-      <button type="button" id="modeNov" class="on" onclick="setMode('nov')">🌱 Новичок</button>
-      <button type="button" id="modeAdv" onclick="setMode('adv')">🎛 Продвинутый</button>
+      <button type="button" id="modeNov" class="on" onclick="setMode('nov')">Просто: текст и фото</button>
+      <button type="button" id="modeAdv" onclick="setMode('adv')">Мульти-источники · про</button>
     </div>
 
     <div class="lbl">Опиши, какое видео хочешь</div>
@@ -137,7 +150,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       <span id="aistat"></span>
     </div>
 
-    <div class="lbl">Изображение для стиля <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— необязательно</span></div>
+    <div class="lbl">Фото для стиля <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— необязательно</span></div>
     <div class="tiles" id="novTiles">
       <div class="tile" id="novTile"></div>
     </div>
@@ -147,7 +160,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       <div class="tiles" id="refsList"></div>
       <div class="rolehint" id="refCounter"></div>
       <button class="morebtn" id="moreRefsBtn" type="button" onclick="unlockMoreRefs()">Нужно больше? Показать до 10</button>
-      <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон».</div>
+      <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон」.</div>
 
       <div class="lbl">Видео-референс камеры и движения</div>
       <div class="tiles"><div class="tile" id="refVideoTile"></div></div>
@@ -159,12 +172,9 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 
     <div class="lbl">Формат кадра</div>
     <div class="seg" id="aspectRow">
-      <button type="button" data-aspect="21:9" onclick="pickAspect('21:9')">21:9</button>
       <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
-      <button type="button" data-aspect="4:3" onclick="pickAspect('4:3')">4:3</button>
-      <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
-      <button type="button" data-aspect="3:4" onclick="pickAspect('3:4')">3:4</button>
       <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
+      <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
     </div>
 
     <div class="lbl">Качество</div>
@@ -184,6 +194,31 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   </section>
 
   <aside class="panel">
+    <div class="sc-wrap" id="scWrap">
+      <div class="sc-head"><span class="sc-title">Снято у нас из пары слов</span><span class="sc-hint">листай →</span></div>
+      <div class="sc-row" id="scRow">
+        <div class="sc-card">
+          <video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video>
+          <div class="sc-cap">Сделано из фразы: <b>「гигантский кот идёт по ночному городу, неон в лужах」</b></div>
+          <button class="sc-btn" type="button" data-prompt="Гигантский пушистый кот идёт по ночному мегаполису, неон отражается в мокром асфальте, кинематографичный стиль">Хочу так же</button>
+        </div>
+        <div class="sc-card">
+          <video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video>
+          <div class="sc-cap">Сделано из фразы: <b>「кот в скафандре плывёт сквозь звёзды」</b></div>
+          <button class="sc-btn" type="button" data-prompt="Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре">Хочу так же</button>
+        </div>
+        <div class="sc-card">
+          <video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video>
+          <div class="sc-cap">Сделано из фразы: <b>「котёнок танцует под весёлую музыку」</b></div>
+          <button class="sc-btn" type="button" data-prompt="Рыжий котёнок весело танцует под ритмичную музыку, мультяшный стиль, яркие цвета">Хочу так же</button>
+        </div>
+        <div class="sc-card">
+          <video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video>
+          <div class="sc-cap">Сделано из фразы: <b>「кот-рыцарь идёт на дракона」</b></div>
+          <button class="sc-btn" type="button" data-prompt="Кот-рыцарь в доспехах с мечом идёт на дракона, эпичный ракурс снизу, дым и искры">Хочу так же</button>
+        </div>
+      </div>
+    </div>
     <div class="tl">
       <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата — карта, Мир, СБП, SberPay, ЮMoney</div>
       <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Генерация Seedance 2.5 — 1–5 минут</div>
@@ -207,9 +242,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     <button class="btn btn-primary btn-lg" id="btn">Создать видео — 199 ₽</button>
     <div id="status"></div>
   </div>
-</div>
-
-<script type="module">
+</div><script type="module">
 let uploadFn = null;
 try {
   const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
@@ -378,7 +411,7 @@ function fileToRefBase64(f, cb){
     var img = new Image();
     img.onload = function(){
       var max = 1024, w = img.width, h = img.height;
-      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*h/w/w*h); }
       var c = document.createElement('canvas');
       c.width = w; c.height = h;
       c.getContext('2d').drawImage(img, 0, 0, w, h);
@@ -702,6 +735,36 @@ function poll(taskId, stg, baseVideoUrl, pid){
 renderRefs();
 updatePriceDisplay();
 updateSteps();
+</script>
+
+<script>
+(function(){
+  var wrap = document.getElementById('scWrap');
+  var out = document.getElementById('outbox');
+  if(!wrap || !out) return;
+  wrap.querySelectorAll('.sc-card').forEach(function(card){
+    var v = card.querySelector('video');
+    if(!v) return;
+    card.addEventListener('mouseenter', function(){ v.play().catch(function(){}); });
+    card.addEventListener('mouseleave', function(){ v.pause(); });
+    v.addEventListener('click', function(){ if(v.paused){ v.play().catch(function(){}); } else { v.pause(); } });
+  });
+  wrap.querySelectorAll('.sc-btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var p = b.getAttribute('data-prompt');
+      var t = document.getElementById('prompt');
+      if(!t) return;
+      t.value = p;
+      t.dispatchEvent(new Event('input'));
+      t.scrollIntoView({behavior:'smooth', block:'center'});
+      t.focus();
+    });
+  });
+  var mo = new MutationObserver(function(){
+    wrap.classList.toggle('hidden', !!out.querySelector('video'));
+  });
+  mo.observe(out, {childList:true, subtree:true});
+})();
 </script>
 <script src="/help-widget.js"></script>
 </body>
