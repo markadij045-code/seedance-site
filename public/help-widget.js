@@ -23,7 +23,6 @@
 
   var PAYRE=/Оплатить|Создать видео|Сгенерировать|Оживить картинку|Запустить генерацию/;
 
-  // Якоря в guide.html для каждой услуги
   var GUIDE_ANCHOR = {create:'video', cartoon:'cartoon', avatar:'avatar', motion:'motion', lipsync:'lipsync'};
 
   document.addEventListener('click', function(e){
@@ -136,7 +135,8 @@
   +'.hwH1sub{color:#9ca3af;font-size:.95rem;margin:0 0 18px}'
   +'.hwGuideLink{margin:12px 0 22px}'
   +'.hwGuideLink a{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid rgba(163,230,53,.45);background:rgba(163,230,53,.08);color:#A3E635;text-decoration:none;font-size:.92rem;font-weight:600;border-radius:999px;transition:.2s}'
-  +'.hwGuideLink a:hover{background:rgba(163,230,53,.16);border-color:rgba(163,230,53,.7)}';
+  +'.hwGuideLink a:hover{background:rgba(163,230,53,.16);border-color:rgba(163,230,53,.7)}'
+  +'.hwSoonTip{display:none;position:fixed;z-index:500;max-width:250px;background:#101308;border:1px solid rgba(163,230,53,.45);color:#e5e7eb;padding:8px 12px;border-radius:10px;font-size:.8rem;line-height:1.4;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.5)}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -272,6 +272,33 @@
   }
   fixMenu();
 
+  var soonTip=null;
+  function showSoon(a){
+    if(!soonTip){
+      soonTip=document.createElement('div');
+      soonTip.className='hwSoonTip';
+      soonTip.textContent='🎛 PRO-студия откроется после запуска — скоро';
+      document.body.appendChild(soonTip);
+    }
+    var r=a.getBoundingClientRect();
+    soonTip.style.left=Math.max(8,Math.min(window.innerWidth-260,r.left))+'px';
+    soonTip.style.top=(r.bottom+8)+'px';
+    soonTip.style.display='block';
+  }
+  function hideSoon(){if(soonTip)soonTip.style.display='none';}
+  function attachSoon(){
+    var as=document.querySelectorAll('a[href="/pro-studio.html"]');
+    for(var i=0;i<as.length;i++){
+      (function(a){
+        if(a.getAttribute('data-soon'))return;
+        a.setAttribute('data-soon','1');
+        a.addEventListener('mouseenter',function(){showSoon(a);});
+        a.addEventListener('mouseleave',hideSoon);
+      })(as[i]);
+    }
+  }
+  attachSoon();
+
   var NAMES={'/gen.html':'Создать видео','/cartoon.html':'Мультфильм из фото','/avatar.html':'Говорящий аватар','/motion.html':'Моушен контроль','/lipsync.html':'Липсинк / дубляж'};
   var SUBS={'/gen.html':'Опиши сцену словами — нейросеть снимет ролик за 1–5 минут','/cartoon.html':'Фото превращается в арт Pixar, а арт оживает в видео','/avatar.html':'Фото + озвучка = ведущий, который говорит твоими словами','/motion.html':'Персонаж с фото повторит движения из твоего видео','/lipsync.html':'Губы на видео синхронизируются с твоей озвучкой'};
   if(NAMES[path]&&!document.querySelector('h1')){
@@ -342,7 +369,7 @@
     +'<ol>';
   for(var j=0;j<d.s.length;j++){html+='<li>'+d.s[j]+'</li>';}
   html+='</ol><h4>Частые вопросы</h4>';
-  for(var k=0;k<FAQ.length;k++){html+='<div class="faq"><b>'+FAQ[k][0]+'</b><br>'+FAQ[k][1]+'</div>';}
+  for(var k=0;k<FAQ.length;k++){html+='<div class="faq"><b>'+FAQ[k][0]'</b><br>'+FAQ[k][1]+'</div>';}
   html+='<p class="faq"><a href="/help.html">Все вопросы и ответы →</a></p>';
   m.innerHTML='<div id="hwBox">'+html+'</div>';
   document.body.appendChild(m);
