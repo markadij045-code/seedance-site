@@ -369,7 +369,7 @@
     +'<ol>';
   for(var j=0;j<d.s.length;j++){html+='<li>'+d.s[j]+'</li>';}
   html+='</ol><h4>Частые вопросы</h4>';
-  for(var k=0;k<FAQ.length;k++){html+='<div class="faq"><b>'+FAQ[k][0]'</b><br>'+FAQ[k][1]+'</div>';}
+  for(var k=0;k<FAQ.length;k++){html+='<div class="faq"><b>'+FAQ[k][0]+'</b><br>'+FAQ[k][1]+'</div>';}
   html+='<p class="faq"><a href="/help.html">Все вопросы и ответы →</a></p>';
   m.innerHTML='<div id="hwBox">'+html+'</div>';
   document.body.appendChild(m);
