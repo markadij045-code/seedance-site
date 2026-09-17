@@ -12,7 +12,7 @@
   var d3 = document.createElement('div');
   d3.className = 'rolehint';
   d3.style.marginTop = '8px';
-  d3.innerHTML = '🎓 Как выжать из нейросети максимум — <a href="/guide.html" style="color:var(--lime)">инструкции по всем услугам</a>.';
+  d3.innerHTML = '🎓 Делаете видео впервые? Прочитайте <a href="/guide.html" style="color:var(--lime)">инструкцию</a> перед стартом: от того, как вы напишете промпт, зависит качество видео.';
   wrap.insertAdjacentElement('afterend', d3);
   wrap.insertAdjacentElement('afterend', d2);
   wrap.insertAdjacentElement('afterend', d1);
