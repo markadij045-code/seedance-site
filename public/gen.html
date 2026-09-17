@@ -10,7 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.ws{max-width:1160px;margin:100px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
+.ws{max-width:100%;margin:100px auto 150px;padding:0 32px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
 .panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
@@ -82,18 +82,19 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .sc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:10px}
 .sc-title{font-weight:700;font-size:.95rem;color:var(--text)}
 .sc-hint{color:var(--muted);font-size:.72rem;white-space:nowrap}
-.sc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:thin}
-.sc-card{flex:0 0 76%;scroll-snap-align:start;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.3)}
-.sc-card video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
-.sc-cap{padding:10px 12px 2px;color:var(--muted);font-size:.78rem;line-height:1.45}
+.scp{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:#000}
+.scp video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.sc-cap{padding:10px 12px 2px;color:var(--muted);font-size:.8rem;line-height:1.45;background:rgba(0,0,0,.35)}
 .sc-cap b{color:var(--text);font-weight:600}
-.sc-btn{display:block;margin:10px 12px 12px;padding:9px 14px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .8rem 'Inter';cursor:pointer;width:calc(100% - 24px)}
-.sc-btn:hover{background:rgba(163,230,53,.16)}
+.sc-ctrl{display:flex;gap:8px;align-items:center;margin:10px 12px 12px}
+.sc-ctrl button{width:34px;height:34px;border-radius:50%;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);cursor:pointer;font-size:.8rem;flex:0 0 auto}
+.sc-ctrl button:hover{background:rgba(163,230,53,.16)}
+.sc-link{margin-left:auto;color:var(--lime);font-size:.78rem;text-decoration:none;border:1px solid var(--border);padding:7px 12px;border-radius:999px;white-space:nowrap}
+.sc-link:hover{border-color:var(--border-lime)}
 @media(max-width:900px){
-  .ws{grid-template-columns:1fr;margin-top:84px}
+  .ws{grid-template-columns:1fr;margin-top:84px;padding:0 16px}
   .bar .btn{margin-left:0;width:100%}
   .agree{min-width:100%}
-  .sc-card{flex:0 0 86%}
 }
 </style>
 </head><body data-ws="1">
@@ -195,27 +196,15 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 
   <aside class="panel">
     <div class="sc-wrap" id="scWrap">
-      <div class="sc-head"><span class="sc-title">Снято у нас из пары слов</span><span class="sc-hint">листай →</span></div>
-      <div class="sc-row" id="scRow">
-        <div class="sc-card">
-          <video src="/cat-city.mp4" muted loop preload="metadata" playsinline></video>
-          <div class="sc-cap">Сделано из фразы: <b>「гигантский кот идёт по ночному городу, неон в лужах」</b></div>
-          <button class="sc-btn" type="button" data-prompt="Гигантский пушистый кот идёт по ночному мегаполису, неон отражается в мокром асфальте, кинематографичный стиль">Хочу так же</button>
-        </div>
-        <div class="sc-card">
-          <video src="/cat-space.mp4" muted loop preload="metadata" playsinline></video>
-          <div class="sc-cap">Сделано из фразы: <b>「кот в скафандре плывёт сквозь звёзды」</b></div>
-          <button class="sc-btn" type="button" data-prompt="Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре">Хочу так же</button>
-        </div>
-        <div class="sc-card">
-          <video src="/cat-dance.mp4" muted loop preload="metadata" playsinline></video>
-          <div class="sc-cap">Сделано из фразы: <b>「котёнок танцует под весёлую музыку」</b></div>
-          <button class="sc-btn" type="button" data-prompt="Рыжий котёнок весело танцует под ритмичную музыку, мультяшный стиль, яркие цвета">Хочу так же</button>
-        </div>
-        <div class="sc-card">
-          <video src="/cat-knight.mp4" muted loop preload="metadata" playsinline></video>
-          <div class="sc-cap">Сделано из фразы: <b>「кот-рыцарь идёт на дракона」</b></div>
-          <button class="sc-btn" type="button" data-prompt="Кот-рыцарь в доспехах с мечом идёт на дракона, эпичный ракурс снизу, дым и искры">Хочу так же</button>
+      <div class="sc-head"><span class="sc-title">Снято у нас из пары слов</span><span class="sc-hint" id="scCount">1 / 4</span></div>
+      <div class="scp">
+        <video id="scVideo" muted autoplay playsinline preload="metadata"></video>
+        <div class="sc-cap" id="scCap"></div>
+        <div class="sc-ctrl">
+          <button type="button" id="scPrev" title="Предыдущий">←</button>
+          <button type="button" id="scPlay" title="Пауза / играть">❚❚</button>
+          <button type="button" id="scNext" title="Следующий">→</button>
+          <a class="sc-link" href="/examples.html">Понравилась фраза? — в примерах</a>
         </div>
       </div>
     </div>
@@ -411,7 +400,7 @@ function fileToRefBase64(f, cb){
     var img = new Image();
     img.onload = function(){
       var max = 1024, w = img.width, h = img.height;
-      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*h/w/w*h); }
+      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
       var c = document.createElement('canvas');
       c.width = w; c.height = h;
       c.getContext('2d').drawImage(img, 0, 0, w, h);
@@ -739,31 +728,42 @@ updateSteps();
 
 <script>
 (function(){
+  var SC_LIST = [
+    {src:'/cat-city.mp4', cap:'Гигантский кот идёт по ночному городу, неон в лужах'},
+    {src:'/cat-space.mp4', cap:'Кот в скафандре плывёт сквозь звёзды'},
+    {src:'/cat-dance.mp4', cap:'Котёнок танцует под весёлую музыку'},
+    {src:'/cat-knight.mp4', cap:'Кот-рыцарь идёт на дракона'}
+  ];
   var wrap = document.getElementById('scWrap');
   var out = document.getElementById('outbox');
-  if(!wrap || !out) return;
-  wrap.querySelectorAll('.sc-card').forEach(function(card){
-    var v = card.querySelector('video');
-    if(!v) return;
-    card.addEventListener('mouseenter', function(){ v.play().catch(function(){}); });
-    card.addEventListener('mouseleave', function(){ v.pause(); });
-    v.addEventListener('click', function(){ if(v.paused){ v.play().catch(function(){}); } else { v.pause(); } });
+  var v = document.getElementById('scVideo');
+  var cap = document.getElementById('scCap');
+  var cnt = document.getElementById('scCount');
+  var playBtn = document.getElementById('scPlay');
+  if(!wrap || !v) return;
+  var i = 0;
+  function show(n){
+    i = (n + SC_LIST.length) % SC_LIST.length;
+    v.src = SC_LIST[i].src;
+    cap.innerHTML = 'Сделано из фразы: <b>「' + SC_LIST[i].cap + '」</b>';
+    cnt.textContent = (i+1) + ' / ' + SC_LIST.length;
+    v.play().catch(function(){});
+  }
+  v.addEventListener('ended', function(){ show(i+1); });
+  document.getElementById('scNext').addEventListener('click', function(){ show(i+1); });
+  document.getElementById('scPrev').addEventListener('click', function(){ show(i-1); });
+  playBtn.addEventListener('click', function(){
+    if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
   });
-  wrap.querySelectorAll('.sc-btn').forEach(function(b){
-    b.addEventListener('click', function(){
-      var p = b.getAttribute('data-prompt');
-      var t = document.getElementById('prompt');
-      if(!t) return;
-      t.value = p;
-      t.dispatchEvent(new Event('input'));
-      t.scrollIntoView({behavior:'smooth', block:'center'});
-      t.focus();
+  v.addEventListener('play', function(){ playBtn.textContent = '❚'; });
+  v.addEventListener('pause', function(){ playBtn.textContent = '▶'; });
+  if(out){
+    var mo = new MutationObserver(function(){
+      wrap.classList.toggle('hidden', !!out.querySelector('video'));
     });
-  });
-  var mo = new MutationObserver(function(){
-    wrap.classList.toggle('hidden', !!out.querySelector('video'));
-  });
-  mo.observe(out, {childList:true, subtree:true});
+    mo.observe(out, {childList:true, subtree:true});
+  }
+  show(0);
 })();
 </script>
 <script src="/help-widget.js"></script>
