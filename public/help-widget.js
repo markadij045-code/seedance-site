@@ -270,9 +270,7 @@
     }
     ensureAccBtn();
   }
-  fixMenu();
-
-  var soonTip=null;
+  fixMenu();  var soonTip=null;
   function showSoon(a){
     if(!soonTip){
       soonTip=document.createElement('div');
@@ -294,6 +292,12 @@
         a.setAttribute('data-soon','1');
         a.addEventListener('mouseenter',function(){showSoon(a);});
         a.addEventListener('mouseleave',hideSoon);
+        a.addEventListener('click',function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+          showSoon(a);
+          setTimeout(hideSoon,2000);
+        });
       })(as[i]);
     }
   }
