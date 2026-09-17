@@ -23,6 +23,9 @@
 
   var PAYRE=/Оплатить|Создать видео|Сгенерировать|Оживить картинку|Запустить генерацию/;
 
+  // Якоря в guide.html для каждой услуги
+  var GUIDE_ANCHOR = {create:'video', cartoon:'cartoon', avatar:'avatar', motion:'motion', lipsync:'lipsync'};
+
   document.addEventListener('click', function(e){
     var b=e.target&&e.target.closest?e.target.closest('button'):null;
     if(!b)return;
@@ -71,7 +74,7 @@
     ['Можно фото с людьми?','Да, в услугах «Мультфильм», «Аватар», «Моушен» и «Липсинк» — только своё фото или с согласия человека. В «Создать видео» нейросеть сама отсеивает реальные лица по правилам безопасности.'],
     ['Кто такие ведущие-пресеты?','Алина, Макс, Ева и кот Барсик — иллюстрации-заглушки, чтобы попробовать аватар без своего фото. Их можно использовать свободно. После запуска добавим ИИ-ведущих и озвучку текстом.'],
     ['А если нужно видео длиннее 30 секунд?','После запуска озвучку длиннее 30 секунд будем собирать из фрагментов в один ролик — как в больших аватар-студиях. Цена — за минуту готового видео.'],
-    ['Зачем регистрация?','По желанию: аккаунт хранит твоих ведущих аватара и историю заказов на всех устройствах. Оплатить и получить видео можно и без неё.']
+    ['Зачем регистрация?','По желанию: аккаунт хранит твоих ведущих аватара и историю заказов на всех устройствах. Оплатить и получить видео можно и без регистрации.']
   ];
 
   var fl=document.createElement('link');
@@ -130,7 +133,10 @@
   +'.hwDropMenu a:hover{background:rgba(163,230,53,.1)}'
   +'.hwDropMenu a.hwActive{color:#A3E635}'
   +'.hwH1{font-size:2rem;margin:26px 0 6px;color:#fff}'
-  +'.hwH1sub{color:#9ca3af;font-size:.95rem;margin:0 0 18px}';
+  +'.hwH1sub{color:#9ca3af;font-size:.95rem;margin:0 0 18px}'
+  +'.hwGuideLink{margin:12px 0 22px}'
+  +'.hwGuideLink a{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid rgba(163,230,53,.45);background:rgba(163,230,53,.08);color:#A3E635;text-decoration:none;font-size:.92rem;font-weight:600;border-radius:999px;transition:.2s}'
+  +'.hwGuideLink a:hover{background:rgba(163,230,53,.16);border-color:rgba(163,230,53,.7)}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -278,6 +284,12 @@
     sub.className='hwH1sub';
     sub.textContent=SUBS[path]||'';
     host.insertBefore(sub,h1.nextSibling);
+    if(GUIDE_ANCHOR[key]){
+      var glink=document.createElement('div');
+      glink.className='hwGuideLink';
+      glink.innerHTML='<a href="/guide.html#'+GUIDE_ANCHOR[key]+'">🎓 Инструкция по этой услуге — как получить лучший результат</a>';
+      host.insertBefore(glink,sub.nextSibling);
+    }
   }
 
   var payBtn=null;
