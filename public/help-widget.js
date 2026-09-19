@@ -4,7 +4,7 @@
   function uploadShim(filename, file, opts){
     var name = filename || (file && file.name) || ('file-' + Date.now());
     var type = (file && file.type) || 'application/octet-stream';
-    return fetch('/api/upload-file?name=' + encodeURIComponent(name) + '&type=' + encodeURIComponent(type), {
+    return fetch('/api/upload?put=1&name=' + encodeURIComponent(name) + '&type=' + encodeURIComponent(type), {
       method: 'POST',
       body: file
     }).then(function(r){
