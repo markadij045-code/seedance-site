@@ -1,23 +1,29 @@
 (function(){
-  // 🚚 ПЕРЕХВАТЧИК ЗАГРУЗКИ: подменяем чужую client-библиотеку на наш прямой endpoint.
-  // Страницы продолжают вызывать window.blobUpload как ни в чём не бывало.
-  window.blobUpload = function(filename, file, opts){
-    var name = filename || file.name || ('file-' + Date.now());
+  // 🚚 ПЕРЕХВАТЧИК ЗАГРУЗКИ, ЛИПКАЯ ВЕРСИЯ: ставим нашу дорогу так,
+  // что любые поздние попытки страницы подменить загрузку отскакивают.
+  function uploadShim(filename, file, opts){
+    var name = filename || (file && file.name) || ('file-' + Date.now());
     var type = (file && file.type) || 'application/octet-stream';
     return fetch('/api/upload-file?name=' + encodeURIComponent(name) + '&type=' + encodeURIComponent(type), {
       method: 'POST',
-      headers: { 'X-File-Name': name, 'X-File-Type': type },
       body: file
     }).then(function(r){
-      if (!r.ok) {
+      if(!r.ok){
         return r.text().then(function(t){ throw new Error('Загрузка не удалась: ' + t); });
       }
       return r.json();
     }).then(function(d){
-      if (d && d.error) throw new Error(d.error);
+      if(d && d.error) throw new Error(d.error);
       return { url: d.url, pathname: d.pathname, downloadUrl: d.url };
     });
-  };
+  }
+  try{
+    Object.defineProperty(window, 'blobUpload', {
+      configurable: true,
+      get: function(){ return uploadShim; },
+      set: function(){ /* держим нашу дорогу */ }
+    });
+  }catch(e){ window.blobUpload = uploadShim; }
 
   // ⚙️ УПРАВЛЕНИЕ ЗАПУСКОМ: true = заглушка (оплаты НЕ проходят), false = рабочий режим
   var LAUNCH_MODE = true;
@@ -146,7 +152,7 @@
   +'.hwDropBtn{background:none;border:none;color:#9ca3af;font-size:.95rem;cursor:pointer;padding:8px 10px;font-family:inherit}'
   +'.hwDropBtn:hover{color:#e5e7eb}'
   +'.hwDropBtn.hwActive{color:#fff;font-weight:600}'
-  +'.hwDropMenu{display:none;position:absolute;top:100%;left:0;background:#101308;border:1px solid rgba(163,230,53,.25);border-radius:12px;padding:8px;min-width:230px;z-index:60;flex-direction:column;gap:2px;box-shadow:0 12px 32px rgba(0,0,0,.5)}
+  +'.hwDropMenu{display:none;position:absolute;top:100%;left:0;background:#101308;border:1px solid rgba(163,230,53,.25);border-radius:12px;padding:8px;min-width:230px;z-index:60;flex-direction:column;gap:2px;box-shadow:0 12px 32px rgba(0,0,0,.5)}'
   +'.hwDrop.open .hwDropMenu,.hwDrop:hover .hwDropMenu{display:flex}'
   +'.hwDropMenu a{display:block;padding:9px 12px;border-radius:8px;color:#e5e7eb;text-decoration:none;font-size:.9rem;white-space:nowrap}'
   +'.hwDropMenu a:hover{background:rgba(163,230,53,.1)}'
@@ -355,7 +361,7 @@
     trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a>';
     payBtn.parentNode.insertBefore(trust,payBtn);
   }
-  if(!WS&&payBtn&&!document.getElementById('contentConfirm')){
+  if(!WS&payBtn&&!document.getElementById('contentConfirm')){
     var cc=document.createElement('div');
     cc.id='contentConfirm';
     cc.style.cssText='margin:14px 0 0;padding:14px 16px;background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.3);border-radius:12px;color:#e5e7eb;font-size:.88rem;line-height:1.6';
