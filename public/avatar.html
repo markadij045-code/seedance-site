@@ -19,7 +19,7 @@
 .show-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .show-card{position:relative;border-radius:18px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:12px;overflow:hidden}
 .show-card video{width:100%;border-radius:12px;display:block}
-.show-cap{margin-top:10px;color:var(--muted);font-size:.82rem;line-height:1.5}
+.show-cap{position:static;background:none;padding:0;margin-top:10px;color:var(--muted);font-size:.82rem;line-height:1.5}
 .show-cap b{color:var(--text);font-weight:600}
 @media(max-width:700px){.show-grid{grid-template-columns:1fr}}
 .ws{max-width:1160px;margin:30px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
@@ -127,7 +127,7 @@
     </div>
     <div class="show-card">
       <video src="/avatar-queen.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="show-cap"><b>Фото + текст.</b> Загрузил портрет, написал фразу — нейросеть сама подберёт голос и синхронно задвигет губами. Скоро откроем эту кнопку на странице.</div>
+      <div class="show-cap"><b>Фото + текст.</b> Загрузил портрет, написал фразу — нейросеть сама подберёт голос и синхронно задвигает губами. Скоро откроем эту кнопку на странице.</div>
     </div>
   </div>
 </section>
