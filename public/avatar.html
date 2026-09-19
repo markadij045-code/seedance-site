@@ -3,13 +3,26 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Говорящий аватар — SeedGen</title>
-<meta property="og:title" content="Говорящий аватар — фото говорит твоим голосом">
-<meta property="og:description" content="Выбери ведущего или загрузи своё фото, добавь озвучку — человек заговорит твоими словами. 499 ₽">
+<title>Говорящий аватар — Ёшкин кот</title>
+<meta property="og:title" content="Говорящий аватар — фото заговорит твоим голосом">
+<meta property="og:description" content="Выбери ведущего или загрузи своё фото, добавь озвучку — человек заговорит твоими словами. От 499 ₽">
+<meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.yoshkin-kot.online/avatar.html">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.ws{max-width:1160px;margin:100px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
+.showcase{max-width:1160px;margin:110px auto 20px;padding:0 24px}
+.showcase h2{font-family:'Space Grotesk';font-size:1.6rem;font-weight:700;margin:0 0 6px}
+.showcase h2 .grad{background:linear-gradient(90deg,#A3E635,#84cc16);-webkit-background-clip:text;background-clip:text;color:transparent}
+.showcase p{color:var(--muted);font-size:.92rem;margin:0 0 18px}
+.show-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.show-card{position:relative;border-radius:18px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:12px;overflow:hidden}
+.show-card video{width:100%;border-radius:12px;display:block}
+.show-cap{margin-top:10px;color:var(--muted);font-size:.82rem;line-height:1.5}
+.show-cap b{color:var(--text);font-weight:600}
+@media(max-width:700px){.show-grid{grid-template-columns:1fr}}
+.ws{max-width:1160px;margin:30px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
 .panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
@@ -64,7 +77,7 @@
 .bar .btn{margin-left:auto}
 #status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
 @media(max-width:900px){
-  .ws{grid-template-columns:1fr;margin-top:84px}
+  .ws{grid-template-columns:1fr;margin-top:20px}
   .bar .btn{margin-left:0;width:100%}
   .agree{min-width:100%}
 }
@@ -76,7 +89,7 @@
   <div class="container nav-in">
     <a class="logo" href="/">
       <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
-      SeedGen
+      Ёшкин кот
     </a>
     <nav class="menu">
       <a href="/gen.html">Создать видео</a>
@@ -103,6 +116,21 @@
   <a href="/examples.html">Примеры</a>
   <a href="/help.html">Помощь</a>
 </div>
+
+<section class="showcase">
+  <h2>Смотри вживую: <span class="grad">кто говорит</span></h2>
+  <p>Два экспоната из нашей студии. Один — фото плюс голос хозяина. Второй — фото плюс текст. Оба сняты одной кнопкой, за минуту.</p>
+  <div class="show-grid">
+    <div class="show-card">
+      <video src="/avatar-voice.mp4" muted loop preload="metadata" playsinline controls></video>
+      <div class="show-cap"><b>Фото + голос хозяина.</b> Надиктовал фразу — кот заговорил твоими словами и твоим голосом. Точно так же будет звучать и твоё фото.</div>
+    </div>
+    <div class="show-card">
+      <video src="/avatar-queen.mp4" muted loop preload="metadata" playsinline controls></video>
+      <div class="show-cap"><b>Фото + текст.</b> Загрузил портрет, написал фразу — нейросеть сама подберёт голос и синхронно задвигет губами. Скоро откроем эту кнопку на странице.</div>
+    </div>
+  </div>
+</section>
 
 <main class="ws">
   <section class="panel">
@@ -652,6 +680,6 @@ updateSteps();
 updateBar();
 </script>
 <script src="/help-widget.js"></script>
-</body>
-</html>     
 <script src="/avatar-fix.js"></script>
+</body>
+</html>
