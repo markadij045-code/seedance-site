@@ -1,19 +1,46 @@
 (function(){
-  // 🚚 ПЕРЕХВАТЧИК ЗАГРУЗКИ, ЛИПКАЯ ВЕРСИЯ: ставим нашу дорогу так,
-  // что любые поздние попытки страницы подменить загрузку отскакивают.
+  // 🚚 ПЕРЕХВАТЧИК ЗАГРУЗКИ v3: возим файл коробками по 3 МБ, считаем проценты вслух
   function uploadShim(filename, file, opts){
+    opts = opts || {};
     var name = filename || (file && file.name) || ('file-' + Date.now());
     var type = (file && file.type) || 'application/octet-stream';
-    return fetch('/api/upload?put=1&name=' + encodeURIComponent(name) + '&type=' + encodeURIComponent(type), {
-      method: 'POST',
-      body: file
-    }).then(function(r){
-      if(!r.ok){
-        return r.text().then(function(t){ throw new Error('Загрузка не удалась: ' + t); });
+    var statusEl = document.getElementById('status');
+    function prog(p){
+      if (opts.onUploadProgress) { try { opts.onUploadProgress({ percentage: p }); } catch(e){} }
+      if (statusEl) statusEl.textContent = 'Загружаем файл: ' + Math.round(p) + '%';
+    }
+    function fail(t){ throw new Error('Загрузка не удалась: ' + t); }
+    var CHUNK = 3 * 1024 * 1024;
+    return file.arrayBuffer().then(function(ab){
+      var total = ab.byteLength;
+      if (total <= CHUNK) {
+        prog(10);
+        return fetch('/api/upload?put=1&name=' + encodeURIComponent(name) + '&type=' + encodeURIComponent(type), { method: 'POST', body: file })
+          .then(function(r){ if(!r.ok) return r.text().then(fail); prog(100); return r.json(); });
       }
-      return r.json();
+      var parts = [];
+      return fetch('/api/upload?mp=create&name=' + encodeURIComponent(name) + '&type=' + encodeURIComponent(type), { method: 'POST' })
+        .then(function(r){ if(!r.ok) return r.text().then(fail); return r.json(); })
+        .then(function(cr){
+          var i = 0;
+          function next(){
+            if (i * CHUNK >= total) return Promise.resolve();
+            var chunk = ab.slice(i * CHUNK, Math.min(total, (i + 1) * CHUNK));
+            var pn = i + 1;
+            prog((i * CHUNK) / total * 90);
+            return fetch('/api/upload?mp=part&key=' + encodeURIComponent(cr.key) + '&uploadId=' + encodeURIComponent(cr.uploadId) + '&partNumber=' + pn, { method: 'POST', body: chunk })
+              .then(function(r){ if(!r.ok) return r.text().then(fail); return r.json(); })
+              .then(function(pr){ parts.push({ partNumber: pr.partNumber || pn, etag: pr.etag }); i++; return next(); });
+          }
+          return next().then(function(){
+            prog(95);
+            return fetch('/api/upload?mp=complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: cr.key, uploadId: cr.uploadId, parts: parts }) })
+              .then(function(r){ if(!r.ok) return r.text().then(fail); prog(100); return r.json(); });
+          });
+        });
     }).then(function(d){
-      if(d && d.error) throw new Error(d.error);
+      if (d && d.error) throw new Error(d.error);
+      if (statusEl) statusEl.textContent = '';
       return { url: d.url, pathname: d.pathname, downloadUrl: d.url };
     });
   }
@@ -361,7 +388,7 @@
     trust.innerHTML='🔒 Официально: самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a>';
     payBtn.parentNode.insertBefore(trust,payBtn);
   }
-  if(!WS&payBtn&&!document.getElementById('contentConfirm')){
+  if(!WS&&payBtn&&!document.getElementById('contentConfirm')){
     var cc=document.createElement('div');
     cc.id='contentConfirm';
     cc.style.cssText='margin:14px 0 0;padding:14px 16px;background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.3);border-radius:12px;color:#e5e7eb;font-size:.88rem;line-height:1.6';
