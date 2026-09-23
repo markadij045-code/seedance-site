@@ -3,22 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Личный кабинет — SeedGen</title>
-<meta name="description" content="Аккаунт SeedGen: история заказов, мои ведущие для аватара. Регистрация по желанию — оплата работает и без неё.">
+<title>Личный кабинет — Ёшкин кот</title>
+<meta name="description" content="Аккаунт Ёшкин кот: мои ведущие для аватара, история заказов, документы. Регистрация по желанию — оплата работает и без неё.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
 .acc-bar{position:sticky;top:0;background:rgba(5,6,7,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);z-index:50}
 .acc-bar-in{max-width:1160px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 .acc-bar a{color:#e5e7eb;text-decoration:none;font-size:.9rem}
-.acc-bar a.logo{font-weight:700;color:#fff;font-size:1.05rem}
+.acc-bar a.logo{font-weight:700;color:#fff;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.acc-bar a.logo svg{width:18px;height:18px}
 .acc-bar a:hover{color:#A3E635}
-.acc-main{max-width:720px;margin:0 auto;padding:40px 20px 80px;color:#c9cfba}
-.acc-main h1{color:#fff;font-size:1.8rem;margin:0 0 6px}
+.acc-main{max-width:760px;margin:0 auto;padding:40px 20px 80px;color:#c9cfba}
+.acc-main h1{color:#fff;font-size:1.9rem;margin:0 0 6px;font-family:'Space Grotesk','Inter',sans-serif}
 .acc-sub{color:#9ca3af;margin:0 0 24px;font-size:.92rem;line-height:1.6}
-.acc-card{border:1px solid rgba(163,230,53,.18);background:#101308;border-radius:20px;padding:24px;margin-bottom:20px}
+.acc-card{border:1px solid rgba(163,230,53,.18);background:linear-gradient(180deg,#101308,#0c0f0a);border-radius:20px;padding:24px;margin-bottom:20px}
 .acc-tabs{display:flex;gap:8px;margin-bottom:18px}
-.acc-tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:none;color:#9ca3af;font-weight:600;font-size:.9rem;cursor:pointer}
+.acc-tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:none;color:#9ca3af;font-weight:600;font-size:.9rem;cursor:pointer;transition:.2s}
 .acc-tabs button.on{border-color:rgba(163,230,53,.5);background:rgba(163,230,53,.08);color:#A3E635}
 .acc-card label{display:block;font-size:.8rem;color:#6b7280;margin:12px 0 6px}
 .acc-card input{width:100%;padding:12px 14px;background:#050607;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#fff;font-size:.95rem;outline:none}
@@ -28,12 +29,23 @@
 .acc-err{color:#fca5a5;font-size:.85rem;min-height:20px;margin-top:10px}
 .acc-why{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:rgba(163,230,53,.06);border:1px solid rgba(163,230,53,.18);color:#9ca3af;font-size:.85rem;line-height:1.6}
 .acc-why b{color:#A3E635}
-.pcard{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:14px;margin-bottom:10px;flex-wrap:wrap}
+.shelf{display:none}
+.shelf.on{display:block}
+.shelf-h{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:1rem;margin:0 0 4px}
+.shelf-h .ico{font-size:1.2rem}
+.shelf-p{color:#6b7280;font-size:.82rem;margin:0 0 14px;line-height:1.5}
+.soonbox{padding:18px;border:1px dashed rgba(163,230,53,.35);border-radius:14px;color:#9ca3af;font-size:.88rem;line-height:1.6;background:rgba(163,230,53,.04)}
+.soonbox b{color:#A3E635}
+.docrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.docrow a{padding:9px 14px;border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#e5e7eb;text-decoration:none;font-size:.85rem}
+.docrow a:hover{border-color:rgba(163,230,53,.5);color:#A3E635}
+.pcard{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:14px;margin-bottom:10px;flex-wrap:wrap;background:rgba(0,0,0,.25)}
 .pcard img{width:56px;height:56px;border-radius:10px;object-fit:cover}
 .pcard .pn{color:#e5e7eb;font-weight:600;font-size:.9rem}
 .pcard .pd{color:#6b7280;font-size:.75rem}
 .pcard .pa{margin-left:auto;display:flex;gap:8px}
 .pcard .pa a,.pcard .pa button{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.8rem;cursor:pointer;text-decoration:none}
+.pcard .pa a:hover{border-color:rgba(163,230,53,.5);color:#A3E635}
 .pcard .pa button.del{color:#fca5a5}
 footer{padding:28px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
 footer a{color:#A3E635}
@@ -41,7 +53,7 @@ footer a{color:#A3E635}
 </head>
 <body>
 <header class="acc-bar"><div class="acc-bar-in">
-<a class="logo" href="/">▶ SeedGen</a>
+<a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg> Ёшкин кот</a>
 <a href="/gen.html">Создать видео</a>
 <a href="/avatar.html">Аватар</a>
 <a href="/help.html">Помощь</a>
@@ -68,13 +80,40 @@ footer a{color:#A3E635}
 
 <div class="acc-card" id="accBox" style="display:none">
   <h3 style="color:#A3E635;margin:0 0 6px" id="accEmail"></h3>
-  <p style="color:#6b7280;font-size:.82rem;margin:0 0 16px">Ты вошёл. Ведущие сохраняются со страницы «Аватар» кнопкой «Сохранить как ведущего».</p>
-  <div id="presetsList"></div>
-  <button class="acc-btn ghost" id="logoutBtn">Выйти</button>
+  <div class="acc-tabs" style="margin-top:14px">
+    <button id="shelfBtnPresets" class="on">👤 Мои ведущие</button>
+    <button id="shelfBtnOrders">📦 Мои заказы</button>
+    <button id="shelfBtnProfile">📄 Профиль</button>
+  </div>
+
+  <div class="shelf on" id="shelfPresets">
+    <div class="shelf-h"><span class="ico">👤</span> Мои ведущие</div>
+    <p class="shelf-p">Сохраняются со страницы «Аватар» кнопкой «Сохранить как ведущего». Открываются в один клик с любого устройства.</p>
+    <div id="presetsList"></div>
+  </div>
+
+  <div class="shelf" id="shelfOrders">
+    <div class="shelf-h"><span class="ico">📦</span> Мои заказы</div>
+    <p class="shelf-p">История заказов со статусами, готовыми видео и чеками.</p>
+    <div class="soonbox"><b>Полка собирается к переезду.</b> Сейчас заказы живут в черновиках браузера и в правой панели страницы услуги, а чеки приходят на почту. После переезда на наш сервер здесь появится полная история: «оплачен → генерируется → готово», кнопка скачать и чек по каждому заказу.</div>
+  </div>
+
+  <div class="shelf" id="shelfProfile">
+    <div class="shelf-h"><span class="ico">📄</span> Профиль и документы</div>
+    <p class="shelf-p">Почта: <span id="profEmail" style="color:#e5e7eb"></span>. Чеки приходят на неё автоматически после каждой оплаты.</p>
+    <div class="soonbox">Мы храним только почту, хеш пароля и твоих ведущих. Лишнего не собираем и никому не передаём.</div>
+    <div class="docrow">
+      <a href="/legal.html#offer">Публичная оферта</a>
+      <a href="/legal.html#policy">Обработка данных</a>
+      <a href="/legal.html">Реквизиты</a>
+    </div>
+  </div>
+
+  <button class="acc-btn ghost" id="logoutBtn" style="margin-top:18px">Выйти</button>
 </div>
 </main>
 
-<footer>© 2026 SeedGen · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта</a></footer>
+<footer>© 2026 Ёшкин кот · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта</a></footer>
 
 <script>
 var token = localStorage.getItem('seedgen_token') || '';
@@ -90,6 +129,18 @@ function setMode(m){
 document.getElementById('tabLogin').onclick = function(){ setMode('login'); };
 document.getElementById('tabReg').onclick = function(){ setMode('reg'); };
 
+function setShelf(s){
+  document.getElementById('shelfBtnPresets').classList.toggle('on', s === 'presets');
+  document.getElementById('shelfBtnOrders').classList.toggle('on', s === 'orders');
+  document.getElementById('shelfBtnProfile').classList.toggle('on', s === 'profile');
+  document.getElementById('shelfPresets').classList.toggle('on', s === 'presets');
+  document.getElementById('shelfOrders').classList.toggle('on', s === 'orders');
+  document.getElementById('shelfProfile').classList.toggle('on', s === 'profile');
+}
+document.getElementById('shelfBtnPresets').onclick = function(){ setShelf('presets'); };
+document.getElementById('shelfBtnOrders').onclick = function(){ setShelf('orders'); };
+document.getElementById('shelfBtnProfile').onclick = function(){ setShelf('profile'); };
+
 function api(body, cb){
   fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
     .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
@@ -101,6 +152,8 @@ function showAccount(email){
   document.getElementById('authBox').style.display = 'none';
   document.getElementById('accBox').style.display = 'block';
   document.getElementById('accEmail').textContent = email;
+  document.getElementById('profEmail').textContent = email;
+  setShelf('presets');
   loadPresets();
 }
 
