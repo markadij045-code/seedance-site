@@ -53,6 +53,21 @@
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
 .rolehint a{color:var(--lime)}
 .savebtn{margin-top:10px;padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
+.recbox{margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
+.recbox.on{display:block}
+.recbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font:600 .88rem 'Inter';cursor:pointer}
+.recbtn.recording{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1);animation:pulse 1.2s infinite}
+.rectime{color:var(--muted);font-size:.85rem;margin-left:10px}
+.recaudio{margin-top:10px;width:100%}
+.hist{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:rgba(0,0,0,.25);padding:14px}
+.hist-h{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.hitem{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.hitem .ht{color:var(--text);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hitem .hd{color:var(--muted);font-size:.7rem}
+.hitem a,.hitem button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font-size:.75rem;cursor:pointer;text-decoration:none;flex:0 0 auto}
+.hitem a:hover{color:var(--lime);border-color:var(--border-lime)}
+.hitem button.del{color:#fca5a5}
+.hempty{color:var(--muted);font-size:.8rem;line-height:1.5}
 .tl{display:flex;flex-direction:column;gap:13px;margin:4px 0 18px}
 .tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
 .tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
@@ -152,9 +167,17 @@
     <div class="lbl">Озвучка</div>
     <div class="seg" id="voiceRow">
       <button type="button" id="vAudio" class="on">🎙 Своё аудио</button>
+      <button type="button" id="vRec">⏺ Запись с микрофона</button>
       <button type="button" id="vText" class="soon">✍️ Текст + голос · скоро</button>
     </div>
     <div class="tiles" style="margin-top:10px"><div class="tile" id="audioTile"></div></div>
+    <div class="recbox" id="recBox">
+      <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
+      <span class="rectime" id="recTime"></span>
+      <div class="rolehint" id="recHint">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом. Запись никуда не уходит, пока ты не нажмёшь «использовать».</div>
+      <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
+      <button class="savebtn" id="recUse" type="button" style="display:none">✅ Использовать запись</button>
+    </div>
     <div class="rolehint" id="audioInfo"></div>
     <div class="rolehint">💬 Хочешь длиннее 30 секунд? После запуска длинные ролики будем собирать из фрагментов — как в больших аватар-студиях.</div>
 
@@ -176,6 +199,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg>
         Здесь появится говорящий аватар.<br>Длина видео = длина твоей озвучки.
       </div>
+    </div>
+    <div class="hist">
+      <div class="hist-h"><span>📦 История (этот браузер)</span><span id="histCount"></span></div>
+      <div id="histList"></div>
     </div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
@@ -393,6 +420,78 @@ document.getElementById('savePresetBtn').onclick=function(){
     .catch(function(){ setStatus(''); alert('Не удалось сохранить'); });
 };
 
+function setVoiceMode(m){
+  document.getElementById('vAudio').classList.toggle('on', m==='audio');
+  document.getElementById('vRec').classList.toggle('on', m==='rec');
+  document.getElementById('recBox').classList.toggle('on', m==='rec');
+}
+document.getElementById('vAudio').onclick=function(){ setVoiceMode('audio'); };
+document.getElementById('vRec').onclick=function(){ setVoiceMode('rec'); };
+
+var mediaRec=null, recChunks=[], recBlob=null, recSec=0, recTimer=null, recUrlLocal=null;
+document.getElementById('recBtn').onclick=function(){
+  var b=document.getElementById('recBtn');
+  if(mediaRec && mediaRec.state==='recording'){
+    mediaRec.stop();
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ alert('Браузер не дал доступ к микрофону. Попробуй Chrome или Яндекс.Браузер.'); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    recChunks=[]; recSec=0;
+    mediaRec=new MediaRecorder(stream);
+    mediaRec.ondataavailable=function(e){ if(e.data && e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop=function(){
+      clearInterval(recTimer);
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      recBlob=new Blob(recChunks,{type:'audio/webm'});
+      b.classList.remove('recording');
+      b.textContent='⏺ Начать запись';
+      document.getElementById('recTime').textContent='';
+      if(recSec>30){ alert('Запись длиннее 30 секунд — обрежь или запиши короче.'); recBlob=null; return; }
+      if(recUrlLocal){ URL.revokeObjectURL(recUrlLocal); }
+      recUrlLocal=URL.createObjectURL(recBlob);
+      var pv=document.getElementById('recPreview');
+      pv.src=recUrlLocal; pv.style.display='block';
+      document.getElementById('recUse').style.display='inline-block';
+    };
+    mediaRec.start();
+    b.classList.add('recording');
+    b.textContent='⏹ Стоп';
+    recTimer=setInterval(function(){
+      recSec++;
+      document.getElementById('recTime').textContent='0:'+(recSec<10?'0':'')+recSec;
+      if(recSec>=30 && mediaRec && mediaRec.state==='recording'){ mediaRec.stop(); }
+    },1000);
+  }).catch(function(){ alert('Не удалось включить микрофон: проверь разрешение сайту в настройках браузера.'); });
+};
+
+document.getElementById('recUse').onclick=function(){
+  if(!recBlob){ return; }
+  var f=new File([recBlob], 'rec-' + Date.now() + '.webm', {type:'audio/webm'});
+  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); }
+  localAudioBlobUrl=URL.createObjectURL(f);
+  audioNameStr='Запись с микрофона';
+  audioSec=Math.min(30, Math.max(1, recSec||1));
+  renderAudioTile();
+  setVoiceMode('audio');
+  if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и нажми «использовать» снова.'); return; }
+  setStatus('Загружаем запись...');
+  window.blobUpload(f.name, f, { access:'public' })
+    .then(function(blob){
+      audioData=blob.url;
+      if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
+      renderAudioTile();
+      setStatus('');
+      saveDraft(); updateSteps(); updateBar();
+    })
+    .catch(function(err){
+      setStatus('');
+      audioSec=0;
+      alert('Не удалось загрузить запись: ' + err.message);
+      renderAudioTile(); updateSteps(); updateBar();
+    });
+};
+
 function renderAudioTile(){
   var t = document.getElementById('audioTile');
   var src = audioData || localAudioBlobUrl;
@@ -424,7 +523,7 @@ function removeAudio(){
 }
 
 document.getElementById('vText').onclick=function(){
-  alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон и прикрепи файл — аватар скажет твоими словами.');
+  alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон или прямо здесь кнопкой «Запись с микрофона» — аватар скажет твоими словами.');
 };
 
 function shrink(dataUrl, cb){
@@ -488,7 +587,7 @@ function onAudioFile(e){
     renderAudioTile();
     if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
     setStatus('Загружаем аудио...');
-    window.blobUpload(safeFileName('avatar-audio', f, '.mp3'), f, { access: 'public', handleUploadUrl: '/api/upload' })
+    window.blobUpload(safeFileName('avatar-audio', f, '.mp3'), f, { access: 'public' })
       .then(function(blob){
         audioData = blob.url;
         audioSec = Math.min(30, Math.max(1, Math.ceil(dur)));
@@ -502,6 +601,28 @@ function onAudioFile(e){
         alert('Не удалось загрузить аудио: ' + err.message);
       });
   });
+}
+
+function histLoad(){ try{ return JSON.parse(localStorage.getItem('seedgen_avatar_history')||'[]'); }catch(e){ return []; } }
+function histSave(l){ try{ localStorage.setItem('seedgen_avatar_history', JSON.stringify(l.slice(0,10))); }catch(e){} }
+function histRender(){
+  var l=histLoad();
+  var box=document.getElementById('histList');
+  document.getElementById('histCount').textContent=l.length?('всего '+l.length):'';
+  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые видео аватара будут собираться здесь (в этом браузере). После переезда история станет общей для всех твоих устройств.</div>'; return; }
+  box.innerHTML=l.map(function(h,i){
+    return '<div class="hitem"><div style="flex:1;min-width:0"><div class="ht">'+(h.name||'аватар')+'</div><div class="hd">'+h.date+'</div></div>'
+      + '<a href="'+h.url+'" target="_blank" rel="noopener">▶ скачать</a>'
+      + '<button class="del" data-i="'+i+'">✕</button></div>';
+  }).join('');
+  box.querySelectorAll('.del').forEach(function(b){
+    b.onclick=function(){ var l2=histLoad(); l2.splice(parseInt(b.getAttribute('data-i'),10),1); histSave(l2); histRender(); };
+  });
+}
+function histPush(url,name){
+  var l=histLoad();
+  l.unshift({url:url,name:name,date:new Date().toLocaleDateString('ru-RU')});
+  histSave(l); histRender();
 }
 
 function checkUrlAlive(url, cb){
@@ -580,6 +701,7 @@ function poll(taskId){
           clearInterval(timer);
           document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + d.videoUrl + '"></video></div>';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          histPush(d.videoUrl, audioNameStr || 'аватар');
           stage = 'done';
           updateSteps(); updateBar();
           try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
@@ -676,6 +798,7 @@ btn.addEventListener('click', function(){
 
 renderCast();
 renderAudioTile();
+histRender();
 updateSteps();
 updateBar();
 </script>
