@@ -5,12 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Создать видео — Ёшкин кот</title>
 <meta property="og:title" content="Создать видео из текста — Ёшкин кот">
-<meta property="og:description" content="Опиши сцену словами — Seedance 2.5 снимет ролик. От 199 ₽">
+<meta property="og:description" content="Опиши сцену словами, загрузи референсы — Seedance 2.5 снимет ролик. От 199 ₽">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.ws{max-width:100%;margin:100px auto 150px;padding:0 32px;display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
+.showcase{max-width:1160px;margin:110px auto 20px;padding:0 24px}
+.showcase h2{font-family:'Space Grotesk';font-size:1.6rem;font-weight:700;margin:0 0 6px}
+.showcase h2 .grad{background:linear-gradient(90deg,#A3E635,#84cc16);-webkit-background-clip:text;background-clip:text;color:transparent}
+.showcase p{color:var(--muted);font-size:.92rem;margin:0 0 18px}
+.show-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.show-card{position:relative;border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:10px;overflow:hidden}
+.show-card video{width:100%;border-radius:12px;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
+.show-cap{color:var(--muted);font-size:.82rem;line-height:1.5;margin-top:10px}
+.show-cap b{color:var(--text);font-weight:600}
+@media(max-width:800px){.show-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.show-grid{grid-template-columns:1fr}}
+.ws{max-width:1160px;margin:30px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start}
 .panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
@@ -18,40 +29,63 @@
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:20px 0 10px}
-textarea.pr{width:100%;min-height:112px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:16px;color:var(--text);padding:14px 16px;font:400 .95rem/1.55 'Inter',sans-serif;resize:vertical;outline:none}
-textarea.pr:focus{border-color:var(--border-lime)}
+.lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 8px}
+.promptBox{position:relative;min-height:180px;max-height:360px;overflow-y:auto;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:18px;padding:14px 16px;font:400 .95rem/1.6 'Inter',sans-serif;color:var(--text);outline:none;white-space:pre-wrap;word-wrap:break-word}
+.promptBox:focus{border-color:var(--border-lime)}
+.promptBox:empty::before{content:attr(data-ph);color:#6b7280;pointer-events:none}
+.chip{display:inline-block;vertical-align:middle;position:relative;margin:2px 6px 2px 0;padding:3px 8px 3px 26px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);border-radius:999px;font-size:.75rem;font-weight:600;cursor:default;line-height:1.6;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip img{position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;object-fit:cover}
+.chip.audio{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#93c5fd;padding-left:28px}
+.chip.audio::before{content:'♪';position:absolute;left:8px;top:2px;font-size:.9rem}
+.chip.video{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.5);color:#fdba74;padding-left:28px}
+.chip.video::before{content:'▶';position:absolute;left:8px;top:2px;font-size:.7rem}
+.chip .x{margin-left:6px;opacity:.7;cursor:pointer}
+.chip .x:hover{opacity:1}
+.chiptag{color:var(--lime);font-weight:700;font-family:'Space Grotesk';padding:1px 7px;background:rgba(163,230,53,.12);border-radius:6px;font-size:.8rem;display:inline-block;vertical-align:middle;margin:0 2px}
+.addrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.addbtn{padding:8px 14px;border-radius:999px;border:1px dashed rgba(163,230,53,.4);background:none;color:#A3E635;font:600 .82rem 'Inter';cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.addbtn:hover{background:rgba(163,230,53,.06);border-style:solid}
+.addbtn svg{width:14px;height:14px}
+.addbtn input[type=file]{display:none}
 .airow{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
 .aibtn{padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
 .aibtn:disabled{opacity:.5}
 #aistat{color:var(--muted);font-size:.82rem}
-.seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
+.dropdown{position:absolute;z-index:100;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:220px;max-width:300px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
+.dropdown.open{display:block}
+.dd-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
+.dd-item:hover,.dd-item.sel{background:rgba(163,230,53,.12)}
+.dd-item img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex:0 0 auto}
+.dd-item.audio{color:#93c5fd}
+.dd-item.audio::before{content:'♪';font-size:1.1rem;flex:0 0 auto;width:28px;text-align:center}
+.dd-item.video{color:#fdba74}
+.dd-item.video::before{content:'▶';font-size:.9rem;flex:0 0 auto;width:28px;text-align:center}
+.dd-empty{padding:10px;color:var(--muted);font-size:.82rem;text-align:center}
+.paramrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.pgroup{display:flex;flex-direction:column;gap:4px}
+.pgroup-lbl{color:var(--muted);font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer;transition:.2s;white-space:nowrap}
 .seg button:hover{color:var(--text)}
 .seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
-.tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
-.tile:hover{border-color:var(--border-lime)}
-.tile img,.tile video{width:100%;height:100%;object-fit:cover}
-.tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.72rem;text-align:center;padding:6px;pointer-events:none}
-.tile .add svg{width:20px;height:20px;color:rgba(163,230,53,.6)}
-.tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:3}
-.tname{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 5px;font-size:.64rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
-.playbadge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
-.playbadge i{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(163,230,53,.55);color:var(--lime);display:grid;place-items:center;font-style:normal;font-size:.72rem}
-.audiotile{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,230,53,.14),rgba(59,130,246,.10))}
-.audiotile svg{width:26px;height:26px;color:var(--lime)}
-.morebtn{margin-top:10px;padding:8px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .8rem 'Inter';cursor:pointer}
+.durBox{flex:1;min-width:220px}
+.durRow{display:flex;align-items:center;gap:12px}
+.durVal{font-family:'Space Grotesk';font-size:1.3rem;font-weight:700;color:var(--lime);min-width:62px;text-align:right}
+.durVal small{color:var(--muted);font-size:.8rem;font-weight:500;margin-left:2px}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
-.srow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
-.sval{font-family:'Space Grotesk';font-size:1.8rem;font-weight:700;letter-spacing:-.02em}
-.sval small{color:var(--muted);font-size:.9rem;font-weight:500;margin-left:4px}
-.sprice{font-family:'Space Grotesk';font-size:1.35rem;font-weight:700;color:var(--lime)}
-input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid #050607;box-shadow:0 0 0 1.5px var(--lime);cursor:pointer}
-input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--lime);border:3px solid #050607;box-shadow:0 0 0 1.5px var(--lime);cursor:pointer}
-.ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:.7rem;margin-top:7px}
+.rolehint b{color:var(--lime)}
+.hist{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:rgba(0,0,0,.25);padding:14px}
+.hist-h{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.hitem{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.hitem .ht{color:var(--text);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hitem .hd{color:var(--muted);font-size:.7rem}
+.hitem a,.hitem button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font-size:.75rem;cursor:pointer;text-decoration:none;flex:0 0 auto}
+.hitem a:hover{color:var(--lime);border-color:var(--border-lime)}
+.hitem button.del{color:#fca5a5}
+.hempty{color:var(--muted);font-size:.8rem;line-height:1.5}
 .tl{display:flex;flex-direction:column;gap:13px;margin:4px 0 18px}
 .tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
 .tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
@@ -75,24 +109,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .agree a{color:var(--lime)}
 .bar .btn{margin-left:auto}
 #status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
-.advblock{display:none}
-.advblock.open{display:block}
-.sc-wrap{margin:0 0 16px}
-.sc-wrap.hidden{display:none}
-.sc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:10px}
-.sc-title{font-weight:700;font-size:.95rem;color:var(--text)}
-.sc-hint{color:var(--muted);font-size:.72rem;white-space:nowrap}
-.scp{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:#000}
-.scp video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
-.sc-cap{padding:10px 12px 2px;color:var(--muted);font-size:.8rem;line-height:1.45;background:rgba(0,0,0,.35)}
-.sc-cap b{color:var(--text);font-weight:600}
-.sc-ctrl{display:flex;gap:8px;align-items:center;margin:10px 12px 12px}
-.sc-ctrl button{width:34px;height:34px;border-radius:50%;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);cursor:pointer;font-size:.8rem;flex:0 0 auto}
-.sc-ctrl button:hover{background:rgba(163,230,53,.16)}
-.sc-link{margin-left:auto;color:var(--lime);font-size:.78rem;text-decoration:none;border:1px solid var(--border);padding:7px 12px;border-radius:999px;white-space:nowrap}
-.sc-link:hover{border-color:var(--border-lime)}
 @media(max-width:900px){
-  .ws{grid-template-columns:1fr;margin-top:84px;padding:0 16px}
+  .ws{grid-template-columns:1fr;margin-top:20px}
   .bar .btn{margin-left:0;width:100%}
   .agree{min-width:100%}
 }
@@ -131,86 +149,100 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   <a href="/help.html">Помощь</a>
 </div>
 
+<section class="showcase">
+  <h2>Снято у нас: <span class="grad">от фразы до ролика</span></h2>
+  <p>Три экспоната студии. Каждый снят за 1–5 минут из пары слов и пары картинок. Точно так же снимем и твой.</p>
+  <div class="show-grid">
+    <div class="show-card">
+      <video src="/cat-space.mp4" muted loop preload="metadata" playsinline controls></video>
+      <div class="show-cap"><b>Фраза + референс.</b> 「Кот в скафандре плывёт сквозь звёзды」 и одна картинка с котом — нейросеть сняла целую сцену.</div>
+    </div>
+    <div class="show-card">
+      <video src="/cat-city.mp4" muted loop preload="metadata" playsinline controls></video>
+      <div class="show-cap"><b>Кинематографичный стиль.</b> 「Гигантский кот идёт по ночному городу, неон в лужах」— одна фраза, ни одной картинки.</div>
+    </div>
+    <div class="show-card">
+      <video src="/cat-dance.mp4" muted loop preload="metadata" playsinline controls></video>
+      <div class="show-cap"><b>Мем и танец.</b> 「Котёнок танцует под весёлую музыку」— для сторис и коротких роликов.</div>
+    </div>
+  </div>
+</section>
+
 <main class="ws">
   <section class="panel">
     <div class="psteps">
-      <span class="pstep active" id="st1"><i>1</i> Описание и файлы</span>
+      <span class="pstep active" id="st1"><i>1</i> Описание и референсы</span>
       <span class="pstep" id="st2"><i>2</i> Оплата</span>
       <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
     </div>
 
-    <div class="seg" style="margin-bottom:6px">
-      <button type="button" id="modeNov" class="on" onclick="setMode('nov')">Просто: текст и фото</button>
-      <button type="button" id="modeAdv" onclick="setMode('adv')">Мульти-источники · про</button>
+    <div class="lbl">Опиши сцену — @ вызывает список загруженных</div>
+    <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Например: @Image1 идёт по ночной улице, камера медленно следит, кинематографичный стиль. Напечатай @ — увидишь все загруженные референсы." spellcheck="false"></div>
+    <div class="dropdown" id="ddMenu"></div>
+
+    <div class="addrow">
+      <label class="addbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Фото · до 10
+        <input type="file" id="addPhoto" accept="image/*" multiple>
+      </label>
+      <label class="addbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM1 5h15v14H1z"/></svg>
+        Видео · до 15 сек
+        <input type="file" id="addVideo" accept="video/mp4,video/webm">
+      </label>
+      <label class="addbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>
+        Звук · до 15 сек
+        <input type="file" id="addAudio" accept="audio/*">
+      </label>
     </div>
 
-    <div class="lbl">Опиши, какое видео хочешь</div>
-    <textarea class="pr" id="prompt" placeholder="Например: кот в скафандре летит сквозь звёздное поле, кинематографичный стиль"></textarea>
     <div class="airow" id="airow">
       <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
       <span id="aistat"></span>
     </div>
 
-    <div class="lbl">Фото для стиля <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">— необязательно</span></div>
-    <div class="tiles" id="novTiles">
-      <div class="tile" id="novTile"></div>
-    </div>
+    <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы, потом опиши сцену, упоминая их через @Image1, @Image2. Так нейросеть точнее поймёт, кто где стоит и что делает.</div>
 
-    <div class="advblock" id="advBlock">
-      <div class="lbl">Референсы: кто и что в кадре <span style="font-weight:500;text-transform:none;letter-spacing:0">— до 10 фото</span></div>
-      <div class="tiles" id="refsList"></div>
-      <div class="rolehint" id="refCounter"></div>
-      <button class="morebtn" id="moreRefsBtn" type="button" onclick="unlockMoreRefs()">Нужно больше? Показать до 10</button>
-      <div class="rolehint">💡 Опиши роли в тексте: «@Image1 — главный герой, @Image2 — фон」.</div>
-
-      <div class="lbl">Видео-референс камеры и движения</div>
-      <div class="tiles"><div class="tile" id="refVideoTile"></div></div>
-
-      <div class="lbl">Звук-референс: музыка и ритм</div>
-      <div class="tiles"><div class="tile" id="refAudioTile"></div></div>
-      <div class="rolehint">⚠️ Звук-референс работает только вместе с фото или видео-референсом.</div>
-    </div>
-
-    <div class="lbl">Формат кадра</div>
-    <div class="seg" id="aspectRow">
-      <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
-      <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
-      <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
-    </div>
-
-    <div class="lbl">Качество</div>
-    <div class="seg" id="qRow">
-      <button type="button" data-q="480p" class="on" onclick="setQuality('480p')">480p · базовое</button>
-      <button type="button" data-q="720p" onclick="setQuality('720p')">720p · HD +200 ₽</button>
-      <button type="button" data-q="1080p" onclick="setQuality('1080p')">1080p · Full HD +300 ₽</button>
-    </div>
-
-    <div class="lbl">Длительность</div>
-    <div class="srow">
-      <div class="sval"><span id="secVal">5</span><small>сек</small></div>
-      <div class="sprice"><span id="priceVal">199</span> ₽</div>
-    </div>
-    <input type="range" id="slider" min="5" max="30" step="1" value="5">
-    <div class="ticks"><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span></div>
-  </section>
-
-  <aside class="panel">
-    <div class="sc-wrap" id="scWrap">
-      <div class="sc-head"><span class="sc-title">Снято у нас из пары слов</span><span class="sc-hint" id="scCount">1 / 4</span></div>
-      <div class="scp">
-        <video id="scVideo" muted autoplay playsinline preload="metadata"></video>
-        <div class="sc-cap" id="scCap"></div>
-        <div class="sc-ctrl">
-          <button type="button" id="scPrev" title="Предыдущий">←</button>
-          <button type="button" id="scPlay" title="Пауза / играть">❚❚</button>
-          <button type="button" id="scNext" title="Следующий">→</button>
-          <a class="sc-link" href="/examples.html">Понравилась фраза? — в примерах</a>
+    <div class="paramrow">
+      <div class="pgroup">
+        <div class="pgroup-lbl">Формат</div>
+        <div class="seg" id="aspectRow">
+          <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
+          <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
+          <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
+        </div>
+      </div>
+      <div class="pgroup">
+        <div class="pgroup-lbl">Качество</div>
+        <div class="seg" id="qRow">
+          <button type="button" data-q="480p" class="on" onclick="setQuality('480p')">480p</button>
+          <button type="button" data-q="720p" onclick="setQuality('720p')">720p · +200 ₽</button>
+          <button type="button" data-q="1080p" onclick="setQuality('1080p')">1080p · +300 ₽</button>
         </div>
       </div>
     </div>
+
+    <div class="paramrow">
+      <div class="pgroup durBox">
+        <div class="pgroup-lbl">Длительность</div>
+        <div class="durRow">
+          <input type="range" id="slider" min="5" max="30" step="1" value="5">
+          <div class="durVal"><span id="secVal">5</span><small>сек</small></div>
+        </div>
+      </div>
+      <div class="pgroup" style="min-width:110px;text-align:right">
+        <div class="pgroup-lbl">Итого</div>
+        <div class="durVal" style="font-size:1.6rem;justify-content:flex-end"><span id="priceVal">199</span><small>₽</small></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel">
     <div class="tl">
       <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата — карта, Мир, СБП, SberPay, ЮMoney</div>
-      <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Генерация Seedance 2.5 — 1–5 минут</div>
+      <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Seedance 2.5 генерирует — 1–5 минут</div>
       <div class="tl-item" id="tlUp" style="display:none"><span class="tl-dot"></span>Улучшение до 1080p — ещё ~1 минута</div>
     </div>
     <div class="outbox" id="outbox">
@@ -218,6 +250,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg>
         Здесь появится твоё видео.<br>Опиши сцену слева и нажми кнопку оплаты внизу.
       </div>
+    </div>
+    <div class="hist">
+      <div class="hist-h"><span>📦 История (этот браузер)</span><span id="histCount"></span></div>
+      <div id="histList"></div>
     </div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
@@ -231,7 +267,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     <button class="btn btn-primary btn-lg" id="btn">Создать видео — 199 ₽</button>
     <div id="status"></div>
   </div>
-</div><script type="module">
+</div>
+<script type="module">
 let uploadFn = null;
 try {
   const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
@@ -254,19 +291,25 @@ function toggleSidebar(){
 }
 
 var SURCHARGE = {'480p':0, '720p':200, '1080p':300};
-var seconds = 5, aspect = '16:9', quality = '480p', mode = 'nov';
-var refNov = null, refsAdv = [], maxRefsAdv = 3;
-var refVideoUrl = null, refAudioUrl = null;
-var refVideoNameStr = null, refAudioNameStr = null;
-var localRefVideoUrl = null, localRefAudioUrl = null;
+var seconds = 5, aspect = '16:9', quality = '480p';
+var refs = []; // {kind:'image'|'video'|'audio', b64|url, name}
 var restoring = false;
 var stage = 'setup';
 var paidSeen = false, baseDone = false, upscaleExpected = false;
 var btn = document.getElementById('btn');
 var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
+var promptBox = document.getElementById('promptBox');
+var ddMenu = document.getElementById('ddMenu');
 
 function setStatus(t){ statusEl.textContent = t; }
+
+function refName(i, kind){
+  if(kind === 'image') return 'Image' + (i+1);
+  if(kind === 'video') return 'Video1';
+  if(kind === 'audio') return 'Audio1';
+  return 'Ref' + (i+1);
+}
 
 function updatePriceDisplay(){
   var p = 199 + (seconds - 5) * 30 + SURCHARGE[quality];
@@ -278,12 +321,11 @@ function updatePriceDisplay(){
 }
 
 function updateSteps(){
-  var promptOk = document.getElementById('prompt').value.trim().length > 0;
+  var promptOk = getPromptText().trim().length > 0;
   var s1 = document.getElementById('st1'), s2 = document.getElementById('st2'), s3 = document.getElementById('st3');
-  var d1 = promptOk, d2 = paidSeen, d3 = (stage === 'done');
-  s1.className = 'pstep' + (d1 ? ' done' : ' active');
-  s2.className = 'pstep' + (d2 ? ' done' : (d1 ? ' active' : ''));
-  s3.className = 'pstep' + (d3 ? ' done' : (d2 ? ' active' : ''));
+  s1.className = 'pstep' + (promptOk ? ' done' : ' active');
+  s2.className = 'pstep' + (paidSeen ? ' done' : (promptOk ? ' active' : ''));
+  s3.className = 'pstep' + (stage === 'done' ? ' done' : (paidSeen ? ' active' : ''));
   var tp = document.getElementById('tlPay'), tg = document.getElementById('tlGen'), tu = document.getElementById('tlUp');
   tp.className = 'tl-item' + (paidSeen ? ' done' : (promptOk ? ' now' : ''));
   tg.className = 'tl-item' + (baseDone ? ' done' : (stage === 'gen' ? ' now' : ''));
@@ -308,91 +350,21 @@ function setQuality(q){
   saveDraft();
 }
 
-function setMode(m){
-  mode = m;
-  document.getElementById('modeNov').classList.toggle('on', m === 'nov');
-  document.getElementById('modeAdv').classList.toggle('on', m === 'adv');
-  document.getElementById('advBlock').classList.toggle('open', m === 'adv');
-  document.getElementById('novTiles').style.display = (m === 'nov') ? 'grid' : 'none';
-  document.getElementById('airow').style.display = (m === 'adv') ? 'none' : 'flex';
-  renderRefs();
-  saveDraft();
-}
-
-function unlockMoreRefs(){ maxRefsAdv = 10; renderRefs(); }
-
-var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>';
-var SVG_NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
-
-function renderNovTile(){
-  var t = document.getElementById('novTile');
-  if(refNov){
-    t.innerHTML = '<img src="data:image/jpeg;base64,' + refNov + '"><button class="x" type="button" onclick="removeNovRef()">✕</button>';
-  }else{
-    t.innerHTML = '<span class="add">' + SVG_PLUS + 'Загрузить фото</span><input type="file" id="refInput" accept="image/*">';
-    document.getElementById('refInput').addEventListener('change', onNovFile);
-  }
-}
-
-function renderRefs(){
-  renderNovTile();
-  var list = document.getElementById('refsList');
-  list.innerHTML = '';
-  if(mode === 'adv'){
-    refsAdv.forEach(function(r, i){
-      var d = document.createElement('div');
-      d.className = 'tile';
-      d.innerHTML = '<img src="data:image/jpeg;base64,' + r + '"><button class="x" type="button" onclick="removeAdvRef(' + i + ')">✕</button>';
-      list.appendChild(d);
-    });
-    if(refsAdv.length < maxRefsAdv){
-      var add = document.createElement('div');
-      add.className = 'tile';
-      add.innerHTML = '<span class="add">' + SVG_PLUS + 'Добавить</span><input type="file" id="refAddInput" accept="image/*" multiple>';
-      list.appendChild(add);
-      document.getElementById('refAddInput').addEventListener('change', onAdvFiles);
+function getPromptText(){
+  var out = '';
+  promptBox.childNodes.forEach(function(n){
+    if(n.nodeType === 3){
+      out += n.nodeValue;
+    }else if(n.nodeType === 1 && n.classList.contains('chip')){
+      out += '@' + n.getAttribute('data-ref');
+    }else if(n.nodeType === 1 && n.tagName === 'BR'){
+      out += '\n';
+    }else if(n.nodeType === 1 && n.classList.contains('chiptag')){
+      out += n.textContent;
     }
-  }
-  document.getElementById('refCounter').textContent = (mode === 'adv' && refsAdv.length) ? ('Загружено: ' + refsAdv.length + ' из ' + maxRefsAdv) : '';
-  document.getElementById('moreRefsBtn').style.display = (mode === 'adv' && maxRefsAdv === 3 && refsAdv.length >= 3) ? 'inline-block' : 'none';
-  renderMediaTile('refVideoTile', refVideoUrl, localRefVideoUrl, 'video', 'Видео (MP4, до 15 сек)', 'refVideoInput', 'video/mp4,video/webm');
-  renderMediaTile('refAudioTile', refAudioUrl, localRefAudioUrl, 'audio', 'Звук (MP3/WAV, до 15 сек)', 'refAudioInput', 'audio/*');
+  });
+  return out.replace(/\u00A0/g, ' ');
 }
-
-function renderMediaTile(id, url, localUrl, kind, label, inputId, accept){
-  var t = document.getElementById(id);
-  var src = url || localUrl;
-  if(src){
-    if(kind === 'video'){
-      t.innerHTML = '<video src="' + src + '" muted playsinline preload="metadata"></video>'
-        + '<span class="playbadge"><i>▶</i></span>'
-        + '<div class="tname">' + (refVideoNameStr || 'видео-референс') + '</div>'
-        + '<button class="x" type="button" onclick="removeRefVideo()">✕</button>';
-      var v = t.querySelector('video');
-      t.querySelector('.playbadge').addEventListener('click', function(){
-        if(v.paused){ v.muted = false; v.play(); } else { v.pause(); v.muted = true; }
-      });
-    }else{
-      t.innerHTML = '<div class="audiotile">' + SVG_NOTE + '</div>'
-        + '<span class="playbadge"><i>▶</i></span>'
-        + '<div class="tname">' + (refAudioNameStr || 'звук-референс') + '</div>'
-        + '<audio src="' + src + '" preload="metadata" style="display:none"></audio>'
-        + '<button class="x" type="button" onclick="removeRefAudio()">✕</button>';
-      var au = t.querySelector('audio');
-      var pb = t.querySelector('.playbadge');
-      pb.addEventListener('click', function(){
-        if(au.paused){ au.play(); pb.querySelector('i').textContent = '❚❚'; }
-        else { au.pause(); pb.querySelector('i').textContent = '▶'; }
-      });
-    }
-  }else{
-    t.innerHTML = '<span class="add">' + SVG_PLUS + label + '</span><input type="file" id="' + inputId + '" accept="' + accept + '">';
-    document.getElementById(inputId).addEventListener('change', kind === 'video' ? onVideoFile : onAudioFile);
-  }
-}
-
-function removeNovRef(){ refNov = null; renderRefs(); saveDraft(); }
-function removeAdvRef(i){ refsAdv.splice(i, 1); renderRefs(); saveDraft(); }
 
 function fileToRefBase64(f, cb){
   var reader = new FileReader();
@@ -411,23 +383,6 @@ function fileToRefBase64(f, cb){
   reader.readAsDataURL(f);
 }
 
-function onNovFile(e){
-  var f = e.target.files[0]; if(!f) return;
-  fileToRefBase64(f, function(b64){ refNov = b64; renderRefs(); saveDraft(); });
-}
-
-function onAdvFiles(e){
-  var files = Array.prototype.slice.call(e.target.files);
-  var idx = 0;
-  function next(){
-    if(idx >= files.length){ return; }
-    var f = files[idx++];
-    if(refsAdv.length >= maxRefsAdv){ alert('Лимит референсов: ' + maxRefsAdv); return; }
-    fileToRefBase64(f, function(b64){ refsAdv.push(b64); renderRefs(); saveDraft(); next(); });
-  }
-  next();
-}
-
 function probeMedia(f, maxSec, cb){
   var url = URL.createObjectURL(f);
   var el = (f.type.indexOf('video/') === 0) ? document.createElement('video') : new Audio();
@@ -436,9 +391,9 @@ function probeMedia(f, maxSec, cb){
     var d = el.duration;
     URL.revokeObjectURL(url);
     if(d > maxSec){ alert('Файл длиннее ' + maxSec + ' секунд. Выбери короче.'); return; }
-    cb();
+    cb(d);
   };
-  el.onerror = function(){ URL.revokeObjectURL(url); cb(); };
+  el.onerror = function(){ URL.revokeObjectURL(url); cb(0); };
   el.src = url;
 }
 
@@ -446,114 +401,240 @@ function safeName(prefix, f, ext){
   return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
 }
 
-function uploadRefMedia(f, kind, cb){
-  if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
+function uploadRef(f, kind, cb){
+  if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и попробуй снова.'); return; }
   setStatus('Загружаем ' + (kind === 'video' ? 'видео' : 'звук') + '...');
-  window.blobUpload(safeName('gen-ref-' + kind, f, kind === 'video' ? '.mp4' : '.mp3'), f, { access: 'public', handleUploadUrl: '/api/upload' })
+  window.blobUpload(safeName('gen-ref-' + kind, f, kind === 'video' ? '.mp4' : '.mp3'), f, { access: 'public' })
     .then(function(blob){ setStatus(''); cb(blob.url); })
     .catch(function(err){ setStatus(''); alert('Не удалось загрузить файл: ' + err.message); });
 }
 
-function onVideoFile(e){
-  var f = e.target.files[0]; if(!f) return;
-  probeMedia(f, 15, function(){
-    if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); }
-    localRefVideoUrl = URL.createObjectURL(f);
-    refVideoNameStr = f.name;
-    renderRefs();
-    uploadRefMedia(f, 'video', function(url){
-      refVideoUrl = url;
-      if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
-      renderRefs();
-      saveDraft();
-    });
+function addRef(kind, data, name){
+  if(kind === 'image'){
+    var imgCount = refs.filter(function(r){ return r.kind === 'image'; }).length;
+    if(imgCount >= 10){ alert('Лимит фото-референсов: 10'); return false; }
+  }else if(kind === 'video'){
+    if(refs.some(function(r){ return r.kind === 'video'; })){ alert('Можно добавить только одно видео'); return false; }
+  }else if(kind === 'audio'){
+    if(refs.some(function(r){ return r.kind === 'audio'; })){ alert('Можно добавить только один звук'); return false; }
+  }
+  refs.push({kind:kind, data:data, name:name || ''});
+  renderChips();
+  saveDraft();
+  return true;
+}
+
+function removeRef(i){
+  var removed = refs.splice(i, 1)[0];
+  // также удаляем упоминания @ImageN из текста, если нужно — оставим как есть, это честно
+  renderChips();
+  saveDraft();
+}
+
+function renderChips(){
+  // сохраняем текущий текст и курсор
+  var saved = promptBox.innerHTML;
+  // пересобираем чипы: удаляем старые, создаём новые
+  promptBox.querySelectorAll('.chip').forEach(function(el){ el.remove(); });
+  refs.forEach(function(r, i){
+    var name = refName(i, r.kind);
+    r._name = name;
+    var chip = document.createElement('span');
+    chip.className = 'chip' + (r.kind !== 'image' ? ' ' + r.kind : '');
+    chip.setAttribute('data-ref', name);
+    chip.setAttribute('data-idx', i);
+    chip.setAttribute('contenteditable', 'false');
+    if(r.kind === 'image'){
+      var img = document.createElement('img');
+      img.src = r.thumb || ('data:image/jpeg;base64,' + r.data);
+      chip.appendChild(img);
+    }
+    var lbl = document.createTextNode(name);
+    chip.appendChild(lbl);
+    var x = document.createElement('span');
+    x.className = 'x';
+    x.textContent = '✕';
+    x.onclick = function(e){ e.stopPropagation(); removeRef(i); };
+    chip.appendChild(x);
+    // вставляем в начало promptBox
+    promptBox.insertBefore(chip, promptBox.firstChild);
   });
 }
-function removeRefVideo(){
-  refVideoUrl = null; refVideoNameStr = null;
-  if(localRefVideoUrl){ URL.revokeObjectURL(localRefVideoUrl); localRefVideoUrl = null; }
-  renderRefs();
-  saveDraft();
-}
 
-function onAudioFile(e){
-  var f = e.target.files[0]; if(!f) return;
-  probeMedia(f, 15, function(){
-    if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); }
-    localRefAudioUrl = URL.createObjectURL(f);
-    refAudioNameStr = f.name;
-    renderRefs();
-    uploadRefMedia(f, 'audio', function(url){
-      refAudioUrl = url;
-      if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
-      renderRefs();
-      saveDraft();
+document.getElementById('addPhoto').addEventListener('change', function(e){
+  var files = Array.prototype.slice.call(e.target.files);
+  var idx = 0;
+  function next(){
+    if(idx >= files.length) return;
+    var f = files[idx++];
+    fileToRefBase64(f, function(b64){
+      var img = new Image();
+      img.onload = function(){
+        var max = 80, w = img.width, h = img.height;
+        if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        var thumb = c.toDataURL('image/jpeg', 0.7);
+        addRef('image', b64, f.name);
+        var r = refs[refs.length - 1];
+        if(r) r.thumb = thumb;
+        renderChips();
+        saveDraft();
+        next();
+      };
+      img.src = 'data:image/jpeg;base64,' + b64;
     });
-  });
-}
-function removeRefAudio(){
-  refAudioUrl = null; refAudioNameStr = null;
-  if(localRefAudioUrl){ URL.revokeObjectURL(localRefAudioUrl); localRefAudioUrl = null; }
-  renderRefs();
-  saveDraft();
-}
-
-function checkUrlAlive(url, cb){
-  if(!url){ cb(false); return; }
-  fetch(url, {method: 'HEAD', mode: 'no-cors'}).then(function(){ cb(true); }).catch(function(){ cb(false); });
-}
-
-function saveDraft(){
-  if(restoring) return;
-  try{
-    var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
-    s.prompt = document.getElementById('prompt').value;
-    s.aspect = aspect; s.seconds = seconds; s.quality = quality; s.mode = mode;
-    s.refNov = refNov; s.refsAdv = refsAdv;
-    s.refVideo = refVideoUrl; s.refAudio = refAudioUrl;
-    s.refVideoName = refVideoNameStr; s.refAudioName = refAudioNameStr;
-    localStorage.setItem('seedgen_gen_draft', JSON.stringify(s));
-  }catch(e){}
-}
-
-slider.addEventListener('input', function(){
-  seconds = parseInt(slider.value, 10);
-  updatePriceDisplay();
-  saveDraft();
+  }
+  next();
+  e.target.value = '';
 });
-document.getElementById('prompt').addEventListener('input', function(){ saveDraft(); updateSteps(); });
 
-(function restoreDraft(){
-  try{
-    var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || 'null');
-    if(!s) return;
-    restoring = true;
-    if(s.prompt) document.getElementById('prompt').value = s.prompt;
-    if(s.aspect) pickAspect(s.aspect);
-    if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
-    if(s.quality && SURCHARGE[s.quality] !== undefined) quality = s.quality;
-    if(s.refNov){ refNov = s.refNov; } else if(s.refImage){ refNov = s.refImage; }
-    if(s.refsAdv && s.refsAdv.length){ refsAdv = s.refsAdv.slice(0, 10); }
-    else if(s.refs && s.refs.length){ refsAdv = s.refs.slice(0, 10); }
-    if(refsAdv.length > 3) maxRefsAdv = 10;
-    refVideoNameStr = s.refVideoName || null;
-    refAudioNameStr = s.refAudioName || null;
-    document.querySelectorAll('#qRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-q') === quality); });
-    setMode(s.mode === 'adv' ? 'adv' : 'nov');
-    restoring = false;
-    if(s.refVideo){
-      checkUrlAlive(s.refVideo, function(alive){ if(alive){ refVideoUrl = s.refVideo; renderRefs(); } });
-    }
-    if(s.refAudio){
-      checkUrlAlive(s.refAudio, function(alive){ if(alive){ refAudioUrl = s.refAudio; renderRefs(); } });
-    }
-    updatePriceDisplay();
-    updateSteps();
-  }catch(e){ restoring = false; updatePriceDisplay(); updateSteps(); }
-})();
+document.getElementById('addVideo').addEventListener('change', function(e){
+  var f = e.target.files[0]; if(!f) return;
+  probeMedia(f, 15, function(){
+    uploadRef(f, 'video', function(url){
+      addRef('video', url, f.name);
+    });
+  });
+  e.target.value = '';
+});
+
+document.getElementById('addAudio').addEventListener('change', function(e){
+  var f = e.target.files[0]; if(!f) return;
+  probeMedia(f, 15, function(){
+    uploadRef(f, 'audio', function(url){
+      addRef('audio', url, f.name);
+    });
+  });
+  e.target.value = '';
+});
+
+// @-dropdown
+var ddSel = 0, ddItems = [], ddActive = false;
+
+function showDropdown(){
+  ddItems = refs.map(function(r, i){ return {name: refName(i, r.kind), kind: r.kind, idx: i, ref: r}; });
+  if(!ddItems.length){
+    ddMenu.innerHTML = '<div class="dd-empty">Сначала загрузи референсы кнопками выше — тогда @ покажет список</div>';
+  }else{
+    ddMenu.innerHTML = ddItems.map(function(it, i){
+      var cls = 'dd-item' + (it.kind !== 'image' ? ' ' + it.kind : '') + (i === ddSel ? ' sel' : '');
+      if(it.kind === 'image'){
+        return '<div class="' + cls + '" data-i="' + i + '"><img src="' + (it.ref.thumb || ('data:image/jpeg;base64,' + it.ref.data)) + '"><span>@' + it.name + ' · ' + (it.ref.name || 'фото') + '</span></div>';
+      }else{
+        return '<div class="' + cls + '" data-i="' + i + '"><span>@' + it.name + ' · ' + (it.ref.name || (it.kind === 'video' ? 'видео' : 'звук')) + '</span></div>';
+      }
+    }).join('');
+    ddMenu.querySelectorAll('.dd-item').forEach(function(el){
+      el.addEventListener('mouseenter', function(){
+        ddSel = parseInt(el.getAttribute('data-i'), 10);
+        updateDdSel();
+      });
+      el.addEventListener('click', function(){ insertFromDd(); });
+    });
+  }
+  positionDropdown();
+  ddMenu.classList.add('open');
+  ddActive = true;
+}
+
+function hideDropdown(){
+  ddMenu.classList.remove('open');
+  ddActive = false;
+}
+
+function updateDdSel(){
+  ddMenu.querySelectorAll('.dd-item').forEach(function(el, i){
+    el.classList.toggle('sel', i === ddSel);
+  });
+}
+
+function positionDropdown(){
+  var sel = window.getSelection();
+  if(!sel.rangeCount){ return; }
+  var range = sel.getRangeAt(0);
+  var rect = range.getBoundingClientRect();
+  var boxRect = promptBox.getBoundingClientRect();
+  var top = rect.bottom - boxRect.top + 4;
+  var left = rect.left - boxRect.left;
+  if(left + 260 > boxRect.width) left = boxRect.width - 270;
+  if(left < 0) left = 4;
+  ddMenu.style.top = top + 'px';
+  ddMenu.style.left = left + 'px';
+}
+
+function insertFromDd(){
+  if(!ddItems.length){ hideDropdown(); return; }
+  var it = ddItems[ddSel];
+  var sel = window.getSelection();
+  if(!sel.rangeCount){ hideDropdown(); return; }
+  var range = sel.getRangeAt(0);
+  // удалить символ @, если он стоит прямо перед курсором
+  var node = range.startContainer;
+  var off = range.startOffset;
+  if(node.nodeType === 3 && off > 0 && node.nodeValue[off - 1] === '@'){
+    node.nodeValue = node.nodeValue.slice(0, off - 1) + node.nodeValue.slice(off);
+    range.setStart(node, off - 1);
+    range.collapse(true);
+  }
+  var tag = document.createElement('span');
+  tag.className = 'chiptag';
+  tag.setAttribute('contenteditable', 'false');
+  tag.textContent = '@' + it.name;
+  range.insertNode(tag);
+  range.setStartAfter(tag);
+  range.insertNode(document.createTextNode(' '));
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
+  hideDropdown();
+  saveDraft();
+  updateSteps();
+}
+
+promptBox.addEventListener('input', function(){
+  saveDraft();
+  updateSteps();
+  // проверяем, есть ли @ перед курсором
+  var sel = window.getSelection();
+  if(!sel.rangeCount){ return; }
+  var range = sel.getRangeAt(0);
+  var node = range.startContainer;
+  var off = range.startOffset;
+  if(node.nodeType === 3 && off > 0 && node.nodeValue[off - 1] === '@'){
+    showDropdown();
+  }else{
+    hideDropdown();
+  }
+});
+
+promptBox.addEventListener('keydown', function(e){
+  if(!ddActive) return;
+  if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    ddSel = Math.min(ddSel + 1, ddItems.length - 1);
+    updateDdSel();
+  }else if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    ddSel = Math.max(ddSel - 1, 0);
+    updateDdSel();
+  }else if(e.key === 'Enter' || e.key === 'Tab'){
+    e.preventDefault();
+    insertFromDd();
+  }else if(e.key === 'Escape'){
+    hideDropdown();
+  }
+});
+
+document.addEventListener('click', function(e){
+  if(!ddMenu.contains(e.target) && !promptBox.contains(e.target)){
+    hideDropdown();
+  }
+});
 
 document.getElementById('aiBtn').addEventListener('click', function(){
-  var t = document.getElementById('prompt').value.trim();
+  var t = getPromptText().replace(/@\w+/g, '').trim();
   if(t.length < 10){ alert('Напиши хотя бы пару слов своими словами — улучшатель сделает из них красивый промпт'); return; }
   var used = parseInt(localStorage.getItem('seedgen_ai_used') || '0', 10);
   if(used >= 5){ alert('Лимит 5 улучшений за визит исчерпан. Но и твой текст уже хорош!'); return; }
@@ -565,7 +646,8 @@ document.getElementById('aiBtn').addEventListener('click', function(){
     .then(function(d){
       b.disabled = false;
       if(d.error){ st.textContent = 'Не удалось улучшить, попробуй ещё раз'; return; }
-      document.getElementById('prompt').value = d.prompt;
+      // вставляем улучшенный текст в конец поля, сохраняя плитки
+      promptBox.appendChild(document.createTextNode('\n' + d.prompt));
       localStorage.setItem('seedgen_ai_used', String(used+1));
       saveDraft(); updateSteps();
       st.textContent = 'Готово! ✨';
@@ -574,11 +656,73 @@ document.getElementById('aiBtn').addEventListener('click', function(){
     .catch(function(){ b.disabled = false; st.textContent = 'Не удалось улучшить, попробуй ещё раз'; });
 });
 
+function histLoad(){ try{ return JSON.parse(localStorage.getItem('seedgen_gen_history')||'[]'); }catch(e){ return []; } }
+function histSave(l){ try{ localStorage.setItem('seedgen_gen_history', JSON.stringify(l.slice(0,10))); }catch(e){} }
+function histRender(){
+  var l=histLoad();
+  var box=document.getElementById('histList');
+  document.getElementById('histCount').textContent=l.length?('всего '+l.length):'';
+  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые ролики будут собираться здесь (в этом браузере). После переезда история станет общей для всех устройств.</div>'; return; }
+  box.innerHTML=l.map(function(h,i){
+    return '<div class="hitem"><div style="flex:1;min-width:0"><div class="ht">'+(h.name||'видео')+'</div><div class="hd">'+h.date+'</div></div>'
+      + '<a href="'+h.url+'" target="_blank" rel="noopener">▶ скачать</a>'
+      + '<button class="del" data-i="'+i+'">✕</button></div>';
+  }).join('');
+  box.querySelectorAll('.del').forEach(function(b){
+    b.onclick=function(){ var l2=histLoad(); l2.splice(parseInt(b.getAttribute('data-i'),10),1); histSave(l2); histRender(); };
+  });
+}
+function histPush(url,name){
+  var l=histLoad();
+  l.unshift({url:url,name:name,date:new Date().toLocaleDateString('ru-RU')});
+  histSave(l); histRender();
+}
+
+slider.addEventListener('input', function(){
+  seconds = parseInt(slider.value, 10);
+  updatePriceDisplay();
+  saveDraft();
+});
+
+function saveDraft(){
+  if(restoring) return;
+  try{
+    localStorage.setItem('seedgen_gen_draft', JSON.stringify({
+      prompt: getPromptText(),
+      refs: refs.map(function(r){ return {kind:r.kind, data:r.data, name:r.name, thumb:r.thumb}; }),
+      aspect: aspect, seconds: seconds, quality: quality, savedAt: Date.now()
+    }));
+  }catch(e){}
+}
+
+(function restoreDraft(){
+  try{
+    var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || 'null');
+    if(!s) return;
+    restoring = true;
+    if(s.aspect) pickAspect(s.aspect);
+    if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
+    if(s.quality && SURCHARGE[s.quality] !== undefined){ quality = s.quality; document.querySelectorAll('#qRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-q') === quality); }); }
+    if(s.refs && s.refs.length){
+      s.refs.forEach(function(r){ refs.push({kind:r.kind, data:r.data, name:r.name, thumb:r.thumb}); });
+      renderChips();
+    }
+    if(s.prompt){
+      promptBox.textContent = s.prompt;
+    }
+    restoring = false;
+    updatePriceDisplay();
+    updateSteps();
+  }catch(e){ restoring = false; updatePriceDisplay(); updateSteps(); }
+})();
+
 btn.addEventListener('click', function(){
-  var prompt = document.getElementById('prompt').value.trim();
+  var prompt = getPromptText().trim();
   if(!prompt){ alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»'); return; }
   if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
-  if(refAudioUrl && refsAdv.length === 0 && !refVideoUrl && !refNov){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; }
+  var hasAudio = refs.some(function(r){ return r.kind === 'audio'; });
+  var hasImageOrVideo = refs.some(function(r){ return r.kind === 'image' || r.kind === 'video'; });
+  if(hasAudio && !hasImageOrVideo){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; }
   btn.disabled = true;
   setStatus('Создаём платёж...');
   saveDraft();
@@ -606,6 +750,7 @@ function showVideo(url, msg){
   stage = 'done';
   updateSteps();
   btn.disabled = false;
+  histPush(url, getPromptText().slice(0, 60) || 'видео');
 }
 
 function startUpscale(pid, baseVideoUrl){
@@ -692,14 +837,16 @@ function poll(taskId, stg, baseVideoUrl, pid){
         paidSeen = true; updateSteps();
         var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
         var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5, quality:draft.quality || '480p'};
-        if(draft.mode === 'adv'){
-          if(draft.refsAdv && draft.refsAdv.length) payload.refs = draft.refsAdv;
-          if(draft.refVideo) payload.refVideo = draft.refVideo;
-          if(draft.refAudio) payload.refAudio = draft.refAudio;
-        }else{
-          if(draft.refNov) payload.refImage = draft.refNov;
-          else if(draft.refImage) payload.refImage = draft.refImage;
-        }
+        var refsList = draft.refs || [];
+        var images = [], video = null, audio = null;
+        refsList.forEach(function(r){
+          if(r.kind === 'image') images.push(r.data);
+          else if(r.kind === 'video') video = r.data;
+          else if(r.kind === 'audio') audio = r.data;
+        });
+        if(images.length){ payload.refs = images; payload.refImage = images[0]; }
+        if(video){ payload.refVideo = video; }
+        if(audio){ payload.refAudio = audio; }
         upscaleExpected = (payload.quality === '1080p');
         setStatus('Оплата прошла! Запускаем генерацию...');
         stage = 'gen'; updateSteps();
@@ -721,52 +868,10 @@ function poll(taskId, stg, baseVideoUrl, pid){
     .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
 })();
 
-renderRefs();
+histRender();
 updatePriceDisplay();
 updateSteps();
 </script>
-
-<script>
-(function(){
-  var SC_LIST = [
-    {src:'/cat-city.mp4', cap:'Гигантский кот идёт по ночному городу, неон в лужах'},
-    {src:'/cat-space.mp4', cap:'Кот в скафандре плывёт сквозь звёзды'},
-    {src:'/cat-dance.mp4', cap:'Котёнок танцует под весёлую музыку'},
-    {src:'/cat-knight.mp4', cap:'Кот-рыцарь идёт на дракона'}
-  ];
-  var wrap = document.getElementById('scWrap');
-  var out = document.getElementById('outbox');
-  var v = document.getElementById('scVideo');
-  var cap = document.getElementById('scCap');
-  var cnt = document.getElementById('scCount');
-  var playBtn = document.getElementById('scPlay');
-  if(!wrap || !v) return;
-  var i = 0;
-  function show(n){
-    i = (n + SC_LIST.length) % SC_LIST.length;
-    v.src = SC_LIST[i].src;
-    cap.innerHTML = 'Сделано из фразы: <b>「' + SC_LIST[i].cap + '」</b>';
-    cnt.textContent = (i+1) + ' / ' + SC_LIST.length;
-    v.play().catch(function(){});
-  }
-  v.addEventListener('ended', function(){ show(i+1); });
-  document.getElementById('scNext').addEventListener('click', function(){ show(i+1); });
-  document.getElementById('scPrev').addEventListener('click', function(){ show(i-1); });
-  playBtn.addEventListener('click', function(){
-    if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
-  });
-  v.addEventListener('play', function(){ playBtn.textContent = '❚'; });
-  v.addEventListener('pause', function(){ playBtn.textContent = '▶'; });
-  if(out){
-    var mo = new MutationObserver(function(){
-      wrap.classList.toggle('hidden', !!out.querySelector('video'));
-    });
-    mo.observe(out, {childList:true, subtree:true});
-  }
-  show(0);
-})();
-</script>
-<script src="/gen-info.js"></script>
 <script src="/help-widget.js"></script>
 </body>
 </html>
