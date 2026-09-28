@@ -10,17 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.showcase{max-width:1160px;margin:110px auto 20px;padding:0 24px}
-.showcase h2{font-family:'Space Grotesk';font-size:1.6rem;font-weight:700;margin:0 0 6px}
-.showcase h2 .grad{background:linear-gradient(90deg,#A3E635,#84cc16);-webkit-background-clip:text;background-clip:text;color:transparent}
-.showcase p{color:var(--muted);font-size:.92rem;margin:0 0 18px}
-.show-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.show-card{border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:10px;overflow:hidden}
-.show-card video{width:100%;border-radius:12px;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
-.show-cap{color:var(--muted);font-size:.82rem;line-height:1.5;margin-top:10px}
-.show-cap b{color:var(--text);font-weight:600}
-@media(max-width:800px){.show-grid{grid-template-columns:1fr}}
-.ws{max-width:1160px;margin:30px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start}
+.ws{max-width:1160px;margin:100px auto 40px;padding:0 24px;display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start}
 .panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
@@ -28,32 +18,33 @@
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.studio{position:relative;border:1px solid var(--border);border-radius:20px;background:rgba(0,0,0,.35)}
-.pwrap{padding:14px 16px 10px}
-.promptBox{min-height:130px;max-height:300px;overflow-y:auto;outline:none;font:400 .95rem/1.7 'Inter',sans-serif;color:var(--text);white-space:pre-wrap;word-wrap:break-word}
-.promptBox:empty::before{content:attr(data-ph);color:#6b7280;pointer-events:none}
-.reftile{display:inline-block;vertical-align:middle;width:46px;height:46px;border-radius:10px;border:1px solid var(--border-lime);overflow:hidden;position:relative;margin:0 6px 4px 0;background:#000}
+.studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:18px 20px 14px}
+.pwrap{position:relative;padding:0 0 10px}
+.promptBox{min-height:120px;max-height:300px;overflow-y:auto;outline:none;font:400 1.02rem/1.8 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word}
+.promptBox:empty::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.95rem}
+.reftile{display:inline-block;vertical-align:middle;width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 12px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg)}
+.reftile:nth-child(even){transform:rotate(1.5deg)}
 .reftile img{width:100%;height:100%;object-fit:cover}
-.reftile .ic{position:absolute;inset:0;display:grid;place-items:center;font-size:1rem;color:var(--lime);background:rgba(163,230,53,.12)}
+.reftile .ic{position:absolute;inset:0;display:grid;place-items:center;font-size:1.1rem;color:var(--lime);background:rgba(163,230,53,.12)}
 .reftile.audio .ic{color:#93c5fd;background:rgba(59,130,246,.12)}
 .reftile.video .ic{color:#fdba74;background:rgba(251,146,60,.12)}
-.reftile .x{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.6rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0}
+.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0}
 .reftile:hover .x{display:grid}
-.addbadge{display:inline-block;vertical-align:middle;width:26px;height:26px;border-radius:50%;border:1px dashed rgba(163,230,53,.6);background:rgba(163,230,53,.12);color:var(--lime);text-align:center;line-height:24px;font-size:.95rem;cursor:pointer;margin:0 8px 4px 0}
-.addbadge:hover{background:rgba(163,230,53,.25)}
-.mchip{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;margin:0 3px;padding:2px 8px 2px 3px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);border-radius:999px;color:var(--lime);font-size:.78rem;font-weight:600;max-width:180px}
-.mchip img{width:18px;height:18px;border-radius:50%;object-fit:cover;flex:0 0 auto}
-.mchip .mi{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.6rem;background:rgba(163,230,53,.15);flex:0 0 auto}
-.mchip.audio .mi{color:#93c5fd;background:rgba(59,130,246,.15)}
-.mchip.video .mi{color:#fdba74;background:rgba(251,146,60,.15)}
+.addbadge{display:inline-block;vertical-align:middle;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#e5e7eb;text-align:center;line-height:30px;font-size:1rem;cursor:pointer;margin:0 10px 6px 0}
+.addbadge:hover{background:rgba(255,255,255,.26)}
+.mchip{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin:0 4px;color:#9ca3af;font-size:.88rem;max-width:200px}
+.mchip img{width:20px;height:20px;border-radius:5px;object-fit:cover;flex:0 0 auto}
+.mchip .mi{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:.65rem;background:rgba(255,255,255,.1);color:#9ca3af;flex:0 0 auto}
 .mchip .mn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.studio-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-top:1px solid var(--border);background:rgba(255,255,255,.02)}
-.pchip{padding:7px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font:600 .8rem 'Inter';cursor:pointer;white-space:nowrap}
-.pchip:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
-.pchip.at{color:var(--lime);border-color:var(--border-lime);background:rgba(163,230,53,.08);font-weight:800}
-.priceBox{font-family:'Space Grotesk';font-size:1.2rem;font-weight:700;color:var(--lime);white-space:nowrap;margin-left:auto}
-.sendbtn{width:40px;height:40px;border-radius:50%;border:none;background:#A3E635;color:#050607;font-size:1.1rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
-.sendbtn:hover{background:#b6f04a}
+.studio-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 0 2px}
+.pchip{border:none;background:none;color:#d1d5db;font:500 .85rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 9px;border-radius:9px}
+.pchip:hover{background:rgba(255,255,255,.06);color:#fff}
+.pchip.mode{color:var(--lime);font-weight:600}
+.pchip.at{font-weight:700;font-size:.95rem}
+.priceBox{font:600 .95rem 'Inter';color:#d1d5db;white-space:nowrap;margin-left:auto;display:flex;align-items:center;gap:5px}
+.priceBox .coin{color:var(--lime);font-weight:800}
+.sendbtn{width:42px;height:42px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1.15rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center;margin-left:8px}
+.sendbtn:hover{background:#e5e7eb}
 .popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:230px;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
 .popup.open{display:block}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
@@ -76,8 +67,17 @@
 input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
 input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
-.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
+.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:12px}
 .rolehint b{color:var(--lime)}
+.showcase{max-width:1160px;margin:10px auto 140px;padding:0 24px}
+.showcase h2{font-family:'Space Grotesk';font-size:1.4rem;font-weight:700;margin:0 0 14px}
+.showcase h2 .grad{background:linear-gradient(90deg,#A3E635,#84cc16);-webkit-background-clip:text;background-clip:text;color:transparent}
+.show-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.show-card{border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:10px;overflow:hidden}
+.show-card video{width:100%;border-radius:12px;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
+.show-cap{color:var(--muted);font-size:.82rem;line-height:1.5;margin-top:10px}
+.show-cap b{color:var(--text);font-weight:600}
+@media(max-width:800px){.show-grid{grid-template-columns:1fr}}
 .hist{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:rgba(0,0,0,.25);padding:14px}
 .hist-h{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
 .hitem{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
@@ -110,7 +110,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .agree a{color:var(--lime)}
 .bar .btn{margin-left:auto}
 #status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
-@media(max-width:900px){.ws{grid-template-columns:1fr;margin-top:20px}.bar .btn{margin-left:0;width:100%}.agree{min-width:100%}}
+@media(max-width:900px){.ws{grid-template-columns:1fr;margin-top:84px}.bar .btn{margin-left:0;width:100%}.agree{min-width:100%}}
 </style>
 </head><body data-ws="1">
 <header class="top">
@@ -141,15 +141,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <a href="/examples.html">Примеры</a>
   <a href="/help.html">Помощь</a>
 </div>
-<section class="showcase">
-  <h2>Снято у нас: <span class="grad">от фразы до ролика</span></h2>
-  <p>Три экспоната студии: каждый снят за 1–5 минут из пары слов и пары картинок.</p>
-  <div class="show-grid">
-    <div class="show-card"><video src="/cat-space.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Фраза + референс.</b> 「Кот в скафандре плывёт сквозь звёзды」.</div></div>
-    <div class="show-card"><video src="/cat-city.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Только фраза.</b> 「Гигантский кот идёт по ночному городу」.</div></div>
-    <div class="show-card"><video src="/cat-dance.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Мем и танец.</b> 「Котёнок танцует под весёлую музыку」.</div></div>
-  </div>
-</section>
 <main class="ws">
   <section class="panel">
     <div class="psteps">
@@ -162,12 +153,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
         <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену словами. Кружком 「+」 загрузи до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Напечатай @ или нажми @ в панели ниже — всплывёт список загруженного, клик вставит упоминание в курсор." spellcheck="false"></div>
       </div>
       <div class="studio-bar">
-        <button class="pchip" id="pcMode" type="button">🎬 Видео из текста ⌄</button>
+        <button class="pchip mode" id="pcMode" type="button">🎬 Видео из текста ⌄</button>
         <button class="pchip" id="pcModel" type="button">⚙ Seedance 2.5 ⌄</button>
         <button class="pchip" id="pcFQ" type="button">16:9 · 480p ⌄</button>
         <button class="pchip" id="pcDur" type="button">5 сек ⌄</button>
         <button class="pchip at" id="pcAt" type="button" title="Упомянуть загруженный референс">@</button>
-        <div class="priceBox"><span id="priceVal">199</span> ₽</div>
+        <div class="priceBox"><span class="coin">₽</span><span id="priceVal">199</span></div>
         <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
       </div>
       <div class="popup" id="popMenu"></div>
@@ -192,6 +183,14 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
   </aside>
 </main>
+<section class="showcase">
+  <h2>Снято у нас: <span class="grad">от фразы до ролика</span></h2>
+  <div class="show-grid">
+    <div class="show-card"><video src="/cat-space.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Фраза + референс.</b> 「Кот в скафандре плывёт сквозь звёзды」.</div></div>
+    <div class="show-card"><video src="/cat-city.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Только фраза.</b> 「Гигантский кот идёт по ночному городу」.</div></div>
+    <div class="show-card"><video src="/cat-dance.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Мем и танец.</b> 「Котёнок танцует под весёлую музыку」.</div></div>
+  </div>
+</section>
 <div class="bar">
   <div class="bar-in">
     <div class="bar-price"><span id="barPrice">199</span> ₽<small id="barMeta">5 сек · 480p</small></div>
