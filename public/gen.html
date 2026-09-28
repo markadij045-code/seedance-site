@@ -30,9 +30,12 @@
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
 .lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 8px}
-.promptBox{position:relative;min-height:180px;max-height:360px;overflow-y:auto;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:18px;padding:14px 16px;font:400 .95rem/1.6 'Inter',sans-serif;color:var(--text);outline:none;white-space:pre-wrap;word-wrap:break-word}
+.promptBox{position:relative;min-height:190px;max-height:380px;overflow-y:auto;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:18px;padding:14px 16px;font:400 .95rem/1.6 'Inter',sans-serif;color:var(--text);outline:none;white-space:pre-wrap;word-wrap:break-word}
 .promptBox:focus{border-color:var(--border-lime)}
 .promptBox:empty::before{content:attr(data-ph);color:#6b7280;pointer-events:none}
+.upltile{display:inline-block;vertical-align:middle;width:36px;height:36px;border-radius:10px;border:1px dashed rgba(163,230,53,.5);background:rgba(163,230,53,.06);color:var(--lime);text-align:center;line-height:34px;font-size:1.15rem;margin:0 8px 4px 0;cursor:pointer;position:relative;flex:0 0 auto}
+.upltile:hover{background:rgba(163,230,53,.14)}
+.upltile input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .chip{display:inline-block;vertical-align:middle;position:relative;margin:2px 6px 2px 0;padding:3px 8px 3px 26px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);border-radius:999px;font-size:.75rem;font-weight:600;cursor:default;line-height:1.6;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip img{position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;object-fit:cover}
 .chip.audio{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#93c5fd;padding-left:28px}
@@ -42,15 +45,25 @@
 .chip .x{margin-left:6px;opacity:.7;cursor:pointer}
 .chip .x:hover{opacity:1}
 .chiptag{color:var(--lime);font-weight:700;font-family:'Space Grotesk';padding:1px 7px;background:rgba(163,230,53,.12);border-radius:6px;font-size:.8rem;display:inline-block;vertical-align:middle;margin:0 2px}
-.addrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.addbtn{padding:8px 14px;border-radius:999px;border:1px dashed rgba(163,230,53,.4);background:none;color:#A3E635;font:600 .82rem 'Inter';cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.addbtn:hover{background:rgba(163,230,53,.06);border-style:solid}
-.addbtn svg{width:14px;height:14px}
-.addbtn input[type=file]{display:none}
 .airow{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
 .aibtn{padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
 .aibtn:disabled{opacity:.5}
 #aistat{color:var(--muted);font-size:.82rem}
+.ctrlbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding:10px 12px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.3)}
+.cchip{padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.05);color:var(--muted);font-size:.78rem;font-weight:600;white-space:nowrap}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer;transition:.2s;white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.durRow{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}
+.durVal{font-family:'Space Grotesk';font-size:1.15rem;font-weight:700;color:var(--lime);min-width:52px;text-align:right;white-space:nowrap}
+.durVal small{color:var(--muted);font-size:.75rem;font-weight:500;margin-left:2px}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
+.priceBox{font-family:'Space Grotesk';font-size:1.25rem;font-weight:700;color:var(--lime);white-space:nowrap}
+.atbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font-weight:800;font-size:1.05rem;cursor:pointer;flex:0 0 auto}
+.atbtn:hover{background:rgba(163,230,53,.2)}
 .dropdown{position:absolute;z-index:100;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:220px;max-width:300px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
 .dropdown.open{display:block}
 .dd-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
@@ -61,20 +74,6 @@
 .dd-item.video{color:#fdba74}
 .dd-item.video::before{content:'▶';font-size:.9rem;flex:0 0 auto;width:28px;text-align:center}
 .dd-empty{padding:10px;color:var(--muted);font-size:.82rem;text-align:center}
-.paramrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
-.pgroup{display:flex;flex-direction:column;gap:4px}
-.pgroup-lbl{color:var(--muted);font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
-.seg{display:flex;gap:4px;flex-wrap:wrap}
-.seg button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer;transition:.2s;white-space:nowrap}
-.seg button:hover{color:var(--text)}
-.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.durBox{flex:1;min-width:220px}
-.durRow{display:flex;align-items:center;gap:12px}
-.durVal{font-family:'Space Grotesk';font-size:1.3rem;font-weight:700;color:var(--lime);min-width:62px;text-align:right}
-.durVal small{color:var(--muted);font-size:.8rem;font-weight:500;margin-left:2px}
-input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
 .rolehint b{color:var(--lime)}
 .hist{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:rgba(0,0,0,.25);padding:14px}
@@ -176,67 +175,36 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
     </div>
 
-    <div class="lbl">Опиши сцену — @ вызывает список загруженных</div>
-    <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Например: @Image1 идёт по ночной улице, камера медленно следит, кинематографичный стиль. Напечатай @ — увидишь все загруженные референсы." spellcheck="false"></div>
+    <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену словами. Кнопкой 「+」 сюда же можно загрузить до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Напечатай @ или нажми кнопку @ в панели ниже — появится список загруженного, клик — и ссылка встанет в текст." spellcheck="false"></div>
     <div class="dropdown" id="ddMenu"></div>
-
-    <div class="addrow">
-      <label class="addbtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        Фото · до 10
-        <input type="file" id="addPhoto" accept="image/*" multiple>
-      </label>
-      <label class="addbtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM1 5h15v14H1z"/></svg>
-        Видео · до 15 сек
-        <input type="file" id="addVideo" accept="video/mp4,video/webm">
-      </label>
-      <label class="addbtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>
-        Звук · до 15 сек
-        <input type="file" id="addAudio" accept="audio/*">
-      </label>
-    </div>
 
     <div class="airow" id="airow">
       <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
       <span id="aistat"></span>
     </div>
 
-    <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы, потом опиши сцену, упоминая их через @Image1, @Image2. Так нейросеть точнее поймёт, кто где стоит и что делает.</div>
-
-    <div class="paramrow">
-      <div class="pgroup">
-        <div class="pgroup-lbl">Формат</div>
-        <div class="seg" id="aspectRow">
-          <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
-          <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
-          <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
-        </div>
+    <div class="ctrlbar">
+      <span class="cchip">🎬 Видео из текста</span>
+      <span class="cchip">⚙ Seedance 2.5</span>
+      <div class="seg" id="aspectRow">
+        <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
+        <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
+        <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
       </div>
-      <div class="pgroup">
-        <div class="pgroup-lbl">Качество</div>
-        <div class="seg" id="qRow">
-          <button type="button" data-q="480p" class="on" onclick="setQuality('480p')">480p</button>
-          <button type="button" data-q="720p" onclick="setQuality('720p')">720p · +200 ₽</button>
-          <button type="button" data-q="1080p" onclick="setQuality('1080p')">1080p · +300 ₽</button>
-        </div>
+      <div class="seg" id="qRow">
+        <button type="button" data-q="480p" class="on" onclick="setQuality('480p')">480p</button>
+        <button type="button" data-q="720p" onclick="setQuality('720p')">720p · +200 ₽</button>
+        <button type="button" data-q="1080p" onclick="setQuality('1080p')">1080p · +300 ₽</button>
       </div>
+      <div class="durRow">
+        <input type="range" id="slider" min="5" max="30" step="1" value="5">
+        <div class="durVal"><span id="secVal">5</span><small>сек</small></div>
+      </div>
+      <div class="priceBox"><span id="priceVal">199</span> ₽</div>
+      <button class="atbtn" id="atBtn" type="button" title="Вставить ссылку на загруженный референс">@</button>
     </div>
 
-    <div class="paramrow">
-      <div class="pgroup durBox">
-        <div class="pgroup-lbl">Длительность</div>
-        <div class="durRow">
-          <input type="range" id="slider" min="5" max="30" step="1" value="5">
-          <div class="durVal"><span id="secVal">5</span><small>сек</small></div>
-        </div>
-      </div>
-      <div class="pgroup" style="min-width:110px;text-align:right">
-        <div class="pgroup-lbl">Итого</div>
-        <div class="durVal" style="font-size:1.6rem;justify-content:flex-end"><span id="priceVal">199</span><small>₽</small></div>
-      </div>
-    </div>
+    <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы кнопкой 「+」, потом опиши сцену, упоминая их через @Image1, @Image2. Так нейросеть точнее поймёт, кто где стоит и что делает.</div>
   </section>
 
   <aside class="panel">
@@ -290,9 +258,24 @@ function toggleSidebar(){
   document.getElementById('sidebarBackdrop').classList.toggle('open');
 }
 
+var DRAFT_KEY = 'yk_gen_draft';
+var HIST_KEY = 'yk_gen_history';
+(function migrateKeys(){
+  try{
+    if(!localStorage.getItem(DRAFT_KEY) && localStorage.getItem('seedgen_gen_draft')){
+      localStorage.setItem(DRAFT_KEY, localStorage.getItem('seedgen_gen_draft'));
+      localStorage.removeItem('seedgen_gen_draft');
+    }
+    if(!localStorage.getItem(HIST_KEY) && localStorage.getItem('seedgen_gen_history')){
+      localStorage.setItem(HIST_KEY, localStorage.getItem('seedgen_gen_history'));
+      localStorage.removeItem('seedgen_gen_history');
+    }
+  }catch(e){}
+})();
+
 var SURCHARGE = {'480p':0, '720p':200, '1080p':300};
 var seconds = 5, aspect = '16:9', quality = '480p';
-var refs = []; // {kind:'image'|'video'|'audio', b64|url, name}
+var refs = [];
 var restoring = false;
 var stage = 'setup';
 var paidSeen = false, baseDone = false, upscaleExpected = false;
@@ -301,6 +284,7 @@ var statusEl = document.getElementById('status');
 var slider = document.getElementById('slider');
 var promptBox = document.getElementById('promptBox');
 var ddMenu = document.getElementById('ddMenu');
+var upTile = null;
 
 function setStatus(t){ statusEl.textContent = t; }
 
@@ -355,15 +339,68 @@ function getPromptText(){
   promptBox.childNodes.forEach(function(n){
     if(n.nodeType === 3){
       out += n.nodeValue;
-    }else if(n.nodeType === 1 && n.classList.contains('chip')){
-      out += '@' + n.getAttribute('data-ref');
-    }else if(n.nodeType === 1 && n.tagName === 'BR'){
-      out += '\n';
     }else if(n.nodeType === 1 && n.classList.contains('chiptag')){
       out += n.textContent;
+    }else if(n.nodeType === 1 && n.tagName === 'BR'){
+      out += '\n';
     }
   });
   return out.replace(/\u00A0/g, ' ');
+}
+
+function initUploadTile(){
+  upTile = document.createElement('span');
+  upTile.className = 'upltile';
+  upTile.setAttribute('contenteditable', 'false');
+  upTile.title = 'Загрузить фото, видео или звук';
+  upTile.innerHTML = '+<input type="file" id="uplInput" accept="image/*,video/*,audio/*" multiple>';
+  promptBox.insertBefore(upTile, promptBox.firstChild);
+  document.getElementById('uplInput').addEventListener('change', function(e){
+    var files = Array.prototype.slice.call(e.target.files);
+    var idx = 0;
+    function next(){
+      if(idx >= files.length) return;
+      var f = files[idx++];
+      routeFile(f, next);
+    }
+    next();
+    e.target.value = '';
+  });
+}
+
+function routeFile(f, done){
+  if(f.type.indexOf('image/') === 0){
+    fileToRefBase64(f, function(b64){
+      var img = new Image();
+      img.onload = function(){
+        var max = 80, w = img.width, h = img.height;
+        if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        var thumb = c.toDataURL('image/jpeg', 0.7);
+        if(addRef('image', b64, f.name)){
+          var r = refs[refs.length - 1];
+          if(r) r.thumb = thumb;
+          renderChips();
+          saveDraft();
+        }
+        done();
+      };
+      img.src = 'data:image/jpeg;base64,' + b64;
+    });
+  }else if(f.type.indexOf('video/') === 0){
+    probeMedia(f, 15, function(){
+      uploadRef(f, 'video', function(url){ addRef('video', url, f.name); done(); });
+    });
+  }else if(f.type.indexOf('audio/') === 0){
+    probeMedia(f, 15, function(){
+      uploadRef(f, 'audio', function(url){ addRef('audio', url, f.name); done(); });
+    });
+  }else{
+    alert('Поддерживаются фото, видео и аудио');
+    done();
+  }
 }
 
 function fileToRefBase64(f, cb){
@@ -390,7 +427,7 @@ function probeMedia(f, maxSec, cb){
   el.onloadedmetadata = function(){
     var d = el.duration;
     URL.revokeObjectURL(url);
-    if(d > maxSec){ alert('Файл длиннее ' + maxSec + ' секунд. Выбери короче.'); return; }
+    if(d > maxSec){ alert('Файл длиннее ' + maxSec + ' секунд. Выбери короче.'); cb(null); return; }
     cb(d);
   };
   el.onerror = function(){ URL.revokeObjectURL(url); cb(0); };
@@ -425,16 +462,12 @@ function addRef(kind, data, name){
 }
 
 function removeRef(i){
-  var removed = refs.splice(i, 1)[0];
-  // также удаляем упоминания @ImageN из текста, если нужно — оставим как есть, это честно
+  refs.splice(i, 1);
   renderChips();
   saveDraft();
 }
 
 function renderChips(){
-  // сохраняем текущий текст и курсор
-  var saved = promptBox.innerHTML;
-  // пересобираем чипы: удаляем старые, создаём новые
   promptBox.querySelectorAll('.chip').forEach(function(el){ el.remove(); });
   refs.forEach(function(r, i){
     var name = refName(i, r.kind);
@@ -442,81 +475,35 @@ function renderChips(){
     var chip = document.createElement('span');
     chip.className = 'chip' + (r.kind !== 'image' ? ' ' + r.kind : '');
     chip.setAttribute('data-ref', name);
-    chip.setAttribute('data-idx', i);
     chip.setAttribute('contenteditable', 'false');
     if(r.kind === 'image'){
       var img = document.createElement('img');
       img.src = r.thumb || ('data:image/jpeg;base64,' + r.data);
       chip.appendChild(img);
     }
-    var lbl = document.createTextNode(name);
-    chip.appendChild(lbl);
+    chip.appendChild(document.createTextNode(name));
     var x = document.createElement('span');
     x.className = 'x';
     x.textContent = '✕';
     x.onclick = function(e){ e.stopPropagation(); removeRef(i); };
     chip.appendChild(x);
-    // вставляем в начало promptBox
-    promptBox.insertBefore(chip, promptBox.firstChild);
+    if(upTile && upTile.nextSibling){
+      promptBox.insertBefore(chip, upTile.nextSibling);
+    }else if(upTile){
+      promptBox.insertBefore(chip, upTile.nextSibling || promptBox.firstChild);
+    }else{
+      promptBox.insertBefore(chip, promptBox.firstChild);
+    }
   });
 }
 
-document.getElementById('addPhoto').addEventListener('change', function(e){
-  var files = Array.prototype.slice.call(e.target.files);
-  var idx = 0;
-  function next(){
-    if(idx >= files.length) return;
-    var f = files[idx++];
-    fileToRefBase64(f, function(b64){
-      var img = new Image();
-      img.onload = function(){
-        var max = 80, w = img.width, h = img.height;
-        if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
-        var c = document.createElement('canvas');
-        c.width = w; c.height = h;
-        c.getContext('2d').drawImage(img, 0, 0, w, h);
-        var thumb = c.toDataURL('image/jpeg', 0.7);
-        addRef('image', b64, f.name);
-        var r = refs[refs.length - 1];
-        if(r) r.thumb = thumb;
-        renderChips();
-        saveDraft();
-        next();
-      };
-      img.src = 'data:image/jpeg;base64,' + b64;
-    });
-  }
-  next();
-  e.target.value = '';
-});
-
-document.getElementById('addVideo').addEventListener('change', function(e){
-  var f = e.target.files[0]; if(!f) return;
-  probeMedia(f, 15, function(){
-    uploadRef(f, 'video', function(url){
-      addRef('video', url, f.name);
-    });
-  });
-  e.target.value = '';
-});
-
-document.getElementById('addAudio').addEventListener('change', function(e){
-  var f = e.target.files[0]; if(!f) return;
-  probeMedia(f, 15, function(){
-    uploadRef(f, 'audio', function(url){
-      addRef('audio', url, f.name);
-    });
-  });
-  e.target.value = '';
-});
-
-// @-dropdown
 var ddSel = 0, ddItems = [], ddActive = false;
 
 function showDropdown(){
   ddItems = refs.map(function(r, i){ return {name: refName(i, r.kind), kind: r.kind, idx: i, ref: r}; });
+  ddSel = 0;
   if(!ddItems.length){
-    ddMenu.innerHTML = '<div class="dd-empty">Сначала загрузи референсы кнопками выше — тогда @ покажет список</div>';
+    ddMenu.innerHTML = '<div class="dd-empty">Сначала загрузи референсы кнопкой 「+」 в поле — тогда @ покажет список</div>';
   }else{
     ddMenu.innerHTML = ddItems.map(function(it, i){
       var cls = 'dd-item' + (it.kind !== 'image' ? ' ' + it.kind : '') + (i === ddSel ? ' sel' : '');
@@ -551,14 +538,17 @@ function updateDdSel(){
 }
 
 function positionDropdown(){
-  var sel = window.getSelection();
-  if(!sel.rangeCount){ return; }
-  var range = sel.getRangeAt(0);
-  var rect = range.getBoundingClientRect();
   var boxRect = promptBox.getBoundingClientRect();
-  var top = rect.bottom - boxRect.top + 4;
-  var left = rect.left - boxRect.left;
-  if(left + 260 > boxRect.width) left = boxRect.width - 270;
+  var top = 8, left = 8;
+  var sel = window.getSelection();
+  if(sel && sel.rangeCount){
+    var rect = sel.getRangeAt(0).getBoundingClientRect();
+    if(rect && (rect.top || rect.left)){
+      top = rect.bottom - boxRect.top + 4;
+      left = rect.left - boxRect.left;
+    }
+  }
+  if(left + 260 > boxRect.width) left = Math.max(4, boxRect.width - 270);
   if(left < 0) left = 4;
   ddMenu.style.top = top + 'px';
   ddMenu.style.left = left + 'px';
@@ -567,10 +557,16 @@ function positionDropdown(){
 function insertFromDd(){
   if(!ddItems.length){ hideDropdown(); return; }
   var it = ddItems[ddSel];
+  promptBox.focus();
   var sel = window.getSelection();
-  if(!sel.rangeCount){ hideDropdown(); return; }
-  var range = sel.getRangeAt(0);
-  // удалить символ @, если он стоит прямо перед курсором
+  var range;
+  if(sel.rangeCount && promptBox.contains(sel.getRangeAt(0).startContainer)){
+    range = sel.getRangeAt(0);
+  }else{
+    range = document.createRange();
+    range.selectNodeContents(promptBox);
+    range.collapse(false);
+  }
   var node = range.startContainer;
   var off = range.startOffset;
   if(node.nodeType === 3 && off > 0 && node.nodeValue[off - 1] === '@'){
@@ -583,9 +579,10 @@ function insertFromDd(){
   tag.setAttribute('contenteditable', 'false');
   tag.textContent = '@' + it.name;
   range.insertNode(tag);
-  range.setStartAfter(tag);
-  range.insertNode(document.createTextNode(' '));
-  range.collapse(false);
+  var space = document.createTextNode(' ');
+  tag.after(space);
+  range.setStartAfter(space);
+  range.collapse(true);
   sel.removeAllRanges();
   sel.addRange(range);
   hideDropdown();
@@ -593,10 +590,20 @@ function insertFromDd(){
   updateSteps();
 }
 
+document.getElementById('atBtn').addEventListener('click', function(){
+  promptBox.focus();
+  var sel = window.getSelection();
+  var range = document.createRange();
+  range.selectNodeContents(promptBox);
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
+  showDropdown();
+});
+
 promptBox.addEventListener('input', function(){
   saveDraft();
   updateSteps();
-  // проверяем, есть ли @ перед курсором
   var sel = window.getSelection();
   if(!sel.rangeCount){ return; }
   var range = sel.getRangeAt(0);
@@ -628,7 +635,7 @@ promptBox.addEventListener('keydown', function(e){
 });
 
 document.addEventListener('click', function(e){
-  if(!ddMenu.contains(e.target) && !promptBox.contains(e.target)){
+  if(!ddMenu.contains(e.target) && e.target.id !== 'atBtn' && !promptBox.contains(e.target)){
     hideDropdown();
   }
 });
@@ -646,8 +653,7 @@ document.getElementById('aiBtn').addEventListener('click', function(){
     .then(function(d){
       b.disabled = false;
       if(d.error){ st.textContent = 'Не удалось улучшить, попробуй ещё раз'; return; }
-      // вставляем улучшенный текст в конец поля, сохраняя плитки
-      promptBox.appendChild(document.createTextNode('\n' + d.prompt));
+      promptBox.appendChild(document.createTextNode((getPromptText() ? ' ' : '') + d.prompt));
       localStorage.setItem('seedgen_ai_used', String(used+1));
       saveDraft(); updateSteps();
       st.textContent = 'Готово! ✨';
@@ -656,8 +662,8 @@ document.getElementById('aiBtn').addEventListener('click', function(){
     .catch(function(){ b.disabled = false; st.textContent = 'Не удалось улучшить, попробуй ещё раз'; });
 });
 
-function histLoad(){ try{ return JSON.parse(localStorage.getItem('seedgen_gen_history')||'[]'); }catch(e){ return []; } }
-function histSave(l){ try{ localStorage.setItem('seedgen_gen_history', JSON.stringify(l.slice(0,10))); }catch(e){} }
+function histLoad(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }catch(e){ return []; } }
+function histSave(l){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(l.slice(0,10))); }catch(e){} }
 function histRender(){
   var l=histLoad();
   var box=document.getElementById('histList');
@@ -687,7 +693,7 @@ slider.addEventListener('input', function(){
 function saveDraft(){
   if(restoring) return;
   try{
-    localStorage.setItem('seedgen_gen_draft', JSON.stringify({
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({
       prompt: getPromptText(),
       refs: refs.map(function(r){ return {kind:r.kind, data:r.data, name:r.name, thumb:r.thumb}; }),
       aspect: aspect, seconds: seconds, quality: quality, savedAt: Date.now()
@@ -695,9 +701,27 @@ function saveDraft(){
   }catch(e){}
 }
 
+function setTextWithTokens(text){
+  promptBox.textContent = '';
+  var parts = text.split(/(@(?:Image\d+|Video1|Audio1))/g);
+  parts.forEach(function(p){
+    if(!p) return;
+    if(/^@(Image\d+|Video1|Audio1)$/.test(p)){
+      var tag = document.createElement('span');
+      tag.className = 'chiptag';
+      tag.setAttribute('contenteditable', 'false');
+      tag.textContent = p;
+      promptBox.appendChild(tag);
+      promptBox.appendChild(document.createTextNode(' '));
+    }else{
+      promptBox.appendChild(document.createTextNode(p));
+    }
+  });
+}
+
 (function restoreDraft(){
   try{
-    var s = JSON.parse(localStorage.getItem('seedgen_gen_draft') || 'null');
+    var s = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
     if(!s) return;
     restoring = true;
     if(s.aspect) pickAspect(s.aspect);
@@ -705,11 +729,9 @@ function saveDraft(){
     if(s.quality && SURCHARGE[s.quality] !== undefined){ quality = s.quality; document.querySelectorAll('#qRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-q') === quality); }); }
     if(s.refs && s.refs.length){
       s.refs.forEach(function(r){ refs.push({kind:r.kind, data:r.data, name:r.name, thumb:r.thumb}); });
-      renderChips();
     }
-    if(s.prompt){
-      promptBox.textContent = s.prompt;
-    }
+    renderChips();
+    if(s.prompt){ setTextWithTokens(s.prompt); }
     restoring = false;
     updatePriceDisplay();
     updateSteps();
@@ -738,7 +760,7 @@ btn.addEventListener('click', function(){
     });
 });
 
-function chainKey(pid){ return 'seedgen_gen_chain_' + pid; }
+function chainKey(pid){ return 'yk_gen_chain_' + pid; }
 function getChain(pid){ try{ return JSON.parse(localStorage.getItem(chainKey(pid)) || 'null'); }catch(e){ return null; } }
 function setChain(pid, obj){ try{ localStorage.setItem(chainKey(pid), JSON.stringify(obj)); }catch(e){} }
 function clearChain(pid){ try{ localStorage.removeItem(chainKey(pid)); }catch(e){} }
@@ -835,7 +857,7 @@ function poll(taskId, stg, baseVideoUrl, pid){
         poll(data.taskId, 'base', null, pid);
       }else if(data.paid){
         paidSeen = true; updateSteps();
-        var draft = JSON.parse(localStorage.getItem('seedgen_gen_draft') || '{}');
+        var draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
         var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5, quality:draft.quality || '480p'};
         var refsList = draft.refs || [];
         var images = [], video = null, audio = null;
@@ -868,6 +890,7 @@ function poll(taskId, stg, baseVideoUrl, pid){
     .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
 })();
 
+initUploadTile();
 histRender();
 updatePriceDisplay();
 updateSteps();
