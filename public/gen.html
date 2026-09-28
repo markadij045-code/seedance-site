@@ -15,12 +15,11 @@
 .showcase h2 .grad{background:linear-gradient(90deg,#A3E635,#84cc16);-webkit-background-clip:text;background-clip:text;color:transparent}
 .showcase p{color:var(--muted);font-size:.92rem;margin:0 0 18px}
 .show-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.show-card{position:relative;border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:10px;overflow:hidden}
+.show-card{border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:10px;overflow:hidden}
 .show-card video{width:100%;border-radius:12px;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
 .show-cap{color:var(--muted);font-size:.82rem;line-height:1.5;margin-top:10px}
 .show-cap b{color:var(--text);font-weight:600}
-@media(max-width:800px){.show-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.show-grid{grid-template-columns:1fr}}
+@media(max-width:800px){.show-grid{grid-template-columns:1fr}}
 .ws{max-width:1160px;margin:30px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start}
 .panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
@@ -29,51 +28,54 @@
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 8px}
-.promptBox{position:relative;min-height:190px;max-height:380px;overflow-y:auto;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:18px;padding:14px 16px;font:400 .95rem/1.6 'Inter',sans-serif;color:var(--text);outline:none;white-space:pre-wrap;word-wrap:break-word}
-.promptBox:focus{border-color:var(--border-lime)}
+.studio{position:relative;border:1px solid var(--border);border-radius:20px;background:rgba(0,0,0,.35)}
+.pwrap{padding:14px 16px 10px}
+.promptBox{min-height:130px;max-height:300px;overflow-y:auto;outline:none;font:400 .95rem/1.7 'Inter',sans-serif;color:var(--text);white-space:pre-wrap;word-wrap:break-word}
 .promptBox:empty::before{content:attr(data-ph);color:#6b7280;pointer-events:none}
-.upltile{display:inline-block;vertical-align:middle;width:36px;height:36px;border-radius:10px;border:1px dashed rgba(163,230,53,.5);background:rgba(163,230,53,.06);color:var(--lime);text-align:center;line-height:34px;font-size:1.15rem;margin:0 8px 4px 0;cursor:pointer;position:relative;flex:0 0 auto}
-.upltile:hover{background:rgba(163,230,53,.14)}
-.upltile input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.chip{display:inline-block;vertical-align:middle;position:relative;margin:2px 6px 2px 0;padding:3px 8px 3px 26px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);border-radius:999px;font-size:.75rem;font-weight:600;cursor:default;line-height:1.6;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chip img{position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;object-fit:cover}
-.chip.audio{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.5);color:#93c5fd;padding-left:28px}
-.chip.audio::before{content:'♪';position:absolute;left:8px;top:2px;font-size:.9rem}
-.chip.video{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.5);color:#fdba74;padding-left:28px}
-.chip.video::before{content:'▶';position:absolute;left:8px;top:2px;font-size:.7rem}
-.chip .x{margin-left:6px;opacity:.7;cursor:pointer}
-.chip .x:hover{opacity:1}
-.chiptag{color:var(--lime);font-weight:700;font-family:'Space Grotesk';padding:1px 7px;background:rgba(163,230,53,.12);border-radius:6px;font-size:.8rem;display:inline-block;vertical-align:middle;margin:0 2px}
-.airow{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-.aibtn{padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
-.aibtn:disabled{opacity:.5}
-#aistat{color:var(--muted);font-size:.82rem}
-.ctrlbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding:10px 12px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.3)}
-.cchip{padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.05);color:var(--muted);font-size:.78rem;font-weight:600;white-space:nowrap}
-.seg{display:flex;gap:4px;flex-wrap:wrap}
-.seg button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer;transition:.2s;white-space:nowrap}
-.seg button:hover{color:var(--text)}
-.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.durRow{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}
-.durVal{font-family:'Space Grotesk';font-size:1.15rem;font-weight:700;color:var(--lime);min-width:52px;text-align:right;white-space:nowrap}
-.durVal small{color:var(--muted);font-size:.75rem;font-weight:500;margin-left:2px}
+.reftile{display:inline-block;vertical-align:middle;width:46px;height:46px;border-radius:10px;border:1px solid var(--border-lime);overflow:hidden;position:relative;margin:0 6px 4px 0;background:#000}
+.reftile img{width:100%;height:100%;object-fit:cover}
+.reftile .ic{position:absolute;inset:0;display:grid;place-items:center;font-size:1rem;color:var(--lime);background:rgba(163,230,53,.12)}
+.reftile.audio .ic{color:#93c5fd;background:rgba(59,130,246,.12)}
+.reftile.video .ic{color:#fdba74;background:rgba(251,146,60,.12)}
+.reftile .x{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.6rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0}
+.reftile:hover .x{display:grid}
+.addbadge{display:inline-block;vertical-align:middle;width:26px;height:26px;border-radius:50%;border:1px dashed rgba(163,230,53,.6);background:rgba(163,230,53,.12);color:var(--lime);text-align:center;line-height:24px;font-size:.95rem;cursor:pointer;margin:0 8px 4px 0}
+.addbadge:hover{background:rgba(163,230,53,.25)}
+.mchip{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;margin:0 3px;padding:2px 8px 2px 3px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);border-radius:999px;color:var(--lime);font-size:.78rem;font-weight:600;max-width:180px}
+.mchip img{width:18px;height:18px;border-radius:50%;object-fit:cover;flex:0 0 auto}
+.mchip .mi{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.6rem;background:rgba(163,230,53,.15);flex:0 0 auto}
+.mchip.audio .mi{color:#93c5fd;background:rgba(59,130,246,.15)}
+.mchip.video .mi{color:#fdba74;background:rgba(251,146,60,.15)}
+.mchip .mn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.studio-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-top:1px solid var(--border);background:rgba(255,255,255,.02)}
+.pchip{padding:7px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font:600 .8rem 'Inter';cursor:pointer;white-space:nowrap}
+.pchip:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
+.pchip.at{color:var(--lime);border-color:var(--border-lime);background:rgba(163,230,53,.08);font-weight:800}
+.priceBox{font-family:'Space Grotesk';font-size:1.2rem;font-weight:700;color:var(--lime);white-space:nowrap;margin-left:auto}
+.sendbtn{width:40px;height:40px;border-radius:50%;border:none;background:#A3E635;color:#050607;font-size:1.1rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
+.sendbtn:hover{background:#b6f04a}
+.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:230px;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
+.popup.open{display:block}
+.pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
+.pu-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
+.pu-item:hover,.pu-item.sel{background:rgba(163,230,53,.12)}
+.pu-item img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex:0 0 auto}
+.pu-item .mi{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;flex:0 0 auto}
+.pu-item.audio{color:#93c5fd}.pu-item.audio .mi{background:rgba(59,130,246,.15)}
+.pu-item.video{color:#fdba74}.pu-item.video .mi{background:rgba(251,146,60,.15)}
+.pu-item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pu-item .chk{margin-left:auto;color:var(--lime)}
+.pu-add{color:var(--lime);font-weight:600}
+.pu-lbl{padding:8px 10px 4px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
+.pu-row button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer}
+.pu-row button:hover{color:var(--text)}
+.pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.pu-dur{padding:8px 12px 12px;display:flex;gap:10px;align-items:center}
+.pu-dur span{font-family:'Space Grotesk';font-weight:700;color:var(--lime);white-space:nowrap;min-width:52px;text-align:right}
 input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
 input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
-.priceBox{font-family:'Space Grotesk';font-size:1.25rem;font-weight:700;color:var(--lime);white-space:nowrap}
-.atbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font-weight:800;font-size:1.05rem;cursor:pointer;flex:0 0 auto}
-.atbtn:hover{background:rgba(163,230,53,.2)}
-.dropdown{position:absolute;z-index:100;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:220px;max-width:300px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
-.dropdown.open{display:block}
-.dd-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
-.dd-item:hover,.dd-item.sel{background:rgba(163,230,53,.12)}
-.dd-item img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex:0 0 auto}
-.dd-item.audio{color:#93c5fd}
-.dd-item.audio::before{content:'♪';font-size:1.1rem;flex:0 0 auto;width:28px;text-align:center}
-.dd-item.video{color:#fdba74}
-.dd-item.video::before{content:'▶';font-size:.9rem;flex:0 0 auto;width:28px;text-align:center}
-.dd-empty{padding:10px;color:var(--muted);font-size:.82rem;text-align:center}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
 .rolehint b{color:var(--lime)}
 .hist{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:rgba(0,0,0,.25);padding:14px}
@@ -99,7 +101,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .ph svg{width:42px;height:42px;color:rgba(163,230,53,.45);margin:0 auto 12px}
 .trust{margin:16px 0 0;color:var(--muted);font-size:.8rem;line-height:1.6;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
-.bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--border)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);border-top:1px solid var(--border)}
 .bar-in{max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .bar-price{font-family:'Space Grotesk';font-size:1.45rem;font-weight:700;white-space:nowrap}
 .bar-price small{display:block;color:var(--muted);font:.72rem/1.2 'Inter';font-weight:500}
@@ -108,20 +110,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .agree a{color:var(--lime)}
 .bar .btn{margin-left:auto}
 #status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
-@media(max-width:900px){
-  .ws{grid-template-columns:1fr;margin-top:20px}
-  .bar .btn{margin-left:0;width:100%}
-  .agree{min-width:100%}
-}
+@media(max-width:900px){.ws{grid-template-columns:1fr;margin-top:20px}.bar .btn{margin-left:0;width:100%}.agree{min-width:100%}}
 </style>
 </head><body data-ws="1">
-
 <header class="top">
   <div class="container nav-in">
-    <a class="logo" href="/">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
-      Ёшкин кот
-    </a>
+    <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg> Ёшкин кот</a>
     <nav class="menu">
       <a href="/cartoon.html">Мультфильм</a>
       <a href="/avatar.html">Аватар</a>
@@ -147,26 +141,15 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <a href="/examples.html">Примеры</a>
   <a href="/help.html">Помощь</a>
 </div>
-
 <section class="showcase">
   <h2>Снято у нас: <span class="grad">от фразы до ролика</span></h2>
-  <p>Три экспоната студии. Каждый снят за 1–5 минут из пары слов и пары картинок. Точно так же снимем и твой.</p>
+  <p>Три экспоната студии: каждый снят за 1–5 минут из пары слов и пары картинок.</p>
   <div class="show-grid">
-    <div class="show-card">
-      <video src="/cat-space.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="show-cap"><b>Фраза + референс.</b> 「Кот в скафандре плывёт сквозь звёзды」 и одна картинка с котом — нейросеть сняла целую сцену.</div>
-    </div>
-    <div class="show-card">
-      <video src="/cat-city.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="show-cap"><b>Кинематографичный стиль.</b> 「Гигантский кот идёт по ночному городу, неон в лужах」— одна фраза, ни одной картинки.</div>
-    </div>
-    <div class="show-card">
-      <video src="/cat-dance.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="show-cap"><b>Мем и танец.</b> 「Котёнок танцует под весёлую музыку」— для сторис и коротких роликов.</div>
-    </div>
+    <div class="show-card"><video src="/cat-space.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Фраза + референс.</b> 「Кот в скафандре плывёт сквозь звёзды」.</div></div>
+    <div class="show-card"><video src="/cat-city.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Только фраза.</b> 「Гигантский кот идёт по ночному городу」.</div></div>
+    <div class="show-card"><video src="/cat-dance.mp4" muted loop preload="metadata" playsinline controls></video><div class="show-cap"><b>Мем и танец.</b> 「Котёнок танцует под весёлую музыку」.</div></div>
   </div>
 </section>
-
 <main class="ws">
   <section class="panel">
     <div class="psteps">
@@ -174,39 +157,24 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <span class="pstep" id="st2"><i>2</i> Оплата</span>
       <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
     </div>
-
-    <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену словами. Кнопкой 「+」 сюда же можно загрузить до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Напечатай @ или нажми кнопку @ в панели ниже — появится список загруженного, клик — и ссылка встанет в текст." spellcheck="false"></div>
-    <div class="dropdown" id="ddMenu"></div>
-
-    <div class="airow" id="airow">
-      <button class="aibtn" id="aiBtn" type="button">✨ Улучшить описание</button>
-      <span id="aistat"></span>
+    <div class="studio">
+      <div class="pwrap">
+        <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену словами. Кружком 「+」 загрузи до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Напечатай @ или нажми @ в панели ниже — всплывёт список загруженного, клик вставит упоминание в курсор." spellcheck="false"></div>
+      </div>
+      <div class="studio-bar">
+        <button class="pchip" id="pcMode" type="button">🎬 Видео из текста ⌄</button>
+        <button class="pchip" id="pcModel" type="button">⚙ Seedance 2.5 ⌄</button>
+        <button class="pchip" id="pcFQ" type="button">16:9 · 480p ⌄</button>
+        <button class="pchip" id="pcDur" type="button">5 сек ⌄</button>
+        <button class="pchip at" id="pcAt" type="button" title="Упомянуть загруженный референс">@</button>
+        <div class="priceBox"><span id="priceVal">199</span> ₽</div>
+        <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
+      </div>
+      <div class="popup" id="popMenu"></div>
     </div>
-
-    <div class="ctrlbar">
-      <span class="cchip">🎬 Видео из текста</span>
-      <span class="cchip">⚙ Seedance 2.5</span>
-      <div class="seg" id="aspectRow">
-        <button type="button" data-aspect="16:9" class="on" onclick="pickAspect('16:9')">16:9</button>
-        <button type="button" data-aspect="9:16" onclick="pickAspect('9:16')">9:16</button>
-        <button type="button" data-aspect="1:1" onclick="pickAspect('1:1')">1:1</button>
-      </div>
-      <div class="seg" id="qRow">
-        <button type="button" data-q="480p" class="on" onclick="setQuality('480p')">480p</button>
-        <button type="button" data-q="720p" onclick="setQuality('720p')">720p · +200 ₽</button>
-        <button type="button" data-q="1080p" onclick="setQuality('1080p')">1080p · +300 ₽</button>
-      </div>
-      <div class="durRow">
-        <input type="range" id="slider" min="5" max="30" step="1" value="5">
-        <div class="durVal"><span id="secVal">5</span><small>сек</small></div>
-      </div>
-      <div class="priceBox"><span id="priceVal">199</span> ₽</div>
-      <button class="atbtn" id="atBtn" type="button" title="Вставить ссылку на загруженный референс">@</button>
-    </div>
-
-    <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы кнопкой 「+」, потом опиши сцену, упоминая их через @Image1, @Image2. Так нейросеть точнее поймёт, кто где стоит и что делает.</div>
+    <input type="file" id="uplInput" accept="image/*,video/*,audio/*" multiple style="display:none">
+    <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы кружком 「+」, потом опиши сцену, упоминая их через @Image1, @Image2 — нейросеть поймёт, кто где стоит.</div>
   </section>
-
   <aside class="panel">
     <div class="tl">
       <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата — карта, Мир, СБП, SberPay, ЮMoney</div>
@@ -214,10 +182,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <div class="tl-item" id="tlUp" style="display:none"><span class="tl-dot"></span>Улучшение до 1080p — ещё ~1 минута</div>
     </div>
     <div class="outbox" id="outbox">
-      <div class="ph">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg>
-        Здесь появится твоё видео.<br>Опиши сцену слева и нажми кнопку оплаты внизу.
-      </div>
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg>Здесь появится твоё видео.<br>Опиши сцену слева и нажми кнопку оплаты внизу.</div>
     </div>
     <div class="hist">
       <div class="hist-h"><span>📦 История (этот браузер)</span><span id="histCount"></span></div>
@@ -227,7 +192,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
   </aside>
 </main>
-
 <div class="bar">
   <div class="bar-in">
     <div class="bar-price"><span id="barPrice">199</span> ₽<small id="barMeta">5 сек · 480p</small></div>
@@ -238,663 +202,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 </div>
 <script type="module">
 let uploadFn = null;
-try {
-  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
-  uploadFn = m.upload;
-} catch (e) {
-  try {
-    const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
-    uploadFn = m2.upload;
-  } catch (e2) {
-    console.error('Blob client load failed:', e2);
-  }
-}
+try { const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm'); uploadFn = m.upload; }
+catch (e) { try { const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client'); uploadFn = m2.upload; } catch (e2) { console.error('Blob client load failed:', e2); } }
 if (uploadFn) window.blobUpload = uploadFn;
 </script>
-
-<script>
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarBackdrop').classList.toggle('open');
-}
-
-var DRAFT_KEY = 'yk_gen_draft';
-var HIST_KEY = 'yk_gen_history';
-(function migrateKeys(){
-  try{
-    if(!localStorage.getItem(DRAFT_KEY) && localStorage.getItem('seedgen_gen_draft')){
-      localStorage.setItem(DRAFT_KEY, localStorage.getItem('seedgen_gen_draft'));
-      localStorage.removeItem('seedgen_gen_draft');
-    }
-    if(!localStorage.getItem(HIST_KEY) && localStorage.getItem('seedgen_gen_history')){
-      localStorage.setItem(HIST_KEY, localStorage.getItem('seedgen_gen_history'));
-      localStorage.removeItem('seedgen_gen_history');
-    }
-  }catch(e){}
-})();
-
-var SURCHARGE = {'480p':0, '720p':200, '1080p':300};
-var seconds = 5, aspect = '16:9', quality = '480p';
-var refs = [];
-var restoring = false;
-var stage = 'setup';
-var paidSeen = false, baseDone = false, upscaleExpected = false;
-var btn = document.getElementById('btn');
-var statusEl = document.getElementById('status');
-var slider = document.getElementById('slider');
-var promptBox = document.getElementById('promptBox');
-var ddMenu = document.getElementById('ddMenu');
-var upTile = null;
-
-function setStatus(t){ statusEl.textContent = t; }
-
-function refName(i, kind){
-  if(kind === 'image') return 'Image' + (i+1);
-  if(kind === 'video') return 'Video1';
-  if(kind === 'audio') return 'Audio1';
-  return 'Ref' + (i+1);
-}
-
-function updatePriceDisplay(){
-  var p = 199 + (seconds - 5) * 30 + SURCHARGE[quality];
-  document.getElementById('secVal').textContent = seconds;
-  document.getElementById('priceVal').textContent = p;
-  document.getElementById('barPrice').textContent = p;
-  document.getElementById('barMeta').textContent = seconds + ' сек · ' + quality;
-  btn.textContent = 'Создать видео — ' + p + ' ₽';
-}
-
-function updateSteps(){
-  var promptOk = getPromptText().trim().length > 0;
-  var s1 = document.getElementById('st1'), s2 = document.getElementById('st2'), s3 = document.getElementById('st3');
-  s1.className = 'pstep' + (promptOk ? ' done' : ' active');
-  s2.className = 'pstep' + (paidSeen ? ' done' : (promptOk ? ' active' : ''));
-  s3.className = 'pstep' + (stage === 'done' ? ' done' : (paidSeen ? ' active' : ''));
-  var tp = document.getElementById('tlPay'), tg = document.getElementById('tlGen'), tu = document.getElementById('tlUp');
-  tp.className = 'tl-item' + (paidSeen ? ' done' : (promptOk ? ' now' : ''));
-  tg.className = 'tl-item' + (baseDone ? ' done' : (stage === 'gen' ? ' now' : ''));
-  tu.style.display = upscaleExpected ? 'flex' : 'none';
-  tu.className = 'tl-item' + (stage === 'done' && upscaleExpected ? ' done' : (stage === 'up' ? ' now' : ''));
-}
-
-function pickAspect(a){
-  aspect = a;
-  document.querySelectorAll('#aspectRow button').forEach(function(el){
-    el.classList.toggle('on', el.getAttribute('data-aspect') === a);
-  });
-  saveDraft();
-}
-
-function setQuality(q){
-  quality = q;
-  document.querySelectorAll('#qRow button').forEach(function(el){
-    el.classList.toggle('on', el.getAttribute('data-q') === q);
-  });
-  updatePriceDisplay();
-  saveDraft();
-}
-
-function getPromptText(){
-  var out = '';
-  promptBox.childNodes.forEach(function(n){
-    if(n.nodeType === 3){
-      out += n.nodeValue;
-    }else if(n.nodeType === 1 && n.classList.contains('chiptag')){
-      out += n.textContent;
-    }else if(n.nodeType === 1 && n.tagName === 'BR'){
-      out += '\n';
-    }
-  });
-  return out.replace(/\u00A0/g, ' ');
-}
-
-function initUploadTile(){
-  upTile = document.createElement('span');
-  upTile.className = 'upltile';
-  upTile.setAttribute('contenteditable', 'false');
-  upTile.title = 'Загрузить фото, видео или звук';
-  upTile.innerHTML = '+<input type="file" id="uplInput" accept="image/*,video/*,audio/*" multiple>';
-  promptBox.insertBefore(upTile, promptBox.firstChild);
-  document.getElementById('uplInput').addEventListener('change', function(e){
-    var files = Array.prototype.slice.call(e.target.files);
-    var idx = 0;
-    function next(){
-      if(idx >= files.length) return;
-      var f = files[idx++];
-      routeFile(f, next);
-    }
-    next();
-    e.target.value = '';
-  });
-}
-
-function routeFile(f, done){
-  if(f.type.indexOf('image/') === 0){
-    fileToRefBase64(f, function(b64){
-      var img = new Image();
-      img.onload = function(){
-        var max = 80, w = img.width, h = img.height;
-        if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
-        var c = document.createElement('canvas');
-        c.width = w; c.height = h;
-        c.getContext('2d').drawImage(img, 0, 0, w, h);
-        var thumb = c.toDataURL('image/jpeg', 0.7);
-        if(addRef('image', b64, f.name)){
-          var r = refs[refs.length - 1];
-          if(r) r.thumb = thumb;
-          renderChips();
-          saveDraft();
-        }
-        done();
-      };
-      img.src = 'data:image/jpeg;base64,' + b64;
-    });
-  }else if(f.type.indexOf('video/') === 0){
-    probeMedia(f, 15, function(){
-      uploadRef(f, 'video', function(url){ addRef('video', url, f.name); done(); });
-    });
-  }else if(f.type.indexOf('audio/') === 0){
-    probeMedia(f, 15, function(){
-      uploadRef(f, 'audio', function(url){ addRef('audio', url, f.name); done(); });
-    });
-  }else{
-    alert('Поддерживаются фото, видео и аудио');
-    done();
-  }
-}
-
-function fileToRefBase64(f, cb){
-  var reader = new FileReader();
-  reader.onload = function(){
-    var img = new Image();
-    img.onload = function(){
-      var max = 1024, w = img.width, h = img.height;
-      if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
-      var c = document.createElement('canvas');
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(img, 0, 0, w, h);
-      cb(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(f);
-}
-
-function probeMedia(f, maxSec, cb){
-  var url = URL.createObjectURL(f);
-  var el = (f.type.indexOf('video/') === 0) ? document.createElement('video') : new Audio();
-  el.preload = 'metadata';
-  el.onloadedmetadata = function(){
-    var d = el.duration;
-    URL.revokeObjectURL(url);
-    if(d > maxSec){ alert('Файл длиннее ' + maxSec + ' секунд. Выбери короче.'); cb(null); return; }
-    cb(d);
-  };
-  el.onerror = function(){ URL.revokeObjectURL(url); cb(0); };
-  el.src = url;
-}
-
-function safeName(prefix, f, ext){
-  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
-}
-
-function uploadRef(f, kind, cb){
-  if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и попробуй снова.'); return; }
-  setStatus('Загружаем ' + (kind === 'video' ? 'видео' : 'звук') + '...');
-  window.blobUpload(safeName('gen-ref-' + kind, f, kind === 'video' ? '.mp4' : '.mp3'), f, { access: 'public' })
-    .then(function(blob){ setStatus(''); cb(blob.url); })
-    .catch(function(err){ setStatus(''); alert('Не удалось загрузить файл: ' + err.message); });
-}
-
-function addRef(kind, data, name){
-  if(kind === 'image'){
-    var imgCount = refs.filter(function(r){ return r.kind === 'image'; }).length;
-    if(imgCount >= 10){ alert('Лимит фото-референсов: 10'); return false; }
-  }else if(kind === 'video'){
-    if(refs.some(function(r){ return r.kind === 'video'; })){ alert('Можно добавить только одно видео'); return false; }
-  }else if(kind === 'audio'){
-    if(refs.some(function(r){ return r.kind === 'audio'; })){ alert('Можно добавить только один звук'); return false; }
-  }
-  refs.push({kind:kind, data:data, name:name || ''});
-  renderChips();
-  saveDraft();
-  return true;
-}
-
-function removeRef(i){
-  refs.splice(i, 1);
-  renderChips();
-  saveDraft();
-}
-
-function renderChips(){
-  promptBox.querySelectorAll('.chip').forEach(function(el){ el.remove(); });
-  refs.forEach(function(r, i){
-    var name = refName(i, r.kind);
-    r._name = name;
-    var chip = document.createElement('span');
-    chip.className = 'chip' + (r.kind !== 'image' ? ' ' + r.kind : '');
-    chip.setAttribute('data-ref', name);
-    chip.setAttribute('contenteditable', 'false');
-    if(r.kind === 'image'){
-      var img = document.createElement('img');
-      img.src = r.thumb || ('data:image/jpeg;base64,' + r.data);
-      chip.appendChild(img);
-    }
-    chip.appendChild(document.createTextNode(name));
-    var x = document.createElement('span');
-    x.className = 'x';
-    x.textContent = '✕';
-    x.onclick = function(e){ e.stopPropagation(); removeRef(i); };
-    chip.appendChild(x);
-    if(upTile && upTile.nextSibling){
-      promptBox.insertBefore(chip, upTile.nextSibling);
-    }else if(upTile){
-      promptBox.insertBefore(chip, upTile.nextSibling || promptBox.firstChild);
-    }else{
-      promptBox.insertBefore(chip, promptBox.firstChild);
-    }
-  });
-}
-
-var ddSel = 0, ddItems = [], ddActive = false;
-
-function showDropdown(){
-  ddItems = refs.map(function(r, i){ return {name: refName(i, r.kind), kind: r.kind, idx: i, ref: r}; });
-  ddSel = 0;
-  if(!ddItems.length){
-    ddMenu.innerHTML = '<div class="dd-empty">Сначала загрузи референсы кнопкой 「+」 в поле — тогда @ покажет список</div>';
-  }else{
-    ddMenu.innerHTML = ddItems.map(function(it, i){
-      var cls = 'dd-item' + (it.kind !== 'image' ? ' ' + it.kind : '') + (i === ddSel ? ' sel' : '');
-      if(it.kind === 'image'){
-        return '<div class="' + cls + '" data-i="' + i + '"><img src="' + (it.ref.thumb || ('data:image/jpeg;base64,' + it.ref.data)) + '"><span>@' + it.name + ' · ' + (it.ref.name || 'фото') + '</span></div>';
-      }else{
-        return '<div class="' + cls + '" data-i="' + i + '"><span>@' + it.name + ' · ' + (it.ref.name || (it.kind === 'video' ? 'видео' : 'звук')) + '</span></div>';
-      }
-    }).join('');
-    ddMenu.querySelectorAll('.dd-item').forEach(function(el){
-      el.addEventListener('mouseenter', function(){
-        ddSel = parseInt(el.getAttribute('data-i'), 10);
-        updateDdSel();
-      });
-      el.addEventListener('click', function(){ insertFromDd(); });
-    });
-  }
-  positionDropdown();
-  ddMenu.classList.add('open');
-  ddActive = true;
-}
-
-function hideDropdown(){
-  ddMenu.classList.remove('open');
-  ddActive = false;
-}
-
-function updateDdSel(){
-  ddMenu.querySelectorAll('.dd-item').forEach(function(el, i){
-    el.classList.toggle('sel', i === ddSel);
-  });
-}
-
-function positionDropdown(){
-  var boxRect = promptBox.getBoundingClientRect();
-  var top = 8, left = 8;
-  var sel = window.getSelection();
-  if(sel && sel.rangeCount){
-    var rect = sel.getRangeAt(0).getBoundingClientRect();
-    if(rect && (rect.top || rect.left)){
-      top = rect.bottom - boxRect.top + 4;
-      left = rect.left - boxRect.left;
-    }
-  }
-  if(left + 260 > boxRect.width) left = Math.max(4, boxRect.width - 270);
-  if(left < 0) left = 4;
-  ddMenu.style.top = top + 'px';
-  ddMenu.style.left = left + 'px';
-}
-
-function insertFromDd(){
-  if(!ddItems.length){ hideDropdown(); return; }
-  var it = ddItems[ddSel];
-  promptBox.focus();
-  var sel = window.getSelection();
-  var range;
-  if(sel.rangeCount && promptBox.contains(sel.getRangeAt(0).startContainer)){
-    range = sel.getRangeAt(0);
-  }else{
-    range = document.createRange();
-    range.selectNodeContents(promptBox);
-    range.collapse(false);
-  }
-  var node = range.startContainer;
-  var off = range.startOffset;
-  if(node.nodeType === 3 && off > 0 && node.nodeValue[off - 1] === '@'){
-    node.nodeValue = node.nodeValue.slice(0, off - 1) + node.nodeValue.slice(off);
-    range.setStart(node, off - 1);
-    range.collapse(true);
-  }
-  var tag = document.createElement('span');
-  tag.className = 'chiptag';
-  tag.setAttribute('contenteditable', 'false');
-  tag.textContent = '@' + it.name;
-  range.insertNode(tag);
-  var space = document.createTextNode(' ');
-  tag.after(space);
-  range.setStartAfter(space);
-  range.collapse(true);
-  sel.removeAllRanges();
-  sel.addRange(range);
-  hideDropdown();
-  saveDraft();
-  updateSteps();
-}
-
-document.getElementById('atBtn').addEventListener('click', function(){
-  promptBox.focus();
-  var sel = window.getSelection();
-  var range = document.createRange();
-  range.selectNodeContents(promptBox);
-  range.collapse(false);
-  sel.removeAllRanges();
-  sel.addRange(range);
-  showDropdown();
-});
-
-promptBox.addEventListener('input', function(){
-  saveDraft();
-  updateSteps();
-  var sel = window.getSelection();
-  if(!sel.rangeCount){ return; }
-  var range = sel.getRangeAt(0);
-  var node = range.startContainer;
-  var off = range.startOffset;
-  if(node.nodeType === 3 && off > 0 && node.nodeValue[off - 1] === '@'){
-    showDropdown();
-  }else{
-    hideDropdown();
-  }
-});
-
-promptBox.addEventListener('keydown', function(e){
-  if(!ddActive) return;
-  if(e.key === 'ArrowDown'){
-    e.preventDefault();
-    ddSel = Math.min(ddSel + 1, ddItems.length - 1);
-    updateDdSel();
-  }else if(e.key === 'ArrowUp'){
-    e.preventDefault();
-    ddSel = Math.max(ddSel - 1, 0);
-    updateDdSel();
-  }else if(e.key === 'Enter' || e.key === 'Tab'){
-    e.preventDefault();
-    insertFromDd();
-  }else if(e.key === 'Escape'){
-    hideDropdown();
-  }
-});
-
-document.addEventListener('click', function(e){
-  if(!ddMenu.contains(e.target) && e.target.id !== 'atBtn' && !promptBox.contains(e.target)){
-    hideDropdown();
-  }
-});
-
-document.getElementById('aiBtn').addEventListener('click', function(){
-  var t = getPromptText().replace(/@\w+/g, '').trim();
-  if(t.length < 10){ alert('Напиши хотя бы пару слов своими словами — улучшатель сделает из них красивый промпт'); return; }
-  var used = parseInt(localStorage.getItem('seedgen_ai_used') || '0', 10);
-  if(used >= 5){ alert('Лимит 5 улучшений за визит исчерпан. Но и твой текст уже хорош!'); return; }
-  var b = document.getElementById('aiBtn');
-  var st = document.getElementById('aistat');
-  b.disabled = true; st.textContent = 'Улучшаем... ⏳';
-  fetch('/api/prompt', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:t})})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      b.disabled = false;
-      if(d.error){ st.textContent = 'Не удалось улучшить, попробуй ещё раз'; return; }
-      promptBox.appendChild(document.createTextNode((getPromptText() ? ' ' : '') + d.prompt));
-      localStorage.setItem('seedgen_ai_used', String(used+1));
-      saveDraft(); updateSteps();
-      st.textContent = 'Готово! ✨';
-      setTimeout(function(){ st.textContent = ''; }, 3000);
-    })
-    .catch(function(){ b.disabled = false; st.textContent = 'Не удалось улучшить, попробуй ещё раз'; });
-});
-
-function histLoad(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }catch(e){ return []; } }
-function histSave(l){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(l.slice(0,10))); }catch(e){} }
-function histRender(){
-  var l=histLoad();
-  var box=document.getElementById('histList');
-  document.getElementById('histCount').textContent=l.length?('всего '+l.length):'';
-  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые ролики будут собираться здесь (в этом браузере). После переезда история станет общей для всех устройств.</div>'; return; }
-  box.innerHTML=l.map(function(h,i){
-    return '<div class="hitem"><div style="flex:1;min-width:0"><div class="ht">'+(h.name||'видео')+'</div><div class="hd">'+h.date+'</div></div>'
-      + '<a href="'+h.url+'" target="_blank" rel="noopener">▶ скачать</a>'
-      + '<button class="del" data-i="'+i+'">✕</button></div>';
-  }).join('');
-  box.querySelectorAll('.del').forEach(function(b){
-    b.onclick=function(){ var l2=histLoad(); l2.splice(parseInt(b.getAttribute('data-i'),10),1); histSave(l2); histRender(); };
-  });
-}
-function histPush(url,name){
-  var l=histLoad();
-  l.unshift({url:url,name:name,date:new Date().toLocaleDateString('ru-RU')});
-  histSave(l); histRender();
-}
-
-slider.addEventListener('input', function(){
-  seconds = parseInt(slider.value, 10);
-  updatePriceDisplay();
-  saveDraft();
-});
-
-function saveDraft(){
-  if(restoring) return;
-  try{
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({
-      prompt: getPromptText(),
-      refs: refs.map(function(r){ return {kind:r.kind, data:r.data, name:r.name, thumb:r.thumb}; }),
-      aspect: aspect, seconds: seconds, quality: quality, savedAt: Date.now()
-    }));
-  }catch(e){}
-}
-
-function setTextWithTokens(text){
-  promptBox.textContent = '';
-  var parts = text.split(/(@(?:Image\d+|Video1|Audio1))/g);
-  parts.forEach(function(p){
-    if(!p) return;
-    if(/^@(Image\d+|Video1|Audio1)$/.test(p)){
-      var tag = document.createElement('span');
-      tag.className = 'chiptag';
-      tag.setAttribute('contenteditable', 'false');
-      tag.textContent = p;
-      promptBox.appendChild(tag);
-      promptBox.appendChild(document.createTextNode(' '));
-    }else{
-      promptBox.appendChild(document.createTextNode(p));
-    }
-  });
-}
-
-(function restoreDraft(){
-  try{
-    var s = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
-    if(!s) return;
-    restoring = true;
-    if(s.aspect) pickAspect(s.aspect);
-    if(s.seconds && s.seconds >= 5 && s.seconds <= 30){ seconds = s.seconds; slider.value = seconds; }
-    if(s.quality && SURCHARGE[s.quality] !== undefined){ quality = s.quality; document.querySelectorAll('#qRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-q') === quality); }); }
-    if(s.refs && s.refs.length){
-      s.refs.forEach(function(r){ refs.push({kind:r.kind, data:r.data, name:r.name, thumb:r.thumb}); });
-    }
-    renderChips();
-    if(s.prompt){ setTextWithTokens(s.prompt); }
-    restoring = false;
-    updatePriceDisplay();
-    updateSteps();
-  }catch(e){ restoring = false; updatePriceDisplay(); updateSteps(); }
-})();
-
-btn.addEventListener('click', function(){
-  var prompt = getPromptText().trim();
-  if(!prompt){ alert('Опиши видео или напиши пару слов и нажми «✨ Улучшить описание»'); return; }
-  if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
-  var hasAudio = refs.some(function(r){ return r.kind === 'audio'; });
-  var hasImageOrVideo = refs.some(function(r){ return r.kind === 'image' || r.kind === 'video'; });
-  if(hasAudio && !hasImageOrVideo){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; }
-  btn.disabled = true;
-  setStatus('Создаём платёж...');
-  saveDraft();
-  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'text2video', seconds:seconds, prompt:prompt, aspect:aspect, quality:quality})})
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data.error){ throw new Error(data.error); }
-      window.location.href = data.confirmationUrl;
-    })
-    .catch(function(e){
-      setStatus('Ошибка: ' + e.message);
-      btn.disabled = false;
-    });
-});
-
-function chainKey(pid){ return 'yk_gen_chain_' + pid; }
-function getChain(pid){ try{ return JSON.parse(localStorage.getItem(chainKey(pid)) || 'null'); }catch(e){ return null; } }
-function setChain(pid, obj){ try{ localStorage.setItem(chainKey(pid), JSON.stringify(obj)); }catch(e){} }
-function clearChain(pid){ try{ localStorage.removeItem(chainKey(pid)); }catch(e){} }
-
-function showVideo(url, msg){
-  document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + url + '"></video></div>';
-  setStatus(msg);
-  baseDone = true;
-  stage = 'done';
-  updateSteps();
-  btn.disabled = false;
-  histPush(url, getPromptText().slice(0, 60) || 'видео');
-}
-
-function startUpscale(pid, baseVideoUrl){
-  stage = 'up';
-  updateSteps();
-  setStatus('✨ Улучшаем качество до 1080p... ещё около минуты ⏳');
-  fetch('/api/upscale', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({videoUrl: baseVideoUrl})})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.error){ throw new Error(d.error); }
-      setChain(pid, {taskId: d.taskId, stage: 'upscale', baseVideoUrl: baseVideoUrl, upscale: true});
-      poll(d.taskId, 'upscale', baseVideoUrl, pid);
-    })
-    .catch(function(e){
-      showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p сейчас недоступно (' + e.message + '). Вот готовое видео в 720p — напиши в поддержку, вернём разницу.');
-      clearChain(pid);
-    });
-}
-
-function poll(taskId, stg, baseVideoUrl, pid){
-  var timer = setInterval(function(){
-    fetch('/api/status?taskId=' + encodeURIComponent(taskId))
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(d.status === 'succeeded'){
-          clearInterval(timer);
-          if(stg === 'upscale'){
-            showVideo(d.videoUrl, 'Готово! ✅ Full HD 1080p. Скачай видео в течение 7 дней.');
-            clearChain(pid);
-          }else{
-            baseDone = true;
-            var ch = getChain(pid);
-            if(ch && ch.upscale && ch.stage === 'base'){
-              startUpscale(pid, d.videoUrl);
-            }else{
-              showVideo(d.videoUrl, 'Готово! ✅ Скачай видео в течение 7 дней.');
-              clearChain(pid);
-            }
-          }
-        }else if(d.status === 'failed'){
-          clearInterval(timer);
-          if(stg === 'upscale' && baseVideoUrl){
-            showVideo(baseVideoUrl, '⚠️ Улучшение до 1080p не удалось. Вот готовое видео в 720p — напиши в поддержку, вернём разницу.');
-            clearChain(pid);
-          }else{
-            setStatus('Ошибка генерации: ' + (d.error || 'попробуй другой запрос'));
-            stage = 'setup';
-            updateSteps();
-            btn.disabled = false;
-            clearChain(pid);
-          }
-        }else{
-          setStatus(stg === 'upscale' ? '✨ Улучшаем качество до 1080p... ещё около минуты ⏳' : '⚡ Seedance 2.5 создаёт твоё видео... ⏳');
-        }
-      })
-      .catch(function(){});
-  }, 5000);
-}
-
-(function(){
-  var pid = new URLSearchParams(window.location.search).get('paymentId');
-  if(!pid) return;
-  var ch = getChain(pid);
-  if(ch && ch.taskId){
-    paidSeen = true;
-    upscaleExpected = !!ch.upscale;
-    stage = (ch.stage === 'upscale') ? 'up' : 'gen';
-    updateSteps();
-    btn.disabled = true;
-    poll(ch.taskId, ch.stage || 'base', ch.baseVideoUrl || null, pid);
-    return;
-  }
-  btn.disabled = true;
-  setStatus('Проверяем оплату...');
-  fetch('/api/check-payment?paymentId=' + encodeURIComponent(pid))
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data.paid && data.taskId){
-        paidSeen = true; stage = 'gen'; updateSteps();
-        setChain(pid, {taskId: data.taskId, stage: 'base', baseVideoUrl: null, upscale: false});
-        setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
-        poll(data.taskId, 'base', null, pid);
-      }else if(data.paid){
-        paidSeen = true; updateSteps();
-        var draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
-        var payload = {service:'text2video', paymentId:pid, prompt:draft.prompt || '', aspect:draft.aspect || '16:9', seconds:draft.seconds || 5, quality:draft.quality || '480p'};
-        var refsList = draft.refs || [];
-        var images = [], video = null, audio = null;
-        refsList.forEach(function(r){
-          if(r.kind === 'image') images.push(r.data);
-          else if(r.kind === 'video') video = r.data;
-          else if(r.kind === 'audio') audio = r.data;
-        });
-        if(images.length){ payload.refs = images; payload.refImage = images[0]; }
-        if(video){ payload.refVideo = video; }
-        if(audio){ payload.refAudio = audio; }
-        upscaleExpected = (payload.quality === '1080p');
-        setStatus('Оплата прошла! Запускаем генерацию...');
-        stage = 'gen'; updateSteps();
-        fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
-          .then(function(r){ return r.json(); })
-          .then(function(d){
-            if(d.error){ throw new Error(d.error); }
-            upscaleExpected = !!d.upscale;
-            setChain(pid, {taskId: d.taskId, stage: 'base', baseVideoUrl: null, upscale: !!d.upscale});
-            setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳');
-            poll(d.taskId, 'base', null, pid);
-          })
-          .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
-      }else{
-        setStatus('Оплата не завершена. Твой текст и настройки сохранены — проверь и нажми кнопку ещё раз.');
-        btn.disabled = false;
-      }
-    })
-    .catch(function(e){ setStatus('Ошибка: ' + e.message); btn.disabled = false; });
-})();
-
-initUploadTile();
-histRender();
-updatePriceDisplay();
-updateSteps();
-</script>
+<script src="/gen-app.js"></script>
 <script src="/help-widget.js"></script>
 </body>
 </html>
