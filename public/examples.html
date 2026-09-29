@@ -3,71 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SeedGen — Примеры видео</title>
-<meta name="description" content="Реальные примеры видео, сгенерированных на SeedGen: коты, мемы, мультфильмы. Смотри и заказывай такое же.">
+<title>Примеры работ — Ёшкин кот</title>
+<meta name="description" content="Реальные примеры видео, сгенерированных на Ёшкин кот: коты, мемы, мультфильмы. Смотри и заказывай такое же.">
+<meta property="og:title" content="Примеры работ — Ёшкин кот">
+<meta property="og:description" content="Реальные видео, снятые нейросетью на нашей студии. Смотри и заказывай такое же.">
+<meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.ex-main{max-width:1100px;margin:0 auto;padding:40px 20px 60px}
-.ex-main h1{font-size:2rem;color:#fff;margin:0 0 10px}
+.ex-main{max-width:1160px;margin:0 auto;padding:110px 24px 60px}
+.ex-main h1{font-family:'Space Grotesk';font-size:2rem;font-weight:700;color:#fff;margin:0 0 10px}
 .ex-sub{color:#9ca3af;margin:0 0 28px;line-height:1.6}
 .ex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-.ex-card{margin:0;background:#101308;border:1px solid rgba(163,230,53,.15);border-radius:16px;overflow:hidden}
+.ex-card{margin:0;background:#101308;border:1px solid rgba(163,230,53,.15);border-radius:16px;overflow:hidden;transition:.25s}
+.ex-card:hover{border-color:var(--border-lime);box-shadow:0 8px 30px rgba(163,230,53,.08)}
 .ex-card video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
 .ex-cap{padding:14px 16px;color:#e5e7eb;font-size:.95rem;line-height:1.5}
-.ex-tags{color:#9ca3af;font-size:.8rem}
-.ex-cta{margin:32px 0 10px;text-align:center}
-.ex-note{color:#6b7280;font-size:.85rem;text-align:center}
-.home-btn{padding:10px 18px;border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#e5e7eb;text-decoration:none;font-size:.9rem;white-space:nowrap}
-footer{padding:28px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+.ex-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.ex-badge.gen{color:var(--lime);background:rgba(163,230,53,.1);border:1px solid var(--border-lime)}
+.ex-badge.motion{color:#fdba74;background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.4)}
+.ex-phrase{color:#9ca3af;font-size:.82rem;font-style:italic;margin-top:6px}
+.ex-tags{color:#6b7280;font-size:.78rem;margin-top:4px;display:block}
+.ex-cta{margin:36px 0 10px;text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.ex-note{color:#6b7280;font-size:.85rem;text-align:center;margin-top:14px}
+footer{padding:28px 20px 90px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
 footer a{color:#A3E635}
 </style>
 </head>
 <body>
-<header class="bar"><div class="bar-in">
-<a class="logo" href="/">▶ SeedGen</a>
-<nav class="menu">
-<a href="/gen.html">Создать видео</a>
-<a href="/cartoon.html">Мультфильм</a>
-<a href="/avatar.html">Аватар</a>
-<a href="/motion.html">Моушен</a>
-<a href="/lipsync.html">Липсинк</a>
-<a href="/help.html">Помощь</a>
-</nav>
-<a class="home-btn" href="/">На главную</a>
-</div></header>
+<header class="top">
+  <div class="container nav-in">
+    <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg> Ёшкин кот</a>
+    <nav class="menu">
+      <a href="/gen.html">Создать видео</a>
+      <a href="/cartoon.html">Мультфильм</a>
+      <a href="/avatar.html">Аватар</a>
+      <a href="/motion.html">Моушен</a>
+      <a href="/lipsync.html">Липсинк</a>
+      <a href="/help.html">Помощь</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="btn btn-ghost" href="/">На главную</a>
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+    </div>
+  </div>
+</header>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/">Главная</a>
+  <a href="/gen.html">Создать видео</a>
+  <a href="/cartoon.html">Мультфильм</a>
+  <a href="/avatar.html">Аватар</a>
+  <a href="/motion.html">Моушен</a>
+  <a href="/lipsync.html">Липсинк</a>
+  <a href="/examples.html">Примеры</a>
+  <a href="/help.html">Помощь</a>
+</div>
 
 <main class="ex-main">
 <h1>Примеры работ</h1>
-<p class="ex-sub">Реальные видео, сгенерированные на SeedGen. Звук выключен по умолчанию — включи, если нужно.</p>
+<p class="ex-sub">Реальные видео, сгенерированные на Ёшкин кот. Звук выключен по умолчанию — включи, если нужно.</p>
 
 <div class="ex-grid">
 <figure class="ex-card">
 <video src="/cat-space.mp4.mp4" controls muted preload="metadata" playsinline></video>
-<figcaption class="ex-cap">Кот-космонавт на орбите<br><span class="ex-tags">Услуга: Создать видео · 5 сек · 480p</span></figcaption>
+<figcaption class="ex-cap"><span class="ex-badge gen">Создать видео</span><br>Кот-космонавт на орбите
+<span class="ex-phrase">сделано из фразы: 「кот в скафандре плывёт сквозь звёзды」</span>
+<span class="ex-tags">5 сек · 480p</span></figcaption>
 </figure>
 <figure class="ex-card">
 <video src="/cat-city.mp4.mp4" controls muted preload="metadata" playsinline></video>
-<figcaption class="ex-cap">Кот гуляет по неоновому городу<br><span class="ex-tags">Услуга: Создать видео · 5 сек · 480p</span></figcaption>
+<figcaption class="ex-cap"><span class="ex-badge gen">Создать видео</span><br>Кот гуляет по неоновому городу
+<span class="ex-phrase">сделано из фразы: 「гигантский кот идёт по ночному городу, неон в лужах」</span>
+<span class="ex-tags">5 сек · 480p</span></figcaption>
 </figure>
 <figure class="ex-card">
 <video src="/cat-knight.mp4.mp4" controls muted preload="metadata" playsinline></video>
-<figcaption class="ex-cap">Кот-рыцарь в доспехах<br><span class="ex-tags">Услуга: Создать видео · 5 сек · 480p</span></figcaption>
+<figcaption class="ex-cap"><span class="ex-badge gen">Создать видео</span><br>Кот-рыцарь в доспехах
+<span class="ex-phrase">сделано из фразы: 「кот-рыцарь идёт на дракона」</span>
+<span class="ex-tags">5 сек · 480p</span></figcaption>
 </figure>
 <figure class="ex-card">
 <video src="/cat-dance.mp4.mp4" controls muted preload="metadata" playsinline></video>
-<figcaption class="ex-cap">Танцующий кот<br><span class="ex-tags">Услуга: Моушен · 5 сек · 480p</span></figcaption>
+<figcaption class="ex-cap"><span class="ex-badge motion">Моушен</span><br>Танцующий кот
+<span class="ex-phrase">сделано из фразы: 「котёнок танцует под весёлую музыку」</span>
+<span class="ex-tags">5 сек · 480p</span></figcaption>
 </figure>
 <figure class="ex-card">
 <video src="/cat-knight-dance.mp4.mp4" controls muted preload="metadata" playsinline></video>
-<figcaption class="ex-cap">Кот-рыцарь отжигает<br><span class="ex-tags">Услуга: Моушен · 5 сек · 480p</span></figcaption>
+<figcaption class="ex-cap"><span class="ex-badge motion">Моушен</span><br>Кот-рыцарь отжигает
+<span class="ex-phrase">сделано из фразы: 「рыцарь в доспехах энергично танцует под бит」</span>
+<span class="ex-tags">5 сек · 480p</span></figcaption>
 </figure>
 </div>
 
-<div class="ex-cta"><a class="btn" href="/gen.html">Хочу такое же — от 199 ₽</a></div>
+<div class="ex-cta">
+<a class="btn btn-primary btn-lg" href="/gen.html">Хочу такое же — от 199 ₽</a>
+<a class="btn btn-ghost btn-lg" href="/cartoon.html">Хочу мультфильм — от 199 ₽</a>
+</div>
 <p class="ex-note">Каждое видео сделано из обычного текстового описания за 1–5 минут.</p>
 </main>
 
-<footer>© 2026 SeedGen · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></footer>
+<footer>© 2026 Ёшкин кот · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></footer>
+<script>
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+</script>
 <script src="/help-widget.js"></script>
 </body>
 </html>
