@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   const service = body.service || 'text2video';
   const prompt = body.prompt || '';
 
-  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299, animate: 299 };
+  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 199, animate: 199 };
   const PER_SEC = 30;
   const QUALITY_SURCHARGE = { '480p': 0, '720p': 200, '1080p': 300 };
   const QUALITY_SERVICES = { text2video: true, cartoon: true, animate: true };
