@@ -12,6 +12,29 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
+<style>
+.svc{position:relative}
+.stat{position:absolute;top:14px;right:14px;padding:4px 10px;border-radius:999px;font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.stat.ok{color:var(--lime);background:rgba(163,230,53,.12);border:1px solid rgba(163,230,53,.4)}
+.soonrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+.soonchip{display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.08);color:#fbbf24;font-size:.8rem;font-weight:600}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-bottom:60px}
+.feat.flip .feat-media{order:2}
+.feat-media{position:relative;aspect-ratio:16/9;border-radius:20px;border:1px solid var(--border);background:radial-gradient(420px 200px at 50% 0,rgba(163,230,53,.07),transparent 70%),#0b0e09;display:grid;place-items:center;overflow:hidden}
+.feat-media .fico{width:64px;height:64px;border-radius:16px;background:rgba(163,230,53,.1);color:var(--lime);display:grid;place-items:center}
+.feat-media .fico svg{width:30px;height:30px}
+.feat-media .fnote{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:var(--muted);font-size:.78rem}
+.feat h3{font-size:1.5rem;margin-bottom:10px}
+.feat p{color:var(--muted);line-height:1.7;margin-bottom:14px}
+.feat p b{color:var(--lime);font-weight:600}
+.feat ul{list-style:none;margin:0 0 18px;display:flex;flex-direction:column;gap:8px;padding:0}
+.feat li{color:rgba(244,245,246,.8);font-size:.9rem;padding-left:22px;position:relative}
+.feat li::before{content:'✓';position:absolute;left:0;color:var(--lime)}
+.step .sico{position:relative;width:52px;height:52px;border-radius:14px;background:var(--lime);color:#0a0c08;display:grid;place-items:center;margin-bottom:16px}
+.step .sico svg{width:24px;height:24px}
+.step .sico .num{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:#0a0c08;color:var(--lime);font-size:.7rem;font-weight:700;display:grid;place-items:center;border:1px solid rgba(163,230,53,.5)}
+@media(max-width:900px){.feat{grid-template-columns:1fr;gap:20px}.feat.flip .feat-media{order:0}}
+</style>
 </head>
 <body>
 
@@ -99,6 +122,7 @@
     </div>
     <div class="svc-grid rv">
       <a class="svc" href="/gen.html">
+        <span class="stat ok">доступно</span>
         <span class="tag">Seedance 2.5</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg></span>
         <h3>Создать видео</h3>
@@ -106,6 +130,7 @@
         <span class="price">от 199 ₽</span>
       </a>
       <a class="svc" href="/cartoon.html">
+        <span class="stat ok">доступно</span>
         <span class="tag">Seedance 2.5</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg></span>
         <h3>Мультфильм</h3>
@@ -113,12 +138,14 @@
         <span class="price">от 199 ₽</span>
       </a>
       <a class="svc" href="/avatar.html">
+        <span class="stat ok">доступно</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></span>
         <h3>Говорящий аватар</h3>
         <p>Человек на фото заговорит твоим голосом — губы синхронно.</p>
         <span class="price">499 ₽</span>
       </a>
       <a class="svc" href="/motion.html">
+        <span class="stat ok">доступно</span>
         <span class="tag">хит</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 0 1 13.6-5.6"/><path d="M20 12a8 8 0 0 1-13.6 5.6"/><path d="M17.5 3v3.5H14"/><path d="M6.5 21v-3.5H10"/></svg></span>
         <h3>Моушен контроль</h3>
@@ -126,12 +153,77 @@
         <span class="price">от 199 ₽</span>
       </a>
       <a class="svc" href="/lipsync.html">
+        <span class="stat ok">доступно</span>
         <span class="tag">хит</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/></svg></span>
         <h3>Липсинк и дубляж</h3>
         <p>Человек в видео скажет твоими словами — для переводов и мемов «заставь сказать».</p>
         <span class="price">от 199 ₽</span>
       </a>
+    </div>
+    <div class="soonrow rv">
+      <span class="soonchip">⏳ скоро: озвучка текстом и выбор голоса для аватара</span>
+      <span class="soonchip">⏳ скоро: диалоги двух ведущих</span>
+      <span class="soonchip">⏳ скоро: PRO-студия</span>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="container">
+    <div class="sec-head rv">
+      <h2>Каждая услуга крупным планом</h2>
+      <p>Пять витрин: что входит в услугу и как это выглядит. Демо-ролики каждой услуги встанут сюда, как только будут отсняты.</p>
+    </div>
+
+    <div class="feat rv">
+      <div class="feat-media"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg></span><span class="fnote">🎬 демо-ролик услуги снимается</span></div>
+      <div>
+        <h3>Создать видео: из слов и из картинки</h3>
+        <p>Опиши сцену своими словами — нейросеть снимет кино с нуля: камера, свет, движение. Добавь фото кружком 「+」— и <b>@-упоминание</b> сделает его героем: лицо, окрас и одежда держатся во всех кадрах.</p>
+        <ul><li>До 10 фото, 1 видео и 1 звук в качестве референсов</li><li>5–30 секунд, качество 480p / 720p / 1080p</li><li>Результат через 1–5 минут, хранится 7 дней</li></ul>
+        <a class="btn btn-primary" href="/gen.html">Попробовать →</a>
+      </div>
+    </div>
+
+    <div class="feat flip rv">
+      <div class="feat-media"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg></span><span class="fnote">🎬 демо-ролик услуги снимается</span></div>
+      <div>
+        <h3>Мультфильм: твоё фото становится героем</h3>
+        <p>Фото превращается в арт-персонажа в стиле <b>Pixar или аниме</b> — и персонаж живёт по твоему сюжету. Одна оплата покрывает весь путь: и арт, и видео.</p>
+        <ul><li>Два пути: напрямую из фото или через арт для точного сходства</li><li>Арт остаётся у тебя навсегда, даже без видео</li><li>Сюжет описываешь словами, героев помечаешь через @</li></ul>
+        <a class="btn btn-primary" href="/cartoon.html">Попробовать →</a>
+      </div>
+    </div>
+
+    <div class="feat rv">
+      <div class="feat-media"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></span><span class="fnote">🎬 демо-ролик услуги снимается</span></div>
+      <div>
+        <h3>Говорящий аватар: фото говорит твоим голосом</h3>
+        <p>Человек на фото заговаривает <b>твоим голосом</b> — губы и мимика синхронно. Для приветствий, новостей, презентаций и обучающих роликов без съёмочной площадки.</p>
+        <ul><li>Своя озвучка MP3/WAV до 30 секунд</li><li>Форматы 9:16, 16:9 и 1:1 под любую площадку</li><li>Скоро: озвучка текстом и выбор голоса из шести</li></ul>
+        <a class="btn btn-primary" href="/avatar.html">Попробовать →</a>
+      </div>
+    </div>
+
+    <div class="feat flip rv">
+      <div class="feat-media"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 0 1 13.6-5.6"/><path d="M20 12a8 8 0 0 1-13.6 5.6"/><path d="M17.5 3v3.5H14"/><path d="M6.5 21v-3.5H10"/></svg></span><span class="fnote">🎬 демо-ролик услуги снимается</span></div>
+      <div>
+        <h3>Моушен контроль: твой танец — его танец</h3>
+        <p>Персонаж с фото повторяет <b>твои движения и жесты</b> кадр в кадр. Сними себя на телефон — и герой сделает в точности то же, с твоей речью и губами.</p>
+        <ul><li>Видео-источник движения: MP4 до 30 секунд</li><li>Переносится не только танец, но и речь с мимикой</li><li>Любимец TikTok: мемы и челленджи за пару минут</li></ul>
+        <a class="btn btn-primary" href="/motion.html">Попробовать →</a>
+      </div>
+    </div>
+
+    <div class="feat rv">
+      <div class="feat-media"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/></svg></span><span class="fnote">🎬 демо-ролик услуги снимается</span></div>
+      <div>
+        <h3>Липсинк и дубляж: скажет твоими словами</h3>
+        <p>Человек в видео говорит <b>твоей озвучкой</b> — для переводов, дубляжа и мемов 「заставь сказать」. Нейросеть синхронизирует губы и мимику с голосом, сохраняя сцену и свет.</p>
+        <ul><li>Твоя озвучка MP3/WAV до 5 МБ</li><li>Исходное видео сохраняется: та же сцена, тот же свет</li><li>До 30 секунд за дубль, результат за 1–5 минут</li></ul>
+        <a class="btn btn-primary" href="/lipsync.html">Попробовать →</a>
+      </div>
     </div>
   </div>
 </section>
@@ -143,10 +235,10 @@
       <p>Четыре шага от идеи до файла на телефоне. Интерфейс можно потрогать до оплаты.</p>
     </div>
     <div class="steps rv">
-      <div class="step"><div class="n">1</div><h3>Опиши или загрузи</h3><p>Текст, фото, видео или озвучка — смотря какую услугу выбрал. Референсы и @-упоминания помогают попасть в цель с первого дубля.</p></div>
-      <div class="step"><div class="n">2</div><h3>Настрой</h3><p>Длительность до 30 секунд, формат кадра и качество: 480p, 720p или 1080p.</p></div>
-      <div class="step"><div class="n">3</div><h3>Оплати</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек по 54-ФЗ приходит на почту сразу.</p></div>
-      <div class="step"><div class="n">4</div><h3>Скачай</h3><p>Ролик появится на странице через 1–5 минут. Хранится 7 дней — успеет везде выйти.</p></div>
+      <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span class="num">1</span></div><h3>Опиши или загрузи</h3><p>Текст, фото, видео или озвучка — смотря какую услугу выбрал. Референсы и @-упоминания помогают попасть в цель с первого дубля.</p></div>
+      <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg><span class="num">2</span></div><h3>Настрой</h3><p>Длительность до 30 секунд, формат кадра и качество: 480p, 720p или 1080p.</p></div>
+      <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span class="num">3</span></div><h3>Оплати</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек по 54-ФЗ приходит на почту сразу.</p></div>
+      <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg><span class="num">4</span></div><h3>Скачай</h3><p>Ролик появится на странице через 1–5 минут. Хранится 7 дней — успеет везде выйти.</p></div>
     </div>
   </div>
 </section>
