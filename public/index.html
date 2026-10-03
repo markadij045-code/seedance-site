@@ -32,9 +32,7 @@
       Ёшкин кот
     </a>
     <nav class="menu">
-      <a href="#services">Услуги</a>
-      <a href="#quality">Качество</a>
-      <a href="#examples">Примеры</a>
+      <a href="/examples.html">Примеры</a>
       <a href="#price">Цены</a>
       <a href="/help.html">Помощь</a>
     </nav>
@@ -47,6 +45,7 @@
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/">Главная</a>
   <a href="/gen.html">Создать видео</a>
   <a href="/cartoon.html">Мультфильм</a>
   <a href="/avatar.html">Аватар</a>
@@ -110,13 +109,13 @@
         <span class="tag">Seedance 2.5</span>
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg></span>
         <h3>Мультфильм</h3>
-        <p>Твоё фото станет арт-персонажем в стиле Pixar и оживёт по твоему сюжету.</p>
-        <span class="price">от 299 ₽</span>
+        <p>Твоё фото станет арт-персонажем в стиле Pixar или аниме и оживёт по твоему сюжету.</p>
+        <span class="price">от 199 ₽</span>
       </a>
       <a class="svc" href="/avatar.html">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></span>
         <h3>Говорящий аватар</h3>
-        <p>Человек на фото заговорит твоим голосом или текстом — губы синхронно.</p>
+        <p>Человек на фото заговорит твоим голосом — губы синхронно.</p>
         <span class="price">499 ₽</span>
       </a>
       <a class="svc" href="/motion.html">
@@ -144,7 +143,7 @@
       <p>Четыре шага от идеи до файла на телефоне. Интерфейс можно потрогать до оплаты.</p>
     </div>
     <div class="steps rv">
-      <div class="step"><div class="n">1</div><h3>Опиши или загрузи</h3><p>Текст, фото, видео или озвучка — смотря какую услугу выбрал. AI-помощник улучшит промпт бесплатно.</p></div>
+      <div class="step"><div class="n">1</div><h3>Опиши или загрузи</h3><p>Текст, фото, видео или озвучка — смотря какую услугу выбрал. Референсы и @-упоминания помогают попасть в цель с первого дубля.</p></div>
       <div class="step"><div class="n">2</div><h3>Настрой</h3><p>Длительность до 30 секунд, формат кадра и качество: 480p, 720p или 1080p.</p></div>
       <div class="step"><div class="n">3</div><h3>Оплати</h3><p>Карта, Мир, СБП, SberPay, ЮMoney. Чек по 54-ФЗ приходит на почту сразу.</p></div>
       <div class="step"><div class="n">4</div><h3>Скачай</h3><p>Ролик появится на странице через 1–5 минут. Хранится 7 дней — успеет везде выйти.</p></div>
@@ -199,24 +198,24 @@
 <section class="sec">
   <div class="container">
     <div class="sec-head rv">
-      <h2>AI-помощник встроен бесплатно</h2>
-      <p>Не знаешь, как описать сцену красиво? Напиши пару слов — кнопка «Улучшить описание» сделает кинематографичный промпт.</p>
+      <h2>Референсы и @-упоминания — попадание в цель</h2>
+      <p>Нейросеть читает не только текст, но и твои файлы. Кружок 「+」загружает фото, видео и звук, а знак @ вставляет их в промпт по именам.</p>
     </div>
     <div class="ai-grid rv">
       <div class="ai-pair">
-        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">«кот в скафандре»</div></div>
+        <div><div class="ai-lbl">Ты загрузил</div><div class="ai-before">фото кота и фото кухни</div></div>
         <div class="ai-arrow">↓</div>
-        <div><div class="ai-lbl lime">AI сделал</div><div class="ai-after">«Кот в глянцевом скафандре медленно плывёт сквозь звёздное поле, свет фиолетовой туманности отражается в визоре»</div></div>
+        <div><div class="ai-lbl lime">Нейросеть видит</div><div class="ai-after">「@Image1 — герой сцены, @Image2 — место действия」: морда, окрас и интерьер сохраняются во всех кадрах</div></div>
       </div>
       <div class="ai-pair">
-        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">«собака бежит по пляжу»</div></div>
+        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">「@Image1 идёт по ночному городу, неон отражается в лужах」</div></div>
         <div class="ai-arrow">↓</div>
-        <div><div class="ai-lbl lime">AI сделал</div><div class="ai-after">«Золотистый ретривер бежит по утреннему пляжу в замедленной съёмке, брызги песка сверкают на солнце, нижний ракурс»</div></div>
+        <div><div class="ai-lbl lime">Нейросеть сняла</div><div class="ai-after">героя с твоего фото, а не 「случайного кота из интернета」— сходство держится весь ролик</div></div>
       </div>
       <div class="ai-pair">
-        <div><div class="ai-lbl">Ты написал</div><div class="ai-before">«город ночью»</div></div>
+        <div><div class="ai-lbl">Ты загрузил</div><div class="ai-before">видео танца + фото персонажа</div></div>
         <div class="ai-arrow">↓</div>
-        <div><div class="ai-lbl lime">AI сделал</div><div class="ai-after">«Ночной мегаполис после дождя: неон отражается в мокром асфальте, камера плавно спускается между небоскрёбами»</div></div>
+        <div><div class="ai-lbl lime">Нейросеть сняла</div><div class="ai-after">персонаж с фото повторяет движения кадр в кадр — так работает моушен контроль</div></div>
       </div>
     </div>
   </div>
@@ -245,7 +244,7 @@
     </div>
     <div class="prows rv">
       <div class="prow"><span>Создать видео · 5–30 сек · Seedance 2.5 · 480p/720p/1080p</span><b>199–1249 ₽</b></div>
-      <div class="prow"><span>Мультфильм из фото · арт Pixar + оживление · до 30 сек</span><b>299–1349 ₽</b></div>
+      <div class="prow"><span>Мультфильм из фото · арт Pixar/аниме + оживление · до 30 сек</span><b>199–1249 ₽</b></div>
       <div class="prow"><span>Говорящий аватар · фото + озвучка до 30 сек</span><b>499 ₽</b></div>
       <div class="prow"><span>Моушен контроль · фото + видео с движением · до 30 сек</span><b>199–949 ₽</b></div>
       <div class="prow"><span>Липсинк / дубляж · видео + озвучка · до 30 сек</span><b>199–949 ₽</b></div>
@@ -257,8 +256,8 @@
   <div class="container">
     <div class="band rv">
       <h2>Твоё первое видео — через 5 минут</h2>
-      <p>Открой «Создать видео», напиши пару слов и нажми «Улучшить описание». Дальше — магия.</p>
-      <a class="btn btn-primary btn-lg" href="/gen.html">Начать бесплатно с промпта</a>
+      <p>Открой 「Создать видео」, напиши пару слов, добавь референсы кружком 「+」— и жми белую стрелку. Дальше — магия.</p>
+      <a class="btn btn-primary btn-lg" href="/gen.html">Начать с промпта</a>
     </div>
   </div>
 </section>
@@ -272,13 +271,13 @@
 
 <script>
 function showWelcome(){
-  if(!localStorage.getItem('seedgen_welcomed')){
+  if(!localStorage.getItem('seedgen_welcomed')&&!localStorage.getItem('yk_welcomed')){
     setTimeout(function(){document.getElementById('welcomeModal').classList.add('open');},800);
   }
 }
 function closeWelcome(){
   document.getElementById('welcomeModal').classList.remove('open');
-  localStorage.setItem('seedgen_welcomed','1');
+  try{localStorage.setItem('seedgen_welcomed','1');localStorage.setItem('yk_welcomed','1');}catch(e){}
 }
 showWelcome();
 function toggleSidebar(){
