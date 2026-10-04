@@ -35,7 +35,45 @@ css.textContent=''
 +'.mgr-foot button{padding:7px 12px;border-radius:8px;border:1px solid rgba(252,165,165,.4);background:none;color:#fca5a5;font:600 .78rem \'Inter\';cursor:pointer}';
 document.head.appendChild(css);
 
+// === НОВАЯ ЛОГИКА: 4 МОДЕЛИ С ЦЕНАМИ ===
+var MODELS = {
+  'wan-3.0': {
+    name: 'Wan 3.0',
+    description: 'быстро и дёшево',
+    basePrice: 99,
+    perSecond: 10,
+    maxDuration: 30,
+    apiModel: 'wan3.0'
+  },
+  'kling-standard': {
+    name: 'Kling',
+    description: 'народный, со звуком',
+    basePrice: 129,
+    perSecond: 15,
+    maxDuration: 10,
+    apiModel: 'kling-standard'
+  },
+  'seedance-2.0': {
+    name: 'Seedance 2.0',
+    description: 'баланс цены и качества',
+    basePrice: 129,
+    perSecond: 15,
+    maxDuration: 15,
+    apiModel: 'seedance-2.0'
+  },
+  'seedance-2.5': {
+    name: 'Seedance 2.5',
+    description: 'флагман: максимум качества',
+    basePrice: 199,
+    perSecond: 30,
+    maxDuration: 30,
+    apiModel: 'seedance-2.5'
+  }
+};
+
 var SURCHARGE={'480p':0,'720p':200,'1080p':300};
+var currentModel = 'seedance-2.5'; // По умолчанию флагман
+var enhancePrompt = true; // Простой режим по умолчанию
 var seconds=5, aspect='16:9', quality='480p', refs=[], restoring=false, stage='setup', paidSeen=false, baseDone=false, upscaleExpected=false;
 var btn=document.getElementById('btn'), sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.querySelector('.studio'), uplInput=document.getElementById('uplInput');
@@ -49,8 +87,26 @@ function refName(i,kind){ if(kind==='image')return 'Image'+(i+1); if(kind==='vid
 function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
 function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s/60), ss=s%60; return m+':'*(m>0)+(m>0?(ss<10?'0':'')+ss:ss+''); }
 
-function updateChips(){ pcFQ.textContent=aspect+' · '+quality+' ⌄'; pcDur.textContent=seconds+' сек ⌄'; }
-function updatePriceDisplay(){ var p=199+(seconds-5)*30+SURCHARGE[quality]; document.getElementById('priceVal').textContent=p; document.getElementById('barPrice').textContent=p; document.getElementById('barMeta').textContent=seconds+' сек · '+quality; btn.textContent='Создать видео — '+p+' ₽'; updateChips(); }
+// === ОБНОВЛЁННАЯ ЛОГИКА ЦЕН ===
+function updateChips(){ 
+  var model = MODELS[currentModel];
+  pcModel.textContent='⚙ '+model.name+' ⌄';
+  pcFQ.textContent=aspect+' · '+quality+' ⌄'; 
+  pcDur.textContent=seconds+' сек ⌄'; 
+}
+
+function updatePriceDisplay(){ 
+  var model = MODELS[currentModel];
+  var basePrice = model.basePrice;
+  var extraSeconds = Math.max(0, seconds - 5);
+  var p = basePrice + (extraSeconds * model.perSecond) + SURCHARGE[quality]; 
+  document.getElementById('priceVal').textContent=p; 
+  document.getElementById('barPrice').textContent=p; 
+  document.getElementById('barMeta').textContent=seconds+' сек · '+quality; 
+  btn.textContent='Создать видео — '+p+' ₽'; 
+  updateChips(); 
+}
+
 function getPromptText(){ var out=''; promptBox.childNodes.forEach(function(n){ if(n.nodeType===3){ out+=n.nodeValue; } else if(n.nodeType===1){ if(n.classList.contains('mchip')){ out+='@'+n.getAttribute('data-ref'); } else if(n.tagName==='BR'){ out+='\n'; } else if(!n.classList.contains('reftile')&&!n.classList.contains('addbadge')&&!n.classList.contains('refstack')&&!n.classList.contains('mgrbtn')){ out+=n.textContent; } } }); return out.replace(/\u00A0/g,' '); }
 function updateSteps(){ var ok=getPromptText().trim().length>0; var s1=document.getElementById('st1'),s2=document.getElementById('st2'),s3=document.getElementById('st3'); s1.className='pstep'+(ok?' done':' active'); s2.className='pstep'+(paidSeen?' done':(ok?' active':'')); s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':'')); var tp=document.getElementById('tlPay'),tg=document.getElementById('tlGen'),tu=document.getElementById('tlUp'); tp.className='tl-item'+(paidSeen?' done':(ok?' now':'')); tg.className='tl-item'+(baseDone?' done':(stage==='gen'?' now':'')); tu.style.display=upscaleExpected?'flex':'none'; tu.className='tl-item'+(stage==='done'&&upscaleExpected?' done':(stage==='up'?' now':'')); }
 
@@ -78,11 +134,81 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closePop
 
 function popModeHTML(){ var items=[['/gen.html','🎬 Видео из текста',1],['/cartoon.html','🎭 Мультфильм из фото',0],['/avatar.html','🗣 Говорящий аватар',0],['/motion.html','🕺 Моушен контроль',0],['/lipsync.html','🎤 Липсинк / дубляж',0]]; return '<div class="pu-head">Режим создания</div>'+items.map(function(it){ return '<div class="pu-item" data-href="'+it[0]+'"><span class="nm">'+it[1]+'</span>'+(it[2]?'<span class="chk">✓</span>':'')+'</div>'; }).join(''); }
 function mountMode(){ pop.querySelectorAll('.pu-item').forEach(function(el){ el.addEventListener('click', function(){ location.href=el.getAttribute('data-href'); }); }); }
-function popModelHTML(){ return '<div class="pu-head">Движок генерации</div><div class="pu-item"><span class="nm">⚙ Seedance 2.5</span><span class="chk">✓</span></div><div class="pu-item" style="opacity:.5;cursor:default"><span class="nm">Больше движков — после переезда</span></div>'; }
+
+// === ОБНОВЛЁННОЕ МЕНЮ МОДЕЛЕЙ ===
+function popModelHTML(){ 
+  var html = '<div class="pu-head">Выбери движок генерации</div>';
+  Object.keys(MODELS).forEach(function(key){
+    var m = MODELS[key];
+    var isSelected = currentModel === key;
+    var priceText = 'от '+m.basePrice+' ₽';
+    html += '<div class="pu-item'+(isSelected?' sel':'')+'" data-model="'+key+'">';
+    html += '<span class="nm">'+m.name+' <small style="color:var(--muted)">— '+m.description+'</small></span>';
+    html += '<span style="margin-left:auto;font-weight:700;color:var(--lime)">'+priceText+'</span>';
+    if(isSelected) html += '<span class="chk" style="margin-left:8px">✓</span>';
+    html += '</div>';
+  });
+  // Серые "скоро"
+  html += '<div class="pu-item" style="opacity:.5;cursor:default"><span class="nm">Kling 4.0 <small style="color:#fbbf24">— новинка октября, скоро</small></span></div>';
+  html += '<div class="pu-item" style="opacity:.5;cursor:default"><span class="nm">Veo 4 <small style="color:#fbbf24">— скоро</small></span></div>';
+  return html;
+}
+
+function mountModel(){ 
+  pop.querySelectorAll('.pu-item[data-model]').forEach(function(el){ 
+    el.addEventListener('click', function(){ 
+      var modelKey = el.getAttribute('data-model');
+      currentModel = modelKey;
+      var model = MODELS[modelKey];
+      // Ограничиваем длительность максимумом модели
+      if(seconds > model.maxDuration){
+        seconds = model.maxDuration;
+      }
+      updatePriceDisplay();
+      saveDraft();
+      closePop();
+    }); 
+  }); 
+}
+
+// === ОБНОВЛЁННОЕ МЕНЮ РЕЖИМОВ (ПРОМПТ) ===
+function popEnhanceHTML(){
+  return '<div class="pu-head">Режим обработки промпта</div>'
+    + '<div class="pu-item'+(enhancePrompt?' sel':'')+'" data-enhance="true"><span class="nm">Простой — AI улучшит промпт</span>'+(enhancePrompt?'<span class="chk">✓</span>':'')+'</div>'
+    + '<div class="pu-item'+(!enhancePrompt?' sel':'')+'" data-enhance="false"><span class="nm">Продвинутый — промпт без изменений</span>'+(!enhancePrompt?'<span class="chk">✓</span>':'')+'</div>'
+    + '<div style="padding:10px;color:var(--muted);font-size:.78rem;line-height:1.5;border-top:1px solid var(--border);margin-top:8px">Простой режим: промпт переводится и дополняется для лучшего результата. Продвинутый: промпт уходит как есть (для опытных).</div>';
+}
+
+function mountEnhance(){
+  pop.querySelectorAll('.pu-item[data-enhance]').forEach(function(el){
+    el.addEventListener('click', function(){
+      enhancePrompt = el.getAttribute('data-enhance') === 'true';
+      closePop();
+    });
+  });
+}
+
 function popFQHTML(){ return '<div class="pu-lbl">Формат кадра</div><div class="pu-row" id="puAsp">'+['16:9','9:16','1:1'].map(function(a){ return '<button type="button" data-a="'+a+'" class="'+(a===aspect?'on':'')+'">'+a+'</button>'; }).join('')+'</div><div class="pu-lbl">Качество</div><div class="pu-row" id="puQ">'+['480p','720p','1080p'].map(function(q){ var lbl=q+(q==='720p'?' · +200 ₽':(q==='1080p'?' · +300 ₽':'')); return '<button type="button" data-q="'+q+'" class="'+(q===quality?'on':'')+'">'+lbl+'</button>'; }).join('')+'</div>'; }
 function mountFQ(){ pop.querySelectorAll('#puAsp button').forEach(function(b){ b.addEventListener('click', function(){ aspect=b.getAttribute('data-a'); updateChips(); saveDraft(); openPop(popRect,popFQHTML(),'fq',mountFQ); }); }); pop.querySelectorAll('#puQ button').forEach(function(b){ b.addEventListener('click', function(){ quality=b.getAttribute('data-q'); updatePriceDisplay(); saveDraft(); openPop(popRect,popFQHTML(),'fq',mountFQ); }); }); }
-function popDurHTML(){ return '<div class="pu-lbl">Длительность</div><div class="pu-dur"><input type="range" id="puSlider" min="5" max="30" step="1" value="'+seconds+'"><span id="puVal">'+seconds+' сек</span></div>'; }
-function mountDur(){ var sl=pop.querySelector('#puSlider'), vv=pop.querySelector('#puVal'); sl.addEventListener('input', function(){ seconds=parseInt(sl.value,10); vv.textContent=seconds+' сек'; updatePriceDisplay(); saveDraft(); updateSteps(); }); }
+
+// === ОБНОВЛЁННОЕ МЕНЮ ДЛИТЕЛЬНОСТИ ===
+function popDurHTML(){ 
+  var model = MODELS[currentModel];
+  var maxDur = model.maxDuration;
+  var currentSec = Math.min(seconds, maxDur);
+  return '<div class="pu-lbl">Длительность (макс '+maxDur+' сек для '+model.name+')</div><div class="pu-dur"><input type="range" id="puSlider" min="5" max="'+maxDur+'" step="1" value="'+currentSec+'"><span id="puVal">'+currentSec+' сек</span></div>'; 
+}
+function mountDur(){ 
+  var sl=pop.querySelector('#puSlider'), vv=pop.querySelector('#puVal'); 
+  sl.addEventListener('input', function(){ 
+    seconds=parseInt(sl.value,10); 
+    vv.textContent=seconds+' сек'; 
+    updatePriceDisplay(); 
+    saveDraft(); 
+    updateSteps(); 
+  }); 
+}
+
 function popMentionHTML(){ var h='<div class="pu-head">Используй @ для упоминания</div><div class="pu-item pu-add" id="puAdd"><span class="nm">+ Добавить файл</span></div>'; if(!refs.length){ h+='<div class="pu-head" style="padding:8px 10px">Пока пусто: загрузи фото, видео или звук</div>'; } else { mSel=0; h+=refs.map(function(r,i){ var cls='pu-item'+(r.kind!=='image'?' '+r.kind:'')+(i===mSel?' sel':''); var ic=r.kind==='image'?'<img src="'+(r.thumb||('data:image/jpeg;base64,'+r.data))+'">':'<span class="mi">'+(r.kind==='video'?'▶':'♪')+'</span>'; return '<div class="'+cls+'" data-i="'+i+'">'+ic+'<span class="nm">'+shortName(r.name||(r._name||refName(i,r.kind)))+'</span></div>'; }).join(''); } return h; }
 function mountMention(){ var add=pop.querySelector('#puAdd'); if(add) add.addEventListener('click', function(){ closePop(); uplInput.click(); }); pop.querySelectorAll('.pu-item[data-i]').forEach(function(el){ el.addEventListener('mousedown', function(e){ e.preventDefault(); }); el.addEventListener('mouseenter', function(){ mSel=parseInt(el.getAttribute('data-i'),10); pop.querySelectorAll('.pu-item[data-i]').forEach(function(x,j){ x.classList.toggle('sel', j===mSel); }); }); el.addEventListener('click', function(){ insertMention(parseInt(el.getAttribute('data-i'),10)); }); }); }
 
@@ -93,10 +219,50 @@ function caretRect(){ var sel=window.getSelection(); if(sel&&sel.rangeCount){ va
 function insertMention(i){ var r=refs[i]; if(!r) return; promptBox.focus(); var sel=window.getSelection(); var range; if(sel.rangeCount&&promptBox.contains(sel.getRangeAt(0).startContainer)){ range=sel.getRangeAt(0); } else { range=document.createRange(); range.selectNodeContents(promptBox); range.collapse(false); } var node=range.startContainer, off=range.startOffset; if(node.nodeType===3&&off>0&&node.nodeValue[off-1]==='@'){ node.nodeValue=node.nodeValue.slice(0,off-1)+node.nodeValue.slice(off); range.setStart(node,off-1); range.collapse(true); } var chip=buildMchip(r,i); range.insertNode(chip); var sp=document.createTextNode(' '); chip.after(sp); range.setStartAfter(sp); range.collapse(true); sel.removeAllRanges(); sel.addRange(range); closePop(); saveDraft(); updateSteps(); }
 
 pcMode.addEventListener('click', function(){ openPopEl(pcMode,popModeHTML(),'mode',mountMode); });
-pcModel.addEventListener('click', function(){ openPopEl(pcModel,popModelHTML(),'model',null); });
+pcModel.addEventListener('click', function(){ openPopEl(pcModel,popModelHTML(),'model',mountModel); });
 pcFQ.addEventListener('click', function(){ openPopEl(pcFQ,popFQHTML(),'fq',mountFQ); });
 pcDur.addEventListener('click', function(){ openPopEl(pcDur,popDurHTML(),'dur',mountDur); });
 pcAt.addEventListener('click', function(){ promptBox.focus(); var sel=window.getSelection(); var range=document.createRange(); range.selectNodeContents(promptBox); range.collapse(false); sel.removeAllRanges(); sel.addRange(range); openPopEl(pcAt,popMentionHTML(),'mention',mountMention); });
+
+// === ДОБАВЛЯЕМ КНОПКУ РЕЖИМОВ В STUDIO-BAR ===
+(function(){
+  var modeBtn = document.createElement('button');
+  modeBtn.className = 'pchip';
+  modeBtn.type = 'button';
+  modeBtn.id = 'pcEnhance';
+  modeBtn.textContent = enhancePrompt ? '✨ Простой режим ⌄' : '🔧 Продвинутый ⌄';
+  modeBtn.addEventListener('click', function(){
+    openPopEl(modeBtn, popEnhanceHTML(), 'enhance', mountEnhance);
+  });
+  // Вставляем перед кнопкой @
+  pcAt.parentNode.insertBefore(modeBtn, pcAt);
+  
+  // Обновляем текст кнопки при изменении режима
+  window.addEventListener('popstate', function(){
+    modeBtn.textContent = enhancePrompt ? '✨ Простой режим ⌄' : '🔧 Продвинутый ⌄';
+  });
+})();
+
+// Функция для обновления кнопки режима (вызывается после mountEnhance)
+function updateEnhanceButton(){
+  var modeBtn = document.getElementById('pcEnhance');
+  if(modeBtn){
+    modeBtn.textContent = enhancePrompt ? '✨ Простой режим ⌄' : '🔧 Продвинутый ⌄';
+  }
+}
+
+// Переопределяем mountEnhance чтобы обновлять кнопку
+var originalMountEnhance = mountEnhance;
+mountEnhance = function(){
+  originalMountEnhance();
+  pop.querySelectorAll('.pu-item[data-enhance]').forEach(function(el){
+    el.addEventListener('click', function(){
+      enhancePrompt = el.getAttribute('data-enhance') === 'true';
+      updateEnhanceButton();
+      closePop();
+    });
+  });
+};
 
 promptBox.addEventListener('input', function(){ saveDraft(); updateSteps(); var sel=window.getSelection(); if(!sel.rangeCount){ return; } var range=sel.getRangeAt(0); var node=range.startContainer, off=range.startOffset; if(node.nodeType===3&&off>0&&node.nodeValue[off-1]==='@'){ openPop(caretRect(),popMentionHTML(),'mention',mountMention); } else if(popKind==='mention'){ closePop(); } });
 promptBox.addEventListener('keydown', function(e){ if(popKind!=='mention') return; var items=pop.querySelectorAll('.pu-item[data-i]'); if(!items.length) return; if(e.key==='ArrowDown'){ e.preventDefault(); mSel=Math.min(mSel+1,items.length-1); items.forEach(function(x,j){ x.classList.toggle('sel',j===mSel); }); } else if(e.key==='ArrowUp'){ e.preventDefault(); mSel=Math.max(mSel-1,0); items.forEach(function(x,j){ x.classList.toggle('sel',j===mSel); }); } else if(e.key==='Enter'||e.key==='Tab'){ e.preventDefault(); insertMention(mSel); } });
@@ -106,11 +272,47 @@ function histSave(l){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(l.slice
 function histRender(){ var l=histLoad(); var box=document.getElementById('histList'); document.getElementById('histCount').textContent=l.length?('всего '+l.length):''; if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые ролики будут собираться здесь (в этом браузере). После переезда история станет общей для всех устройств.</div>'; return; } box.innerHTML=l.map(function(h,i){ return '<div class="hitem"><div style="flex:1;min-width:0"><div class="ht">'+(h.name||'видео')+'</div><div class="hd">'+h.date+'</div></div><a href="'+h.url+'" target="_blank" rel="noopener">▶ скачать</a><button class="del" data-i="'+i+'">✕</button></div>'; }).join(''); box.querySelectorAll('.del').forEach(function(b){ b.onclick=function(){ var l2=histLoad(); l2.splice(parseInt(b.getAttribute('data-i'),10),1); histSave(l2); histRender(); }; }); }
 function histPush(url,name){ var l=histLoad(); l.unshift({url:url,name:name,date:new Date().toLocaleDateString('ru-RU')}); histSave(l); histRender(); }
 
-function saveDraft(){ if(restoring) return; try{ localStorage.setItem(DRAFT_KEY, JSON.stringify({ prompt:getPromptText(), refs:refs.map(function(r){ return {kind:r.kind,data:r.data,name:r.name,thumb:r.thumb,dur:r.dur}; }), aspect:aspect, seconds:seconds, quality:quality, savedAt:Date.now() })); }catch(e){} }
+function saveDraft(){ if(restoring) return; try{ localStorage.setItem(DRAFT_KEY, JSON.stringify({ prompt:getPromptText(), refs:refs.map(function(r){ return {kind:r.kind,data:r.data,name:r.name,thumb:r.thumb,dur:r.dur}; }), aspect:aspect, seconds:seconds, quality:quality, model:currentModel, enhance:enhancePrompt, savedAt:Date.now() })); }catch(e){} }
 function setTextWithTokens(text){ promptBox.textContent=''; var parts=text.split(/(@(?:Image\d+|Video1|Audio1))/g); parts.forEach(function(p){ if(!p) return; var m=p.match(/^@(Image\d+|Video1|Audio1)$/); if(m){ var idx=-1; for(var i=0;i<refs.length;i++){ if(refs[i]._name===m[1]){ idx=i; break; } } if(idx>=0){ promptBox.appendChild(buildMchip(refs[idx],idx)); promptBox.appendChild(document.createTextNode(' ')); } else { promptBox.appendChild(document.createTextNode(p)); } } else { promptBox.appendChild(document.createTextNode(p)); } }); }
-(function restoreDraft(){ try{ var s=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); if(!s) return; restoring=true; if(s.aspect) aspect=s.aspect; if(s.seconds&&s.seconds>=5&&s.seconds<=30) seconds=s.seconds; if(s.quality&&SURCHARGE[s.quality]!==undefined) quality=s.quality; if(s.refs&&s.refs.length){ s.refs.forEach(function(r){ refs.push({kind:r.kind,data:r.data,name:r.name,thumb:r.thumb,dur:r.dur}); }); } renderRefs(); if(s.prompt) setTextWithTokens(s.prompt); restoring=false; updatePriceDisplay(); updateSteps(); }catch(e){ restoring=false; renderRefs(); updatePriceDisplay(); updateSteps(); } })();
+(function restoreDraft(){ try{ var s=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); if(!s) return; restoring=true; if(s.aspect) aspect=s.aspect; if(s.seconds&&s.seconds>=5&&s.seconds<=30) seconds=s.seconds; if(s.quality&&SURCHARGE[s.quality]!==undefined) quality=s.quality; if(s.model && MODELS[s.model]) currentModel=s.model; if(s.enhance!==undefined) enhancePrompt=s.enhance; if(s.refs&&s.refs.length){ s.refs.forEach(function(r){ refs.push({kind:r.kind,data:r.data,name:r.name,thumb:r.thumb,dur:r.dur}); }); } renderRefs(); if(s.prompt) setTextWithTokens(s.prompt); restoring=false; updatePriceDisplay(); updateSteps(); updateEnhanceButton(); }catch(e){ restoring=false; renderRefs(); updatePriceDisplay(); updateSteps(); updateEnhanceButton(); } })();
 
-function payClick(){ var prompt=getPromptText().trim(); if(!prompt){ alert('Опиши видео или добавь пару слов в поле'); return; } if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; } var hasAudio=refs.some(function(r){return r.kind==='audio';}); var hasImgVid=refs.some(function(r){return r.kind==='image'||r.kind==='video';}); if(hasAudio&&!hasImgVid){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; } btn.disabled=true; sendBtn.disabled=true; setStatus('Создаём платёж...'); saveDraft(); fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'text2video',seconds:seconds,prompt:prompt,aspect:aspect,quality:quality})}).then(function(r){return r.json();}).then(function(data){ if(data.error){ throw new Error(data.error); } window.location.href=data.confirmationUrl; }).catch(function(e){ setStatus('Ошибка: '+e.message); btn.disabled=false; sendBtn.disabled=false; }); }
+// === ОБНОВЛЁННАЯ ЛОГИКА ОПЛАТЫ С ПЕРЕДАЧЕЙ МОДЕЛИ И РЕЖИМА ===
+function payClick(){ 
+  var prompt=getPromptText().trim(); 
+  if(!prompt){ alert('Опиши видео или добавь пару слов в поле'); return; } 
+  if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; } 
+  var hasAudio=refs.some(function(r){return r.kind==='audio';}); 
+  var hasImgVid=refs.some(function(r){return r.kind==='image'||r.kind==='video';}); 
+  if(hasAudio&&!hasImgVid){ alert('Звук-референс работает только вместе с фото или видео-референсом'); return; } 
+  
+  btn.disabled=true; 
+  sendBtn.disabled=true; 
+  setStatus('Создаём платёж...'); 
+  saveDraft(); 
+  
+  var model = MODELS[currentModel];
+  
+  fetch('/api/pay',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      service:'text2video',
+      model: model.apiModel,
+      seconds:seconds,
+      prompt:prompt,
+      aspect:aspect,
+      quality:quality,
+      enhancePrompt: enhancePrompt
+    })
+  }).then(function(r){return r.json();}).then(function(data){ 
+    if(data.error){ throw new Error(data.error); } 
+    window.location.href=data.confirmationUrl; 
+  }).catch(function(e){ 
+    setStatus('Ошибка: '+e.message); 
+    btn.disabled=false; 
+    sendBtn.disabled=false; 
+  }); 
+}
 btn.addEventListener('click', payClick);
 sendBtn.addEventListener('click', payClick);
 
@@ -120,12 +322,135 @@ function setChain(pid,obj){ try{ localStorage.setItem(chainKey(pid), JSON.string
 function clearChain(pid){ try{ localStorage.removeItem(chainKey(pid)); }catch(e){} }
 function showVideo(url,msg){ document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+url+'"></video></div>'; setStatus(msg); baseDone=true; stage='done'; updateSteps(); btn.disabled=false; sendBtn.disabled=false; histPush(url, getPromptText().slice(0,60)||'видео'); }
 function startUpscale(pid,baseVideoUrl){ stage='up'; updateSteps(); setStatus('✨ Улучшаем качество до 1080p... ещё около минуты ⏳'); fetch('/api/upscale',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({videoUrl:baseVideoUrl})}).then(function(r){return r.json();}).then(function(d){ if(d.error){ throw new Error(d.error); } setChain(pid,{taskId:d.taskId,stage:'upscale',baseVideoUrl:baseVideoUrl,upscale:true}); poll(d.taskId,'upscale',baseVideoUrl,pid); }).catch(function(e){ showVideo(baseVideoUrl,'⚠️ Улучшение до 1080p сейчас недоступно ('+e.message+'). Вот готовое видео в 720p — напиши в поддержку, вернём разницу.'); clearChain(pid); }); }
-function poll(taskId,stg,baseVideoUrl,pid){ var timer=setInterval(function(){ fetch('/api/status?taskId='+encodeURIComponent(taskId)).then(function(r){return r.json();}).then(function(d){ if(d.status==='succeeded'){ clearInterval(timer); if(stg==='upscale'){ showVideo(d.videoUrl,'Готово! ✅ Full HD 1080p. Скачай видео в течение 7 дней.'); clearChain(pid); } else { baseDone=true; var ch=getChain(pid); if(ch&&ch.upscale&&ch.stage==='base'){ startUpscale(pid,d.videoUrl); } else { showVideo(d.videoUrl,'Готово! ✅ Скачай видео в течение 7 дней.'); clearChain(pid); } } } else if(d.status==='failed'){ clearInterval(timer); if(stg==='upscale'&&baseVideoUrl){ showVideo(baseVideoUrl,'⚠️ Улучшение до 1080p не удалось. Вот готовое видео в 720p — напиши в поддержку, вернём разницу.'); clearChain(pid); } else { setStatus('Ошибка генерации: '+(d.error||'попробуй другой запрос')); stage='setup'; updateSteps(); btn.disabled=false; sendBtn.disabled=false; clearChain(pid); } } else { setStatus(stg==='upscale'?'✨ Улучшаем качество до 1080p... ещё около минуты ⏳':'⚡ Seedance 2.5 создаёт твоё видео... ⏳'); } }).catch(function(){}); },5000); }
+function poll(taskId,stg,baseVideoUrl,pid){ 
+  var timer=setInterval(function(){ 
+    fetch('/api/status?taskId='+encodeURIComponent(taskId)).then(function(r){return r.json();}).then(function(d){ 
+      if(d.status==='succeeded'){ 
+        clearInterval(timer); 
+        if(stg==='upscale'){ 
+          showVideo(d.videoUrl,'Готово! ✅ Full HD 1080p. Скачай видео в течение 7 дней.'); 
+          clearChain(pid); 
+        } else { 
+          baseDone=true; 
+          var ch=getChain(pid); 
+          if(ch&&ch.upscale&&ch.stage==='base'){ 
+            startUpscale(pid,d.videoUrl); 
+          } else { 
+            showVideo(d.videoUrl,'Готово! ✅ Скачай видео в течение 7 дней.'); 
+            clearChain(pid); 
+          } 
+        } 
+      } else if(d.status==='failed'){ 
+        clearInterval(timer); 
+        if(stg==='upscale'&&baseVideoUrl){ 
+          showVideo(baseVideoUrl,'⚠️ Улучшение до 1080p не удалось. Вот готовое видео в 720p — напиши в поддержку, вернём разницу.'); 
+          clearChain(pid); 
+        } else { 
+          setStatus('Ошибка генерации: '+(d.error||'попробуй другой запрос')); 
+          stage='setup'; 
+          updateSteps(); 
+          btn.disabled=false; 
+          sendBtn.disabled=false; 
+          clearChain(pid); 
+        } 
+      } else { 
+        var modelName = MODELS[currentModel].name;
+        setStatus(stg==='upscale'?'✨ Улучшаем качество до 1080p... ещё около минуты ⏳':'⚡ '+modelName+' создаёт твоё видео... ⏳'); 
+      } 
+    }).catch(function(){}); 
+  },5000); 
+}
 
-(function(){ var pid=new URLSearchParams(window.location.search).get('paymentId'); if(!pid) return; var ch=getChain(pid); if(ch&&ch.taskId){ paidSeen=true; upscaleExpected=!!ch.upscale; stage=(ch.stage==='upscale')?'up':'gen'; updateSteps(); btn.disabled=true; sendBtn.disabled=true; poll(ch.taskId,ch.stage||'base',ch.baseVideoUrl||null,pid); return; } btn.disabled=true; sendBtn.disabled=true; setStatus('Проверяем оплату...'); fetch('/api/check-payment?paymentId='+encodeURIComponent(pid)).then(function(r){return r.json();}).then(function(data){ if(data.paid&&data.taskId){ paidSeen=true; stage='gen'; updateSteps(); setChain(pid,{taskId:data.taskId,stage:'base',baseVideoUrl:null,upscale:false}); setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳'); poll(data.taskId,'base',null,pid); } else if(data.paid){ paidSeen=true; updateSteps(); var draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'{}'); var payload={service:'text2video',paymentId:pid,prompt:draft.prompt||'',aspect:draft.aspect||'16:9',seconds:draft.seconds||5,quality:draft.quality||'480p'}; var rl=draft.refs||[], images=[], video=null, audio=null; rl.forEach(function(r){ if(r.kind==='image') images.push(r.data); else if(r.kind==='video') video=r.data; else if(r.kind==='audio') audio=r.data; }); if(images.length){ payload.refs=images; payload.refImage=images[0]; } if(video){ payload.refVideo=video; } if(audio){ payload.refAudio=audio; } upscaleExpected=(payload.quality==='1080p'); setStatus('Оплата прошла! Запускаем генерацию...'); stage='gen'; updateSteps(); fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).then(function(d){ if(d.error){ throw new Error(d.error); } upscaleExpected=!!d.upscale; setChain(pid,{taskId:d.taskId,stage:'base',baseVideoUrl:null,upscale:!!d.upscale}); setStatus('⚡ Seedance 2.5 создаёт твоё видео... ⏳'); poll(d.taskId,'base',null,pid); }).catch(function(e){ setStatus('Ошибка: '+e.message); btn.disabled=false; sendBtn.disabled=false; }); } else { setStatus('Оплата не завершена. Твой текст и настройки сохранены — проверь и нажми кнопку ещё раз.'); btn.disabled=false; sendBtn.disabled=false; } }).catch(function(e){ setStatus('Ошибка: '+e.message); btn.disabled=false; sendBtn.disabled=false; }); })();
+(function(){ 
+  var pid=new URLSearchParams(window.location.search).get('paymentId'); 
+  if(!pid) return; 
+  var ch=getChain(pid); 
+  if(ch&&ch.taskId){ 
+    paidSeen=true; 
+    upscaleExpected=!!ch.upscale; 
+    stage=(ch.stage==='upscale')?'up':'gen'; 
+    updateSteps(); 
+    btn.disabled=true; 
+    sendBtn.disabled=true; 
+    poll(ch.taskId,ch.stage||'base',ch.baseVideoUrl||null,pid); 
+    return; 
+  } 
+  btn.disabled=true; 
+  sendBtn.disabled=true; 
+  setStatus('Проверяем оплату...'); 
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid)).then(function(r){return r.json();}).then(function(data){ 
+    if(data.paid&&data.taskId){ 
+      paidSeen=true; 
+      stage='gen'; 
+      updateSteps(); 
+      setChain(pid,{taskId:data.taskId,stage:'base',baseVideoUrl:null,upscale:false}); 
+      var modelName = MODELS[currentModel].name;
+      setStatus('⚡ '+modelName+' создаёт твоё видео... ⏳'); 
+      poll(data.taskId,'base',null,pid); 
+    } else if(data.paid){ 
+      paidSeen=true; 
+      updateSteps(); 
+      var draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'{}'); 
+      
+      // Восстанавливаем модель из черновика
+      if(draft.model && MODELS[draft.model]){
+        currentModel = draft.model;
+      }
+      if(draft.enhance!==undefined){
+        enhancePrompt = draft.enhance;
+      }
+      
+      var model = MODELS[currentModel];
+      var payload={
+        service:'text2video',
+        paymentId:pid,
+        model: model.apiModel,
+        prompt:draft.prompt||'',
+        aspect:draft.aspect||'16:9',
+        seconds:draft.seconds||5,
+        quality:draft.quality||'480p',
+        enhancePrompt: enhancePrompt
+      }; 
+      var rl=draft.refs||[], images=[], video=null, audio=null; 
+      rl.forEach(function(r){ 
+        if(r.kind==='image') images.push(r.data); 
+        else if(r.kind==='video') video=r.data; 
+        else if(r.kind==='audio') audio=r.data; 
+      }); 
+      if(images.length){ payload.refs=images; payload.refImage=images[0]; } 
+      if(video){ payload.refVideo=video; } 
+      if(audio){ payload.refAudio=audio; } 
+      upscaleExpected=(payload.quality==='1080p'); 
+      setStatus('Оплата прошла! Запускаем генерацию...'); 
+      stage='gen'; 
+      updateSteps(); 
+      fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).then(function(d){ 
+        if(d.error){ throw new Error(d.error); } 
+        upscaleExpected=!!d.upscale; 
+        setChain(pid,{taskId:d.taskId,stage:'base',baseVideoUrl:null,upscale:!!d.upscale}); 
+        var modelName = MODELS[currentModel].name;
+        setStatus('⚡ '+modelName+' создаёт твоё видео... ⏳'); 
+        poll(d.taskId,'base',null,pid); 
+      }).catch(function(e){ 
+        setStatus('Ошибка: '+e.message); 
+        btn.disabled=false; 
+        sendBtn.disabled=false; 
+      }); 
+    } else { 
+      setStatus('Оплата не завершена. Твой текст и настройки сохранены — проверь и нажми кнопку ещё раз.'); 
+      btn.disabled=false; 
+      sendBtn.disabled=false; 
+    } 
+  }).catch(function(e){ 
+    setStatus('Ошибка: '+e.message); 
+    btn.disabled=false; 
+    sendBtn.disabled=false; 
+  }); 
+})();
 
 renderRefs();
 histRender();
 updatePriceDisplay();
 updateSteps();
+updateEnhanceButton();
 })();
