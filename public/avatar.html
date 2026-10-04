@@ -17,76 +17,79 @@
 .rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
 .rail a.on{opacity:1;filter:none;background:rgba(163,230,53,.12);box-shadow:inset 0 0 0 1px rgba(163,230,53,.45)}
 .wrap{max-width:1040px;margin:96px auto 60px;padding:0 24px 0 88px}
-.pagehead{text-align:center;margin:0 0 22px}
+.pagehead{text-align:center;margin:0 0 20px}
 .pagehead h1{font-family:'Space Grotesk';font-size:2rem;line-height:1.2;margin:0 0 8px;color:var(--text)}
 .pagehead p{color:var(--muted);font-size:.92rem;margin:0}
-.psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+.psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:600}
 .pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.stage{position:relative;border:1px solid var(--border);border-radius:22px;background:#171a14;padding:20px;display:grid;grid-template-columns:150px 1fr;gap:20px}
-.face{position:relative;aspect-ratio:3/4;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;cursor:pointer}
-.face img{width:100%;height:100%;object-fit:cover;display:block}
-.face .fadd{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:.76rem;text-align:center;padding:8px}
-.face .fadd svg{width:24px;height:24px;color:rgba(163,230,53,.6)}
-.face .ftag{position:absolute;left:6px;bottom:6px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);color:var(--lime);font-size:.66rem;font-weight:700}
-.vside{display:flex;flex-direction:column;min-width:0}
-.vlbl{color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:2px 0 10px}
-.vzone{flex:1;min-height:190px;display:flex;flex-direction:column;gap:12px}
-.vph{color:#8b9284;font-size:.95rem;line-height:1.7}
-.vph .vl{background:none;border:none;padding:0;color:var(--lime);font:inherit;text-decoration:underline;cursor:pointer}
-.vph .vl:hover{color:#c8f06a}
-.vph .vl.soon{color:#5d6455;cursor:not-allowed;text-decoration:underline dotted}
-.achip{display:flex;gap:10px;align-items:center;border:1px solid rgba(163,230,53,.35);background:rgba(163,230,53,.07);border-radius:12px;padding:10px 12px;max-width:520px}
-.achip .pl{width:32px;height:32px;border-radius:50%;border:none;background:rgba(163,230,53,.16);color:var(--lime);cursor:pointer;font-size:.78rem;flex:0 0 auto}
-.achip .an{color:var(--text);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.achip .as{color:var(--muted);font-size:.74rem;flex:0 0 auto}
-.achip .ax{width:24px;height:24px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fca5a5;cursor:pointer;font-size:.68rem;flex:0 0 auto}
-.vmini{display:flex;gap:14px;align-items:center;margin-top:2px}
-.vmini .vl{background:none;border:none;padding:0;color:var(--lime);font-size:.8rem;text-decoration:underline;cursor:pointer}
-.vmini .vl:hover{color:#c8f06a}
-.recbox{padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none;max-width:520px}
+.studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:16px 18px 12px}
+.pwrap{position:relative;padding:0 0 8px}
+.promptBox{min-height:130px;max-height:300px;overflow-y:auto;outline:none;font:400 1rem/1.8 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word}
+.promptBox::before{content:none}
+.promptBox:not(:has(.reftile))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.93rem}
+.reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg);cursor:pointer}
+.reftile:nth-child(even){transform:rotate(1.5deg)}
+.reftile img{width:100%;height:100%;object-fit:cover}
+.reftile.host{outline:2px solid var(--lime);outline-offset:1px}
+.reftile .ic{position:absolute;inset:0;display:grid;place-items:center;font-size:1.05rem;color:var(--lime);background:rgba(163,230,53,.12)}
+.reftile.audio .ic{color:#93c5fd;background:rgba(59,130,246,.12)}
+.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0;z-index:3}
+.reftile:hover .x{display:grid}
+.durb{position:absolute;left:3px;bottom:3px;background:rgba(0,0,0,.78);color:#fff;font-size:.6rem;padding:1px 4px;border-radius:4px;z-index:2}
+.addbadge{display:inline-block;vertical-align:middle;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#e5e7eb;text-align:center;line-height:30px;font-size:1rem;cursor:pointer;margin:0 8px 6px 0}
+.addbadge:hover{background:rgba(255,255,255,.26)}
+.recbox{margin:4px 0 10px;padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
 .recbox.on{display:block}
 .recbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font:600 .88rem 'Inter';cursor:pointer}
 .recbtn.recording{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1);animation:pulse 1.2s infinite}
 .rectime{color:var(--muted);font-size:.85rem;margin-left:10px}
 .recaudio{margin-top:10px;width:100%}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
-.stagebar{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07);padding-top:16px;margin-top:4px}
-.chipbtn{display:inline-flex;gap:8px;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 .84rem 'Inter';cursor:pointer;max-width:250px}
-.chipbtn:hover{background:rgba(255,255,255,.1)}
-.chipbtn .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.spacer{flex:1}
-.pricetag{font-family:'Space Grotesk';font-weight:700;font-size:1.15rem;color:var(--text);white-space:nowrap}
-.pricetag small{display:block;color:var(--muted);font:.68rem/1.2 'Inter';font-weight:500}
-.genbtn{padding:12px 26px;border-radius:999px;border:none;background:var(--lime);color:#0a0c08;font:700 .95rem 'Inter';cursor:pointer;white-space:nowrap}
-.genbtn:hover{filter:brightness(1.08)}
-.genbtn:disabled{opacity:.6;cursor:not-allowed}
-.pop{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:6px;min-width:250px;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:320px;overflow-y:auto}
-.pop.open{display:block}
+.studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:nowrap;padding:4px 0 2px;overflow-x:auto}
+.pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
+.pchip:hover{background:rgba(255,255,255,.06);color:#fff}
+.pchip.mode{color:var(--lime);font-weight:600}
+.priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;margin-left:auto;display:flex;align-items:center;gap:4px;flex:0 0 auto;padding-right:6px}
+.priceBox .coin{color:var(--lime);font-weight:800}
+.sendbtn{width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1.1rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
+.sendbtn:hover{background:#e5e7eb}
+.sendbtn:disabled{opacity:.5;cursor:not-allowed}
+.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:240px;max-width:330px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:320px;overflow-y:auto}
+.popup.open{display:block}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
 .pu-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
-.pu-item:hover{background:rgba(163,230,53,.12)}
-.pu-item img{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
-.pu-item .mi{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:.9rem;background:rgba(255,255,255,.08);flex:0 0 auto}
+.pu-item:hover,.pu-item.sel{background:rgba(163,230,53,.12)}
+.pu-item img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex:0 0 auto}
+.pu-item .mi{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;background:rgba(255,255,255,.08);flex:0 0 auto}
 .pu-item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pu-item .chk{margin-left:auto;color:var(--lime)}
+.pu-item.dis{opacity:.5;cursor:not-allowed}
+.pu-lbl{padding:8px 10px 4px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
 .pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
-.pu-row button{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .82rem 'Inter';cursor:pointer}
+.pu-row button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer}
 .pu-row button:hover{color:var(--text)}
 .pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:12px}
+.rolehint a{color:var(--lime)}
 .agreerow{display:flex;justify-content:center;margin:14px 0 0}
-.agreerow label{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;cursor:pointer;max-width:560px}
+.agreerow label{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;cursor:pointer;max-width:600px}
 .agreerow input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
 .agreerow a{color:var(--lime)}
 #status{margin-top:10px;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
 .result{margin:26px 0 0}
-.result .mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
-.outbox{border-radius:18px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;display:grid;place-items:center;min-height:220px;padding:12px}
+.mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
+.outbox{border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);display:grid;place-items:center;overflow:hidden;padding:14px;min-height:240px}
 .outbox video{width:100%;max-height:480px;border-radius:14px}
-.ph{color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px;text-align:center}
-.recent{margin:30px 0 0}
+.ph{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px}
+.vf{width:64px;height:84px;border:1.5px dashed rgba(163,230,53,.45);border-radius:12px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
+.vf svg{width:22px;height:22px}
+.ph-t{color:var(--text);font-weight:600;font-size:.95rem}
+.ph-s{margin-top:4px;font-size:.78rem}
+.recent{margin:28px 0 0}
 .rhead{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
 .rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
 .rcard{flex:0 0 200px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3)}
@@ -102,12 +105,10 @@
 .payrow a{color:var(--lime);font-size:.75rem;text-decoration:none}
 .trust{color:var(--muted);font-size:.76rem;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
-.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;text-align:center}
 @media(max-width:900px){
   .rail{display:none}
   .wrap{padding:0 24px;margin-top:84px}
-  .stage{grid-template-columns:1fr}
-  .face{max-width:180px}
+  .studio-bar{flex-wrap:wrap}
 }
 </style>
 </head>
@@ -157,7 +158,7 @@
 <main class="wrap">
   <div class="pagehead">
     <h1>Что скажет твой аватар?</h1>
-    <p>Выбери ведущего, добавь озвучку — фото заговорит твоими словами, губы в такт</p>
+    <p>Кружком 「+」 добавь ведущего и озвучку — фото заговорит твоими словами, губы в такт</p>
   </div>
 
   <div class="psteps">
@@ -166,35 +167,42 @@
     <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
   </div>
 
-  <div class="stage" id="stage">
-    <div class="face" id="faceBox" title="Выбрать ведущего"></div>
-    <div class="vside">
-      <div class="vlbl">Озвучка — что скажет аватар</div>
-      <div class="vzone" id="voiceZone"></div>
-      <div class="recbox" id="recBox">
-        <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
-        <span class="rectime" id="recTime"></span>
-        <div class="rolehint" id="recHint" style="text-align:left;margin-top:8px">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом.</div>
-        <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
-        <button class="recbtn" id="recUse" type="button" style="display:none;margin-top:10px">✅ Использовать запись</button>
-      </div>
+  <div class="studio" id="stage">
+    <div class="pwrap">
+      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Здесь появятся плитки ведущего и озвучки — добавь их кружком 「+」. Текст сценария для озвучки голосом студии откроется после запуска." spellcheck="false"></div>
     </div>
-    <div class="stagebar">
-      <button class="chipbtn" id="hostChip" type="button">🗣 <span class="cn">Выбрать ведущего</span> ⌄</button>
-      <button class="chipbtn" id="fmtChip" type="button">📱 <span class="cn">9:16</span> ⌄</button>
-      <span class="spacer"></span>
-      <span class="pricetag">499 ₽<small id="barMeta">озвучка до 30 сек</small></span>
-      <button class="genbtn" id="btn" type="button">Создать видео</button>
+    <div class="recbox" id="recBox">
+      <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
+      <span class="rectime" id="recTime"></span>
+      <div class="rolehint" id="recHint" style="text-align:left;margin-top:8px">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом.</div>
+      <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
+      <button class="recbtn" id="recUse" type="button" style="display:none;margin-top:10px">✅ Использовать запись</button>
     </div>
-    <div class="pop" id="popMenu"></div>
+    <div class="studio-bar">
+      <button class="pchip mode" id="pcMode" type="button">🗣 Аватар ⌄</button>
+      <button class="pchip" id="pcHost" type="button">🎤 Ведущий ⌄</button>
+      <button class="pchip" id="pcVoice" type="button">🎙 Озвучки нет ⌄</button>
+      <button class="pchip" id="pcFmt" type="button">📱 9:16 ⌄</button>
+      <div class="priceBox"><span class="coin">₽</span><span id="priceVal">499</span></div>
+      <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
+    </div>
+    <div class="popup" id="popMenu"></div>
   </div>
 
-  <div class="agreerow"><label><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a>. Своё фото или фото с согласия человека — иначе нейросеть отклонит заказ, деньги вернутся автоматически.</span></label></div>
+  <div class="rolehint" style="text-align:center">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно. · <a href="/examples.html">Смотреть примеры →</a></div>
+
+  <div class="agreerow"><label><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label></div>
   <div id="status"></div>
 
   <section class="result" id="resultSec" style="display:none">
     <div class="mod-h">Твоё видео</div>
-    <div class="outbox" id="outbox"><div class="ph">Здесь появится говорящий аватар после оплаты и генерации</div></div>
+    <div class="outbox" id="outbox">
+      <div class="ph">
+        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></div>
+        <div class="ph-t">Здесь появится говорящий аватар</div>
+        <div class="ph-s">Длина видео = длина твоей озвучки</div>
+      </div>
+    </div>
   </section>
 
   <section class="recent">
@@ -207,7 +215,7 @@
       <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
       <a href="/prices.html">Цены и оплата →</a>
     </div>
-    <div class="rolehint">💬 Озвучка текстом с выбором голоса (6 голосов + Барсик) откроется сразу после запуска. Длина видео = длина озвучки.</div>
+    <div class="rolehint" style="text-align:center">💬 Озвучка текстом с выбором голоса (6 голосов + Барсик) откроется сразу после запуска.</div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
   </div>
@@ -250,26 +258,33 @@ var imageData=null, audioData=null, audioSec=0;
 var presetId=null;
 var audioNameStr=null, localAudioBlobUrl=null;
 var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
-var btn=document.getElementById('btn'), statusEl=document.getElementById('status');
-var pop=document.getElementById('popMenu'), stageBox=document.getElementById('stage');
+var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
+var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
+sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||''; }catch(e){}
 var serverPresets=[];
+var popKind=null, popRect=null, tileAudio=null;
 
 function setStatus(t){ statusEl.textContent=t; }
+function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s/60), ss=s%60; return m+':'*(m>0)+(m>0?(ss<10?'0':'')+ss:ss+''); }
 
 function hostName(){
   if(presetId!==null&&PRESETS[presetId]) return PRESETS[presetId].name;
   if(imageData) return 'Твоё фото';
-  return 'Выбрать ведущего';
+  return null;
 }
 
-function updateBar(){
-  document.getElementById('barMeta').textContent=(audioSec?'озвучка '+audioSec+' сек':'озвучка до 30 сек')+' · '+orientation;
-  var filesOk=!!imageData&&!!audioData;
-  if(!paidSeen){ btn.textContent='Создать видео — 499 ₽'; btn.disabled=false; }
-  else if(filesOk&&stage!=='gen'&&stage!=='done'){ btn.textContent='Запустить генерацию (оплачено)'; btn.disabled=false; }
-  else if(stage==='done'){ btn.textContent='Готово ✅'; btn.disabled=true; }
-  else{ btn.textContent='Оплачено ✅'; btn.disabled=true; }
+function updateChips(){
+  var hn=hostName();
+  document.getElementById('pcHost').textContent='🎤 '+(hn||'Ведущий')+' ⌄';
+  document.getElementById('pcVoice').textContent='🎙 '+(audioNameStr?shortName(audioNameStr):'Озвучки нет')+' ⌄';
+  document.getElementById('pcFmt').textContent='📱 '+orientation+' ⌄';
+}
+function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
+
+function updateSend(){
+  if(stage==='done'){ sendBtn.disabled=true; sendBtn.title='Готово'; }
+  else{ sendBtn.disabled=false; sendBtn.title=paidSeen?'Запустить генерацию':'На оплату'; }
 }
 
 function updateSteps(){
@@ -281,28 +296,81 @@ function updateSteps(){
   document.getElementById('resultSec').style.display=(paidSeen||stage!=='setup')?'block':'none';
 }
 
-function renderFace(){
-  var f=document.getElementById('faceBox');
+function stopTileAudio(){ if(tileAudio){ try{ tileAudio.pause(); }catch(e){} tileAudio=null; } }
+
+function renderTiles(){
+  stopTileAudio();
+  promptBox.querySelectorAll('.reftile,.addbadge').forEach(function(el){ el.remove(); });
+  var rest=promptBox.firstChild;
+  var nodes=[];
   if(imageData){
-    f.innerHTML='<img src="data:image/jpeg;base64,'+imageData+'" alt="Ведущий"><span class="ftag">'+hostName()+'</span>';
-  }else{
-    f.innerHTML='<span class="fadd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>Выбрать ведущего<br>или своё фото</span>';
+    var t=document.createElement('span');
+    t.className='reftile host';
+    t.title='Ведущий: '+hostName();
+    t.innerHTML='<img src="data:image/jpeg;base64,'+imageData+'">';
+    var x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='✕';
+    x.onclick=function(ev){ ev.stopPropagation(); removePhoto(); };
+    t.appendChild(x);
+    t.addEventListener('click',function(ev){ if(ev.target.classList.contains('x'))return; openPopEl(document.getElementById('pcHost'),hostPopHTML(),'host',mountHostPop); });
+    nodes.push(t);
   }
-  document.querySelector('#hostChip .cn').textContent=hostName();
+  if(audioData||localAudioBlobUrl){
+    var a=document.createElement('span');
+    a.className='reftile audio';
+    a.title='Озвучка: '+(audioNameStr||'файл');
+    a.innerHTML='<span class="ic">♪</span>'+(audioSec?'<span class="durb">'+fmtDur(audioSec)+'</span>':'');
+    var xa=document.createElement('button'); xa.type='button'; xa.className='x'; xa.textContent='✕';
+    xa.onclick=function(ev){ ev.stopPropagation(); removeAudio(); };
+    a.appendChild(xa);
+    a.addEventListener('click',function(ev){
+      if(ev.target.classList.contains('x'))return;
+      var src=audioData||localAudioBlobUrl;
+      if(tileAudio&&!tileAudio.paused){ tileAudio.pause(); return; }
+      tileAudio=new Audio(src); tileAudio.play();
+    });
+    nodes.push(a);
+  }
+  var add=document.createElement('span');
+  add.className='addbadge'; add.setAttribute('contenteditable','false');
+  add.title='Добавить ведущего или озвучку'; add.textContent='+';
+  add.onclick=function(){ openPopEl(add,addPopHTML(),'add',mountAddPop); };
+  nodes.push(add);
+  nodes.forEach(function(n){ promptBox.insertBefore(n,rest); });
+  updateChips(); updateSteps(); updateSend();
 }
 
-function closePop(){ pop.classList.remove('open'); }
-function openPopAt(el,html,mount){
-  pop.innerHTML=html; pop.classList.add('open');
-  var s=stageBox.getBoundingClientRect(), r=el.getBoundingClientRect();
-  var top=r.bottom-s.top+8, left=r.left-s.left;
+function closePop(){ pop.classList.remove('open'); popKind=null; }
+function openPop(rect,html,kind,mount){
+  popKind=kind; popRect=rect; pop.innerHTML=html; pop.classList.add('open');
+  var s=studio.getBoundingClientRect();
+  var top=rect.bottom-s.top+6, left=rect.left-s.left;
   pop.style.top=top+'px'; pop.style.left='0px';
-  var w=pop.offsetWidth;
-  if(left+w>s.width-8) left=Math.max(8,s.width-w-8);
+  var w=pop.offsetWidth, sw=s.width;
+  if(left+w>sw-8) left=Math.max(8,sw-w-8);
   pop.style.left=left+'px';
   if(mount)mount();
 }
-document.addEventListener('mousedown',function(e){ if(!pop.contains(e.target)&&!e.target.closest('#hostChip')&&!e.target.closest('#fmtChip')&&!e.target.closest('#faceBox')) closePop(); });
+function openPopEl(el,html,kind,mount){ openPop(el.getBoundingClientRect(),html,kind,mount); }
+document.addEventListener('mousedown',function(e){ if(!pop.contains(e.target)) closePop(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePop(); } });
+
+function addPopHTML(){
+  return '<div class="pu-head">Добавить в сцену</div>'
+    +'<div class="pu-item" data-act="photo"><span class="mi">📷</span><span class="nm">Фото ведущего (своё или пресет)</span></div>'
+    +'<div class="pu-item" data-act="audio"><span class="mi">🎙</span><span class="nm">Озвучка файлом (MP3/WAV)</span></div>'
+    +'<div class="pu-item" data-act="rec"><span class="mi">⏺</span><span class="nm">Записать с микрофона</span></div>';
+}
+function mountAddPop(){
+  pop.querySelectorAll('[data-act]').forEach(function(el){
+    el.addEventListener('click',function(){
+      var act=el.getAttribute('data-act');
+      closePop();
+      if(act==='photo') openPopEl(document.getElementById('pcHost'),hostPopHTML(),'host',mountHostPop);
+      if(act==='audio') document.getElementById('audioInput').click();
+      if(act==='rec') document.getElementById('recBox').classList.add('on');
+    });
+  });
+}
 
 function hostPopHTML(){
   var h='<div class="pu-head">Кто говорит</div>';
@@ -310,10 +378,10 @@ function hostPopHTML(){
   if(imageData) h+='<div class="pu-item" data-act="clear"><span class="mi">✕</span><span class="nm">Убрать фото</span></div>';
   h+='<div class="pu-head">Ведущие студии</div>';
   PRESETS.forEach(function(p){
-    h+='<div class="pu-item" data-preset="'+p.id+'"><img src="data:image/svg+xml;charset=utf-8,'+encodeURIComponent(p.svg)+'"><span class="nm">'+p.name+'</span>'+(presetId===p.id?'<span style="margin-left:auto;color:var(--lime)">✓</span>':'')+'</div>';
+    h+='<div class="pu-item" data-preset="'+p.id+'"><img src="data:image/svg+xml;charset=utf-8,'+encodeURIComponent(p.svg)+'"><span class="nm">'+p.name+'</span>'+(presetId===p.id?'<span class="chk">✓</span>':'')+'</div>';
   });
   if(serverPresets.length){
-    h+='<div class="pu-head">Мои ведущие</div>';
+    h+='<div class="pu-head">Мои ведущие (аккаунт)</div>';
     serverPresets.forEach(function(p,i){
       h+='<div class="pu-item" data-spreset="'+i+'"><img src="data:image/jpeg;base64,'+p.image+'"><span class="nm">'+p.name+'</span></div>';
     });
@@ -327,51 +395,92 @@ function mountHostPop(){
   pop.querySelectorAll('[data-preset]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); selectPreset(parseInt(el.getAttribute('data-preset'),10)); }); });
   pop.querySelectorAll('[data-spreset]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); selectServerPreset(serverPresets[parseInt(el.getAttribute('data-spreset'),10)]); }); });
 }
-function openHostPop(el){ openPopAt(el,hostPopHTML(),mountHostPop); }
+
+function voicePopHTML(){
+  var h='<div class="pu-head">Озвучка — что скажет аватар</div>';
+  h+='<div class="pu-item" data-act="upload"><span class="mi">🎙</span><span class="nm">Загрузить файл (MP3/WAV, до 30 сек)</span></div>';
+  h+='<div class="pu-item" data-act="rec"><span class="mi">⏺</span><span class="nm">Записать с микрофона</span></div>';
+  h+='<div class="pu-item dis" data-act="text"><span class="mi">✍️</span><span class="nm">Текст + голос студии · скоро</span></div>';
+  if(audioData||localAudioBlobUrl){
+    h+='<div class="pu-head">Сейчас: '+shortName(audioNameStr||'озвучка')+'</div>';
+    h+='<div class="pu-item" data-act="del"><span class="mi">✕</span><span class="nm">Убрать озвучку</span></div>';
+  }
+  return h;
+}
+function mountVoicePop(){
+  pop.querySelectorAll('[data-act]').forEach(function(el){
+    el.addEventListener('click',function(){
+      var act=el.getAttribute('data-act');
+      if(act==='text'){ alert('Озвучка текстом с выбором голоса откроется после подключения голосовых моделей. Сейчас — файл или запись с микрофона.'); return; }
+      closePop();
+      if(act==='upload') document.getElementById('audioInput').click();
+      if(act==='rec') document.getElementById('recBox').classList.toggle('on');
+      if(act==='del') removeAudio();
+    });
+  });
+}
 
 function fmtPopHTML(){
-  return '<div class="pu-head">Формат кадра</div><div class="pu-row" id="puOr">'+['9:16','16:9','1:1'].map(function(a){ return '<button type="button" data-or="'+a+'" class="'+(a===orientation?'on':'')+'">'+a+'</button>'; }).join('')+'</div>';
+  return '<div class="pu-lbl">Формат кадра</div><div class="pu-row" id="puOr">'+['9:16','16:9','1:1'].map(function(a){ return '<button type="button" data-or="'+a+'" class="'+(a===orientation?'on':'')+'">'+a+'</button>'; }).join('')+'</div>';
 }
 function mountFmtPop(){
   pop.querySelectorAll('#puOr button').forEach(function(b){ b.addEventListener('click',function(){ setOr(b.getAttribute('data-or')); closePop(); }); });
 }
 
-document.getElementById('hostChip').addEventListener('click',function(){ openHostPop(this); });
-document.getElementById('faceBox').addEventListener('click',function(){ openHostPop(this); });
-document.getElementById('fmtChip').addEventListener('click',function(){ openPopAt(this,fmtPopHTML(),mountFmtPop); });
+function modePopHTML(){
+  var items=[['/gen.html','🎬 Видео из текста',0],['/cartoon.html','🎭 Мультфильм из фото',0],['/avatar.html','🗣 Говорящий аватар',1],['/motion.html','🕺 Моушен контроль',0],['/lipsync.html','🎤 Липсинк / дубляж',0]];
+  return '<div class="pu-head">Режим создания</div>'+items.map(function(it){ return '<div class="pu-item" data-href="'+it[0]+'"><span class="nm">'+it[1]+'</span>'+(it[2]?'<span class="chk">✓</span>':'')+'</div>'; }).join('');
+}
+function mountModePop(){
+  pop.querySelectorAll('[data-href]').forEach(function(el){ el.addEventListener('click',function(){ location.href=el.getAttribute('data-href'); }); });
+}
+
+document.getElementById('pcMode').addEventListener('click',function(){ openPopEl(this,modePopHTML(),'mode',mountModePop); });
+document.getElementById('pcHost').addEventListener('click',function(){ openPopEl(this,hostPopHTML(),'host',mountHostPop); });
+document.getElementById('pcVoice').addEventListener('click',function(){ openPopEl(this,voicePopHTML(),'voice',mountVoicePop); });
+document.getElementById('pcFmt').addEventListener('click',function(){ openPopEl(this,fmtPopHTML(),'fmt',mountFmtPop); });
 
 function setOr(or){
   orientation=or;
-  document.querySelector('#fmtChip .cn').textContent=or;
-  updateBar(); saveDraft();
+  updateChips(); saveDraft();
 }
 
-function renderVoice(){
-  var z=document.getElementById('voiceZone');
-  var h='';
-  if(audioData||localAudioBlobUrl){
-    h+='<div class="achip"><button class="pl" id="vPlay" type="button">▶</button><span class="an">'+(audioNameStr||'озвучка')+'</span><span class="as">'+(audioSec||'')+' сек</span><button class="ax" id="vDel" type="button">✕</button><audio id="vAu" src="'+(audioData||localAudioBlobUrl)+'" preload="metadata" style="display:none"></audio></div>';
-    h+='<div class="vmini"><button class="vl" id="vReplace" type="button">заменить озвучку</button></div>';
-  }else{
-    h+='<div class="vph">Добавь голос: <button class="vl" id="vAudio" type="button">загрузи озвучку</button> или <button class="vl" id="vRec" type="button">запиши с микрофона</button>.<br>Текст + голос с выбором ведущих голосов — <button class="vl soon" id="vText" type="button">скоро</button>.</div>';
-  }
-  z.innerHTML=h;
-  var pl=document.getElementById('vPlay');
-  if(pl){
-    var au=document.getElementById('vAu');
-    pl.onclick=function(){ if(au.paused){ au.play(); pl.textContent='❚'; } else { au.pause(); pl.textContent='▶'; } };
-    document.getElementById('vDel').onclick=function(){ removeAudio(); };
-    document.getElementById('vReplace').onclick=function(){ document.getElementById('audioInput').click(); };
-  }else{
-    document.getElementById('vAudio').onclick=function(){ document.getElementById('audioInput').click(); };
-    document.getElementById('vRec').onclick=function(){ document.getElementById('recBox').classList.toggle('on'); };
-    document.getElementById('vText').onclick=function(){ alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон или кнопкой 「запиши с микрофона」.'); };
-  }
+function selectPreset(id){
+  presetId=id;
+  setStatus('Готовим ведущего...');
+  svgToPng(PRESETS[id].svg,function(b64){
+    imageData=b64;
+    renderTiles(); setStatus(''); saveDraft();
+  });
+}
+function selectServerPreset(p){
+  presetId=null; imageData=p.image;
+  if(p.audio){ audioData=p.audio; audioNameStr=p.audioName||p.name; audioSec=p.seconds||0; }
+  if(p.orientation) orientation=p.orientation;
+  renderTiles(); saveDraft();
+}
+function removePhoto(){
+  imageData=null; presetId=null;
+  renderTiles(); saveDraft();
 }
 function removeAudio(){
   audioData=null; audioSec=0; audioNameStr=null;
   if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
-  renderVoice(); saveDraft(); updateSteps(); updateBar();
+  renderTiles(); saveDraft();
+}
+
+function svgToPng(svg,cb){
+  var img=new Image();
+  img.onload=function(){ var c=document.createElement('canvas'); c.width=512; c.height=512; c.getContext('2d').drawImage(img,0,0,512,512); cb(c.toDataURL('image/jpeg',0.9).split(',')[1]); };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+
+function loadMyPresets(cb){
+  if(!token){ if(cb)cb(); return; }
+  fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'presets-list',token:token})})
+    .then(function(r){return r.json();})
+    .then(function(d){ serverPresets=(d&&d.presets)?d.presets:[]; if(cb)cb(); })
+    .catch(function(){ if(cb)cb(); });
 }
 
 var mediaRec=null, recChunks=[], recBlob=null, recSec=0, recTimer=null, recUrlLocal=null;
@@ -412,7 +521,7 @@ document.getElementById('recUse').onclick=function(){
   localAudioBlobUrl=URL.createObjectURL(f);
   audioNameStr='Запись с микрофона';
   audioSec=Math.min(30,Math.max(1,recSec||1));
-  renderVoice();
+  renderTiles();
   document.getElementById('recBox').classList.remove('on');
   if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и нажми 「использовать」 снова.'); return; }
   setStatus('Загружаем запись...');
@@ -420,9 +529,9 @@ document.getElementById('recUse').onclick=function(){
     .then(function(blob){
       audioData=blob.url;
       if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
-      renderVoice(); setStatus(''); saveDraft(); updateSteps(); updateBar();
+      renderTiles(); setStatus(''); saveDraft();
     })
-    .catch(function(err){ setStatus(''); audioSec=0; alert('Не удалось загрузить запись: '+err.message); renderVoice(); updateSteps(); updateBar(); });
+    .catch(function(err){ setStatus(''); audioSec=0; alert('Не удалось загрузить запись: '+err.message); renderTiles(); });
 };
 
 function shrink(dataUrl,cb){
@@ -445,7 +554,7 @@ document.getElementById('photoInput').addEventListener('change',function(e){
   reader.onload=function(){
     shrink(reader.result,function(d){
       imageData=d.split(',')[1]; presetId=null;
-      renderFace(); setStatus(''); saveDraft(); updateSteps(); updateBar();
+      renderTiles(); setStatus(''); saveDraft();
     });
   };
   reader.readAsDataURL(f);
@@ -471,7 +580,7 @@ document.getElementById('audioInput').addEventListener('change',function(e){
     if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); }
     localAudioBlobUrl=URL.createObjectURL(f);
     audioNameStr=f.name;
-    renderVoice();
+    renderTiles();
     if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
     setStatus('Загружаем аудио...');
     window.blobUpload(safeFileName('avatar-audio',f,'.mp3'),f,{access:'public'})
@@ -479,7 +588,7 @@ document.getElementById('audioInput').addEventListener('change',function(e){
         audioData=blob.url;
         audioSec=Math.min(30,Math.max(1,Math.ceil(dur)));
         if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
-        renderVoice(); setStatus(''); saveDraft(); updateSteps(); updateBar();
+        renderTiles(); setStatus(''); saveDraft();
       })
       .catch(function(err){ setStatus(''); alert('Не удалось загрузить аудио: '+err.message); });
   });
@@ -492,7 +601,7 @@ function histRender(){
   var l=histLoad();
   var box=document.getElementById('histList');
   document.getElementById('histCount').textContent=l.length?('всего '+l.length):'';
-  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые аватар-ролики будут собираться здесь (в этом браузере).</div>'; return; }
+  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые аватар-ролики будут собираться здесь (в этом браузере). После переезда история станет общей для всех устройств.</div>'; return; }
   box.innerHTML=l.map(function(h,i){
     return '<div class="rcard"><video src="'+h.url+'" muted preload="metadata" playsinline></video><div class="rc"><div class="rn">'+(h.name||'аватар')+'</div><div class="rd">'+h.date+'</div><a href="'+h.url+'" target="_blank" rel="noopener">⬇ скачать</a> <button class="del" data-i="'+i+'" style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:.72rem">✕</button></div></div>';
   }).join('');
@@ -531,20 +640,19 @@ function saveDraft(){
     audioSec=s.seconds||0;
     audioNameStr=s.audioName||null;
     restoring=false;
-    renderFace(); renderVoice(); updateSteps(); updateBar();
-    document.querySelector('#fmtChip .cn').textContent=orientation;
+    renderTiles();
     if(s.audio){
       checkUrlAlive(s.audio,function(alive){
-        if(alive){ audioData=s.audio; renderVoice(); updateSteps(); updateBar(); }
-        else{ audioData=null; audioSec=0; renderVoice(); setStatus('⚠️ Черновик озвучки устарел — прикрепи аудио заново.'); updateSteps(); updateBar(); }
+        if(alive){ audioData=s.audio; renderTiles(); }
+        else{ audioData=null; audioSec=0; renderTiles(); setStatus('⚠️ Черновик озвучки устарел — добавь аудио заново кружком +'); }
       });
     }
-  }catch(e){ restoring=false; renderFace(); renderVoice(); updateSteps(); updateBar(); }
+  }catch(e){ restoring=false; renderTiles(); }
 })();
 
 function callGenerate(pid){
   stage='gen';
-  updateSteps(); updateBar();
+  updateSteps(); updateSend();
   setStatus('Оживляем аватар... 1–5 минут ⏳');
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'avatar',paymentId:pid,image:imageData,audio:audioData,seconds:audioSec,aspect:orientation})})
     .then(function(r){ return r.json(); })
@@ -553,7 +661,7 @@ function callGenerate(pid){
       try{ localStorage.setItem('seedgen_avatar_task_'+pid,d.taskId); }catch(e){}
       poll(d.taskId);
     })
-    .catch(function(e){ setStatus('Ошибка: '+e.message); stage='setup'; updateSteps(); updateBar(); });
+    .catch(function(e){ setStatus('Ошибка: '+e.message); stage='setup'; updateSteps(); updateSend(); });
 }
 function poll(taskId){
   var timer=setInterval(function(){
@@ -565,12 +673,12 @@ function poll(taskId){
           document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+d.videoUrl+'"></video></div>';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
           histPush(d.videoUrl,audioNameStr||'аватар');
-          stage='done'; updateSteps(); updateBar();
+          stage='done'; updateSteps(); updateSend();
           try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
         }else if(d.status==='failed'){
           clearInterval(timer);
           setStatus('Ошибка: '+(d.error||'попробуй другое фото и аудио'));
-          stage='setup'; updateSteps(); updateBar();
+          stage='setup'; updateSteps(); updateSend();
         }else{
           setStatus('Оживляем аватар... 1–5 минут ⏳');
         }
@@ -579,12 +687,12 @@ function poll(taskId){
   },5000);
 }
 
-btn.addEventListener('click',function(){
+function payClick(){
   if(paidSeen&&activePaymentId&&imageData&&audioData&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
-  if(!imageData){ alert('Выбери ведущего или загрузи своё фото'); return; }
-  if(!audioData){ alert('Сначала добавь озвучку: файл или запись с микрофона'); return; }
+  if(!imageData){ alert('Добавь ведущего: кружок + → фото или пресет'); return; }
+  if(!audioData){ alert('Добавь озвучку: кружок + → файл или запись с микрофона'); return; }
   if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
-  btn.disabled=true;
+  sendBtn.disabled=true;
   setStatus('Создаём платёж...');
   saveDraft();
   fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'avatar'})})
@@ -595,15 +703,16 @@ btn.addEventListener('click',function(){
       saveDraft();
       window.location.href=data.confirmationUrl;
     })
-    .catch(function(e){ setStatus('Ошибка: '+e.message); btn.disabled=false; });
-});
+    .catch(function(e){ setStatus('Ошибка: '+e.message); sendBtn.disabled=false; });
+}
+sendBtn.addEventListener('click',payClick);
 
 (function(){
   var pid=new URLSearchParams(window.location.search).get('paymentId');
   if(!pid) return;
   activePaymentId=pid; paidSeen=true;
   var savedTask=localStorage.getItem('seedgen_avatar_task_'+pid);
-  if(savedTask){ stage='gen'; updateSteps(); updateBar(); setStatus('Оживляем аватар... 1–5 минут ⏳'); poll(savedTask); return; }
+  if(savedTask){ stage='gen'; updateSteps(); updateSend(); setStatus('Оживляем аватар... 1–5 минут ⏳'); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
@@ -611,21 +720,20 @@ btn.addEventListener('click',function(){
       if(data.paid){
         saveDraft();
         if(imageData&&audioData){ setStatus('Оплата прошла! Запускаем генерацию...'); callGenerate(pid); }
-        else{ setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку ещё раз.'); updateSteps(); updateBar(); }
+        else{ setStatus('Оплата прошла! ✅ Добавь ведущего и озвучку кружком + — и нажми ↑ ещё раз.'); updateSteps(); updateSend(); }
       }else{
         paidSeen=false; activePaymentId=null;
-        setStatus('Оплата не завершена. Фото и формат сохранены — можешь оплатить ещё раз.');
-        updateSteps(); updateBar();
+        setStatus('Оплата не завершена. Настройки сохранены — можешь оплатить ещё раз.');
+        updateSteps(); updateSend();
       }
     })
-    .catch(function(e){ paidSeen=false; setStatus('Ошибка: '+e.message); updateSteps(); updateBar(); });
+    .catch(function(e){ paidSeen=false; setStatus('Ошибка: '+e.message); updateSteps(); updateSend(); });
 })();
 
-renderFace();
-renderVoice();
+renderTiles();
 histRender();
 updateSteps();
-updateBar();
+updateSend();
 loadMyPresets();
 </script>
 <script src="/help-widget.js"></script>
