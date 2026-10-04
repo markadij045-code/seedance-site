@@ -26,39 +26,40 @@
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.stage{position:relative;border:1px solid var(--border);border-radius:22px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:18px;display:grid;grid-template-columns:220px 1fr;gap:18px}
-.face{position:relative;aspect-ratio:3/4;border-radius:16px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;cursor:pointer}
+.stage{position:relative;border:1px solid var(--border);border-radius:22px;background:#171a14;padding:20px;display:grid;grid-template-columns:150px 1fr;gap:20px}
+.face{position:relative;aspect-ratio:3/4;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;cursor:pointer}
 .face img{width:100%;height:100%;object-fit:cover;display:block}
-.face .fadd{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:.8rem;text-align:center;padding:10px}
-.face .fadd svg{width:26px;height:26px;color:rgba(163,230,53,.6)}
-.face .ftag{position:absolute;left:8px;bottom:8px;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.7);color:var(--lime);font-size:.7rem;font-weight:700}
-.vside{display:flex;flex-direction:column;gap:12px;min-width:0}
-.vlbl{color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
-.vzone{flex:1;border:1px dashed rgba(255,255,255,.14);border-radius:16px;background:rgba(0,0,0,.25);padding:16px;display:flex;flex-direction:column;gap:12px;justify-content:center;min-height:150px}
-.vzone .vph{color:var(--muted);font-size:.9rem;line-height:1.6}
-.vzone .vph b{color:var(--text)}
-.vbtns{display:flex;gap:8px;flex-wrap:wrap}
-.vbtn{padding:10px 16px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 .85rem 'Inter';cursor:pointer}
-.vbtn:hover{background:rgba(255,255,255,.1)}
-.vbtn.soon{opacity:.5;cursor:not-allowed}
-.achip{display:flex;gap:10px;align-items:center;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);border-radius:12px;padding:10px 12px}
-.achip .pl{width:34px;height:34px;border-radius:50%;border:none;background:rgba(163,230,53,.15);color:var(--lime);cursor:pointer;font-size:.8rem;flex:0 0 auto}
+.face .fadd{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:.76rem;text-align:center;padding:8px}
+.face .fadd svg{width:24px;height:24px;color:rgba(163,230,53,.6)}
+.face .ftag{position:absolute;left:6px;bottom:6px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);color:var(--lime);font-size:.66rem;font-weight:700}
+.vside{display:flex;flex-direction:column;min-width:0}
+.vlbl{color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:2px 0 10px}
+.vzone{flex:1;min-height:190px;display:flex;flex-direction:column;gap:12px}
+.vph{color:#8b9284;font-size:.95rem;line-height:1.7}
+.vph .vl{background:none;border:none;padding:0;color:var(--lime);font:inherit;text-decoration:underline;cursor:pointer}
+.vph .vl:hover{color:#c8f06a}
+.vph .vl.soon{color:#5d6455;cursor:not-allowed;text-decoration:underline dotted}
+.achip{display:flex;gap:10px;align-items:center;border:1px solid rgba(163,230,53,.35);background:rgba(163,230,53,.07);border-radius:12px;padding:10px 12px;max-width:520px}
+.achip .pl{width:32px;height:32px;border-radius:50%;border:none;background:rgba(163,230,53,.16);color:var(--lime);cursor:pointer;font-size:.78rem;flex:0 0 auto}
 .achip .an{color:var(--text);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.achip .as{color:var(--muted);font-size:.75rem;flex:0 0 auto}
-.achip .ax{width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fca5a5;cursor:pointer;font-size:.7rem;flex:0 0 auto}
-.recbox{padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
+.achip .as{color:var(--muted);font-size:.74rem;flex:0 0 auto}
+.achip .ax{width:24px;height:24px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fca5a5;cursor:pointer;font-size:.68rem;flex:0 0 auto}
+.vmini{display:flex;gap:14px;align-items:center;margin-top:2px}
+.vmini .vl{background:none;border:none;padding:0;color:var(--lime);font-size:.8rem;text-decoration:underline;cursor:pointer}
+.vmini .vl:hover{color:#c8f06a}
+.recbox{padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none;max-width:520px}
 .recbox.on{display:block}
 .recbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font:600 .88rem 'Inter';cursor:pointer}
 .recbtn.recording{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1);animation:pulse 1.2s infinite}
 .rectime{color:var(--muted);font-size:.85rem;margin-left:10px}
 .recaudio{margin-top:10px;width:100%}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
-.stagebar{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px}
-.chipbtn{display:inline-flex;gap:8px;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 .84rem 'Inter';cursor:pointer;max-width:240px}
+.stagebar{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07);padding-top:16px;margin-top:4px}
+.chipbtn{display:inline-flex;gap:8px;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 .84rem 'Inter';cursor:pointer;max-width:250px}
 .chipbtn:hover{background:rgba(255,255,255,.1)}
 .chipbtn .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .spacer{flex:1}
-.pricetag{font-family:'Space Grotesk';font-weight:700;font-size:1.2rem;color:var(--text);white-space:nowrap}
+.pricetag{font-family:'Space Grotesk';font-weight:700;font-size:1.15rem;color:var(--text);white-space:nowrap}
 .pricetag small{display:block;color:var(--muted);font:.68rem/1.2 'Inter';font-weight:500}
 .genbtn{padding:12px 26px;border-radius:999px;border:none;background:var(--lime);color:#0a0c08;font:700 .95rem 'Inter';cursor:pointer;white-space:nowrap}
 .genbtn:hover{filter:brightness(1.08)}
@@ -84,7 +85,7 @@
 .result .mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
 .outbox{border-radius:18px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;display:grid;place-items:center;min-height:220px;padding:12px}
 .outbox video{width:100%;max-height:480px;border-radius:14px}
-.ph{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px}
+.ph{color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px;text-align:center}
 .recent{margin:30px 0 0}
 .rhead{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
 .rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
@@ -102,12 +103,11 @@
 .trust{color:var(--muted);font-size:.76rem;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;text-align:center}
-.rolehint a{color:var(--lime)}
 @media(max-width:900px){
   .rail{display:none}
   .wrap{padding:0 24px;margin-top:84px}
   .stage{grid-template-columns:1fr}
-  .face{max-width:220px;margin:0 auto}
+  .face{max-width:180px}
 }
 </style>
 </head>
@@ -176,7 +176,7 @@
         <span class="rectime" id="recTime"></span>
         <div class="rolehint" id="recHint" style="text-align:left;margin-top:8px">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом.</div>
         <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
-        <button class="savebtn recbtn" id="recUse" type="button" style="display:none;margin-top:10px">✅ Использовать запись</button>
+        <button class="recbtn" id="recUse" type="button" style="display:none;margin-top:10px">✅ Использовать запись</button>
       </div>
     </div>
     <div class="stagebar">
@@ -286,7 +286,7 @@ function renderFace(){
   if(imageData){
     f.innerHTML='<img src="data:image/jpeg;base64,'+imageData+'" alt="Ведущий"><span class="ftag">'+hostName()+'</span>';
   }else{
-    f.innerHTML='<span class="fadd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>Выбрать ведущего<br>или загрузить своё фото</span>';
+    f.innerHTML='<span class="fadd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>Выбрать ведущего<br>или своё фото</span>';
   }
   document.querySelector('#hostChip .cn').textContent=hostName();
 }
@@ -317,8 +317,6 @@ function hostPopHTML(){
     serverPresets.forEach(function(p,i){
       h+='<div class="pu-item" data-spreset="'+i+'"><img src="data:image/jpeg;base64,'+p.image+'"><span class="nm">'+p.name+'</span></div>';
     });
-  }else if(token){
-    h+='<div class="pu-head">Мои ведущие пока пустые — сохранишь связку кнопкой в кабинете</div>';
   }
   return h;
 }
@@ -348,56 +346,26 @@ function setOr(or){
   updateBar(); saveDraft();
 }
 
-var SVG_NOTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
-
-function svgToPng(svg,cb){
-  var img=new Image();
-  img.onload=function(){ var c=document.createElement('canvas'); c.width=512; c.height=512; c.getContext('2d').drawImage(img,0,0,512,512); cb(c.toDataURL('image/jpeg',0.9).split(',')[1]); };
-  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
-}
-
-function selectPreset(id){
-  presetId=id;
-  setStatus('Готовим ведущего...');
-  svgToPng(PRESETS[id].svg,function(b64){ imageData=b64; renderFace(); setStatus(''); saveDraft(); updateSteps(); updateBar(); });
-}
-function removePhoto(){
-  imageData=null; presetId=null;
-  renderFace(); saveDraft(); updateSteps(); updateBar();
-}
-function selectServerPreset(p){
-  presetId=null; imageData=p.image;
-  if(p.audio){ audioData=p.audio; audioNameStr=p.audioName||p.name; audioSec=p.seconds||0; }
-  if(p.orientation) orientation=p.orientation;
-  document.querySelector('#fmtChip .cn').textContent=orientation;
-  renderFace(); renderVoice(); updateSteps(); updateBar(); saveDraft();
-}
-function loadMyPresets(cb){
-  if(!token){ if(cb)cb(); return; }
-  fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'presets-list',token:token})})
-    .then(function(r){return r.json();})
-    .then(function(d){ serverPresets=(d&&d.presets)?d.presets:[]; if(cb)cb(); })
-    .catch(function(){ if(cb)cb(); });
-}
-
 function renderVoice(){
   var z=document.getElementById('voiceZone');
   var h='';
   if(audioData||localAudioBlobUrl){
     h+='<div class="achip"><button class="pl" id="vPlay" type="button">▶</button><span class="an">'+(audioNameStr||'озвучка')+'</span><span class="as">'+(audioSec||'')+' сек</span><button class="ax" id="vDel" type="button">✕</button><audio id="vAu" src="'+(audioData||localAudioBlobUrl)+'" preload="metadata" style="display:none"></audio></div>';
+    h+='<div class="vmini"><button class="vl" id="vReplace" type="button">заменить озвучку</button></div>';
   }else{
-    h+='<div class="vph"><b>Добавь голос.</b> Загрузи файл озвучки или запиши прямо здесь — аватар скажет это твоими словами. Текст + голос появится после запуска.</div>';
+    h+='<div class="vph">Добавь голос: <button class="vl" id="vAudio" type="button">загрузи озвучку</button> или <button class="vl" id="vRec" type="button">запиши с микрофона</button>.<br>Текст + голос с выбором ведущих голосов — <button class="vl soon" id="vText" type="button">скоро</button>.</div>';
   }
-  h+='<div class="vbtns"><button class="vbtn" id="vAudio" type="button">🎙 Загрузить аудио</button><button class="vbtn" id="vRec" type="button">⏺ Запись с микрофона</button><button class="vbtn soon" id="vText" type="button">✍️ Текст + голос · скоро</button></div>';
   z.innerHTML=h;
-  document.getElementById('vAudio').onclick=function(){ document.getElementById('audioInput').click(); };
-  document.getElementById('vRec').onclick=function(){ document.getElementById('recBox').classList.toggle('on'); };
-  document.getElementById('vText').onclick=function(){ alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон или кнопкой 「Запись с микрофона」.'); };
   var pl=document.getElementById('vPlay');
   if(pl){
     var au=document.getElementById('vAu');
     pl.onclick=function(){ if(au.paused){ au.play(); pl.textContent='❚'; } else { au.pause(); pl.textContent='▶'; } };
     document.getElementById('vDel').onclick=function(){ removeAudio(); };
+    document.getElementById('vReplace').onclick=function(){ document.getElementById('audioInput').click(); };
+  }else{
+    document.getElementById('vAudio').onclick=function(){ document.getElementById('audioInput').click(); };
+    document.getElementById('vRec').onclick=function(){ document.getElementById('recBox').classList.toggle('on'); };
+    document.getElementById('vText').onclick=function(){ alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон или кнопкой 「запиши с микрофона」.'); };
   }
 }
 function removeAudio(){
