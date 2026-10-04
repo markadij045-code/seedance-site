@@ -99,7 +99,6 @@
 .rcard .rn{color:var(--text);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rcard .rd{color:var(--muted);font-size:.68rem;margin:2px 0 6px}
 .rcard a{color:var(--lime);font-size:.72rem;text-decoration:none}
-.hempty{color:var(--muted);font-size:.82rem;line-height:1.5}
 .footnote{margin:26px 0 0;display:flex;flex-direction:column;gap:10px;align-items:center}
 .payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
 .pay-ic{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.03em}
@@ -205,8 +204,8 @@
     </div>
   </section>
 
-  <section class="recent">
-    <div class="rhead"><span>Недавние работы</span><span id="histCount"></span></div>
+  <section class="recent" id="recentSec" style="display:none">
+    <div class="rhead"><span>Ваши работы</span><span id="histCount"></span></div>
     <div class="rrow" id="histList"></div>
   </section>
 
@@ -215,7 +214,6 @@
       <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
       <a href="/prices.html">Цены и оплата →</a>
     </div>
-    <div class="rolehint" style="text-align:center">💬 Озвучка текстом с выбором голоса (6 голосов + Барсик) откроется сразу после запуска.</div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
   </div>
@@ -659,9 +657,11 @@ function histLoad(){ try{ return JSON.parse(localStorage.getItem('seedgen_avatar
 function histSave(l){ try{ localStorage.setItem('seedgen_avatar_history',JSON.stringify(l.slice(0,10))); }catch(e){} }
 function histRender(){
   var l=histLoad();
+  var sec=document.getElementById('recentSec');
   var box=document.getElementById('histList');
-  document.getElementById('histCount').textContent=l.length?('всего '+l.length):'';
-  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые аватар-ролики будут собираться здесь (в этом браузере). После переезда история станет общей для всех устройств.</div>'; return; }
+  if(!l.length){ sec.style.display='none'; box.innerHTML=''; document.getElementById('histCount').textContent=''; return; }
+  sec.style.display='';
+  document.getElementById('histCount').textContent='всего '+l.length;
   box.innerHTML=l.map(function(h,i){
     return '<div class="rcard"><video src="'+h.url+'" muted preload="metadata" playsinline></video><div class="rc"><div class="rn">'+(h.name||'аватар')+'</div><div class="rd">'+h.date+'</div><a href="'+h.url+'" target="_blank" rel="noopener">⬇ скачать</a> <button class="del" data-i="'+i+'" style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:.72rem">✕</button></div></div>';
   }).join('');
