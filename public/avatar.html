@@ -5,38 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Говорящий аватар — Ёшкин кот</title>
 <meta property="og:title" content="Говорящий аватар — фото заговорит твоим голосом">
-<meta property="og:description" content="Выбери ведущего или загрузи своё фото, добавь озвучку — человек заговорит твоими словами. От 499 ₽">
+<meta property="og:description" content="Выбери ведущего или загрузи своё фото, добавь озвучку — человек заговорит твоими словами. 499 ₽">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.yoshkin-kot.online/avatar.html">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.showcase{max-width:1160px;margin:110px auto 20px;padding:0 24px}
-.showcase h2{font-family:'Space Grotesk';font-size:1.6rem;font-weight:700;margin:0 0 6px}
-.showcase h2 .grad{background:linear-gradient(90deg,#A3E635,#84cc16);-webkit-background-clip:text;background-clip:text;color:transparent}
-.showcase p{color:var(--muted);font-size:.92rem;margin:0 0 18px}
-.show-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.show-card{position:relative;border-radius:18px;border:1px solid var(--border);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:12px;overflow:hidden}
-.show-card video{width:100%;border-radius:12px;display:block}
-.show-cap{position:static;background:none;padding:0;margin-top:10px;color:var(--muted);font-size:.82rem;line-height:1.5}
-.show-cap b{color:var(--text);font-weight:600}
-@media(max-width:700px){.show-grid{grid-template-columns:1fr}}
-.ws{max-width:1160px;margin:30px auto 150px;padding:0 24px;display:grid;grid-template-columns:1.12fr minmax(340px,.88fr);gap:20px;align-items:start}
-.panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
-.side{display:flex;flex-direction:column;gap:14px;padding:20px}
-.psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.rail{position:fixed;left:0;top:0;bottom:0;width:64px;background:rgba(5,6,7,.92);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:84px 0 20px;gap:6px;z-index:90}
+.rail a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;text-decoration:none;filter:grayscale(1);opacity:.5}
+.rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
+.rail a.on{opacity:1;filter:none;background:rgba(163,230,53,.12);box-shadow:inset 0 0 0 1px rgba(163,230,53,.45)}
+.app{max-width:1160px;margin:96px auto 60px;padding:0 24px 0 88px;display:grid;grid-template-columns:1fr minmax(340px,400px);gap:20px;align-items:start}
+.formcol{display:flex;flex-direction:column;gap:14px}
+.modelcard{display:flex;gap:14px;align-items:center;border:1px solid var(--border-lime);background:linear-gradient(180deg,rgba(163,230,53,.08),rgba(163,230,53,.03));border-radius:18px;padding:16px 18px}
+.modelcard .mi{width:46px;height:46px;border-radius:12px;background:rgba(163,230,53,.15);color:var(--lime);display:grid;place-items:center;font-size:1.3rem;flex:0 0 auto}
+.modelcard .mt{font-weight:700;font-size:1.02rem;color:var(--text)}
+.modelcard .ms{color:var(--muted);font-size:.8rem;margin-top:3px;line-height:1.45}
+.modelcard .mp{margin-left:auto;font-family:'Space Grotesk';font-weight:700;font-size:1.15rem;color:var(--lime);white-space:nowrap}
+.mod{border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:18px}
+.mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
+.psteps{display:flex;gap:8px;flex-wrap:wrap}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
 .pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.lbl{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:20px 0 10px}
-.seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
-.seg button:hover{color:var(--text)}
-.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.seg button.soon{opacity:.55;cursor:not-allowed}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
 .tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
 .tile:hover{border-color:var(--border-lime)}
@@ -51,28 +45,40 @@
 .playbadge i{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(163,230,53,.55);color:var(--lime);display:grid;place-items:center;font-style:normal;font-size:.72rem}
 .audiotile{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,230,53,.14),rgba(59,130,246,.10))}
 .audiotile svg{width:26px;height:26px;color:var(--lime)}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
+.seg button:hover{color:var(--text)}
+.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.seg button.soon{opacity:.55;cursor:not-allowed}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
 .rolehint a{color:var(--lime)}
 .savebtn{margin-top:10px;padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
-.recbox{margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
+.recbox{margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
 .recbox.on{display:block}
 .recbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font:600 .88rem 'Inter';cursor:pointer}
 .recbtn.recording{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1);animation:pulse 1.2s infinite}
 .rectime{color:var(--muted);font-size:.85rem;margin-left:10px}
 .recaudio{margin-top:10px;width:100%}
-.tl{display:flex;flex-direction:column;gap:9px}
-.tl-item{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.82rem;line-height:1.45}
-.tl-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
-.tl-item.done{color:var(--text)}
-.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
-.tl-item.now{color:var(--text)}
-.tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
-.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;padding:14px}
+.paymod{border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,rgba(163,230,53,.06),rgba(0,0,0,.2));padding:18px}
+.payrow2{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.payrow2 .big{font-family:'Space Grotesk';font-size:1.7rem;font-weight:700;color:var(--text)}
+.payrow2 small{color:var(--muted);font-size:.78rem}
+.agree2{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.82rem;line-height:1.5;margin-bottom:14px}
+.agree2 input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
+.agree2 a{color:var(--lime)}
+.paybtn{width:100%;padding:15px 20px;border-radius:14px;border:none;background:var(--lime);color:#0a0c08;font:700 1rem 'Inter';cursor:pointer}
+.paybtn:hover{filter:brightness(1.08)}
+.paybtn:disabled{opacity:.6;cursor:not-allowed}
+#status{margin-top:10px;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
+.showcol{display:flex;flex-direction:column;gap:14px}
+.showcol h1{font-family:'Space Grotesk';font-size:1.55rem;line-height:1.25;margin:0 0 4px;color:var(--text)}
+.showsub{color:var(--muted);font-size:.86rem;line-height:1.55;margin:0}
+.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);aspect-ratio:9/12;display:grid;place-items:center;overflow:hidden;padding:14px}
 .outbox video{width:100%;border-radius:14px}
 .ph{text-align:center;color:var(--muted);font-size:.82rem;line-height:1.5;padding:16px}
-.vf{width:74px;height:46px;border:1.5px dashed rgba(163,230,53,.45);border-radius:10px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
-.vf svg{width:20px;height:20px}
+.vf{width:64px;height:84px;border:1.5px dashed rgba(163,230,53,.45);border-radius:12px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
+.vf svg{width:22px;height:22px}
 .ph-t{color:var(--text);font-weight:600;font-size:.95rem}
 .ph-s{margin-top:4px;font-size:.78rem}
 .payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -91,25 +97,27 @@ details.hist[open] summary{margin-bottom:10px}
 .hitem a:hover{color:var(--lime);border-color:var(--border-lime)}
 .hitem button.del{color:#fca5a5}
 .hempty{color:var(--muted);font-size:.8rem;line-height:1.5}
-.trust{margin:2px 0 0;color:var(--muted);font-size:.76rem;line-height:1.55;text-align:center}
+.demo{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.3)}
+.demo video{width:100%;display:block}
+.demo .dc{padding:10px 12px;color:var(--muted);font-size:.78rem;line-height:1.5}
+.demo .dc b{color:var(--text)}
+.trust{margin:0;color:var(--muted);font-size:.76rem;line-height:1.55;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
-.bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--border)}
-.bar-in{max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.bar-price{font-family:'Space Grotesk';font-size:1.45rem;font-weight:700;white-space:nowrap}
-.bar-price small{display:block;color:var(--muted);font:.72rem/1.2 'Inter';font-weight:500}
-.agree{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;flex:1;min-width:230px;margin:0}
-.agree input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
-.agree a{color:var(--lime)}
-.bar .btn{margin-left:auto}
-#status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
 @media(max-width:900px){
-  .ws{grid-template-columns:1fr;margin-top:20px}
-  .bar .btn{margin-left:0;width:100%}
-  .agree{min-width:100%}
+  .rail{display:none}
+  .app{grid-template-columns:1fr;margin-top:84px;padding:0 24px}
 }
 </style>
 </head>
 <body data-ws="1">
+
+<nav class="rail">
+  <a href="/gen.html" title="Создать видео">🎬</a>
+  <a href="/cartoon.html" title="Мультфильм">🎭</a>
+  <a href="/avatar.html" class="on" title="Говорящий аватар">🗣</a>
+  <a href="/motion.html" title="Моушен контроль">🕺</a>
+  <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
+</nav>
 
 <header class="top">
   <div class="container nav-in">
@@ -144,73 +152,79 @@ details.hist[open] summary{margin-bottom:10px}
   <a href="/help.html">Помощь</a>
 </div>
 
-<section class="showcase">
-  <h2>Смотри вживую: <span class="grad">кто говорит</span></h2>
-  <p>Два экспоната из нашей студии. Один — фото плюс голос хозяина. Второй — фото плюс текст. Оба сняты одной кнопкой, за минуту.</p>
-  <div class="show-grid">
-    <div class="show-card">
-      <video src="/avatar-voice.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="show-cap"><b>Фото + голос хозяина.</b> Надиктовал фразу — кот заговорил твоими словами и твоим голосом. Точно так же будет звучать и твоё фото.</div>
-    </div>
-    <div class="show-card">
-      <video src="/avatar-queen.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="show-cap"><b>Фото + текст.</b> Загрузил портрет, написал фразу — нейросеть сама подберёт голос и синхронно задвигает губами. Скоро откроем эту кнопку на странице.</div>
-    </div>
-  </div>
-</section>
-
-<main class="ws">
-  <section class="panel">
+<main class="app">
+  <section class="formcol">
     <div class="psteps">
       <span class="pstep active" id="st1"><i>1</i> Ведущий и озвучка</span>
       <span class="pstep" id="st2"><i>2</i> Оплата</span>
       <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
     </div>
 
-    <div class="lbl">Кто говорит</div>
-    <div class="tiles" id="castRow"></div>
-    <button class="savebtn" id="savePresetBtn" type="button" style="display:none">💾 Сохранить как ведущего</button>
-    <div class="rolehint">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно.</div>
-
-    <div class="lbl" id="myLbl" style="display:none">Мои ведущие (из аккаунта)</div>
-    <div class="tiles" id="myRow" style="display:none"></div>
-    <div class="rolehint" id="myHint"></div>
-
-    <div class="lbl">Озвучка</div>
-    <div class="seg" id="voiceRow">
-      <button type="button" id="vAudio" class="on">🎙 Своё аудио</button>
-      <button type="button" id="vRec">⏺ Запись с микрофона</button>
-      <button type="button" id="vText" class="soon">✍️ Текст + голос · скоро</button>
+    <div class="modelcard">
+      <span class="mi">🗣</span>
+      <span>
+        <span class="mt">Kling Avatar</span>
+        <span class="ms" style="display:block">Синхрон губ и мимики · длина видео = длина озвучки · до 30 сек</span>
+      </span>
+      <span class="mp">499 ₽</span>
     </div>
-    <div class="tiles" style="margin-top:10px"><div class="tile" id="audioTile"></div></div>
-    <div class="recbox" id="recBox">
-      <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
-      <span class="rectime" id="recTime"></span>
-      <div class="rolehint" id="recHint">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом. Запись никуда не уходит, пока ты не нажмёшь 「использовать」.</div>
-      <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
-      <button class="savebtn" id="recUse" type="button" style="display:none">✅ Использовать запись</button>
-    </div>
-    <div class="rolehint" id="audioInfo"></div>
-    <div class="rolehint">💬 Хочешь длиннее 30 секунд? После запуска длинные ролики будем собирать из фрагментов — как в больших аватар-студиях.</div>
 
-    <div class="lbl">Формат видео</div>
-    <div class="seg" id="orientRow">
-      <button type="button" data-or="9:16" class="on" onclick="setOr('9:16')">📱 9:16</button>
-      <button type="button" data-or="16:9" onclick="setOr('16:9')">💻 16:9</button>
-      <button type="button" data-or="1:1" onclick="setOr('1:1')">⬜ 1:1</button>
+    <div class="mod">
+      <div class="mod-h">Кто говорит</div>
+      <div class="tiles" id="castRow"></div>
+      <button class="savebtn" id="savePresetBtn" type="button" style="display:none">💾 Сохранить как ведущего</button>
+      <div class="rolehint">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно.</div>
+      <div class="mod-h" id="myLbl" style="display:none;margin-top:16px">Мои ведущие (из аккаунта)</div>
+      <div class="tiles" id="myRow" style="display:none"></div>
+      <div class="rolehint" id="myHint"></div>
+    </div>
+
+    <div class="mod">
+      <div class="mod-h">Озвучка</div>
+      <div class="seg" id="voiceRow">
+        <button type="button" id="vAudio" class="on">🎙 Своё аудио</button>
+        <button type="button" id="vRec">⏺ Запись с микрофона</button>
+        <button type="button" id="vText" class="soon">✍️ Текст + голос · скоро</button>
+      </div>
+      <div class="tiles" style="margin-top:12px"><div class="tile" id="audioTile"></div></div>
+      <div class="recbox" id="recBox">
+        <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
+        <span class="rectime" id="recTime"></span>
+        <div class="rolehint" id="recHint">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом. Запись никуда не уходит, пока ты не нажмёшь 「использовать」.</div>
+        <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
+        <button class="savebtn" id="recUse" type="button" style="display:none">✅ Использовать запись</button>
+      </div>
+      <div class="rolehint" id="audioInfo"></div>
+      <div class="rolehint">💬 Хочешь длиннее 30 секунд? После запуска длинные ролики будем собирать из фрагментов — как в больших аватар-студиях.</div>
+    </div>
+
+    <div class="mod">
+      <div class="mod-h">Формат видео</div>
+      <div class="seg" id="orientRow">
+        <button type="button" data-or="9:16" class="on" onclick="setOr('9:16')">📱 9:16</button>
+        <button type="button" data-or="16:9" onclick="setOr('16:9')">💻 16:9</button>
+        <button type="button" data-or="1:1" onclick="setOr('1:1')">⬜ 1:1</button>
+      </div>
+    </div>
+
+    <div class="paymod">
+      <div class="payrow2"><span class="big">499 ₽</span><small id="barMeta">озвучка до 30 сек · 9:16</small></div>
+      <label class="agree2"><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label>
+      <button class="paybtn" id="btn" type="button">Оплатить аватар — 499 ₽</button>
+      <div id="status"></div>
     </div>
   </section>
 
-  <aside class="panel side">
-    <div class="tl">
-      <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата любым удобным способом</div>
-      <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Kling Avatar оживляет фото — 1–5 минут</div>
+  <aside class="showcol">
+    <div>
+      <h1>Фото говорит твоим голосом</h1>
+      <p class="showsub">Ведущий на фото повторит твою речь дословно: губы, мимика, интонации. Результат появится в этом окне.</p>
     </div>
     <div class="outbox" id="outbox">
       <div class="ph">
         <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></div>
         <div class="ph-t">Здесь появится говорящий аватар</div>
-        <div class="ph-s">Длина видео = длина твоей озвучки</div>
+        <div class="ph-s">Собери связку слева и нажми кнопку оплаты</div>
       </div>
     </div>
     <div class="payrow">
@@ -221,19 +235,14 @@ details.hist[open] summary{margin-bottom:10px}
       <summary>📦 История (этот браузер) <span id="histCount"></span></summary>
       <div id="histList"></div>
     </details>
+    <div class="demo">
+      <video src="/avatar-voice.mp4" muted loop preload="metadata" playsinline controls></video>
+      <div class="dc"><b>Пример из студии:</b> фото кота + голос хозяина. Надиктовал фразу — кот заговорил словами и голосом владельца. Твоё фото будет звучать так же.</div>
+    </div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
   </aside>
 </main>
-
-<div class="bar">
-  <div class="bar-in">
-    <div class="bar-price">499 ₽<small id="barMeta">озвучка до 30 сек · 9:16</small></div>
-    <div class="agree" id="agreeWrap"><label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;margin:0"><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label></div>
-    <button class="btn btn-primary btn-lg" id="btn">Оплатить аватар — 499 ₽</button>
-    <div id="status"></div>
-  </div>
-</div>
 
 <script type="module">
 let uploadFn = null;
@@ -311,8 +320,6 @@ function updateSteps(){
   s1.className='pstep'+(filesOk?' done':' active');
   s2.className='pstep'+(paidSeen?' done':(filesOk?' active':''));
   s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
-  document.getElementById('tlPay').className='tl-item'+(paidSeen?' done':(filesOk?' now':''));
-  document.getElementById('tlGen').className='tl-item'+(stage==='done'?' done':(stage==='gen'?' now':''));
 }
 
 function setOr(or){
@@ -783,7 +790,7 @@ btn.addEventListener('click', function(){
           setStatus('Оплата прошла! Запускаем генерацию...');
           callGenerate(pid);
         }else{
-          setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку внизу ещё раз.');
+          setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку ещё раз.');
           updateSteps(); updateBar();
         }
       }else{
