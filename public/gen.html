@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Создать видео — Ёшкин кот</title>
 <meta property="og:title" content="Создать видео из текста — Ёшкин кот">
-<meta property="og:description" content="Опиши сцену словами, загрузи референсы — Seedance 2.5 снимет ролик. От 199 ₽">
+<meta property="og:description" content="Опиши сцену словами, загрузи референсы — нейросеть снимет ролик. От 99 ₽">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.ws{max-width:1160px;margin:100px auto 60px;padding:0 24px;display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start}
+.ws{max-width:1160px;margin:100px auto 60px;padding:0 24px;display:grid;grid-template-columns:1.25fr minmax(340px,.75fr);gap:20px;align-items:start}
 .panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
+.side{display:flex;flex-direction:column;gap:14px;padding:20px}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
 .pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
@@ -71,8 +72,30 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:12px}
 .rolehint b{color:var(--lime)}
 .rolehint a{color:var(--lime)}
-.hist{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:rgba(0,0,0,.25);padding:14px}
-.hist-h{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.tl{display:flex;flex-direction:column;gap:9px}
+.tl-item{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.82rem;line-height:1.45}
+.tl-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
+.tl-item.done{color:var(--text)}
+.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
+.tl-item.now{color:var(--text)}
+.tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
+.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;padding:14px}
+.outbox video{width:100%;border-radius:14px}
+.ph{text-align:center;color:var(--muted);font-size:.82rem;line-height:1.5;padding:16px}
+.vf{width:74px;height:46px;border:1.5px dashed rgba(163,230,53,.45);border-radius:10px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
+.vf svg{width:20px;height:20px}
+.ph-t{color:var(--text);font-weight:600;font-size:.95rem}
+.ph-s{margin-top:4px;font-size:.78rem}
+.payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pay-ic{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.03em}
+.payrow a{margin-left:auto;color:var(--lime);font-size:.75rem;text-decoration:none;white-space:nowrap}
+.payrow a:hover{text-decoration:underline}
+details.hist{border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);padding:10px 12px}
+details.hist summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+details.hist summary::-webkit-details-marker{display:none}
+details.hist summary:hover{color:var(--text)}
+details.hist[open] summary{margin-bottom:10px}
 .hitem{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
 .hitem .ht{color:var(--text);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hitem .hd{color:var(--muted);font-size:.7rem}
@@ -80,19 +103,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .hitem a:hover{color:var(--lime);border-color:var(--border-lime)}
 .hitem button.del{color:#fca5a5}
 .hempty{color:var(--muted);font-size:.8rem;line-height:1.5}
-.tl{display:flex;flex-direction:column;gap:13px;margin:4px 0 18px}
-.tl-item{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:.88rem;line-height:1.5}
-.tl-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
-.tl-item.done{color:var(--text)}
-.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
-.tl-item.now{color:var(--text)}
-.tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
-.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);min-height:280px;display:grid;place-items:center;overflow:hidden;padding:14px}
-.outbox video{width:100%;border-radius:14px}
-.ph{text-align:center;color:var(--muted);font-size:.88rem;line-height:1.6;padding:30px}
-.ph svg{width:42px;height:42px;color:rgba(163,230,53,.45);margin:0 auto 12px}
-.trust{margin:16px 0 0;color:var(--muted);font-size:.8rem;line-height:1.6;text-align:center}
+.trust{margin:2px 0 0;color:var(--muted);font-size:.76rem;line-height:1.55;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);border-top:1px solid var(--border)}
 .bar-in{max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
@@ -132,6 +143,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <a href="/motion.html">Моушен</a>
   <a href="/lipsync.html">Липсинк</a>
   <a href="/examples.html">Примеры</a>
+  <a href="/prices.html">Цены</a>
   <a href="/help.html">Помощь</a>
 </div>
 <main class="ws">
@@ -159,19 +171,27 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <input type="file" id="uplInput" accept="image/*,video/*,audio/*" multiple style="display:none">
     <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы кружком 「+」, потом опиши сцену, упоминая их через @Image1, @Image2 — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры работ →</a></div>
   </section>
-  <aside class="panel">
+  <aside class="panel side">
     <div class="tl">
-      <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата — карта, Мир, СБП, SberPay, ЮMoney</div>
+      <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата любым удобным способом</div>
       <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Seedance 2.5 генерирует — 1–5 минут</div>
       <div class="tl-item" id="tlUp" style="display:none"><span class="tl-dot"></span>Улучшение до 1080p — ещё ~1 минута</div>
     </div>
     <div class="outbox" id="outbox">
-      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg>Здесь появится твоё видео.<br>Опиши сцену слева и нажми кнопку оплаты внизу.</div>
+      <div class="ph">
+        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg></div>
+        <div class="ph-t">Здесь появится твоё видео</div>
+        <div class="ph-s">Опиши сцену слева — остальное студия сделает сама</div>
+      </div>
     </div>
-    <div class="hist">
-      <div class="hist-h"><span>📦 История (этот браузер)</span><span id="histCount"></span></div>
+    <div class="payrow">
+      <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
+      <a href="/prices.html">Цены и оплата →</a>
+    </div>
+    <details class="hist">
+      <summary>📦 История (этот браузер) <span id="histCount"></span></summary>
       <div id="histList"></div>
-    </div>
+    </details>
     <div id="wsNotice"></div>
     <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
   </aside>
