@@ -1,5 +1,33 @@
 import { getBalance } from '../lib/ledger.js';
 
+// === НОВАЯ ЛОГИКА: 4 МОДЕЛИ С ЦЕНАМИ ===
+const MODELS = {
+  'wan-3.0': {
+    name: 'Wan 3.0',
+    basePrice: 99,
+    perSecond: 10,
+    maxDuration: 30
+  },
+  'kling-standard': {
+    name: 'Kling',
+    basePrice: 129,
+    perSecond: 15,
+    maxDuration: 10
+  },
+  'seedance-2.0': {
+    name: 'Seedance 2.0',
+    basePrice: 129,
+    perSecond: 15,
+    maxDuration: 15
+  },
+  'seedance-2.5': {
+    name: 'Seedance 2.5',
+    basePrice: 199,
+    perSecond: 30,
+    maxDuration: 30
+  }
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -15,7 +43,11 @@ export default async function handler(req, res) {
   const service = body.service || 'text2video';
   const prompt = body.prompt || '';
 
-  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 199, animate: 199 };
+  // === ПРИНИМАЕМ МОДЕЛЬ И РЕЖИМ ПРОМПТА ===
+  const modelKey = body.model || 'seedance-2.5';
+  const enhancePrompt = body.enhancePrompt !== false; // По умолчанию true
+
+  const BASE = { motion: 199, lipsync: 199, cartoon: 199, animate: 199 };
   const PER_SEC = 30;
   const QUALITY_SURCHARGE = { '480p': 0, '720p': 200, '1080p': 300 };
   const QUALITY_SERVICES = { text2video: true, cartoon: true, animate: true };
@@ -28,11 +60,19 @@ export default async function handler(req, res) {
   if (service === 'avatar') {
     seconds = 0;
     price = { amount: '499.00', desc: 'Говорящий аватар SeedGen' };
+  } else if (service === 'text2video') {
+    // === НОВАЯ ЛОГИКА: ЦЕНА ЗАВИСИТ ОТ МОДЕЛИ ===
+    const model = MODELS[modelKey] || MODELS['seedance-2.5'];
+    if (!seconds || seconds < 5) seconds = 5;
+    if (seconds > model.maxDuration) seconds = model.maxDuration;
+    const amount = model.basePrice + (seconds - 5) * model.perSecond + surcharge;
+    const qLabel = quality !== '480p' ? ', ' + quality : '';
+    price = { amount: amount + '.00', desc: 'Создать видео (' + model.name + '), ' + seconds + ' сек' + qLabel + ' SeedGen' };
   } else if (BASE[service]) {
     if (!seconds || seconds < 5) seconds = 5;
     if (seconds > 30) seconds = 30;
     const amount = BASE[service] + (seconds - 5) * PER_SEC + surcharge;
-    const names = { text2video: 'Создать видео', motion: 'Моушен контроль', lipsync: 'Липсинк (дубляж)', cartoon: 'Мультфильм из фото', animate: 'Мультфильм: оживление' };
+    const names = { motion: 'Моушен контроль', lipsync: 'Липсинк (дубляж)', cartoon: 'Мультфильм из фото', animate: 'Мультфильм: оживление' };
     const qLabel = (QUALITY_SERVICES[service] && quality !== '480p') ? ', ' + quality : '';
     price = { amount: amount + '.00', desc: names[service] + ', ' + seconds + ' сек' + qLabel + ' SeedGen' };
   } else {
@@ -71,7 +111,15 @@ export default async function handler(req, res) {
         capture: true,
         confirmation: { type: 'redirect', return_url: returnUrl },
         description: price.desc,
-        metadata: { service: service, prompt: prompt, seconds: String(seconds), quality: quality }
+        // === ПЕРЕДАЁМ МОДЕЛЬ И РЕЖИМ В METADATA ===
+        metadata: { 
+          service: service, 
+          prompt: prompt, 
+          seconds: String(seconds), 
+          quality: quality,
+          model: modelKey,
+          enhancePrompt: String(enhancePrompt)
+        }
       })
     });
     const data = await r.json();
