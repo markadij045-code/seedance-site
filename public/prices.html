@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Цены и оплата — Ёшкин кот</title>
+<meta property="og:title" content="Цены и оплата — Ёшкин кот">
+<meta property="og:description" content="Вся экономика студии на одной странице: модели, секунды, качество, способы оплаты. Без подписок и скрытых списаний">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
+<style>
+.pw{max-width:960px;margin:110px auto 60px;padding:0 24px}
+.pw h1{font-family:'Space Grotesk';font-size:2.2rem;margin-bottom:10px}
+.pw .lead{color:var(--muted);line-height:1.7;margin-bottom:30px}
+.blk{border:1px solid var(--border);border-radius:20px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:24px;margin-bottom:18px}
+.blk h2{font-size:1.2rem;margin:0 0 6px}
+.blk .sub{color:var(--muted);font-size:.85rem;margin:0 0 16px;line-height:1.6}
+.pt{width:100%;border-collapse:collapse}
+.pt th,.pt td{padding:11px 12px;border-bottom:1px solid var(--border);text-align:left;font-size:.88rem;vertical-align:top}
+.pt tr:last-child td{border-bottom:none}
+.pt th{color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.pt td b{color:var(--lime);font-weight:700;white-space:nowrap}
+.pt .dim{color:var(--muted);font-size:.8rem}
+.pt .soon{color:#fbbf24;font-size:.78rem}
+.payrow{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:6px 0 14px}
+.pay-ic{padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.03em}
+.ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.ul li{color:rgba(244,245,246,.85);font-size:.88rem;line-height:1.55;padding-left:24px;position:relative}
+.ul li::before{content:'✓';position:absolute;left:0;color:var(--lime)}
+.infogrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:800px){.infogrid{grid-template-columns:1fr}.pw{margin-top:90px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="container nav-in">
+    <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg> Ёшкин кот</a>
+    <nav class="menu">
+      <a href="/examples.html">Примеры</a>
+      <a href="/prices.html" style="color:var(--lime)">Цены</a>
+      <a href="/help.html">Помощь</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="btn btn-primary" href="/gen.html">Создать видео</a>
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+    </div>
+  </div>
+</header>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/">Главная</a>
+  <a href="/gen.html">Создать видео</a>
+  <a href="/cartoon.html">Мультфильм</a>
+  <a href="/avatar.html">Аватар</a>
+  <a href="/motion.html">Моушен</a>
+  <a href="/lipsync.html">Липсинк</a>
+  <a href="/examples.html">Примеры</a>
+  <a href="/prices.html">Цены</a>
+  <a href="/help.html">Помощь</a>
+</div>
+
+<main class="pw">
+  <h1>Цены и оплата</h1>
+  <p class="lead">Вся экономика студии на одной странице. Одна оплата за один заказ: без подписок, без автосписаний, без скрытых строк. Не сгенерилось — вернём или перегенерируем.</p>
+
+  <div class="blk">
+    <h2>Создать видео: четыре модели на выбор</h2>
+    <p class="sub">Цена зависит от модели: дешевле — проще и длиннее, дороже — флагманское качество. База включает 5 секунд, каждая следующая секунда стоит указанную цену.</p>
+    <table class="pt">
+      <tr><th>Модель</th><th>База 5 сек</th><th>Доп. секунда</th><th>Предел</th><th>Характер</th></tr>
+      <tr><td><b>Wan 3.0</b></td><td><b>99 ₽</b></td><td>+10 ₽</td><td>30 сек</td><td class="dim">дёшево и длинно, 720p</td></tr>
+      <tr><td><b>Kling</b></td><td><b>129 ₽</b></td><td>+15 ₽</td><td>10 сек</td><td class="dim">народный выбор, умеет со звуком</td></tr>
+      <tr><td><b>Seedance 2.0</b></td><td><b>129 ₽</b></td><td>+15 ₽</td><td>15 сек</td><td class="dim">баланс цены и качества</td></tr>
+      <tr><td><b>Seedance 2.5</b></td><td><b>199 ₽</b></td><td>+30 ₽</td><td>30 сек</td><td class="dim">флагман: качество и до 10 референсов</td></tr>
+      <tr><td class="soon">Kling 4.0</td><td class="soon">скоро</td><td class="soon">—</td><td class="soon">20 сек</td><td class="soon">новинка октября, откроем первой неделей</td></tr>
+      <tr><td class="soon">Veo 4</td><td class="soon">скоро</td><td class="soon">—</td><td class="soon">—</td><td class="soon">ждём цен и открытия</td></tr>
+    </table>
+  </div>
+
+  <div class="blk">
+    <h2>Качество кадра</h2>
+    <p class="sub">Надбавка одинакова для всех моделей и услуг, где есть качество.</p>
+    <table class="pt">
+      <tr><th>Качество</th><th>Надбавка</th><th>Зачем</th></tr>
+      <tr><td>480p</td><td><b>0 ₽</b></td><td class="dim">черновики, мемы, быстрые пробы</td></tr>
+      <tr><td>720p</td><td><b>+200 ₽</b></td><td class="dim">стандарт для соцсетей и YouTube</td></tr>
+      <tr><td>1080p</td><td><b>+300 ₽</b></td><td class="dim">Full HD с автоулучшением, ~1 минута дольше</td></tr>
+    </table>
+  </div>
+
+  <div class="blk">
+    <h2>Остальные услуги</h2>
+    <p class="sub">Каждая услуга — одна оплата за один заказ.</p>
+    <table class="pt">
+      <tr><th>Услуга</th><th>Что входит</th><th>Цена</th></tr>
+      <tr><td><b>Мультфильм из фото</b></td><td class="dim">арт Pixar/аниме + оживление по сюжету, до 30 сек</td><td><b>от 199 ₽</b></td></tr>
+      <tr><td><b>Говорящий аватар</b></td><td class="dim">фото говорит твоей озвучкой, губы синхронно, до 30 сек</td><td><b>499 ₽</b></td></tr>
+      <tr><td><b>Моушен контроль</b></td><td class="dim">персонаж с фото повторяет твои движения и речь, до 30 сек</td><td><b>от 199 ₽</b></td></tr>
+      <tr><td><b>Липсинк / дубляж</b></td><td class="dim">человек в видео говорит твоей озвучкой, до 30 сек</td><td><b>от 199 ₽</b></td></tr>
+    </table>
+  </div>
+
+  <div class="blk">
+    <h2>Оплата</h2>
+    <div class="payrow">
+      <span class="pay-ic">VISA</span><span class="pay-ic">Mastercard</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
+    </div>
+    <ul class="ul">
+      <li>Одна оплата за один заказ — без подписок и автосписаний</li>
+      <li>Чек по 54-ФЗ приходит на почту сразу после оплаты</li>
+      <li>Не сгенерилось по нашей вине — вернём деньги или перегенерируем бесплатно</li>
+      <li>Готовое видео хранится 7 дней — успеет выйти везде</li>
+    </ul>
+  </div>
+
+  <div class="blk">
+    <h2>Слоты на день — честно</h2>
+    <p class="sub">Мы принимаем <b style="color:var(--lime)">15 заказов в день</b>, чтобы каждое видео делалось внимательно и в срок. Новые слоты открываются ежедневно в <b style="color:var(--lime)">12:00 по Москве</b>. Если слоты кончились — оплата закроется до завтра, деньги не спишутся.</p>
+  </div>
+
+  <div class="blk" style="text-align:center">
+    <h2 style="margin-bottom:8px">Выбрал модель? Погнали</h2>
+    <p class="sub">Опиши сцену, студия посчитает цену сама — до копейки, как в таблице выше.</p>
+    <a class="btn btn-primary btn-lg" href="/gen.html">Создать видео</a>
+  </div>
+</main>
+
+<footer>
+  <div class="container foot-in">
+    <div>© Ёшкин кот, 2026<br>Самозанятая Малкова О. А., ИНН 420900493994</div>
+    <div><a href="/legal.html#offer">Оферта</a> · <a href="/legal.html#policy">Конфиденциальность</a><br><a href="/help.html">Помощь</a> · <a href="/examples.html">Примеры</a></div>
+  </div>
+</footer>
+<script src="/help-widget.js"></script>
+</body>
+</html>
