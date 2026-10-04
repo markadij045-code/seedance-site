@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Говорящий аватар — Ёшкин кот</title>
 <meta property="og:title" content="Говорящий аватар — фото заговорит твоим голосом">
-<meta property="og:description" content="Выбери ведущего или загрузи своё фото, добавь озвучку — человек заговорит твоими словами. 499 ₽">
+<meta property="og:description" content="Выбери ведущего, добавь озвучку — фото заговорит твоими словами. 499 ₽">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.yoshkin-kot.online/avatar.html">
@@ -16,96 +16,98 @@
 .rail a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;text-decoration:none;filter:grayscale(1);opacity:.5}
 .rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
 .rail a.on{opacity:1;filter:none;background:rgba(163,230,53,.12);box-shadow:inset 0 0 0 1px rgba(163,230,53,.45)}
-.app{max-width:1160px;margin:96px auto 60px;padding:0 24px 0 88px;display:grid;grid-template-columns:1fr minmax(340px,400px);gap:20px;align-items:start}
-.formcol{display:flex;flex-direction:column;gap:14px}
-.modelcard{display:flex;gap:14px;align-items:center;border:1px solid var(--border-lime);background:linear-gradient(180deg,rgba(163,230,53,.08),rgba(163,230,53,.03));border-radius:18px;padding:16px 18px}
-.modelcard .mi{width:46px;height:46px;border-radius:12px;background:rgba(163,230,53,.15);color:var(--lime);display:grid;place-items:center;font-size:1.3rem;flex:0 0 auto}
-.modelcard .mt{font-weight:700;font-size:1.02rem;color:var(--text)}
-.modelcard .ms{color:var(--muted);font-size:.8rem;margin-top:3px;line-height:1.45}
-.modelcard .mp{margin-left:auto;font-family:'Space Grotesk';font-weight:700;font-size:1.15rem;color:var(--lime);white-space:nowrap}
-.mod{border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:18px}
-.mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
-.psteps{display:flex;gap:8px;flex-wrap:wrap}
-.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
+.wrap{max-width:1040px;margin:96px auto 60px;padding:0 24px 0 88px}
+.pagehead{text-align:center;margin:0 0 22px}
+.pagehead h1{font-family:'Space Grotesk';font-size:2rem;line-height:1.2;margin:0 0 8px;color:var(--text)}
+.pagehead p{color:var(--muted);font-size:.92rem;margin:0}
+.psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:600}
 .pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
-.tile{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.3);overflow:hidden;transition:.2s}
-.tile:hover{border-color:var(--border-lime)}
-.tile img,.tile svg{width:100%;height:100%;object-fit:cover;display:block}
-.tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.tile .add{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.72rem;text-align:center;padding:6px;pointer-events:none}
-.tile .add svg{width:20px;height:20px;color:rgba(163,230,53,.6)}
-.tile .x{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#fca5a5;cursor:pointer;font-size:.75rem;z-index:3}
-.tile.sel{border-color:var(--lime);box-shadow:0 0 0 2px rgba(163,230,53,.35)}
-.tname{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 5px;font-size:.64rem;color:rgba(255,255,255,.9);background:linear-gradient(180deg,transparent,rgba(0,0,0,.88));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
-.playbadge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
-.playbadge i{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:1px solid rgba(163,230,53,.55);color:var(--lime);display:grid;place-items:center;font-style:normal;font-size:.72rem}
-.audiotile{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(163,230,53,.14),rgba(59,130,246,.10))}
-.audiotile svg{width:26px;height:26px;color:var(--lime)}
-.seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 .87rem 'Inter';cursor:pointer;transition:.2s}
-.seg button:hover{color:var(--text)}
-.seg button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.seg button.soon{opacity:.55;cursor:not-allowed}
-.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:10px}
-.rolehint a{color:var(--lime)}
-.savebtn{margin-top:10px;padding:9px 16px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime);font:600 .85rem 'Inter';cursor:pointer}
-.recbox{margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
+.stage{position:relative;border:1px solid var(--border);border-radius:22px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:18px;display:grid;grid-template-columns:220px 1fr;gap:18px}
+.face{position:relative;aspect-ratio:3/4;border-radius:16px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;cursor:pointer}
+.face img{width:100%;height:100%;object-fit:cover;display:block}
+.face .fadd{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:.8rem;text-align:center;padding:10px}
+.face .fadd svg{width:26px;height:26px;color:rgba(163,230,53,.6)}
+.face .ftag{position:absolute;left:8px;bottom:8px;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.7);color:var(--lime);font-size:.7rem;font-weight:700}
+.vside{display:flex;flex-direction:column;gap:12px;min-width:0}
+.vlbl{color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.vzone{flex:1;border:1px dashed rgba(255,255,255,.14);border-radius:16px;background:rgba(0,0,0,.25);padding:16px;display:flex;flex-direction:column;gap:12px;justify-content:center;min-height:150px}
+.vzone .vph{color:var(--muted);font-size:.9rem;line-height:1.6}
+.vzone .vph b{color:var(--text)}
+.vbtns{display:flex;gap:8px;flex-wrap:wrap}
+.vbtn{padding:10px 16px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 .85rem 'Inter';cursor:pointer}
+.vbtn:hover{background:rgba(255,255,255,.1)}
+.vbtn.soon{opacity:.5;cursor:not-allowed}
+.achip{display:flex;gap:10px;align-items:center;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);border-radius:12px;padding:10px 12px}
+.achip .pl{width:34px;height:34px;border-radius:50%;border:none;background:rgba(163,230,53,.15);color:var(--lime);cursor:pointer;font-size:.8rem;flex:0 0 auto}
+.achip .an{color:var(--text);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.achip .as{color:var(--muted);font-size:.75rem;flex:0 0 auto}
+.achip .ax{width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.5);color:#fca5a5;cursor:pointer;font-size:.7rem;flex:0 0 auto}
+.recbox{padding:14px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);display:none}
 .recbox.on{display:block}
 .recbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border-lime);background:rgba(163,230,53,.1);color:var(--lime);font:600 .88rem 'Inter';cursor:pointer}
 .recbtn.recording{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1);animation:pulse 1.2s infinite}
 .rectime{color:var(--muted);font-size:.85rem;margin-left:10px}
 .recaudio{margin-top:10px;width:100%}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
-.paymod{border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,rgba(163,230,53,.06),rgba(0,0,0,.2));padding:18px}
-.payrow2{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
-.payrow2 .big{font-family:'Space Grotesk';font-size:1.7rem;font-weight:700;color:var(--text)}
-.payrow2 small{color:var(--muted);font-size:.78rem}
-.agree2{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.82rem;line-height:1.5;margin-bottom:14px}
-.agree2 input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
-.agree2 a{color:var(--lime)}
-.paybtn{width:100%;padding:15px 20px;border-radius:14px;border:none;background:var(--lime);color:#0a0c08;font:700 1rem 'Inter';cursor:pointer}
-.paybtn:hover{filter:brightness(1.08)}
-.paybtn:disabled{opacity:.6;cursor:not-allowed}
+.stagebar{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px}
+.chipbtn{display:inline-flex;gap:8px;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 .84rem 'Inter';cursor:pointer;max-width:240px}
+.chipbtn:hover{background:rgba(255,255,255,.1)}
+.chipbtn .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spacer{flex:1}
+.pricetag{font-family:'Space Grotesk';font-weight:700;font-size:1.2rem;color:var(--text);white-space:nowrap}
+.pricetag small{display:block;color:var(--muted);font:.68rem/1.2 'Inter';font-weight:500}
+.genbtn{padding:12px 26px;border-radius:999px;border:none;background:var(--lime);color:#0a0c08;font:700 .95rem 'Inter';cursor:pointer;white-space:nowrap}
+.genbtn:hover{filter:brightness(1.08)}
+.genbtn:disabled{opacity:.6;cursor:not-allowed}
+.pop{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:6px;min-width:250px;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:320px;overflow-y:auto}
+.pop.open{display:block}
+.pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
+.pu-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
+.pu-item:hover{background:rgba(163,230,53,.12)}
+.pu-item img{width:32px;height:32px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.pu-item .mi{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:.9rem;background:rgba(255,255,255,.08);flex:0 0 auto}
+.pu-item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
+.pu-row button{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .82rem 'Inter';cursor:pointer}
+.pu-row button:hover{color:var(--text)}
+.pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.agreerow{display:flex;justify-content:center;margin:14px 0 0}
+.agreerow label{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;cursor:pointer;max-width:560px}
+.agreerow input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
+.agreerow a{color:var(--lime)}
 #status{margin-top:10px;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
-.showcol{display:flex;flex-direction:column;gap:14px}
-.showcol h1{font-family:'Space Grotesk';font-size:1.55rem;line-height:1.25;margin:0 0 4px;color:var(--text)}
-.showsub{color:var(--muted);font-size:.86rem;line-height:1.55;margin:0}
-.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);aspect-ratio:9/12;display:grid;place-items:center;overflow:hidden;padding:14px}
-.outbox video{width:100%;border-radius:14px}
-.ph{text-align:center;color:var(--muted);font-size:.82rem;line-height:1.5;padding:16px}
-.vf{width:64px;height:84px;border:1.5px dashed rgba(163,230,53,.45);border-radius:12px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
-.vf svg{width:22px;height:22px}
-.ph-t{color:var(--text);font-weight:600;font-size:.95rem}
-.ph-s{margin-top:4px;font-size:.78rem}
-.payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.result{margin:26px 0 0}
+.result .mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
+.outbox{border-radius:18px;border:1px solid var(--border);background:rgba(0,0,0,.35);overflow:hidden;display:grid;place-items:center;min-height:220px;padding:12px}
+.outbox video{width:100%;max-height:480px;border-radius:14px}
+.ph{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px}
+.recent{margin:30px 0 0}
+.rhead{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.rcard{flex:0 0 200px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3)}
+.rcard video{width:100%;aspect-ratio:9/16;object-fit:cover;display:block;background:#000}
+.rcard .rc{padding:8px 10px}
+.rcard .rn{color:var(--text);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcard .rd{color:var(--muted);font-size:.68rem;margin:2px 0 6px}
+.rcard a{color:var(--lime);font-size:.72rem;text-decoration:none}
+.hempty{color:var(--muted);font-size:.82rem;line-height:1.5}
+.footnote{margin:26px 0 0;display:flex;flex-direction:column;gap:10px;align-items:center}
+.payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
 .pay-ic{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.03em}
-.payrow a{margin-left:auto;color:var(--lime);font-size:.75rem;text-decoration:none;white-space:nowrap}
-.payrow a:hover{text-decoration:underline}
-details.hist{border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);padding:10px 12px}
-details.hist summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-details.hist summary::-webkit-details-marker{display:none}
-details.hist summary:hover{color:var(--text)}
-details.hist[open] summary{margin-bottom:10px}
-.hitem{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
-.hitem .ht{color:var(--text);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hitem .hd{color:var(--muted);font-size:.7rem}
-.hitem a,.hitem button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font-size:.75rem;cursor:pointer;text-decoration:none;flex:0 0 auto}
-.hitem a:hover{color:var(--lime);border-color:var(--border-lime)}
-.hitem button.del{color:#fca5a5}
-.hempty{color:var(--muted);font-size:.8rem;line-height:1.5}
-.demo{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.3)}
-.demo video{width:100%;display:block}
-.demo .dc{padding:10px 12px;color:var(--muted);font-size:.78rem;line-height:1.5}
-.demo .dc b{color:var(--text)}
-.trust{margin:0;color:var(--muted);font-size:.76rem;line-height:1.55;text-align:center}
+.payrow a{color:var(--lime);font-size:.75rem;text-decoration:none}
+.trust{color:var(--muted);font-size:.76rem;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
+.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;text-align:center}
+.rolehint a{color:var(--lime)}
 @media(max-width:900px){
   .rail{display:none}
-  .app{grid-template-columns:1fr;margin-top:84px;padding:0 24px}
+  .wrap{padding:0 24px;margin-top:84px}
+  .stage{grid-template-columns:1fr}
+  .face{max-width:220px;margin:0 auto}
 }
 </style>
 </head>
@@ -152,97 +154,67 @@ details.hist[open] summary{margin-bottom:10px}
   <a href="/help.html">Помощь</a>
 </div>
 
-<main class="app">
-  <section class="formcol">
-    <div class="psteps">
-      <span class="pstep active" id="st1"><i>1</i> Ведущий и озвучка</span>
-      <span class="pstep" id="st2"><i>2</i> Оплата</span>
-      <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
-    </div>
+<main class="wrap">
+  <div class="pagehead">
+    <h1>Что скажет твой аватар?</h1>
+    <p>Выбери ведущего, добавь озвучку — фото заговорит твоими словами, губы в такт</p>
+  </div>
 
-    <div class="modelcard">
-      <span class="mi">🗣</span>
-      <span>
-        <span class="mt">Kling Avatar</span>
-        <span class="ms" style="display:block">Синхрон губ и мимики · длина видео = длина озвучки · до 30 сек</span>
-      </span>
-      <span class="mp">499 ₽</span>
-    </div>
+  <div class="psteps">
+    <span class="pstep active" id="st1"><i>1</i> Ведущий и озвучка</span>
+    <span class="pstep" id="st2"><i>2</i> Оплата</span>
+    <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
+  </div>
 
-    <div class="mod">
-      <div class="mod-h">Кто говорит</div>
-      <div class="tiles" id="castRow"></div>
-      <button class="savebtn" id="savePresetBtn" type="button" style="display:none">💾 Сохранить как ведущего</button>
-      <div class="rolehint">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно.</div>
-      <div class="mod-h" id="myLbl" style="display:none;margin-top:16px">Мои ведущие (из аккаунта)</div>
-      <div class="tiles" id="myRow" style="display:none"></div>
-      <div class="rolehint" id="myHint"></div>
-    </div>
-
-    <div class="mod">
-      <div class="mod-h">Озвучка</div>
-      <div class="seg" id="voiceRow">
-        <button type="button" id="vAudio" class="on">🎙 Своё аудио</button>
-        <button type="button" id="vRec">⏺ Запись с микрофона</button>
-        <button type="button" id="vText" class="soon">✍️ Текст + голос · скоро</button>
-      </div>
-      <div class="tiles" style="margin-top:12px"><div class="tile" id="audioTile"></div></div>
+  <div class="stage" id="stage">
+    <div class="face" id="faceBox" title="Выбрать ведущего"></div>
+    <div class="vside">
+      <div class="vlbl">Озвучка — что скажет аватар</div>
+      <div class="vzone" id="voiceZone"></div>
       <div class="recbox" id="recBox">
         <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
         <span class="rectime" id="recTime"></span>
-        <div class="rolehint" id="recHint">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом. Запись никуда не уходит, пока ты не нажмёшь 「использовать」.</div>
+        <div class="rolehint" id="recHint" style="text-align:left;margin-top:8px">Прочитай текст вслух (до 30 секунд) — аватар повторит его твоим голосом.</div>
         <audio class="recaudio" id="recPreview" controls style="display:none"></audio>
-        <button class="savebtn" id="recUse" type="button" style="display:none">✅ Использовать запись</button>
-      </div>
-      <div class="rolehint" id="audioInfo"></div>
-      <div class="rolehint">💬 Хочешь длиннее 30 секунд? После запуска длинные ролики будем собирать из фрагментов — как в больших аватар-студиях.</div>
-    </div>
-
-    <div class="mod">
-      <div class="mod-h">Формат видео</div>
-      <div class="seg" id="orientRow">
-        <button type="button" data-or="9:16" class="on" onclick="setOr('9:16')">📱 9:16</button>
-        <button type="button" data-or="16:9" onclick="setOr('16:9')">💻 16:9</button>
-        <button type="button" data-or="1:1" onclick="setOr('1:1')">⬜ 1:1</button>
+        <button class="savebtn recbtn" id="recUse" type="button" style="display:none;margin-top:10px">✅ Использовать запись</button>
       </div>
     </div>
-
-    <div class="paymod">
-      <div class="payrow2"><span class="big">499 ₽</span><small id="barMeta">озвучка до 30 сек · 9:16</small></div>
-      <label class="agree2"><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label>
-      <button class="paybtn" id="btn" type="button">Оплатить аватар — 499 ₽</button>
-      <div id="status"></div>
+    <div class="stagebar">
+      <button class="chipbtn" id="hostChip" type="button">🗣 <span class="cn">Выбрать ведущего</span> ⌄</button>
+      <button class="chipbtn" id="fmtChip" type="button">📱 <span class="cn">9:16</span> ⌄</button>
+      <span class="spacer"></span>
+      <span class="pricetag">499 ₽<small id="barMeta">озвучка до 30 сек</small></span>
+      <button class="genbtn" id="btn" type="button">Создать видео</button>
     </div>
+    <div class="pop" id="popMenu"></div>
+  </div>
+
+  <div class="agreerow"><label><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a>. Своё фото или фото с согласия человека — иначе нейросеть отклонит заказ, деньги вернутся автоматически.</span></label></div>
+  <div id="status"></div>
+
+  <section class="result" id="resultSec" style="display:none">
+    <div class="mod-h">Твоё видео</div>
+    <div class="outbox" id="outbox"><div class="ph">Здесь появится говорящий аватар после оплаты и генерации</div></div>
   </section>
 
-  <aside class="showcol">
-    <div>
-      <h1>Фото говорит твоим голосом</h1>
-      <p class="showsub">Ведущий на фото повторит твою речь дословно: губы, мимика, интонации. Результат появится в этом окне.</p>
-    </div>
-    <div class="outbox" id="outbox">
-      <div class="ph">
-        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></div>
-        <div class="ph-t">Здесь появится говорящий аватар</div>
-        <div class="ph-s">Собери связку слева и нажми кнопку оплаты</div>
-      </div>
-    </div>
+  <section class="recent">
+    <div class="rhead"><span>Недавние работы</span><span id="histCount"></span></div>
+    <div class="rrow" id="histList"></div>
+  </section>
+
+  <div class="footnote">
     <div class="payrow">
       <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
       <a href="/prices.html">Цены и оплата →</a>
     </div>
-    <details class="hist">
-      <summary>📦 История (этот браузер) <span id="histCount"></span></summary>
-      <div id="histList"></div>
-    </details>
-    <div class="demo">
-      <video src="/avatar-voice.mp4" muted loop preload="metadata" playsinline controls></video>
-      <div class="dc"><b>Пример из студии:</b> фото кота + голос хозяина. Надиктовал фразу — кот заговорил словами и голосом владельца. Твоё фото будет звучать так же.</div>
-    </div>
+    <div class="rolehint">💬 Озвучка текстом с выбором голоса (6 голосов + Барсик) откроется сразу после запуска. Длина видео = длина озвучки.</div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
-  </aside>
+  </div>
 </main>
+
+<input type="file" id="photoInput" accept="image/*" style="display:none">
+<input type="file" id="audioInput" accept="audio/*" style="display:none">
 
 <script type="module">
 let uploadFn = null;
@@ -273,203 +245,181 @@ var PRESETS=[
  {id:3,name:'Кот Барсик',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#101308"/><path d="M150 160l26-76 44 52z" fill="#1f2937"/><path d="M362 160l-26-76-44 52z" fill="#1f2937"/><path d="M96 512c0-90 72-140 160-140s160 50 160 140z" fill="#1f2937"/><circle cx="256" cy="235" r="112" fill="#1f2937"/><circle cx="214" cy="215" r="15" fill="#A3E635"/><circle cx="298" cy="215" r="15" fill="#A3E635"/><circle cx="214" cy="215" r="6" fill="#050607"/><circle cx="298" cy="215" r="6" fill="#050607"/><path d="M244 262h24l-12 14z" fill="#f9a8d4"/><path d="M256 276c0 10-10 16-20 16M256 276c0 10 10 16 20 16" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M160 250l-40-6M160 268l-38 8M352 250l40-6M352 268l38 8" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/></svg>'}
 ];
 
-var orientation = '9:16';
-var imageData = null, audioData = null, audioSec = 0;
-var presetId = null;
-var audioNameStr = null, localAudioBlobUrl = null;
-var restoring = false;
-var stage = 'setup';
-var paidSeen = false;
-var activePaymentId = null;
-var btn = document.getElementById('btn');
-var statusEl = document.getElementById('status');
-var token = '';
-try{ token = localStorage.getItem('seedgen_token') || ''; }catch(e){}
-var serverPresets = [];
+var orientation='9:16';
+var imageData=null, audioData=null, audioSec=0;
+var presetId=null;
+var audioNameStr=null, localAudioBlobUrl=null;
+var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
+var btn=document.getElementById('btn'), statusEl=document.getElementById('status');
+var pop=document.getElementById('popMenu'), stageBox=document.getElementById('stage');
+var token=''; try{ token=localStorage.getItem('seedgen_token')||''; }catch(e){}
+var serverPresets=[];
 
-function setStatus(t){ statusEl.textContent = t; }
+function setStatus(t){ statusEl.textContent=t; }
 
-function updateBar(){
-  document.getElementById('barMeta').textContent = (audioSec ? 'озвучка ' + audioSec + ' сек' : 'озвучка до 30 сек') + ' · ' + orientation;
-  var filesOk = !!imageData && !!audioData;
-  if(!paidSeen){
-    btn.textContent = 'Оплатить аватар — 499 ₽';
-    btn.disabled = false;
-  }else if(filesOk && stage !== 'gen' && stage !== 'done'){
-    btn.textContent = 'Запустить генерацию (оплачено)';
-    btn.disabled = false;
-  }else if(stage === 'done'){
-    btn.textContent = 'Готово ✅';
-    btn.disabled = true;
-  }else{
-    btn.textContent = 'Оплачено ✅';
-    btn.disabled = true;
-  }
-  updateSaveBtn();
+function hostName(){
+  if(presetId!==null&&PRESETS[presetId]) return PRESETS[presetId].name;
+  if(imageData) return 'Твоё фото';
+  return 'Выбрать ведущего';
 }
 
-function updateSaveBtn(){
-  var b = document.getElementById('savePresetBtn');
-  if(!b) return;
-  b.style.display = (token && imageData && audioData) ? 'inline-block' : 'none';
+function updateBar(){
+  document.getElementById('barMeta').textContent=(audioSec?'озвучка '+audioSec+' сек':'озвучка до 30 сек')+' · '+orientation;
+  var filesOk=!!imageData&&!!audioData;
+  if(!paidSeen){ btn.textContent='Создать видео — 499 ₽'; btn.disabled=false; }
+  else if(filesOk&&stage!=='gen'&&stage!=='done'){ btn.textContent='Запустить генерацию (оплачено)'; btn.disabled=false; }
+  else if(stage==='done'){ btn.textContent='Готово ✅'; btn.disabled=true; }
+  else{ btn.textContent='Оплачено ✅'; btn.disabled=true; }
 }
 
 function updateSteps(){
-  var filesOk = !!imageData && !!audioData;
+  var filesOk=!!imageData&&!!audioData;
   var s1=document.getElementById('st1'),s2=document.getElementById('st2'),s3=document.getElementById('st3');
   s1.className='pstep'+(filesOk?' done':' active');
   s2.className='pstep'+(paidSeen?' done':(filesOk?' active':''));
   s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
+  document.getElementById('resultSec').style.display=(paidSeen||stage!=='setup')?'block':'none';
 }
+
+function renderFace(){
+  var f=document.getElementById('faceBox');
+  if(imageData){
+    f.innerHTML='<img src="data:image/jpeg;base64,'+imageData+'" alt="Ведущий"><span class="ftag">'+hostName()+'</span>';
+  }else{
+    f.innerHTML='<span class="fadd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>Выбрать ведущего<br>или загрузить своё фото</span>';
+  }
+  document.querySelector('#hostChip .cn').textContent=hostName();
+}
+
+function closePop(){ pop.classList.remove('open'); }
+function openPopAt(el,html,mount){
+  pop.innerHTML=html; pop.classList.add('open');
+  var s=stageBox.getBoundingClientRect(), r=el.getBoundingClientRect();
+  var top=r.bottom-s.top+8, left=r.left-s.left;
+  pop.style.top=top+'px'; pop.style.left='0px';
+  var w=pop.offsetWidth;
+  if(left+w>s.width-8) left=Math.max(8,s.width-w-8);
+  pop.style.left=left+'px';
+  if(mount)mount();
+}
+document.addEventListener('mousedown',function(e){ if(!pop.contains(e.target)&&!e.target.closest('#hostChip')&&!e.target.closest('#fmtChip')&&!e.target.closest('#faceBox')) closePop(); });
+
+function hostPopHTML(){
+  var h='<div class="pu-head">Кто говорит</div>';
+  h+='<div class="pu-item" data-act="upload"><span class="mi">＋</span><span class="nm">Загрузить своё фото</span></div>';
+  if(imageData) h+='<div class="pu-item" data-act="clear"><span class="mi">✕</span><span class="nm">Убрать фото</span></div>';
+  h+='<div class="pu-head">Ведущие студии</div>';
+  PRESETS.forEach(function(p){
+    h+='<div class="pu-item" data-preset="'+p.id+'"><img src="data:image/svg+xml;charset=utf-8,'+encodeURIComponent(p.svg)+'"><span class="nm">'+p.name+'</span>'+(presetId===p.id?'<span style="margin-left:auto;color:var(--lime)">✓</span>':'')+'</div>';
+  });
+  if(serverPresets.length){
+    h+='<div class="pu-head">Мои ведущие</div>';
+    serverPresets.forEach(function(p,i){
+      h+='<div class="pu-item" data-spreset="'+i+'"><img src="data:image/jpeg;base64,'+p.image+'"><span class="nm">'+p.name+'</span></div>';
+    });
+  }else if(token){
+    h+='<div class="pu-head">Мои ведущие пока пустые — сохранишь связку кнопкой в кабинете</div>';
+  }
+  return h;
+}
+function mountHostPop(){
+  pop.querySelectorAll('[data-act="upload"]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); document.getElementById('photoInput').click(); }); });
+  var cl=pop.querySelector('[data-act="clear"]');
+  if(cl) cl.addEventListener('click',function(){ closePop(); removePhoto(); });
+  pop.querySelectorAll('[data-preset]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); selectPreset(parseInt(el.getAttribute('data-preset'),10)); }); });
+  pop.querySelectorAll('[data-spreset]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); selectServerPreset(serverPresets[parseInt(el.getAttribute('data-spreset'),10)]); }); });
+}
+function openHostPop(el){ openPopAt(el,hostPopHTML(),mountHostPop); }
+
+function fmtPopHTML(){
+  return '<div class="pu-head">Формат кадра</div><div class="pu-row" id="puOr">'+['9:16','16:9','1:1'].map(function(a){ return '<button type="button" data-or="'+a+'" class="'+(a===orientation?'on':'')+'">'+a+'</button>'; }).join('')+'</div>';
+}
+function mountFmtPop(){
+  pop.querySelectorAll('#puOr button').forEach(function(b){ b.addEventListener('click',function(){ setOr(b.getAttribute('data-or')); closePop(); }); });
+}
+
+document.getElementById('hostChip').addEventListener('click',function(){ openHostPop(this); });
+document.getElementById('faceBox').addEventListener('click',function(){ openHostPop(this); });
+document.getElementById('fmtChip').addEventListener('click',function(){ openPopAt(this,fmtPopHTML(),mountFmtPop); });
 
 function setOr(or){
-  orientation = or;
-  document.querySelectorAll('#orientRow button').forEach(function(el){
-    el.classList.toggle('on', el.getAttribute('data-or') === or);
-  });
-  updateBar();
-  saveDraft();
+  orientation=or;
+  document.querySelector('#fmtChip .cn').textContent=or;
+  updateBar(); saveDraft();
 }
 
-var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>';
-var SVG_NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
+var SVG_NOTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V6l8-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="15" cy="16" r="2.5"/></svg>';
 
-function svgToPng(svg, cb){
-  var img = new Image();
-  img.onload = function(){
-    var c = document.createElement('canvas');
-    c.width = 512; c.height = 512;
-    c.getContext('2d').drawImage(img, 0, 0, 512, 512);
-    cb(c.toDataURL('image/jpeg', 0.9).split(',')[1]);
-  };
-  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-}
-
-function renderCast(){
-  var row = document.getElementById('castRow');
-  row.innerHTML = '';
-  var up = document.createElement('div');
-  up.className = 'tile' + (imageData && presetId === null ? ' sel' : '');
-  if(imageData && presetId === null){
-    up.innerHTML = '<img src="data:image/jpeg;base64,' + imageData + '"><button class="x" type="button" onclick="removePhoto()">✕</button><div class="tname">Твоё фото</div>';
-  }else{
-    up.innerHTML = '<span class="add">' + SVG_PLUS + 'Своё фото</span><input type="file" id="photoInput" accept="image/*">';
-  }
-  row.appendChild(up);
-  if(presetId === null){
-    var inp = up.querySelector('#photoInput');
-    if(inp) inp.addEventListener('change', onPhotoFile);
-  }
-  PRESETS.forEach(function(p){
-    var t = document.createElement('div');
-    t.className = 'tile' + (presetId === p.id ? ' sel' : '');
-    t.innerHTML = p.svg + '<div class="tname">' + p.name + '</div>';
-    t.onclick = function(){ selectPreset(p.id); };
-    row.appendChild(t);
-  });
+function svgToPng(svg,cb){
+  var img=new Image();
+  img.onload=function(){ var c=document.createElement('canvas'); c.width=512; c.height=512; c.getContext('2d').drawImage(img,0,0,512,512); cb(c.toDataURL('image/jpeg',0.9).split(',')[1]); };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 
 function selectPreset(id){
-  presetId = id;
+  presetId=id;
   setStatus('Готовим ведущего...');
-  svgToPng(PRESETS[id].svg, function(b64){
-    imageData = b64;
-    renderCast();
-    setStatus('');
-    saveDraft(); updateSteps(); updateBar();
-  });
+  svgToPng(PRESETS[id].svg,function(b64){ imageData=b64; renderFace(); setStatus(''); saveDraft(); updateSteps(); updateBar(); });
 }
-
 function removePhoto(){
-  imageData = null; presetId = null;
-  renderCast();
-  saveDraft(); updateSteps(); updateBar();
+  imageData=null; presetId=null;
+  renderFace(); saveDraft(); updateSteps(); updateBar();
 }
-
-function renderMyRow(){
-  var lbl=document.getElementById('myLbl'),row=document.getElementById('myRow'),hint=document.getElementById('myHint');
-  if(!token){
-    lbl.style.display='none'; row.style.display='none';
-    hint.innerHTML='👤 <a href="/account.html">Войди в аккаунт</a>, чтобы сохранять ведущих и брать их с любого устройства.';
-    return;
-  }
-  lbl.style.display='block'; row.style.display='grid';
-  if(!serverPresets.length){
-    row.innerHTML='';
-    hint.textContent='Сохранённых ведущих пока нет — собери связку выше и нажми 「Сохранить как ведущего」.';
-    return;
-  }
-  hint.textContent='';
-  row.innerHTML='';
-  serverPresets.forEach(function(p){
-    var t=document.createElement('div');
-    t.className='tile';
-    t.innerHTML='<img src="data:image/jpeg;base64,'+p.image+'"><div class="tname">'+p.name+'</div>';
-    t.onclick=function(){ selectServerPreset(p); };
-    row.appendChild(t);
-  });
-}
-
 function selectServerPreset(p){
-  presetId=null;
-  imageData=p.image;
+  presetId=null; imageData=p.image;
   if(p.audio){ audioData=p.audio; audioNameStr=p.audioName||p.name; audioSec=p.seconds||0; }
   if(p.orientation) orientation=p.orientation;
-  document.querySelectorAll('#orientRow button').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-or')===orientation); });
-  renderCast(); renderAudioTile(); renderMyRow(); updateSteps(); updateBar(); saveDraft();
+  document.querySelector('#fmtChip .cn').textContent=orientation;
+  renderFace(); renderVoice(); updateSteps(); updateBar(); saveDraft();
 }
-
 function loadMyPresets(cb){
-  if(!token){ renderMyRow(); if(cb)cb(); return; }
+  if(!token){ if(cb)cb(); return; }
   fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'presets-list',token:token})})
     .then(function(r){return r.json();})
-    .then(function(d){ serverPresets=(d&&d.presets)?d.presets:[]; renderMyRow(); if(cb)cb(); })
-    .catch(function(){ renderMyRow(); if(cb)cb(); });
+    .then(function(d){ serverPresets=(d&&d.presets)?d.presets:[]; if(cb)cb(); })
+    .catch(function(){ if(cb)cb(); });
 }
 
-document.getElementById('savePresetBtn').onclick=function(){
-  if(!token){ location.href='/account.html'; return; }
-  var name=prompt('Имя ведущего (до 40 символов):','Мой ведущий');
-  if(!name) return;
-  setStatus('Сохраняем ведущего...');
-  fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'presets-save',token:token,preset:{name:name,image:imageData,audio:audioData,audioName:audioNameStr,orientation:orientation,seconds:audioSec}})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      setStatus('');
-      if(d.error){ alert(d.error); return; }
-      serverPresets=d.presets||serverPresets;
-      renderMyRow();
-      alert('Ведущий сохранён! Он также доступен в кабинете.');
-    })
-    .catch(function(){ setStatus(''); alert('Не удалось сохранить'); });
-};
-
-function setVoiceMode(m){
-  document.getElementById('vAudio').classList.toggle('on', m==='audio');
-  document.getElementById('vRec').classList.toggle('on', m==='rec');
-  document.getElementById('recBox').classList.toggle('on', m==='rec');
+function renderVoice(){
+  var z=document.getElementById('voiceZone');
+  var h='';
+  if(audioData||localAudioBlobUrl){
+    h+='<div class="achip"><button class="pl" id="vPlay" type="button">▶</button><span class="an">'+(audioNameStr||'озвучка')+'</span><span class="as">'+(audioSec||'')+' сек</span><button class="ax" id="vDel" type="button">✕</button><audio id="vAu" src="'+(audioData||localAudioBlobUrl)+'" preload="metadata" style="display:none"></audio></div>';
+  }else{
+    h+='<div class="vph"><b>Добавь голос.</b> Загрузи файл озвучки или запиши прямо здесь — аватар скажет это твоими словами. Текст + голос появится после запуска.</div>';
+  }
+  h+='<div class="vbtns"><button class="vbtn" id="vAudio" type="button">🎙 Загрузить аудио</button><button class="vbtn" id="vRec" type="button">⏺ Запись с микрофона</button><button class="vbtn soon" id="vText" type="button">✍️ Текст + голос · скоро</button></div>';
+  z.innerHTML=h;
+  document.getElementById('vAudio').onclick=function(){ document.getElementById('audioInput').click(); };
+  document.getElementById('vRec').onclick=function(){ document.getElementById('recBox').classList.toggle('on'); };
+  document.getElementById('vText').onclick=function(){ alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон или кнопкой 「Запись с микрофона」.'); };
+  var pl=document.getElementById('vPlay');
+  if(pl){
+    var au=document.getElementById('vAu');
+    pl.onclick=function(){ if(au.paused){ au.play(); pl.textContent='❚'; } else { au.pause(); pl.textContent='▶'; } };
+    document.getElementById('vDel').onclick=function(){ removeAudio(); };
+  }
 }
-document.getElementById('vAudio').onclick=function(){ setVoiceMode('audio'); };
-document.getElementById('vRec').onclick=function(){ setVoiceMode('rec'); };
+function removeAudio(){
+  audioData=null; audioSec=0; audioNameStr=null;
+  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
+  renderVoice(); saveDraft(); updateSteps(); updateBar();
+}
 
 var mediaRec=null, recChunks=[], recBlob=null, recSec=0, recTimer=null, recUrlLocal=null;
 document.getElementById('recBtn').onclick=function(){
   var b=document.getElementById('recBtn');
-  if(mediaRec && mediaRec.state==='recording'){
-    mediaRec.stop();
-    return;
-  }
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ alert('Браузер не дал доступ к микрофону. Попробуй Chrome или Яндекс.Браузер.'); return; }
+  if(mediaRec&&mediaRec.state==='recording'){ mediaRec.stop(); return; }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ alert('Браузер не дал доступ к микрофону. Попробуй Chrome или Яндекс.Браузер.'); return; }
   navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
     recChunks=[]; recSec=0;
     mediaRec=new MediaRecorder(stream);
-    mediaRec.ondataavailable=function(e){ if(e.data && e.data.size) recChunks.push(e.data); };
+    mediaRec.ondataavailable=function(e){ if(e.data&&e.data.size) recChunks.push(e.data); };
     mediaRec.onstop=function(){
       clearInterval(recTimer);
       stream.getTracks().forEach(function(t){ t.stop(); });
       recBlob=new Blob(recChunks,{type:'audio/webm'});
-      b.classList.remove('recording');
-      b.textContent='⏺ Начать запись';
+      b.classList.remove('recording'); b.textContent='⏺ Начать запись';
       document.getElementById('recTime').textContent='';
       if(recSec>30){ alert('Запись длиннее 30 секунд — обрежь или запиши короче.'); recBlob=null; return; }
       if(recUrlLocal){ URL.revokeObjectURL(recUrlLocal); }
@@ -479,165 +429,104 @@ document.getElementById('recBtn').onclick=function(){
       document.getElementById('recUse').style.display='inline-block';
     };
     mediaRec.start();
-    b.classList.add('recording');
-    b.textContent='⏹ Стоп';
+    b.classList.add('recording'); b.textContent='⏹ Стоп';
     recTimer=setInterval(function(){
       recSec++;
       document.getElementById('recTime').textContent='0:'+(recSec<10?'0':'')+recSec;
-      if(recSec>=30 && mediaRec && mediaRec.state==='recording'){ mediaRec.stop(); }
+      if(recSec>=30&&mediaRec&&mediaRec.state==='recording'){ mediaRec.stop(); }
     },1000);
   }).catch(function(){ alert('Не удалось включить микрофон: проверь разрешение сайту в настройках браузера.'); });
 };
-
 document.getElementById('recUse').onclick=function(){
-  if(!recBlob){ return; }
-  var f=new File([recBlob], 'rec-' + Date.now() + '.webm', {type:'audio/webm'});
+  if(!recBlob) return;
+  var f=new File([recBlob],'rec-'+Date.now()+'.webm',{type:'audio/webm'});
   if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); }
   localAudioBlobUrl=URL.createObjectURL(f);
   audioNameStr='Запись с микрофона';
-  audioSec=Math.min(30, Math.max(1, recSec||1));
-  renderAudioTile();
-  setVoiceMode('audio');
+  audioSec=Math.min(30,Math.max(1,recSec||1));
+  renderVoice();
+  document.getElementById('recBox').classList.remove('on');
   if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и нажми 「использовать」 снова.'); return; }
   setStatus('Загружаем запись...');
-  window.blobUpload(f.name, f, { access:'public' })
+  window.blobUpload(f.name,f,{access:'public'})
     .then(function(blob){
       audioData=blob.url;
       if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
-      renderAudioTile();
-      setStatus('');
-      saveDraft(); updateSteps(); updateBar();
+      renderVoice(); setStatus(''); saveDraft(); updateSteps(); updateBar();
     })
-    .catch(function(err){
-      setStatus('');
-      audioSec=0;
-      alert('Не удалось загрузить запись: ' + err.message);
-      renderAudioTile(); updateSteps(); updateBar();
-    });
+    .catch(function(err){ setStatus(''); audioSec=0; alert('Не удалось загрузить запись: '+err.message); renderVoice(); updateSteps(); updateBar(); });
 };
 
-function renderAudioTile(){
-  var t = document.getElementById('audioTile');
-  var src = audioData || localAudioBlobUrl;
-  if(src){
-    t.innerHTML = '<div class="audiotile">' + SVG_NOTE + '</div>'
-      + '<span class="playbadge"><i>▶</i></span>'
-      + '<div class="tname">' + (audioNameStr || 'озвучка') + '</div>'
-      + '<audio src="' + src + '" preload="metadata" style="display:none"></audio>'
-      + '<button class="x" type="button" onclick="removeAudio()">✕</button>';
-    var au = t.querySelector('audio');
-    var pb = t.querySelector('.playbadge');
-    pb.addEventListener('click', function(){
-      if(au.paused){ au.play(); pb.querySelector('i').textContent = '❚❚'; }
-      else { au.pause(); pb.querySelector('i').textContent = '▶'; }
-    });
-  }else{
-    t.innerHTML = '<span class="add">' + SVG_PLUS + 'Выбрать аудио</span><input type="file" id="audioInput" accept="audio/*">';
-    document.getElementById('audioInput').addEventListener('change', onAudioFile);
-  }
-  var info = document.getElementById('audioInfo');
-  info.textContent = audioSec ? ('⏱ Твоя озвучка: ' + audioSec + ' сек — столько же будет длиться видео. Цена фиксированная: 499 ₽.') : '';
-}
-
-function removeAudio(){
-  audioData = null; audioSec = 0; audioNameStr = null;
-  if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
-  renderAudioTile();
-  saveDraft(); updateSteps(); updateBar();
-}
-
-document.getElementById('vText').onclick=function(){
-  alert('Озвучка текстом с выбором голоса откроется сразу после подключения голосовых моделей. Сейчас запиши голос на телефон или прямо здесь кнопкой 「Запись с микрофона」 — аватар скажет твоими словами.');
-};
-
-function shrink(dataUrl, cb){
-  var img = new Image();
-  img.onload = function(){
-    var max = 1024, w = img.width, h = img.height;
-    if(w > max || h > max){ var k = Math.min(max/w, max/h); w = Math.round(w*k); h = Math.round(h*k); }
-    var c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    c.getContext('2d').drawImage(img, 0, 0, w, h);
-    cb(c.toDataURL('image/jpeg', 0.85));
+function shrink(dataUrl,cb){
+  var img=new Image();
+  img.onload=function(){
+    var max=1024,w=img.width,h=img.height;
+    if(w>max||h>max){ var k=Math.min(max/w,max/h); w=Math.round(w*k); h=Math.round(h*k); }
+    var c=document.createElement('canvas'); c.width=w; c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    cb(c.toDataURL('image/jpeg',0.85));
   };
-  img.src = dataUrl;
+  img.src=dataUrl;
 }
-
-function onPhotoFile(e){
-  var f = e.target.files[0]; if(!f) return;
-  if(f.type.indexOf('image/') !== 0){ alert('Нужно изображение JPG или PNG'); return; }
-  if(f.size > 10*1024*1024){ alert('Файл больше 10 МБ. Выбери фото поменьше.'); return; }
+document.getElementById('photoInput').addEventListener('change',function(e){
+  var f=e.target.files[0]; if(!f) return;
+  if(f.type.indexOf('image/')!==0){ alert('Нужно изображение JPG или PNG'); return; }
+  if(f.size>10*1024*1024){ alert('Файл больше 10 МБ. Выбери фото поменьше.'); return; }
   setStatus('Обрабатываем фото...');
-  var reader = new FileReader();
-  reader.onload = function(){
-    shrink(reader.result, function(d){
-      imageData = d.split(',')[1];
-      presetId = null;
-      renderCast();
-      setStatus('');
-      saveDraft(); updateSteps(); updateBar();
+  var reader=new FileReader();
+  reader.onload=function(){
+    shrink(reader.result,function(d){
+      imageData=d.split(',')[1]; presetId=null;
+      renderFace(); setStatus(''); saveDraft(); updateSteps(); updateBar();
     });
   };
   reader.readAsDataURL(f);
-}
+  e.target.value='';
+});
 
-function probeAudio(f, maxSec, cb){
-  var url = URL.createObjectURL(f);
-  var a = new Audio();
-  a.src = url;
-  a.addEventListener('loadedmetadata', function(){
-    var d = a.duration;
-    URL.revokeObjectURL(url);
-    if(d > maxSec){ alert('Аудио длиннее ' + maxSec + ' секунд. Выбери файл короче.'); return; }
-    cb(d);
-  });
-  a.addEventListener('error', function(){ URL.revokeObjectURL(url); alert('Не удалось прочитать аудиофайл'); });
+function probeAudio(f,maxSec,cb){
+  var url=URL.createObjectURL(f);
+  var a=new Audio(); a.src=url;
+  a.addEventListener('loadedmetadata',function(){ var d=a.duration; URL.revokeObjectURL(url); if(d>maxSec){ alert('Аудио длиннее '+maxSec+' секунд. Выбери файл короче.'); return; } cb(d); });
+  a.addEventListener('error',function(){ URL.revokeObjectURL(url); alert('Не удалось прочитать аудиофайл'); });
 }
-
-function safeFileName(prefix, f, defExt){
-  var m = (f.name || '').match(/\.[a-z0-9]+$/i);
-  var ext = m ? m[0].toLowerCase() : defExt;
-  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
+function safeFileName(prefix,f,defExt){
+  var m=(f.name||'').match(/\.[a-z0-9]+$/i);
+  var ext=m?m[0].toLowerCase():defExt;
+  return prefix+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+ext;
 }
-
-function onAudioFile(e){
-  var f = e.target.files[0]; if(!f) return;
-  if(f.type.indexOf('audio/') !== 0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
-  if(f.size > 5*1024*1024){ alert('Аудио больше 5 МБ. Выбери файл короче.'); return; }
-  probeAudio(f, 30, function(dur){
+document.getElementById('audioInput').addEventListener('change',function(e){
+  var f=e.target.files[0]; if(!f) return;
+  if(f.type.indexOf('audio/')!==0){ alert('Нужно аудио в формате MP3 или WAV'); return; }
+  if(f.size>5*1024*1024){ alert('Аудио больше 5 МБ. Выбери файл короче.'); return; }
+  probeAudio(f,30,function(dur){
     if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); }
-    localAudioBlobUrl = URL.createObjectURL(f);
-    audioNameStr = f.name;
-    renderAudioTile();
+    localAudioBlobUrl=URL.createObjectURL(f);
+    audioNameStr=f.name;
+    renderVoice();
     if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
     setStatus('Загружаем аудио...');
-    window.blobUpload(safeFileName('avatar-audio', f, '.mp3'), f, { access: 'public' })
+    window.blobUpload(safeFileName('avatar-audio',f,'.mp3'),f,{access:'public'})
       .then(function(blob){
-        audioData = blob.url;
-        audioSec = Math.min(30, Math.max(1, Math.ceil(dur)));
-        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl = null; }
-        renderAudioTile();
-        setStatus('');
-        saveDraft(); updateSteps(); updateBar();
+        audioData=blob.url;
+        audioSec=Math.min(30,Math.max(1,Math.ceil(dur)));
+        if(localAudioBlobUrl){ URL.revokeObjectURL(localAudioBlobUrl); localAudioBlobUrl=null; }
+        renderVoice(); setStatus(''); saveDraft(); updateSteps(); updateBar();
       })
-      .catch(function(err){
-        setStatus('');
-        alert('Не удалось загрузить аудио: ' + err.message);
-      });
+      .catch(function(err){ setStatus(''); alert('Не удалось загрузить аудио: '+err.message); });
   });
-}
+  e.target.value='';
+});
 
 function histLoad(){ try{ return JSON.parse(localStorage.getItem('seedgen_avatar_history')||'[]'); }catch(e){ return []; } }
-function histSave(l){ try{ localStorage.setItem('seedgen_avatar_history', JSON.stringify(l.slice(0,10))); }catch(e){} }
+function histSave(l){ try{ localStorage.setItem('seedgen_avatar_history',JSON.stringify(l.slice(0,10))); }catch(e){} }
 function histRender(){
   var l=histLoad();
   var box=document.getElementById('histList');
   document.getElementById('histCount').textContent=l.length?('всего '+l.length):'';
-  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые видео аватара будут собираться здесь (в этом браузере). После переезда история станет общей для всех твоих устройств.</div>'; return; }
+  if(!l.length){ box.innerHTML='<div class="hempty">Пока пусто. Готовые аватар-ролики будут собираться здесь (в этом браузере).</div>'; return; }
   box.innerHTML=l.map(function(h,i){
-    return '<div class="hitem"><div style="flex:1;min-width:0"><div class="ht">'+(h.name||'аватар')+'</div><div class="hd">'+h.date+'</div></div>'
-      + '<a href="'+h.url+'" target="_blank" rel="noopener">▶ скачать</a>'
-      + '<button class="del" data-i="'+i+'">✕</button></div>';
+    return '<div class="rcard"><video src="'+h.url+'" muted preload="metadata" playsinline></video><div class="rc"><div class="rn">'+(h.name||'аватар')+'</div><div class="rd">'+h.date+'</div><a href="'+h.url+'" target="_blank" rel="noopener">⬇ скачать</a> <button class="del" data-i="'+i+'" style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:.72rem">✕</button></div></div>';
   }).join('');
   box.querySelectorAll('.del').forEach(function(b){
     b.onclick=function(){ var l2=histLoad(); l2.splice(parseInt(b.getAttribute('data-i'),10),1); histSave(l2); histRender(); };
@@ -649,182 +538,127 @@ function histPush(url,name){
   histSave(l); histRender();
 }
 
-function checkUrlAlive(url, cb){
+function checkUrlAlive(url,cb){
   if(!url){ cb(false); return; }
-  fetch(url, {method: 'HEAD', mode: 'no-cors'}).then(function(){ cb(true); }).catch(function(){ cb(false); });
+  fetch(url,{method:'HEAD',mode:'no-cors'}).then(function(){ cb(true); }).catch(function(){ cb(false); });
 }
 
 function saveDraft(){
   if(restoring) return;
   try{
-    localStorage.setItem('seedgen_avatar_draft', JSON.stringify({
-      image: imageData, orientation: orientation, seconds: audioSec, preset: presetId,
-      audio: audioData, audioName: audioNameStr, savedAt: Date.now()
+    localStorage.setItem('seedgen_avatar_draft',JSON.stringify({
+      image:imageData,orientation:orientation,seconds:audioSec,preset:presetId,
+      audio:audioData,audioName:audioNameStr,savedAt:Date.now()
     }));
   }catch(e){}
 }
-
 (function restoreDraft(){
   try{
-    var s = JSON.parse(localStorage.getItem('seedgen_avatar_draft') || 'null');
+    var s=JSON.parse(localStorage.getItem('seedgen_avatar_draft')||'null');
     if(!s) return;
-    restoring = true;
-    imageData = s.image || null;
-    presetId = (s.preset === undefined || s.preset === null) ? null : s.preset;
-    if(s.orientation) orientation = s.orientation;
-    audioSec = s.seconds || 0;
-    audioNameStr = s.audioName || null;
-    document.querySelectorAll('#orientRow button').forEach(function(el){
-      el.classList.toggle('on', el.getAttribute('data-or') === orientation);
-    });
-    restoring = false;
-    renderCast();
-    renderAudioTile();
-    updateSteps(); updateBar();
+    restoring=true;
+    imageData=s.image||null;
+    presetId=(s.preset===undefined||s.preset===null)?null:s.preset;
+    if(s.orientation) orientation=s.orientation;
+    audioSec=s.seconds||0;
+    audioNameStr=s.audioName||null;
+    restoring=false;
+    renderFace(); renderVoice(); updateSteps(); updateBar();
+    document.querySelector('#fmtChip .cn').textContent=orientation;
     if(s.audio){
-      checkUrlAlive(s.audio, function(alive){
-        if(alive){
-          audioData = s.audio;
-          renderAudioTile();
-          updateSteps(); updateBar();
-        }else{
-          audioData = null; audioSec = 0;
-          renderAudioTile();
-          setStatus('⚠️ Черновик озвучки устарел — прикрепи аудио заново.');
-          updateSteps(); updateBar();
-        }
+      checkUrlAlive(s.audio,function(alive){
+        if(alive){ audioData=s.audio; renderVoice(); updateSteps(); updateBar(); }
+        else{ audioData=null; audioSec=0; renderVoice(); setStatus('⚠️ Черновик озвучки устарел — прикрепи аудио заново.'); updateSteps(); updateBar(); }
       });
     }
-  }catch(e){ restoring = false; renderCast(); updateSteps(); updateBar(); }
+  }catch(e){ restoring=false; renderFace(); renderVoice(); updateSteps(); updateBar(); }
 })();
 
 function callGenerate(pid){
-  stage = 'gen';
+  stage='gen';
   updateSteps(); updateBar();
   setStatus('Оживляем аватар... 1–5 минут ⏳');
-  fetch('/api/generate', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'avatar', paymentId:pid, image:imageData, audio:audioData, seconds:audioSec, aspect:orientation})})
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'avatar',paymentId:pid,image:imageData,audio:audioData,seconds:audioSec,aspect:orientation})})
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(d.error){ throw new Error(d.error); }
-      try{ localStorage.setItem('seedgen_avatar_task_' + pid, d.taskId); }catch(e){}
+      try{ localStorage.setItem('seedgen_avatar_task_'+pid,d.taskId); }catch(e){}
       poll(d.taskId);
     })
-    .catch(function(e){
-      setStatus('Ошибка: ' + e.message);
-      stage = 'setup';
-      updateSteps(); updateBar();
-    });
+    .catch(function(e){ setStatus('Ошибка: '+e.message); stage='setup'; updateSteps(); updateBar(); });
 }
-
 function poll(taskId){
-  var timer = setInterval(function(){
-    fetch('/api/status?taskId=' + encodeURIComponent(taskId))
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
       .then(function(r){ return r.json(); })
       .then(function(d){
-        if(d.status === 'succeeded'){
+        if(d.status==='succeeded'){
           clearInterval(timer);
-          document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + d.videoUrl + '"></video></div>';
+          document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+d.videoUrl+'"></video></div>';
           setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
-          histPush(d.videoUrl, audioNameStr || 'аватар');
-          stage = 'done';
-          updateSteps(); updateBar();
+          histPush(d.videoUrl,audioNameStr||'аватар');
+          stage='done'; updateSteps(); updateBar();
           try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
-        }else if(d.status === 'failed'){
+        }else if(d.status==='failed'){
           clearInterval(timer);
-          setStatus('Ошибка: ' + (d.error || 'попробуй другое фото и аудио'));
-          stage = 'setup';
-          updateSteps(); updateBar();
+          setStatus('Ошибка: '+(d.error||'попробуй другое фото и аудио'));
+          stage='setup'; updateSteps(); updateBar();
         }else{
           setStatus('Оживляем аватар... 1–5 минут ⏳');
         }
       })
       .catch(function(){});
-  }, 5000);
+  },5000);
 }
 
-btn.addEventListener('click', function(){
-  if(paidSeen && activePaymentId && imageData && audioData && stage !== 'gen' && stage !== 'done'){
-    callGenerate(activePaymentId);
-    return;
-  }
+btn.addEventListener('click',function(){
+  if(paidSeen&&activePaymentId&&imageData&&audioData&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
   if(!imageData){ alert('Выбери ведущего или загрузи своё фото'); return; }
-  if(!audioData){ alert('Сначала загрузи озвучку (или обнови черновик — возможно, файл устарел)'); return; }
+  if(!audioData){ alert('Сначала добавь озвучку: файл или запись с микрофона'); return; }
   if(!document.getElementById('agree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
-  btn.disabled = true;
+  btn.disabled=true;
   setStatus('Создаём платёж...');
   saveDraft();
-  fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({service:'avatar'})})
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'avatar'})})
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.error){ throw new Error(data.error); }
-      activePaymentId = data.paymentId;
+      activePaymentId=data.paymentId;
       saveDraft();
-      window.location.href = data.confirmationUrl;
+      window.location.href=data.confirmationUrl;
     })
-    .catch(function(e){
-      setStatus('Ошибка: ' + e.message);
-      btn.disabled = false;
-    });
+    .catch(function(e){ setStatus('Ошибка: '+e.message); btn.disabled=false; });
 });
 
 (function(){
-  var pid = new URLSearchParams(window.location.search).get('paymentId');
+  var pid=new URLSearchParams(window.location.search).get('paymentId');
   if(!pid) return;
-  activePaymentId = pid;
-  paidSeen = true;
-  var savedTask = localStorage.getItem('seedgen_avatar_task_' + pid);
-  if(savedTask){
-    stage = 'gen';
-    updateSteps(); updateBar();
-    setStatus('Оживляем аватар... 1–5 минут ⏳');
-    poll(savedTask);
-    return;
-  }
+  activePaymentId=pid; paidSeen=true;
+  var savedTask=localStorage.getItem('seedgen_avatar_task_'+pid);
+  if(savedTask){ stage='gen'; updateSteps(); updateBar(); setStatus('Оживляем аватар... 1–5 минут ⏳'); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
-  fetch('/api/check-payment?paymentId=' + encodeURIComponent(pid))
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
     .then(function(data){
       if(data.paid){
         saveDraft();
-        if(imageData && audioData){
-          setStatus('Оплата прошла! Запускаем генерацию...');
-          callGenerate(pid);
-        }else{
-          setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку ещё раз.');
-          updateSteps(); updateBar();
-        }
+        if(imageData&&audioData){ setStatus('Оплата прошла! Запускаем генерацию...'); callGenerate(pid); }
+        else{ setStatus('Оплата прошла! ✅ Выбери ведущего и озвучку — и нажми кнопку ещё раз.'); updateSteps(); updateBar(); }
       }else{
-        paidSeen = false;
-        activePaymentId = null;
+        paidSeen=false; activePaymentId=null;
         setStatus('Оплата не завершена. Фото и формат сохранены — можешь оплатить ещё раз.');
         updateSteps(); updateBar();
       }
     })
-    .catch(function(e){
-      paidSeen = false;
-      setStatus('Ошибка: ' + e.message);
-      updateSteps(); updateBar();
-    });
+    .catch(function(e){ paidSeen=false; setStatus('Ошибка: '+e.message); updateSteps(); updateBar(); });
 })();
 
-(function(){
-  var want = new URLSearchParams(window.location.search).get('preset');
-  if(want){
-    loadMyPresets(function(){
-      for(var i=0;i<serverPresets.length;i++){
-        if(serverPresets[i].id===want){ selectServerPreset(serverPresets[i]); break; }
-      }
-    });
-  }else{
-    loadMyPresets();
-  }
-})();
-
-renderCast();
-renderAudioTile();
+renderFace();
+renderVoice();
 histRender();
 updateSteps();
 updateBar();
+loadMyPresets();
 </script>
 <script src="/help-widget.js"></script>
 <script src="/avatar-fix.js"></script>
