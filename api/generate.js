@@ -1,5 +1,37 @@
 import { readLedger, writeLedger, getBalance, estimateCost } from '../lib/ledger.js';
 
+// === НОВАЯ ЛОГИКА: МАППИНГ МОДЕЛЕЙ ===
+const MODELS = {
+  'wan-3.0': {
+    name: 'Wan 3.0',
+    basePrice: 99,
+    perSecond: 10,
+    maxDuration: 30,
+    apiModel: 'wan-3.0'
+  },
+  'kling-standard': {
+    name: 'Kling',
+    basePrice: 129,
+    perSecond: 15,
+    maxDuration: 10,
+    apiModel: 'kling-video'
+  },
+  'seedance-2.0': {
+    name: 'Seedance 2.0',
+    basePrice: 129,
+    perSecond: 15,
+    maxDuration: 15,
+    apiModel: 'seedance-2-0'
+  },
+  'seedance-2.5': {
+    name: 'Seedance 2.5',
+    basePrice: 199,
+    perSecond: 30,
+    maxDuration: 30,
+    apiModel: 'seedance-2-5'
+  }
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -11,7 +43,12 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
-  const BASE = { text2video: 199, motion: 199, lipsync: 199, cartoon: 299, animate: 299 };
+  // === ПРИНИМАЕМ МОДЕЛЬ И РЕЖИМ ===
+  const modelKey = body.model || 'seedance-2.5';
+  const enhancePrompt = body.enhancePrompt !== false;
+  const selectedModel = MODELS[modelKey] || MODELS['seedance-2.5'];
+
+  const BASE = { motion: 199, lipsync: 199, cartoon: 299, animate: 299 };
   const PER_SEC = 30;
   const QUALITY_SURCHARGE = { '480p': 0, '720p': 200, '1080p': 300 };
   const SEEDANCE_SERVICES = { text2video: true, animate: true, cartoon: true };
@@ -43,10 +80,16 @@ export default async function handler(req, res) {
 
   let seconds = parseInt(body.seconds, 10);
   let expectedPrice;
+  
   if (service === 'avatar') {
     expectedPrice = 499;
     if (!seconds || seconds < 1) seconds = 1;
     if (seconds > 30) seconds = 30;
+  } else if (service === 'text2video') {
+    // === ЦЕНА ЗАВИСИТ ОТ МОДЕЛИ ===
+    if (!seconds || seconds < 5) seconds = 5;
+    if (seconds > selectedModel.maxDuration) seconds = selectedModel.maxDuration;
+    expectedPrice = selectedModel.basePrice + (seconds - 5) * selectedModel.perSecond + surcharge;
   } else if (BASE[service]) {
     if (!seconds || seconds < 5) seconds = 5;
     if (seconds > 30) seconds = 30;
@@ -147,6 +190,72 @@ export default async function handler(req, res) {
     if (refAud.error) return res.status(400).json({ error: 'Звук-референс: ' + refAud.error });
   }
 
+  // === НОВАЯ ФУНКЦИЯ: ПРОМТ-МАСТЕР ===
+  async function enhancePromptText(text, nImages, hasVideo, hasAudio) {
+    // Если режим "Продвинутый" — только переводим (если русский) и добавляем роли
+    // Если режим "Простой" — переводим + улучшаем через LLM
+    
+    const hasCyrillic = /[а-яА-ЯёЁ]/.test(text);
+    
+    if (!enhancePrompt) {
+      // Продвинутый режим: только перевод + роли
+      let result = text;
+      if (hasCyrillic) {
+        // Простой перевод через Gemini
+        const translatePrompt = 'Translate this video generation prompt to English, keep it concise:\n\n' + text;
+        try {
+          const r = await fetch('https://api.cometapi.com/v1beta/models/gemini-2.0-flash:generateContent', {
+            method: 'POST',
+            headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: translatePrompt }] }],
+              generationConfig: { responseModalities: ['TEXT'] }
+            })
+          });
+          const data = await r.json();
+          if (r.ok && data.candidates && data.candidates[0]) {
+            const parts = data.candidates[0].content && data.candidates[0].content.parts;
+            if (parts && parts[0] && parts[0].text) {
+              result = parts[0].text.trim();
+            }
+          }
+        } catch (e) {
+          // Если перевод не удался — используем оригинал
+        }
+      }
+      return withRoles(result, nImages, hasVideo, hasAudio);
+    }
+    
+    // Простой режим: улучшаем через LLM
+    const enhanceSystemPrompt = `You are a professional video generation prompt engineer. Transform the user's simple description into a detailed cinematic English prompt. Add: camera movement, lighting, atmosphere, visual details. Keep it under 100 words. Output ONLY the enhanced prompt, no explanations.
+
+User's description: ${text}
+
+References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''}${hasAudio ? ', 1 audio reference' : ''}`;
+
+    try {
+      const r = await fetch('https://api.cometapi.com/v1beta/models/gemini-2.0-flash:generateContent', {
+        method: 'POST',
+        headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: enhanceSystemPrompt }] }],
+          generationConfig: { responseModalities: ['TEXT'] }
+        })
+      });
+      const data = await r.json();
+      if (r.ok && data.candidates && data.candidates[0]) {
+        const parts = data.candidates[0].content && data.candidates[0].content.parts;
+        if (parts && parts[0] && parts[0].text) {
+          return withRoles(parts[0].text.trim(), nImages, hasVideo, hasAudio);
+        }
+      }
+    } catch (e) {
+      // Если улучшение не удалось — используем оригинал
+    }
+    
+    return withRoles(text, nImages, hasVideo, hasAudio);
+  }
+
   function withRoles(p, nImages, hasVideo, hasAudio) {
     if (p.indexOf('@Image') !== -1 || p.indexOf('@Video') !== -1 || p.indexOf('@Audio') !== -1) return p;
     var parts = [];
@@ -203,7 +312,8 @@ export default async function handler(req, res) {
     } else if (service === 'animate') {
       var images2 = [img].concat(refs);
       form.append('model', model);
-      form.append('prompt', withRoles(prompt || 'The scene comes alive: natural smooth motion, gentle camera movement', images2.length, !!refVid, !!refAud));
+      const enhancedPrompt = await enhancePromptText(prompt || 'The scene comes alive: natural smooth motion, gentle camera movement', images2.length, !!refVid, !!refAud);
+      form.append('prompt', enhancedPrompt);
       for (var ai = 0; ai < images2.length; ai++) {
         form.append('input_reference', new Blob([images2[ai].buffer], { type: images2[ai].mime }), 'ref' + ai + '.jpg');
       }
@@ -219,8 +329,10 @@ export default async function handler(req, res) {
       form.append('video', new Blob([vid.buffer], { type: vid.mime }), 'video.mp4');
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
     } else {
-      form.append('model', model);
-      form.append('prompt', withRoles(prompt, refs.length, !!refVid, !!refAud));
+      // === НОВАЯ ЛОГИКА: ИСПОЛЬЗУЕМ ВЫБРАННУЮ МОДЕЛЬ ===
+      form.append('model', selectedModel.apiModel);
+      const enhancedPrompt = await enhancePromptText(prompt, refs.length, !!refVid, !!refAud);
+      form.append('prompt', enhancedPrompt);
       for (var ti = 0; ti < refs.length; ti++) {
         form.append('input_reference', new Blob([refs[ti].buffer], { type: refs[ti].mime }), 'ref' + ti + '.jpg');
       }
@@ -244,6 +356,9 @@ export default async function handler(req, res) {
       r2.service = service;
       r2.seconds = seconds;
       r2.quality = quality;
+      // === СОХРАНЯЕМ МОДЕЛЬ И РЕЖИМ ===
+      r2.model = modelKey;
+      r2.enhancePrompt = enhancePrompt;
       if (paidAmount !== null) r2.amount = paidAmount;
       r2.upscale = quality === '1080p';
       r2.createdAt = Date.now();
