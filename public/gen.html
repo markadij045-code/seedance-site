@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Создать видео — Ёшкин кот</title>
 <meta property="og:title" content="Создать видео — текст в кадры">
-<meta property="og:description" content="Опиши сцену словами — кот соберёт кадры. Добавь референсы, выбери стиль и формат.">
+<meta property="og:description" content="Опиши сцену словами — кот соберёт кадры. Добавь референсы, выбери модель, стиль и формат.">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.yoshkin-kot.online/gen.html">
@@ -33,7 +33,7 @@
 .pagehead p{color:var(--muted);font-size:.92rem;margin:0}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:600}
-.pstep i{width:18px;height:18px;border-radius:50%;;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
+.pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
@@ -56,6 +56,7 @@
 .pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
 .pchip:hover{background:rgba(255,255,255,.06);color:#fff}
 .pchip.mode{color:var(--lime);font-weight:600}
+.pchip.at{font-weight:700;font-size:.95rem}
 .priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;margin-left:auto;display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-right:6px}
 .priceBox .coin{color:var(--lime);display:grid;place-items:center}
 .priceBox .coin .msv{width:16px;height:16px}
@@ -193,7 +194,7 @@
 <main class="wrap">
   <div class="pagehead">
     <h1>Какое видео создадим?</h1>
-    <p>Опиши сцену словами — кот соберёт кадры. Кружком 「+」 добавь референсы: фото стиля или персонажа</p>
+    <p>Опиши сцену словами — кот соберёт кадры. Кружком 「+」 добавь референсы и пометь их через @</p>
   </div>
 
   <div class="psteps">
@@ -204,20 +205,23 @@
 
   <div class="studio" id="stage">
     <div class="pwrap">
-      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену: кто, где, что делает, настроение и свет. Пример: 「рыжий кот в шарфе идёт по заснеженной улице вечером, тёплый свет фонарей, снег кружится」. Кружком + добавь референсы — фото стиля или персонажа." spellcheck="false"></div>
+      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену: кто, где, что делает, настроение и свет. Пример: 「рыжий кот в шарфе идёт по заснеженной улице вечером, тёплый свет фонарей, снег кружится」. Кружком + добавь референсы, знаком @ пометь, кто из них герой." spellcheck="false"></div>
     </div>
     <div class="studio-bar">
-      <button class="pchip mode" id="pcStyle" type="button">🎬 Реалистичный ⌄</button>
+      <button class="pchip mode" id="pcModel" type="button">⚙ Seedance 2.5 ⌄</button>
+      <button class="pchip" id="pcEnh" type="button">✨ Простой режим ⌄</button>
       <button class="pchip" id="pcRef" type="button">🖼 Референсы (0) ⌄</button>
-      <button class="pchip" id="pcFmt" type="button">📱 9:16 ⌄</button>
-      <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">499</span></div>
+      <button class="pchip" id="pcFQ" type="button">📱 16:9 · 480p ⌄</button>
+      <button class="pchip" id="pcDur" type="button">⏱ 5 сек ⌄</button>
+      <button class="pchip at" id="pcAt" type="button" title="Вставить упоминание референса">@</button>
+      <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">199</span></div>
       <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
     </div>
     <div class="popup" id="popMenu"></div>
     <div class="refprev" id="refPrev"></div>
   </div>
 
-  <div class="rolehint" style="text-align:center">🛡 Референсы загружай свои или с согласия человека. Пресеты-стили — иллюстрации, их можно свободно. · <a href="/examples.html">Смотреть примеры →</a></div>
+  <div class="rolehint" style="text-align:center">💡 Сначала загрузи референсы кружком 「+」, потом опиши сцену, упоминая их через @Image1, @Image2 — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры →</a></div>
 
   <div id="status"></div>
 
@@ -227,7 +231,7 @@
       <div class="ph">
         <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></div>
         <div class="ph-t">Здесь появится твоё видео</div>
-        <div class="ph-s">Длина и кадры = твой промпт и стиль</div>
+        <div class="ph-s">Кадры = твой промпт, модель и стиль</div>
       </div>
     </div>
   </section>
@@ -281,7 +285,7 @@
       <div class="shop-rate">1 🐭 = 1 ₽ · честный курс поставщика</div>
       <div class="shop-bal">В кошельке: <b>— 🐭</b><span class="soonbadge">баланс появится после запуска</span></div>
       <div class="packs">
-        <div class="pack"><div class="pn">100 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 100 ₽</div><div class="gift">хватит на видео</div></div>
+        <div class="pack"><div class="pn">100 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 100 ₽</div><div class="gift">хватит на черновик</div></div>
         <div class="pack"><div class="pn">500 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 500 ₽</div><div class="gift">+25 🐭 в подарок</div></div>
         <div class="pack"><div class="pn">1000 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 1000 ₽</div><div class="gift">+100 🐭 в подарок</div></div>
       </div>
