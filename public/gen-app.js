@@ -118,7 +118,7 @@ function modelPopHTML(){
   var h='<div class="pu-head">Модель генерации</div>';
   Object.keys(MODELS).forEach(function(k){
     var m=MODELS[k];
-    h+='<div class="pu-item" data-model="'+k+'"><span class="nm">'+m.name+' · от '+m.base+' 🐭 · до '+m.max+' сек</span>'+(modelKey===k?'<span class="chk">✓</span>':'')+'</div>';
+    h+='<div class="pu-item" data-model="'+k+'"><span class="nc"><span class="nm">'+m.name+'</span><span class="pu-desc">от '+m.base+' 🐭 · до '+m.max+' сек за дубль</span></span>'+(modelKey===k?'<span class="chk">✓</span>':'')+'</div>';
   });
   return h;
 }
@@ -133,9 +133,9 @@ function mountModelPop(){
 }
 
 function enhPopHTML(){
-  return '<div class="pu-head">Режим промпта</div>'
-    +'<div class="pu-item" data-enh="1"><span class="nm">✨ Простой — кот допишет детали сам</span>'+(enhance?'<span class="chk">✓</span>':'')+'</div>'
-    +'<div class="pu-item" data-enh="0"><span class="nm">🎛 Продвинутый — твой текст как есть</span>'+(!enhance?'<span class="chk">✓</span>':'')+'</div>';
+  return '<div class="pu-head">Режим промпта — как кот читает твой текст</div>'
+    +'<div class="pu-item" data-enh="1"><span class="mi">✨</span><span class="nc"><span class="nm">Простой режим</span><span class="pu-desc">Пиши своими словами, как говоришь другу. Кот сам переведёт на киноязык: добавит камеру, свет, движение и детали. Выбери, если пробуешь впервые.</span></span>'+(enhance?'<span class="chk">✓</span>':'')+'</div>'
+    +'<div class="pu-item" data-enh="0"><span class="mi">🎛</span><span class="nc"><span class="nm">Продвинутый режим</span><span class="pu-desc">Твой текст уходит в нейросеть дословно, без правок и улучшений. Выбери, если уже умеешь писать промпты сам и хочешь полный контроль.</span></span>'+(!enhance?'<span class="chk">✓</span>':'')+'</div>';
 }
 function mountEnhPop(){
   pop.querySelectorAll('[data-enh]').forEach(function(el){
