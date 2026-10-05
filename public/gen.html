@@ -44,17 +44,34 @@
 .promptBox::-webkit-scrollbar-track{background:transparent}
 .promptBox::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
 .promptBox::before{content:none}
-.promptBox:not(:has(.reftile))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.9rem}
-.reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg);cursor:pointer}
-.reftile:nth-child(even){transform:rotate(1.5deg)}
+.promptBox:not(:has(.reftile)):not(:has(.tile-stack))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.9rem}
+.reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);cursor:pointer}
 .reftile img{width:100%;height:100%;object-fit:cover}
-.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0;z-index:3}
+.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0;z-index:5}
 .reftile:hover .x{display:grid}
 .addbadge{display:inline-block;vertical-align:middle;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#e5e7eb;text-align:center;line-height:30px;font-size:1rem;cursor:pointer;margin:0 8px 6px 0}
 .addbadge:hover{background:rgba(255,255,255,.26)}
+.tile-stack{display:inline-block;vertical-align:middle;position:relative;width:64px;height:64px;margin:0 10px 6px 0;cursor:pointer}
+.tile-stack .reftile{position:absolute;top:0;left:0;margin:0;transition:transform .25s ease;transform-origin:center}
+.tile-stack .reftile:nth-child(1){transform:rotate(-4deg);z-index:4}
+.tile-stack .reftile:nth-child(2){transform:rotate(2deg) translate(6px,2px);z-index:3}
+.tile-stack .reftile:nth-child(3){transform:rotate(-2deg) translate(12px,4px);z-index:2}
+.tile-stack .reftile:nth-child(4){transform:rotate(4deg) translate(18px,6px);z-index:1}
+.tile-stack .reftile:nth-child(n+5){transform:rotate(0deg) translate(24px,8px);z-index:0}
+.tile-stack:hover .reftile{transform:rotate(0deg)}
+.tile-stack:hover .reftile:nth-child(1){transform:rotate(0) translate(0,0)}
+.tile-stack:hover .reftile:nth-child(2){transform:rotate(0) translate(72px,0)}
+.tile-stack:hover .reftile:nth-child(3){transform:rotate(0) translate(144px,0)}
+.tile-stack:hover .reftile:nth-child(4){transform:rotate(0) translate(216px,0)}
+.tile-stack:hover .reftile:nth-child(n+5){transform:rotate(0) translate(288px,0)}
 .refprev{position:absolute;z-index:130;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:8px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;width:240px}
 .refprev.open{display:block}
 .refprev img{width:100%;border-radius:8px;display:block;background:#000}
+.mention{display:inline-flex;align-items:center;gap:5px;padding:2px 5px 2px 2px;border:1px solid rgba(163,230,53,.35);background:rgba(163,230,53,.06);border-radius:7px;margin:0 3px;vertical-align:middle;user-select:none;white-space:nowrap;font-size:.82rem}
+.mention img{width:24px;height:24px;border-radius:4px;object-fit:cover;flex:0 0 auto;display:block}
+.mention .tok{padding:3px 8px;border:1px solid rgba(163,230,53,.6);background:rgba(163,230,53,.15);border-radius:999px;color:var(--lime);font-weight:700;font-size:.76rem;letter-spacing:.03em;font-family:'Space Grotesk','Inter',sans-serif}
+.mention .x{margin-left:3px;border:none;background:none;color:#fca5a5;font-size:.72rem;cursor:pointer;padding:0 3px;line-height:1;opacity:0;transition:opacity .15s}
+.mention:hover .x{opacity:1}
 .studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:wrap;padding:4px 0 2px}
 .pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
 .pchip:hover{background:rgba(255,255,255,.06);color:#fff}
@@ -220,7 +237,7 @@
 
   <div class="studio" id="stage">
     <div class="pwrap">
-      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену: кто, где, что делает, настроение и свет. Пример: 「рыжий кот в шарфе идёт по заснеженной улице вечером, тёплый свет фонарей, снег кружится」. Кружком + добавь референсы, знаком @ пометь, кто из них герой." spellcheck="false"></div>
+      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену: кто, где, что делает, настроение и свет. Пример: 「рыжий кот в шарфе идёт по заснеженной улице вечером, тёплый свет фонарей, снег кружится」. Кружком + добавь референсы, кнопкой @ вставляй их упоминания в текст." spellcheck="false"></div>
     </div>
     <div class="studio-bar">
       <button class="pchip mode" id="pcModel" type="button">⚙ Seedance 2.5 ⌄</button>
@@ -228,7 +245,7 @@
       <button class="pchip" id="pcRef" type="button">🖼 Референсы (0) ⌄</button>
       <button class="pchip" id="pcFQ" type="button">📱 16:9 · 480p ⌄</button>
       <button class="pchip" id="pcDur" type="button">⏱ 5 сек ⌄</button>
-      <button class="pchip at" id="pcAt" type="button" title="Вставить упоминание референса">@</button>
+      <button class="pchip at" id="pcAt" type="button" title="Вставить упоминание референса в курсор">@</button>
       <div class="barRight">
         <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">199</span></div>
         <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
@@ -238,7 +255,7 @@
     <div class="refprev" id="refPrev"></div>
   </div>
 
-  <div class="rolehint" style="text-align:center">💡 Сначала загрузи референсы кружком 「+」, потом опиши сцену, упоминая их через @Image1, @Image2 — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры →</a></div>
+  <div class="rolehint" style="text-align:center">💡 Сначала загрузи референсы кружком 「+」, потом опиши сцену и кнопкой @ вставляй их в текст — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры →</a></div>
 
   <div id="status"></div>
 
