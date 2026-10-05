@@ -31,8 +31,7 @@
 .msv{width:15px;height:15px;color:var(--lime);display:inline-block;vertical-align:-2px}
 .wrap{max-width:1040px;margin:96px auto 60px;padding:0 24px 0 88px}
 .pagehead{text-align:center;margin:0 0 20px}
-.pagehead h1{font-family:'Space Grotesk';font-size:2rem;line-height:1.2;margin:0 0 8px;color:var(--text)}
-.pagehead p{color:var(--muted);font-size:.92rem;margin:0}
+.pagehead h1{font-family:'Space Grotesk';font-size:2rem;line-height:1.2;margin:0;color:var(--text)}
 .psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
 .pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:600}
 .pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
@@ -47,8 +46,6 @@
 .promptBox::-webkit-scrollbar{width:8px}
 .promptBox::-webkit-scrollbar-track{background:transparent}
 .promptBox::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
-.promptBox::before{content:none}
-.promptBox.empty::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.9rem}
 .reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);cursor:pointer;user-select:none;-webkit-user-select:none}
 .reftile img{width:100%;height:100%;object-fit:cover}
 .reftile .big{position:absolute;inset:0;display:grid;place-items:center;font-size:1.3rem;background:rgba(255,255,255,.05)}
@@ -240,7 +237,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 <main class="wrap">
   <div class="pagehead">
     <h1>Какое видео создадим?</h1>
-    <p>Опиши сцену словами — нейросеть снимет ролик по твоему тексту. Кружком 「+」 добавь референсы: фото, видео или звук — и пометь их через @</p>
   </div>
 
   <div class="psteps">
@@ -252,7 +248,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <div class="studio" id="stage">
     <div class="pwrap">
       <div class="refrow" id="refRow"></div>
-      <div class="promptBox empty" id="promptBox" contenteditable="true" data-ph="Опиши сцену: кто, где, что делает, настроение и свет. Пример: 「рыжий кот в шарфе идёт по заснеженной улице вечером, тёплый свет фонарей, снег кружится」. Кружком + добавь референсы, кнопкой @ вставляй их упоминания в текст." spellcheck="false"></div>
+      <div class="promptBox" id="promptBox" contenteditable="true" spellcheck="false"></div>
     </div>
     <div class="studio-bar">
       <button class="pchip mode" id="pcModel" type="button">⚙ Seedance 2.5 ⌄</button>
@@ -270,7 +266,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="refprev" id="refPrev"></div>
   </div>
 
-  <div class="rolehint" style="text-align:center">💡 Сначала загрузи референсы кружком 「+」, потом опиши сцену и кнопкой @ вставляй их в текст — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры →</a></div>
+  <div class="rolehint" style="text-align:center">💡 Опиши сцену словами, кружком 「+」 добавь референсы (фото, видео или звук) и кнопкой @ вставляй их в текст — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры →</a></div>
 
   <div id="status"></div>
 
