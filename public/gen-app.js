@@ -23,10 +23,21 @@ var refPrev=document.getElementById('refPrev');
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
 var popKind=null;
+var savedRange=null;
 
 function setStatus(t){ statusEl.textContent=t; }
 function model(){ return MODELS[modelKey]||MODELS['seedance-2.5']; }
 function price(){ return model().base + Math.max(0,(seconds-5))*model().per + (SURCHARGE[quality]||0); }
+
+function saveCaret(){
+  var sel=window.getSelection();
+  if(!sel||!sel.rangeCount) return;
+  var r=sel.getRangeAt(0);
+  if(promptBox.contains(r.commonAncestorContainer)){ savedRange=r.cloneRange(); }
+}
+document.addEventListener('selectionchange',saveCaret);
+promptBox.addEventListener('keyup',saveCaret);
+promptBox.addEventListener('mouseup',saveCaret);
 
 function promptText(){
   var c=promptBox.cloneNode(true);
@@ -180,7 +191,7 @@ function mountDurPop(){
 
 function atPopHTML(){
   if(!refs.length) return '<div class="pu-head">Упоминания</div><div class="pu-item dis"><span class="nm">Сначала добавь референсы кружком +</span></div>';
-  var h='<div class="pu-head">Вставить в текст</div>';
+  var h='<div class="pu-head">Вставить в текст, где стоит курсор</div>';
   refs.forEach(function(r,i){
     h+='<div class="pu-item" data-at="@Image'+(i+1)+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span></div>';
   });
@@ -194,15 +205,26 @@ function mountAtPop(){
 function insertMention(tok){
   promptBox.focus();
   var sel=window.getSelection();
-  if(sel&&sel.rangeCount){
-    var range=sel.getRangeAt(0);
+  var range=null;
+  if(savedRange&&promptBox.contains(savedRange.commonAncestorContainer)){
+    range=savedRange;
+  }else if(sel&&sel.rangeCount&&promptBox.contains(sel.getRangeAt(0).commonAncestorContainer)){
+    range=sel.getRangeAt(0);
+  }
+  if(range){
+    sel.removeAllRanges(); sel.addRange(range);
     range.deleteContents();
     var node=document.createTextNode(tok+' ');
     range.insertNode(node);
     range.setStartAfter(node); range.collapse(true);
     sel.removeAllRanges(); sel.addRange(range);
+    savedRange=range.cloneRange();
   }else{
-    promptBox.textContent=(promptBox.textContent||'')+' '+tok+' ';
+    var tail=document.createTextNode(((promptBox.textContent||'').length&&!/\s$/.test(promptBox.textContent||'')?' ':'')+tok+' ');
+    promptBox.appendChild(tail);
+    var r2=document.createRange(); r2.selectNodeContents(promptBox); r2.collapse(false);
+    sel.removeAllRanges(); sel.addRange(r2);
+    savedRange=r2.cloneRange();
   }
   updateSteps(); updateSend(); saveDraft();
 }
