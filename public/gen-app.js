@@ -41,7 +41,12 @@ promptBox.addEventListener('mouseup',saveCaret);
 
 function promptText(){
   var c=promptBox.cloneNode(true);
-  c.querySelectorAll('.reftile,.addbadge').forEach(function(e){ e.remove(); });
+  c.querySelectorAll('.reftile,.addbadge,.tile-stack').forEach(function(e){ e.remove(); });
+  c.querySelectorAll('.mention').forEach(function(m){
+    var idx=m.dataset.ref;
+    var txt=document.createTextNode('@Image'+idx+' ');
+    m.replaceWith(txt);
+  });
   return (c.textContent||'').replace(/\s+/g,' ').trim();
 }
 
@@ -82,21 +87,32 @@ function showRefPrev(i,el){
 
 function renderTiles(){
   hideRefPrev();
-  promptBox.querySelectorAll('.reftile,.addbadge').forEach(function(el){ el.remove(); });
+  promptBox.querySelectorAll('.reftile,.addbadge,.tile-stack').forEach(function(el){ el.remove(); });
   var rest=promptBox.firstChild;
   var nodes=[];
-  refs.forEach(function(r,i){
-    var t=document.createElement('span');
-    t.className='reftile';
-    t.title='Референс @Image'+(i+1);
-    t.innerHTML='<img src="data:image/jpeg;base64,'+r+'">';
-    var x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='✕';
-    x.onclick=function(ev){ ev.stopPropagation(); refs.splice(i,1); renderTiles(); saveDraft(); };
-    t.appendChild(x);
-    t.addEventListener('mouseenter',function(){ showRefPrev(i,t); });
-    t.addEventListener('mouseleave',hideRefPrev);
-    nodes.push(t);
-  });
+  if(refs.length){
+    var stack=document.createElement('span');
+    stack.className='tile-stack';
+    stack.setAttribute('contenteditable','false');
+    stack.title='Референсы — '+refs.length+' шт. Наведи, чтобы раскрыть. Кликни для меню.';
+    refs.forEach(function(r,i){
+      var t=document.createElement('span');
+      t.className='reftile';
+      t.title='Референс @Image'+(i+1);
+      t.innerHTML='<img src="data:image/jpeg;base64,'+r+'">';
+      var x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='✕';
+      x.onclick=function(ev){ ev.stopPropagation(); refs.splice(i,1); renderTiles(); saveDraft(); };
+      t.appendChild(x);
+      t.addEventListener('mouseenter',function(){ showRefPrev(i,t); });
+      t.addEventListener('mouseleave',hideRefPrev);
+      stack.appendChild(t);
+    });
+    stack.addEventListener('click',function(ev){
+      if(ev.target.classList.contains('x'))return;
+      openPopEl(stack,refPopHTML(),'ref',mountRefPop);
+    });
+    nodes.push(stack);
+  }
   var add=document.createElement('span');
   add.className='addbadge'; add.setAttribute('contenteditable','false');
   add.title='Добавить референс'; add.textContent='+';
@@ -193,16 +209,17 @@ function atPopHTML(){
   if(!refs.length) return '<div class="pu-head">Упоминания</div><div class="pu-item dis"><span class="nm">Сначала добавь референсы кружком +</span></div>';
   var h='<div class="pu-head">Вставить в текст, где стоит курсор</div>';
   refs.forEach(function(r,i){
-    h+='<div class="pu-item" data-at="@Image'+(i+1)+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span></div>';
+    h+='<div class="pu-item" data-at="'+(i+1)+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span></div>';
   });
   return h;
 }
 function mountAtPop(){
   pop.querySelectorAll('[data-at]').forEach(function(el){
-    el.addEventListener('click',function(){ insertMention(el.getAttribute('data-at')); closePop(); });
+    el.addEventListener('click',function(){ insertMention(parseInt(el.getAttribute('data-at'),10)); closePop(); });
   });
 }
-function insertMention(tok){
+
+function insertMention(idx){
   promptBox.focus();
   var sel=window.getSelection();
   var range=null;
@@ -211,17 +228,38 @@ function insertMention(tok){
   }else if(sel&&sel.rangeCount&&promptBox.contains(sel.getRangeAt(0).commonAncestorContainer)){
     range=sel.getRangeAt(0);
   }
+
+  var chip=document.createElement('span');
+  chip.className='mention';
+  chip.setAttribute('contenteditable','false');
+  chip.dataset.ref=idx;
+  chip.innerHTML='<img src="data:image/jpeg;base64,'+refs[idx-1]+'"><span class="tok">@Image'+idx+'</span><button type="button" class="x" title="Убрать">✕</button>';
+  chip.querySelector('.x').onclick=function(ev){ ev.stopPropagation(); chip.remove(); updateSteps(); updateSend(); saveDraft(); };
+
   if(range){
     sel.removeAllRanges(); sel.addRange(range);
+    var container=range.startContainer;
+    var offset=range.startOffset;
+    var prevChar='';
+    if(container.nodeType===3 && offset>0){ prevChar=container.textContent[offset-1]||''; }
+    if(prevChar && prevChar!==' ' && prevChar!=='\n' && prevChar!=='\t'){
+      var sp=document.createTextNode(' ');
+      range.insertNode(sp);
+      range.setStartAfter(sp); range.collapse(true);
+    }
     range.deleteContents();
-    var node=document.createTextNode(tok+' ');
-    range.insertNode(node);
-    range.setStartAfter(node); range.collapse(true);
+    range.insertNode(chip);
+    range.setStartAfter(chip); range.collapse(true);
+    var trail=document.createTextNode(' ');
+    range.insertNode(trail);
+    range.setStartAfter(trail); range.collapse(true);
     sel.removeAllRanges(); sel.addRange(range);
     savedRange=range.cloneRange();
   }else{
-    var tail=document.createTextNode(((promptBox.textContent||'').length&&!/\s$/.test(promptBox.textContent||'')?' ':'')+tok+' ');
-    promptBox.appendChild(tail);
+    var tail=promptBox.textContent||'';
+    if(tail && !/\s$/.test(tail)) promptBox.appendChild(document.createTextNode(' '));
+    promptBox.appendChild(chip);
+    promptBox.appendChild(document.createTextNode(' '));
     var r2=document.createRange(); r2.selectNodeContents(promptBox); r2.collapse(false);
     sel.removeAllRanges(); sel.addRange(r2);
     savedRange=r2.cloneRange();
