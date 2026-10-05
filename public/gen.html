@@ -52,7 +52,7 @@
 .refprev{position:absolute;z-index:130;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:8px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;width:240px}
 .refprev.open{display:block}
 .refprev img{width:100%;border-radius:8px;display:block;background:#000}
-.studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:nowrap;padding:4px 0 2px;overflow-x:auto}
+.studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:wrap;padding:4px 0 2px}
 .pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
 .pchip:hover{background:rgba(255,255,255,.06);color:#fff}
 .pchip.mode{color:var(--lime);font-weight:600}
@@ -66,12 +66,15 @@
 .popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:240px;max-width:330px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:320px;overflow-y:auto}
 .popup.open{display:block}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
-.pu-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
+.pu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
 .pu-item:hover,.pu-item.sel{background:rgba(163,230,53,.12)}
 .pu-item img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex:0 0 auto}
 .pu-item .mi{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;background:rgba(255,255,255,.08);flex:0 0 auto}
 .pu-item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pu-item .chk{margin-left:auto;color:var(--lime)}
+.pu-item .nc{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pu-item .nc .nm{white-space:normal;font-weight:600}
+.pu-desc{color:var(--muted);font-size:.72rem;line-height:1.45;font-weight:400}
+.pu-item .chk{margin-left:auto;color:var(--lime);flex:0 0 auto}
 .pu-item.dis{opacity:.5;cursor:not-allowed}
 .pu-lbl{padding:8px 10px 4px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
 .pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
@@ -133,7 +136,6 @@
 @media(max-width:900px){
   .rail{display:none}
   .wrap{padding:0 24px;margin-top:84px}
-  .studio-bar{flex-wrap:wrap}
   .shop{grid-template-columns:1fr}
   .packs{grid-template-columns:1fr}
 }
