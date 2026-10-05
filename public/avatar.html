@@ -64,7 +64,6 @@
 .recbtn.recording{border-color:#f87171;color:#f87171;background:rgba(248,113,113,.1);animation:pulse 1.2s infinite}
 .rectime{color:var(--muted);font-size:.85rem;margin-left:10px}
 .recaudio{margin-top:10px;width:100%}
-.sctext{color:var(--text);font-weight:600}
 @keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
 .studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:nowrap;padding:4px 0 2px;overflow-x:auto}
 .pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
@@ -94,19 +93,6 @@
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:12px}
 .rolehint a{color:var(--lime)}
 #status{margin-top:10px;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
-.scen{margin:28px 0 0}
-.scgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.scard{border:1px solid var(--border);border-radius:16px;background:rgba(0,0,0,.3);padding:10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:8px}
-.scard:hover{border-color:var(--border-lime)}
-.scov{display:grid;place-items:center;font-size:1.7rem;height:74px;border-radius:12px}
-.g1{background:linear-gradient(135deg,#7c2d12,#ea580c)}
-.g2{background:linear-gradient(135deg,#1e3a8a,#3b82f6)}
-.g3{background:linear-gradient(135deg,#111827,#4b5563)}
-.g4{background:linear-gradient(135deg,#831843,#ec4899)}
-.g5{background:linear-gradient(135deg,#312e81,#8b5cf6)}
-.g6{background:linear-gradient(135deg,#065f46,#10b981)}
-.sct{color:var(--text);font-size:.85rem;font-weight:600}
-.scs{color:var(--muted);font-size:.72rem}
 .result{margin:26px 0 0}
 .mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
 .outbox{border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);display:grid;place-items:center;overflow:hidden;padding:14px;min-height:240px}
@@ -160,7 +146,6 @@
   .rail{display:none}
   .wrap{padding:0 24px;margin-top:84px}
   .studio-bar{flex-wrap:wrap}
-  .scgrid{grid-template-columns:1fr 1fr}
   .shop{grid-template-columns:1fr}
   .packs{grid-template-columns:1fr}
 }
@@ -255,11 +240,6 @@
   <div class="rolehint" style="text-align:center">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно. · <a href="/examples.html">Смотреть примеры →</a></div>
 
   <div id="status"></div>
-
-  <section class="scen">
-    <div class="rhead"><span>Сценарии — выбери и прочитай вслух</span></div>
-    <div class="scgrid" id="scGrid"></div>
-  </section>
 
   <section class="result" id="resultSec" style="display:none">
     <div class="mod-h">Твоё видео</div>
@@ -366,15 +346,6 @@ var PRESETS=[
  {id:1,name:'Ведущий Макс',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#e5e7eb"/><path d="M96 512c0-96 72-150 160-150s160 54 160 150z" fill="#374151"/><rect x="236" y="290" width="40" height="70" rx="18" fill="#e8b98a"/><circle cx="256" cy="215" r="90" fill="#eec096"/><path d="M170 190c10-60 46-88 86-88s76 28 86 88c-30-24-60-30-86-30s-56 6-86 30z" fill="#263238"/><path d="M196 240c8 40 30 58 60 58s52-18 60-58c-14 10-34 14-60 14s-46-4-60-14z" fill="#455a64"/><circle cx="224" cy="212" r="9" fill="#111"/><circle cx="288" cy="212" r="9" fill="#111"/><path d="M236 252c12 8 28 8 40 0" stroke="#8d5524" stroke-width="6" fill="none" stroke-linecap="round"/></svg>'},
  {id:2,name:'Блогер Ева',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#312e81"/><path d="M96 512c0-96 72-150 160-150s160 54 160 150z" fill="#0f172a"/><rect x="236" y="290" width="40" height="70" rx="18" fill="#f5c8a3"/><circle cx="256" cy="215" r="92" fill="#f8d4b2"/><path d="M160 230c-6-90 40-130 96-130s102 40 96 130c-8 40-20 52-20 52s8-70-16-96c-30 18-90 18-120 0c-24 26-16 96-16 96s-14-12-20-52z" fill="#f472b6"/><circle cx="224" cy="220" r="9" fill="#111"/><circle cx="288" cy="220" r="9" fill="#111"/><path d="M230 262c16 14 36 14 52 0" stroke="#c2410c" stroke-width="7" fill="none" stroke-linecap="round"/></svg>'},
  {id:3,name:'Кот Барсик',svg:'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#101308"/><path d="M150 160l26-76 44 52z" fill="#1f2937"/><path d="M362 160l-26-76-44 52z" fill="#1f2937"/><path d="M96 512c0-90 72-140 160-140s160 50 160 140z" fill="#1f2937"/><circle cx="256" cy="235" r="112" fill="#1f2937"/><circle cx="214" cy="215" r="15" fill="#A3E635"/><circle cx="298" cy="215" r="15" fill="#A3E635"/><circle cx="214" cy="215" r="6" fill="#050607"/><circle cx="298" cy="215" r="6" fill="#050607"/><path d="M244 262h24l-12 14z" fill="#f9a8d4"/><path d="M256 276c0 10-10 16-20 16M256 276c0 10 10 16 20 16" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M160 250l-40-6M160 268l-38 8M352 250l40-6M352 268l38 8" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/></svg>'}
-];
-
-var SCEN=[
- {id:'promo',t:'Реклама и промо',f:'9:16',g:'g1',ic:'📣',s:'Привет! Только сегодня — скидка 50% на все курсы! Ссылка в профиле. Успей, предложение тает, как снег на ладошке!'},
- {id:'lesson',t:'Объяснение урока',f:'16:9',g:'g2',ic:'🎓',s:'Итак, тема сегодняшнего урока — фотосинтез. Простыми словами: это то, как растения готовят себе еду из света. Запомни три слова: свет, вода, углекислый газ.'},
- {id:'news',t:'Новостной обзор',f:'16:9',g:'g3',ic:'📰',s:'Доброе утро! Главные новости дня: учёные научили котов давать пять, а синоптики обещают солнце. Курс мышек стабилен — один к одному. Погода — отличная, настроение — тоже.'},
- {id:'congrats',t:'Поздравление другу',f:'9:16',g:'g4',ic:'🎉',s:'С днём рождения! Желаю здоровья, счастья и торт размером с это видео! Обнимаю крепко-крепко — иди отмечать, ты это заслужил!'},
- {id:'podcast',t:'Интро подкаста',f:'1:1',g:'g5',ic:'🎙',s:'Вы слушаете подкаст 「Мышиная возня」, сорок второй выпуск. Сегодня говорим о том, почему коты спят в коробках. Заваривай чай, устраивайся поудобнее — мы начинаем.'},
- {id:'review',t:'Обзор товара',f:'9:16',g:'g6',ic:'🛍',s:'У меня в руках новый блендер. Три причины взять: мощный, тихий и моется сам. Одна против: короткий шнур. На этом всё, честно и без рекламы!'}
 ];
 
 var orientation='9:16';
@@ -630,53 +601,6 @@ function setOr(or){
   orientation=or;
   updateChips(); saveDraft();
 }
-
-function renderScen(){
-  var g=document.getElementById('scGrid');
-  g.innerHTML=SCEN.map(function(sc){
-    return '<button class="scard" type="button" data-sc="'+sc.id+'"><span class="scov '+sc.g+'">'+sc.ic+'</span><span class="sct">'+sc.t+'</span><span class="scs">'+sc.f+' · текст уже написан, читай вслух</span></button>';
-  }).join('');
-  g.querySelectorAll('[data-sc]').forEach(function(el){
-    el.addEventListener('click',function(){
-      var sc=null;
-      SCEN.forEach(function(x){ if(x.id===el.getAttribute('data-sc')) sc=x; });
-      if(!sc) return;
-      setOr(sc.f);
-      voiceMode='rec';
-      updateChips();
-      var rb=document.getElementById('recBox');
-      rb.classList.add('on');
-      document.getElementById('recHint').innerHTML='Сценарий 「'+sc.t+'」 — прочитай вслух (до 30 сек):<br><span class="sctext">「'+sc.s+'」</span>';
-      rb.scrollIntoView({behavior:'smooth',block:'center'});
-      saveDraft();
-    });
-  });
-}
-
-document.getElementById('rbToken').addEventListener('click',function(){ document.getElementById('shopMask').classList.add('open'); });
-document.getElementById('shopClose').addEventListener('click',function(){ document.getElementById('shopMask').classList.remove('open'); });
-document.getElementById('shopMask').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
-document.getElementById('shopBuy').addEventListener('click',function(){ alert('Палыч открывает лавку в день запуска. Сейчас он только точит весы 🐭'); });
-
-var rbUser=document.getElementById('rbUser'), rmenu=document.getElementById('rmenu');
-function syncUserMenu(){
-  document.getElementById('rmAcc').textContent=token?'Мой кабинет':'Войти в кабинет';
-  document.getElementById('rmOut').style.display=token?'flex':'none';
-}
-rbUser.addEventListener('click',function(){ rmenu.classList.toggle('open'); syncUserMenu(); });
-rmenu.querySelectorAll('button').forEach(function(b){
-  b.addEventListener('click',function(){
-    var act=b.getAttribute('data-act');
-    rmenu.classList.remove('open');
-    if(act==='account') location.href='/account.html';
-    if(act==='help'){ var hf=document.getElementById('hwFloat'); if(hf) hf.click(); }
-    if(act==='settings') alert('Настройки откроются после запуска: звук, язык интерфейса, уведомления.');
-    if(act==='logout'){
-      try{ localStorage.removeItem('seedgen_token'); localStorage.removeItem('yk_token'); }catch(e){}
-      location.reload();
-    }
-  });
-});
 
 function selectPreset(id){
   presetId=id;
@@ -968,12 +892,35 @@ sendBtn.addEventListener('click',payClick);
 })();
 
 renderTiles();
-renderScen();
 histRender();
 updateSteps();
 updateSend();
 syncUserMenu();
 loadMyPresets();
+
+function syncUserMenu(){
+  document.getElementById('rmAcc').textContent=token?'Мой кабинет':'Войти в кабинет';
+  document.getElementById('rmOut').style.display=token?'flex':'none';
+}
+var rbUser=document.getElementById('rbUser'), rmenu=document.getElementById('rmenu');
+rbUser.addEventListener('click',function(){ rmenu.classList.toggle('open'); syncUserMenu(); });
+rmenu.querySelectorAll('button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var act=b.getAttribute('data-act');
+    rmenu.classList.remove('open');
+    if(act==='account') location.href='/account.html';
+    if(act==='help'){ var hf=document.getElementById('hwFloat'); if(hf) hf.click(); }
+    if(act==='settings') alert('Настройки откроются после запуска: звук, язык интерфейса, уведомления.');
+    if(act==='logout'){
+      try{ localStorage.removeItem('seedgen_token'); localStorage.removeItem('yk_token'); }catch(e){}
+      location.reload();
+    }
+  });
+});
+document.getElementById('rbToken').addEventListener('click',function(){ document.getElementById('shopMask').classList.add('open'); });
+document.getElementById('shopClose').addEventListener('click',function(){ document.getElementById('shopMask').classList.remove('open'); });
+document.getElementById('shopMask').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+document.getElementById('shopBuy').addEventListener('click',function(){ alert('Палыч открывает лавку в день запуска. Сейчас он только точит весы 🐭'); });
 </script>
 <script src="/help-widget.js"></script>
 <script src="/avatar-fix.js"></script>
