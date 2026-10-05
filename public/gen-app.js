@@ -32,6 +32,7 @@ function model(){ return MODELS[modelKey]||MODELS['seedance-2.5']; }
 function price(){ return model().base + Math.max(0,(seconds-5))*model().per + (SURCHARGE[quality]||0); }
 function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s/60), ss=s%60; return m>0? m+':'+(ss<10?'0':'')+ss : '0:'+ss; }
 function refCount(){ return refs.length+(refVideo?1:0)+(refAudio?1:0); }
+function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
 
 function saveCaret(){
   var sel=window.getSelection();
@@ -42,12 +43,6 @@ function saveCaret(){
 document.addEventListener('selectionchange',saveCaret);
 promptBox.addEventListener('keyup',saveCaret);
 promptBox.addEventListener('mouseup',saveCaret);
-
-function updatePlaceholder(){
-  var hasText=(promptBox.textContent||'').trim().length>0;
-  var hasMention=!!promptBox.querySelector('.mention');
-  promptBox.classList.toggle('empty', !hasText && !hasMention);
-}
 
 function promptText(){
   var c=promptBox.cloneNode(true);
@@ -133,7 +128,7 @@ function renderTiles(){
       inner:'<span class="big">🎬</span><span class="durb">'+fmtDur(refVideo.sec)+'</span>',
       onRemove:function(){ refVideo=null; renderTiles(); saveDraft(); },
       onHover:function(el){ showPrevHTML('<video src="'+refVideo.url+'" muted preload="metadata"></video>',el); },
-      onClick:function(){ openPopEl(el2(refRow),refPopHTML(),'ref',mountRefPop); }
+      onClick:function(){ openPopEl(refRow.lastElementChild,refPopHTML(),'ref',mountRefPop); }
     }));
   }
   if(refAudio){
@@ -141,8 +136,12 @@ function renderTiles(){
       title:'Звук-референс @Audio1 · '+fmtDur(refAudio.sec),
       inner:'<span class="big">🎵</span><span class="durb">'+fmtDur(refAudio.sec)+'</span>',
       onRemove:function(){ refAudio=null; renderTiles(); saveDraft(); },
-      onHover:function(el){ showPrevHTML('<div class="ap"><button type="button" id="rpPlay">▶</button><span>'+shortName(refAudio.name)+' · '+fmtDur(refAudio.sec)+'</span></div>',el); var b=refPrev.querySelector('#rpPlay'); var au=new Audio(refAudio.url); b.onclick=function(){ if(au.paused){au.play();b.textContent='❚';} else {au.pause();b.textContent='▶';} }; },
-      onClick:function(){ openPopEl(el2(refRow),refPopHTML(),'ref',mountRefPop); }
+      onHover:function(el){
+        showPrevHTML('<div class="ap"><button type="button" id="rpPlay">▶</button><span>'+shortName(refAudio.name)+' · '+fmtDur(refAudio.sec)+'</span></div>',el);
+        var b=refPrev.querySelector('#rpPlay'); var au=new Audio(refAudio.url);
+        b.onclick=function(){ if(au.paused){au.play();b.textContent='❚';} else {au.pause();b.textContent='▶';} };
+      },
+      onClick:function(){ openPopEl(refRow.lastElementChild,refPopHTML(),'ref',mountRefPop); }
     }));
   }
   var add=document.createElement('span');
@@ -150,10 +149,8 @@ function renderTiles(){
   add.title='Загрузить референс'; add.textContent='+';
   add.onclick=function(){ openPopEl(add,refPopHTML(),'ref',mountRefPop); };
   refRow.appendChild(add);
-  updateChips(); updateSteps(); updateSend(); updatePlaceholder();
+  updateChips(); updateSteps(); updateSend();
 }
-function el2(node){ return node.lastElementChild||node; }
-function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
 
 function closePop(){ pop.classList.remove('open'); popKind=null; }
 function openPop(rect,html,kind,mount){
@@ -285,7 +282,7 @@ function insertMention(tok){
   chip.setAttribute('contenteditable','false');
   chip.dataset.tok=tok;
   chip.innerHTML=thumb+'<span class="tok">'+tok+'</span><button type="button" class="x" title="Убрать">✕</button>';
-  chip.querySelector('.x').onclick=function(ev){ ev.stopPropagation(); chip.remove(); updateSteps(); updateSend(); updatePlaceholder(); saveDraft(); };
+  chip.querySelector('.x').onclick=function(ev){ ev.stopPropagation(); chip.remove(); updateSteps(); updateSend(); saveDraft(); };
 
   if(range){
     sel.removeAllRanges(); sel.addRange(range);
@@ -312,7 +309,7 @@ function insertMention(tok){
     sel.removeAllRanges(); sel.addRange(r2);
     savedRange=r2.cloneRange();
   }
-  updateSteps(); updateSend(); updatePlaceholder(); saveDraft();
+  updateSteps(); updateSend(); saveDraft();
 }
 
 document.getElementById('pcModel').addEventListener('click',function(){ openPopEl(this,modelPopHTML(),'model',mountModelPop); });
@@ -453,7 +450,7 @@ function saveDraft(){
     renderTiles();
   }catch(e){ restoring=false; renderTiles(); }
 })();
-promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); updatePlaceholder(); saveDraft(); });
+promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); saveDraft(); });
 
 function callGenerate(pid){
   stage='gen';
@@ -570,5 +567,4 @@ renderTiles();
 histRender();
 updateSteps();
 updateSend();
-updatePlaceholder();
 syncUserMenu();
