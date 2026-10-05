@@ -10,12 +10,14 @@ var MODELS={
  'seedance-2.5':{name:'Seedance 2.5',base:199,per:30,max:30,api:'seedance-2-5'}
 };
 var SURCHARGE={'480p':0,'720p':200,'1080p':300};
+var MAXIMG=10, MAXVIDSEC=15, MAXAUDSEC=15, MAXVIDMB=20, MAXAUDMB=5;
 var modelKey='seedance-2.5';
 var enhance=true;
 var orientation='16:9';
 var quality='480p';
 var seconds=5;
 var refs=[];
+var refVideo=null, refAudio=null;
 var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
@@ -28,6 +30,8 @@ var savedRange=null;
 function setStatus(t){ statusEl.textContent=t; }
 function model(){ return MODELS[modelKey]||MODELS['seedance-2.5']; }
 function price(){ return model().base + Math.max(0,(seconds-5))*model().per + (SURCHARGE[quality]||0); }
+function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s/60), ss=s%60; return m>0? m+':'+(ss<10?'0':'')+ss : '0:'+ss; }
+function refCount(){ return refs.length+(refVideo?1:0)+(refAudio?1:0); }
 
 function saveCaret(){
   var sel=window.getSelection();
@@ -49,8 +53,7 @@ function promptText(){
   var c=promptBox.cloneNode(true);
   c.querySelectorAll('.reftile,.addbadge,.tile-stack').forEach(function(e){ e.remove(); });
   c.querySelectorAll('.mention').forEach(function(m){
-    var idx=m.dataset.ref;
-    var txt=document.createTextNode('@Image'+idx+' ');
+    var txt=document.createTextNode((m.dataset.tok||'')+' ');
     m.replaceWith(txt);
   });
   return (c.textContent||'').replace(/\s+/g,' ').trim();
@@ -59,7 +62,7 @@ function promptText(){
 function updateChips(){
   document.getElementById('pcModel').textContent='⚙ '+model().name+' ⌄';
   document.getElementById('pcEnh').textContent=(enhance?'✨ Простой режим':'✨ Продвинутый')+' ⌄';
-  document.getElementById('pcRef').textContent='🖼 Референсы ('+refs.length+') ⌄';
+  document.getElementById('pcRef').textContent='🖼 Референсы ('+refCount()+') ⌄';
   document.getElementById('pcFQ').textContent='📱 '+orientation+' · '+quality+' ⌄';
   document.getElementById('pcDur').textContent='⏱ '+seconds+' сек ⌄';
   document.getElementById('priceVal').textContent=price();
@@ -78,9 +81,9 @@ function updateSteps(){
 }
 
 function hideRefPrev(){ refPrev.classList.remove('open'); refPrev.innerHTML=''; }
-function showRefPrev(i,el){
+function showPrevHTML(html,el){
   hideRefPrev();
-  refPrev.innerHTML='<img src="data:image/jpeg;base64,'+refs[i]+'">';
+  refPrev.innerHTML=html;
   refPrev.classList.add('open');
   var s=studio.getBoundingClientRect(), t=el.getBoundingClientRect();
   var left=t.left-s.left;
@@ -91,6 +94,19 @@ function showRefPrev(i,el){
   refPrev.style.top=top+'px';
 }
 
+function makeTile(opts){
+  var t=document.createElement('span');
+  t.className='reftile';
+  t.title=opts.title;
+  t.innerHTML=opts.inner;
+  var x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='✕';
+  x.onclick=function(ev){ ev.stopPropagation(); opts.onRemove(); };
+  t.appendChild(x);
+  if(opts.onHover){ t.addEventListener('mouseenter',function(){ opts.onHover(t); }); t.addEventListener('mouseleave',hideRefPrev); }
+  if(opts.onClick){ t.addEventListener('click',function(ev){ if(ev.target.classList.contains('x'))return; opts.onClick(); }); }
+  return t;
+}
+
 function renderTiles(){
   hideRefPrev();
   refRow.innerHTML='';
@@ -98,32 +114,46 @@ function renderTiles(){
     var stack=document.createElement('span');
     stack.className='tile-stack';
     stack.setAttribute('contenteditable','false');
-    stack.title='Референсы — '+refs.length+' шт. Наведи, чтобы раскрыть. Кликни для меню.';
+    stack.title='Фото-референсы: '+refs.length+'. Наведи — раскрыть, кликни — меню';
     refs.forEach(function(r,i){
-      var t=document.createElement('span');
-      t.className='reftile';
-      t.title='Референс @Image'+(i+1);
-      t.innerHTML='<img src="data:image/jpeg;base64,'+r+'">';
-      var x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='✕';
-      x.onclick=function(ev){ ev.stopPropagation(); refs.splice(i,1); renderTiles(); saveDraft(); };
-      t.appendChild(x);
-      t.addEventListener('mouseenter',function(){ showRefPrev(i,t); });
-      t.addEventListener('mouseleave',hideRefPrev);
+      var t=makeTile({
+        title:'Референс @Image'+(i+1),
+        inner:'<img src="data:image/jpeg;base64,'+r+'">',
+        onRemove:function(){ refs.splice(i,1); renderTiles(); saveDraft(); },
+        onHover:function(el){ showPrevHTML('<img src="data:image/jpeg;base64,'+r+'">',el); },
+        onClick:function(){ openPopEl(stack,refPopHTML(),'ref',mountRefPop); }
+      });
       stack.appendChild(t);
-    });
-    stack.addEventListener('click',function(ev){
-      if(ev.target.classList.contains('x'))return;
-      openPopEl(stack,refPopHTML(),'ref',mountRefPop);
     });
     refRow.appendChild(stack);
   }
+  if(refVideo){
+    refRow.appendChild(makeTile({
+      title:'Видео-референс @Video1 · '+fmtDur(refVideo.sec),
+      inner:'<span class="big">🎬</span><span class="durb">'+fmtDur(refVideo.sec)+'</span>',
+      onRemove:function(){ refVideo=null; renderTiles(); saveDraft(); },
+      onHover:function(el){ showPrevHTML('<video src="'+refVideo.url+'" muted preload="metadata"></video>',el); },
+      onClick:function(){ openPopEl(el2(refRow),refPopHTML(),'ref',mountRefPop); }
+    }));
+  }
+  if(refAudio){
+    refRow.appendChild(makeTile({
+      title:'Звук-референс @Audio1 · '+fmtDur(refAudio.sec),
+      inner:'<span class="big">🎵</span><span class="durb">'+fmtDur(refAudio.sec)+'</span>',
+      onRemove:function(){ refAudio=null; renderTiles(); saveDraft(); },
+      onHover:function(el){ showPrevHTML('<div class="ap"><button type="button" id="rpPlay">▶</button><span>'+shortName(refAudio.name)+' · '+fmtDur(refAudio.sec)+'</span></div>',el); var b=refPrev.querySelector('#rpPlay'); var au=new Audio(refAudio.url); b.onclick=function(){ if(au.paused){au.play();b.textContent='❚';} else {au.pause();b.textContent='▶';} }; },
+      onClick:function(){ openPopEl(el2(refRow),refPopHTML(),'ref',mountRefPop); }
+    }));
+  }
   var add=document.createElement('span');
   add.className='addbadge'; add.setAttribute('contenteditable','false');
-  add.title='Добавить референс'; add.textContent='+';
+  add.title='Загрузить референс'; add.textContent='+';
   add.onclick=function(){ openPopEl(add,refPopHTML(),'ref',mountRefPop); };
   refRow.appendChild(add);
   updateChips(); updateSteps(); updateSend(); updatePlaceholder();
 }
+function el2(node){ return node.lastElementChild||node; }
+function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
 
 function closePop(){ pop.classList.remove('open'); popKind=null; }
 function openPop(rect,html,kind,mount){
@@ -156,15 +186,16 @@ function mountModelPop(){
   pop.querySelectorAll('[data-model]').forEach(function(el){
     el.addEventListener('click',function(){
       modelKey=el.getAttribute('data-model');
-      if(seconds>model().max) seconds=model().max;
+      var cap=Math.min(30,model().max);
+      if(seconds>cap) seconds=cap;
       closePop(); updateChips(); saveDraft();
     });
   });
 }
 
 function enhPopHTML(){
-  return '<div class="pu-head">Режим промпта — как кот читает твой текст</div>'
-    +'<div class="pu-item" data-enh="1"><span class="mi">✨</span><span class="nc"><span class="nm">Простой режим</span><span class="pu-desc">Пиши своими словами, как говоришь другу. Кот сам переведёт на киноязык: добавит камеру, свет, движение и детали. Выбери, если пробуешь впервые.</span></span>'+(enhance?'<span class="chk">✓</span>':'')+'</div>'
+  return '<div class="pu-head">Режим промпта — как нейросеть читает твой текст</div>'
+    +'<div class="pu-item" data-enh="1"><span class="mi">✨</span><span class="nc"><span class="nm">Простой режим</span><span class="pu-desc">Пиши своими словами, как говоришь другу. Модель сама переведёт на киноязык: добавит камеру, свет, движение и детали. Выбери, если пробуешь впервые.</span></span>'+(enhance?'<span class="chk">✓</span>':'')+'</div>'
     +'<div class="pu-item" data-enh="0"><span class="mi">🎛</span><span class="nc"><span class="nm">Продвинутый режим</span><span class="pu-desc">Твой текст уходит в нейросеть дословно, без правок и улучшений. Выбери, если уже умеешь писать промпты сам и хочешь полный контроль.</span></span>'+(!enhance?'<span class="chk">✓</span>':'')+'</div>';
 }
 function mountEnhPop(){
@@ -175,19 +206,27 @@ function mountEnhPop(){
 
 function refPopHTML(){
   var h='<div class="pu-head">Референсы</div>';
-  h+='<div class="pu-item" data-act="upload"><span class="mi">＋</span><span class="nm">Загрузить фото (своё или с согласия)</span></div>';
-  if(refs.length){
+  h+='<div class="pu-item" data-act="upload"><span class="mi">＋</span><span class="nm">Загрузить референс</span></div>';
+  if(refCount()){
     h+='<div class="pu-head">Добавленные</div>';
     refs.forEach(function(r,i){
-      h+='<div class="pu-item" data-del="'+i+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span><span class="chk" style="color:#fca5a5">✕</span></div>';
+      h+='<div class="pu-item" data-del="img:'+i+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span><span class="chk" style="color:#fca5a5">✕</span></div>';
     });
+    if(refVideo) h+='<div class="pu-item" data-del="video"><span class="mi">🎬</span><span class="nm">@Video1 · '+fmtDur(refVideo.sec)+'</span><span class="chk" style="color:#fca5a5">✕</span></div>';
+    if(refAudio) h+='<div class="pu-item" data-del="audio"><span class="mi">🎵</span><span class="nm">@Audio1 · '+fmtDur(refAudio.sec)+'</span><span class="chk" style="color:#fca5a5">✕</span></div>';
   }
   return h;
 }
 function mountRefPop(){
-  pop.querySelectorAll('[data-act="upload"]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); document.getElementById('photoInput').click(); }); });
+  pop.querySelectorAll('[data-act="upload"]').forEach(function(el){ el.addEventListener('click',function(){ closePop(); document.getElementById('refInput').click(); }); });
   pop.querySelectorAll('[data-del]').forEach(function(el){
-    el.addEventListener('click',function(){ refs.splice(parseInt(el.getAttribute('data-del'),10),1); closePop(); renderTiles(); saveDraft(); });
+    el.addEventListener('click',function(){
+      var v=el.getAttribute('data-del');
+      if(v==='video') refVideo=null;
+      else if(v==='audio') refAudio=null;
+      else { var i=parseInt(v.split(':')[1],10); refs.splice(i,1); }
+      closePop(); renderTiles(); saveDraft();
+    });
   });
 }
 
@@ -201,54 +240,60 @@ function mountFqPop(){
 }
 
 function durPopHTML(){
-  var opts=[]; for(var s=5;s<=model().max;s+=5) opts.push(s);
-  return '<div class="pu-lbl">Длительность (лимит модели '+model().max+' сек)</div><div class="pu-row" id="puDur">'+opts.map(function(s){ return '<button type="button" data-sec="'+s+'" class="'+(s===seconds?'on':'')+'">'+s+' сек</button>'; }).join('')+'</div>';
+  var cap=Math.min(30,model().max);
+  return '<div class="pu-lbl">Длительность · лимит модели '+model().max+' сек</div>'
+    +'<div class="pu-dur"><input type="range" id="puRange" min="5" max="'+cap+'" step="1" value="'+seconds+'"><span id="puVal">'+seconds+' сек</span></div>';
 }
 function mountDurPop(){
-  pop.querySelectorAll('[data-sec]').forEach(function(b){ b.addEventListener('click',function(){ seconds=parseInt(b.getAttribute('data-sec'),10); closePop(); updateChips(); saveDraft(); }); });
+  var r=pop.querySelector('#puRange'), v=pop.querySelector('#puVal');
+  r.addEventListener('input',function(){ seconds=parseInt(r.value,10); v.textContent=seconds+' сек'; updateChips(); });
+  r.addEventListener('change',function(){ saveDraft(); });
 }
 
 function atPopHTML(){
-  if(!refs.length) return '<div class="pu-head">Упоминания</div><div class="pu-item dis"><span class="nm">Сначала добавь референсы кружком +</span></div>';
+  if(!refCount()) return '<div class="pu-head">Упоминания</div><div class="pu-item dis"><span class="nm">Сначала добавь референсы кружком +</span></div>';
   var h='<div class="pu-head">Вставить в текст, где стоит курсор</div>';
   refs.forEach(function(r,i){
-    h+='<div class="pu-item" data-at="'+(i+1)+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span></div>';
+    h+='<div class="pu-item" data-tok="@Image'+(i+1)+'"><img src="data:image/jpeg;base64,'+r+'"><span class="nm">@Image'+(i+1)+'</span></div>';
   });
+  if(refVideo) h+='<div class="pu-item" data-tok="@Video1"><span class="mi">🎬</span><span class="nm">@Video1</span></div>';
+  if(refAudio) h+='<div class="pu-item" data-tok="@Audio1"><span class="mi">🎵</span><span class="nm">@Audio1</span></div>';
   return h;
 }
 function mountAtPop(){
-  pop.querySelectorAll('[data-at]').forEach(function(el){
-    el.addEventListener('click',function(){ insertMention(parseInt(el.getAttribute('data-at'),10)); closePop(); });
+  pop.querySelectorAll('[data-tok]').forEach(function(el){
+    el.addEventListener('click',function(){ insertMention(el.getAttribute('data-tok')); closePop(); });
   });
 }
 
-function insertMention(idx){
+function insertMention(tok){
   promptBox.focus();
   var sel=window.getSelection();
   var range=null;
-  if(savedRange&&promptBox.contains(savedRange.commonAncestorContainer)){
-    range=savedRange;
-  }else if(sel&&sel.rangeCount&&promptBox.contains(sel.getRangeAt(0).commonAncestorContainer)){
-    range=sel.getRangeAt(0);
-  }
+  if(savedRange&&promptBox.contains(savedRange.commonAncestorContainer)){ range=savedRange; }
+  else if(sel&&sel.rangeCount&&promptBox.contains(sel.getRangeAt(0).commonAncestorContainer)){ range=sel.getRangeAt(0); }
+
+  var thumb='';
+  if(tok.indexOf('@Image')===0){
+    var i=parseInt(tok.replace('@Image',''),10)-1;
+    if(refs[i]) thumb='<img src="data:image/jpeg;base64,'+refs[i]+'">';
+  }else if(tok==='@Video1'){ thumb='<span class="vic">🎬</span>'; }
+  else if(tok==='@Audio1'){ thumb='<span class="vic">🎵</span>'; }
 
   var chip=document.createElement('span');
   chip.className='mention';
   chip.setAttribute('contenteditable','false');
-  chip.dataset.ref=idx;
-  chip.innerHTML='<img src="data:image/jpeg;base64,'+refs[idx-1]+'"><span class="tok">@Image'+idx+'</span><button type="button" class="x" title="Убрать">✕</button>';
+  chip.dataset.tok=tok;
+  chip.innerHTML=thumb+'<span class="tok">'+tok+'</span><button type="button" class="x" title="Убрать">✕</button>';
   chip.querySelector('.x').onclick=function(ev){ ev.stopPropagation(); chip.remove(); updateSteps(); updateSend(); updatePlaceholder(); saveDraft(); };
 
   if(range){
     sel.removeAllRanges(); sel.addRange(range);
-    var container=range.startContainer;
-    var offset=range.startOffset;
-    var prevChar='';
+    var container=range.startContainer, offset=range.startOffset, prevChar='';
     if(container.nodeType===3 && offset>0){ prevChar=container.textContent[offset-1]||''; }
     if(prevChar && prevChar!==' ' && prevChar!=='\n' && prevChar!=='\t'){
       var sp=document.createTextNode(' ');
-      range.insertNode(sp);
-      range.setStartAfter(sp); range.collapse(true);
+      range.insertNode(sp); range.setStartAfter(sp); range.collapse(true);
     }
     range.deleteContents();
     range.insertNode(chip);
@@ -288,23 +333,74 @@ function shrink(dataUrl,cb){
   };
   img.src=dataUrl;
 }
-document.getElementById('photoInput').addEventListener('change',function(e){
+function probeMedia(f,maxSec,cb){
+  var url=URL.createObjectURL(f);
+  var el=document.createElement(f.type.indexOf('video')===0?'video':'audio');
+  el.preload='metadata'; el.src=url;
+  el.addEventListener('loadedmetadata',function(){
+    var d=el.duration; URL.revokeObjectURL(url);
+    if(d>maxSec){ alert('Файл длиннее '+maxSec+' секунд. Выбери короче.'); return; }
+    cb(d);
+  });
+  el.addEventListener('error',function(){ URL.revokeObjectURL(url); alert('Не удалось прочитать файл'); });
+}
+function safeFileName(prefix,f,defExt){
+  var m=(f.name||'').match(/\.[a-z0-9]+$/i);
+  var ext=m?m[0].toLowerCase():defExt;
+  return prefix+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+ext;
+}
+function uploadMedia(f,kind,sec){
+  if(!window.blobUpload){ alert('Загрузка ещё готовится — подожди пару секунд и выбери файл снова.'); return; }
+  setStatus('Загружаем '+ (kind==='video'?'видео':'звук') +'...');
+  window.blobUpload(safeFileName(kind==='video'?'gen-video':'gen-audio',f,kind==='video'?'.mp4':'.mp3'), f, {access:'public'})
+    .then(function(blob){
+      if(kind==='video') refVideo={url:blob.url,sec:sec,name:f.name};
+      else refAudio={url:blob.url,sec:sec,name:f.name};
+      setStatus(''); renderTiles(); saveDraft();
+    })
+    .catch(function(err){ setStatus(''); alert('Не удалось загрузить файл: '+err.message); });
+}
+
+document.getElementById('refInput').addEventListener('change',function(e){
   var files=Array.prototype.slice.call(e.target.files);
   if(!files.length) return;
-  setStatus('Обрабатываем референсы...');
-  var done=0;
+  var imgs=[], vids=[], auds=[];
   files.forEach(function(f){
-    if(f.type.indexOf('image/')!==0||f.size>10*1024*1024){ done++; if(done>=files.length){renderTiles();setStatus('');} return; }
-    var reader=new FileReader();
-    reader.onload=function(){
-      shrink(reader.result,function(d){
-        refs.push(d.split(',')[1]);
-        done++;
-        if(done>=files.length){ renderTiles(); setStatus(''); saveDraft(); }
-      });
-    };
-    reader.readAsDataURL(f);
+    if(f.type.indexOf('image/')===0) imgs.push(f);
+    else if(f.type.indexOf('video/')===0) vids.push(f);
+    else if(f.type.indexOf('audio/')===0) auds.push(f);
   });
+  if(imgs.length){
+    var room=MAXIMG-refs.length;
+    if(room<=0){ alert('Максимум '+MAXIMG+' фото-референсов.'); }
+    else{
+      if(imgs.length>room){ alert('Влезет ещё '+room+' фото — лишние пропустим.'); imgs=imgs.slice(0,room); }
+      setStatus('Обрабатываем фото...');
+      var done=0;
+      imgs.forEach(function(f){
+        if(f.size>10*1024*1024){ done++; if(done>=imgs.length){renderTiles();setStatus('');} return; }
+        var reader=new FileReader();
+        reader.onload=function(){
+          shrink(reader.result,function(d){
+            refs.push(d.split(',')[1]);
+            done++;
+            if(done>=imgs.length){ renderTiles(); setStatus(''); saveDraft(); }
+          });
+        };
+        reader.readAsDataURL(f);
+      });
+    }
+  }
+  if(vids.length){
+    var vf=vids[0];
+    if(vf.size>MAXVIDMB*1024*1024){ alert('Видео больше '+MAXVIDMB+' МБ. Выбери файл поменьше.'); }
+    else probeMedia(vf,MAXVIDSEC,function(d){ uploadMedia(vf,'video',Math.min(MAXVIDSEC,Math.ceil(d))); });
+  }
+  if(auds.length){
+    var af=auds[0];
+    if(af.size>MAXAUDMB*1024*1024){ alert('Звук больше '+MAXAUDMB+' МБ. Выбери файл поменьше.'); }
+    else probeMedia(af,MAXAUDSEC,function(d){ uploadMedia(af,'audio',Math.min(MAXAUDSEC,Math.ceil(d))); });
+  }
   e.target.value='';
 });
 
@@ -334,7 +430,8 @@ function saveDraft(){
   if(restoring) return;
   try{
     localStorage.setItem('seedgen_gen_draft',JSON.stringify({
-      prompt:promptText(),model:modelKey,enhance:enhance,orientation:orientation,quality:quality,seconds:seconds,refs:refs,savedAt:Date.now()
+      prompt:promptText(),model:modelKey,enhance:enhance,orientation:orientation,quality:quality,seconds:seconds,
+      refs:refs,video:refVideo,audio:refAudio,savedAt:Date.now()
     }));
   }catch(e){}
 }
@@ -349,6 +446,8 @@ function saveDraft(){
     if(s.quality) quality=s.quality;
     if(s.seconds) seconds=s.seconds;
     refs=s.refs||[];
+    refVideo=s.video||null;
+    refAudio=s.audio||null;
     restoring=false;
     if(s.prompt){ promptBox.textContent=s.prompt; }
     renderTiles();
@@ -363,7 +462,8 @@ function callGenerate(pid){
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     service:'text2video', paymentId:pid, prompt:promptText(),
     model:modelKey, enhancePrompt:enhance,
-    seconds:seconds, quality:quality, aspect:orientation, refs:refs
+    seconds:seconds, quality:quality, aspect:orientation,
+    refs:refs, video:refVideo?refVideo.url:null, audio:refAudio?refAudio.url:null
   })})
     .then(function(r){ return r.json(); })
     .then(function(d){
