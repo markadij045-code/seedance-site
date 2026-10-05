@@ -19,7 +19,7 @@ var refs=[];
 var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
-var refPrev=document.getElementById('refPrev');
+var refPrev=document.getElementById('refPrev'), refRow=document.getElementById('refRow');
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
 var popKind=null;
@@ -38,6 +38,12 @@ function saveCaret(){
 document.addEventListener('selectionchange',saveCaret);
 promptBox.addEventListener('keyup',saveCaret);
 promptBox.addEventListener('mouseup',saveCaret);
+
+function updatePlaceholder(){
+  var hasText=(promptBox.textContent||'').trim().length>0;
+  var hasMention=!!promptBox.querySelector('.mention');
+  promptBox.classList.toggle('empty', !hasText && !hasMention);
+}
 
 function promptText(){
   var c=promptBox.cloneNode(true);
@@ -87,9 +93,7 @@ function showRefPrev(i,el){
 
 function renderTiles(){
   hideRefPrev();
-  promptBox.querySelectorAll('.reftile,.addbadge,.tile-stack').forEach(function(el){ el.remove(); });
-  var rest=promptBox.firstChild;
-  var nodes=[];
+  refRow.innerHTML='';
   if(refs.length){
     var stack=document.createElement('span');
     stack.className='tile-stack';
@@ -111,15 +115,14 @@ function renderTiles(){
       if(ev.target.classList.contains('x'))return;
       openPopEl(stack,refPopHTML(),'ref',mountRefPop);
     });
-    nodes.push(stack);
+    refRow.appendChild(stack);
   }
   var add=document.createElement('span');
   add.className='addbadge'; add.setAttribute('contenteditable','false');
   add.title='Добавить референс'; add.textContent='+';
   add.onclick=function(){ openPopEl(add,refPopHTML(),'ref',mountRefPop); };
-  nodes.push(add);
-  nodes.forEach(function(n){ promptBox.insertBefore(n,rest); });
-  updateChips(); updateSteps(); updateSend();
+  refRow.appendChild(add);
+  updateChips(); updateSteps(); updateSend(); updatePlaceholder();
 }
 
 function closePop(){ pop.classList.remove('open'); popKind=null; }
@@ -234,7 +237,7 @@ function insertMention(idx){
   chip.setAttribute('contenteditable','false');
   chip.dataset.ref=idx;
   chip.innerHTML='<img src="data:image/jpeg;base64,'+refs[idx-1]+'"><span class="tok">@Image'+idx+'</span><button type="button" class="x" title="Убрать">✕</button>';
-  chip.querySelector('.x').onclick=function(ev){ ev.stopPropagation(); chip.remove(); updateSteps(); updateSend(); saveDraft(); };
+  chip.querySelector('.x').onclick=function(ev){ ev.stopPropagation(); chip.remove(); updateSteps(); updateSend(); updatePlaceholder(); saveDraft(); };
 
   if(range){
     sel.removeAllRanges(); sel.addRange(range);
@@ -264,7 +267,7 @@ function insertMention(idx){
     sel.removeAllRanges(); sel.addRange(r2);
     savedRange=r2.cloneRange();
   }
-  updateSteps(); updateSend(); saveDraft();
+  updateSteps(); updateSend(); updatePlaceholder(); saveDraft();
 }
 
 document.getElementById('pcModel').addEventListener('click',function(){ openPopEl(this,modelPopHTML(),'model',mountModelPop); });
@@ -351,7 +354,7 @@ function saveDraft(){
     renderTiles();
   }catch(e){ restoring=false; renderTiles(); }
 })();
-promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); saveDraft(); });
+promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); updatePlaceholder(); saveDraft(); });
 
 function callGenerate(pid){
   stage='gen';
@@ -467,4 +470,5 @@ renderTiles();
 histRender();
 updateSteps();
 updateSend();
+updatePlaceholder();
 syncUserMenu();
