@@ -4,122 +4,165 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Создать видео — Ёшкин кот</title>
-<meta property="og:title" content="Создать видео из текста — Ёшкин кот">
-<meta property="og:description" content="Опиши сцену словами, загрузи референсы — нейросеть снимет ролик. От 99 ₽">
+<meta property="og:title" content="Создать видео — текст в кадры">
+<meta property="og:description" content="Опиши сцену словами — кот соберёт кадры. Добавь референсы, выбери стиль и формат.">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.yoshkin-kot.online/gen.html">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.ws{max-width:1160px;margin:100px auto 60px;padding:0 24px;display:grid;grid-template-columns:1.25fr minmax(340px,.75fr);gap:20px;align-items:start}
-.panel{border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:26px}
-.side{display:flex;flex-direction:column;gap:14px;padding:20px}
-.psteps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.8rem;font-weight:600}
-.pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
+.rail{position:fixed;left:0;top:0;bottom:0;width:64px;background:rgba(5,6,7,.92);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:84px 0 16px;gap:6px;z-index:90}
+.rail a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;text-decoration:none;filter:grayscale(1);opacity:.5}
+.rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
+.rail a.on{opacity:1;filter:none;background:rgba(163,230,53,.12);box-shadow:inset 0 0 0 1px rgba(163,230,53,.45)}
+.rspacer{flex:1}
+.rbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--lime);display:grid;place-items:center;cursor:pointer;margin-top:4px}
+.rbtn:hover{background:rgba(163,230,53,.12);border-color:var(--border-lime)}
+.rbtn svg{width:20px;height:20px}
+.rbtn.user{color:#e5e7eb}
+.rmenu{position:fixed;left:76px;bottom:16px;z-index:400;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:6px;min-width:220px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;flex-direction:column}
+.rmenu.open{display:flex}
+.rmenu button{display:flex;gap:10px;align-items:center;padding:9px 12px;border:none;border-radius:8px;background:none;color:var(--text);font:500 .85rem 'Inter';cursor:pointer;text-align:left}
+.rmenu button:hover{background:rgba(163,230,53,.12)}
+.rmenu button.dis{opacity:.5}
+.msv{width:15px;height:15px;color:var(--lime);display:inline-block;vertical-align:-2px}
+.wrap{max-width:1040px;margin:96px auto 60px;padding:0 24px 0 88px}
+.pagehead{text-align:center;margin:0 0 20px}
+.pagehead h1{font-family:'Space Grotesk';font-size:2rem;line-height:1.2;margin:0 0 8px;color:var(--text)}
+.pagehead p{color:var(--muted);font-size:.92rem;margin:0}
+.psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:600}
+.pstep i{width:18px;height:18px;border-radius:50%;;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
 .pstep.done{color:var(--lime);border-color:var(--border-lime)}
 .pstep.done i{background:rgba(163,230,53,.15)}
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
 .studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:16px 18px 12px}
 .pwrap{position:relative;padding:0 0 8px}
-.promptBox{min-height:118px;max-height:300px;overflow-y:auto;outline:none;font:400 1rem/1.8 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word}
+.promptBox{min-height:140px;max-height:300px;overflow-y:auto;outline:none;font:400 .95rem/1.65 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word}
 .promptBox::before{content:none}
-.promptBox:not(:has(.reftile))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.93rem}
-.reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg)}
+.promptBox:not(:has(.reftile))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.9rem}
+.reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg);cursor:pointer}
 .reftile:nth-child(even){transform:rotate(1.5deg)}
 .reftile img{width:100%;height:100%;object-fit:cover}
-.reftile .ic{position:absolute;inset:0;display:grid;place-items:center;font-size:1.05rem;color:var(--lime);background:rgba(163,230,53,.12)}
-.reftile.audio .ic{color:#93c5fd;background:rgba(59,130,246,.12)}
-.reftile.video .ic{color:#fdba74;background:rgba(251,146,60,.12)}
-.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0}
+.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0;z-index:3}
 .reftile:hover .x{display:grid}
 .addbadge{display:inline-block;vertical-align:middle;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#e5e7eb;text-align:center;line-height:30px;font-size:1rem;cursor:pointer;margin:0 8px 6px 0}
 .addbadge:hover{background:rgba(255,255,255,.26)}
-.mchip{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin:0 4px;color:#9ca3af;font-size:.88rem;max-width:200px}
-.mchip img{width:20px;height:20px;border-radius:5px;object-fit:cover;flex:0 0 auto}
-.mchip .mi{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:.65rem;background:rgba(255,255,255,.1);color:#9ca3af;flex:0 0 auto}
-.mchip .mn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.refprev{position:absolute;z-index:130;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:8px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;width:240px}
+.refprev.open{display:block}
+.refprev img{width:100%;border-radius:8px;display:block;background:#000}
 .studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:nowrap;padding:4px 0 2px;overflow-x:auto}
 .pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
 .pchip:hover{background:rgba(255,255,255,.06);color:#fff}
 .pchip.mode{color:var(--lime);font-weight:600}
-.pchip.at{font-weight:700;font-size:.95rem}
-.priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;margin-left:auto;display:flex;align-items:center;gap:4px;flex:0 0 auto;padding-right:6px}
-.priceBox .coin{color:var(--lime);font-weight:800}
+.priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;margin-left:auto;display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-right:6px}
+.priceBox .coin{color:var(--lime);display:grid;place-items:center}
+.priceBox .coin .msv{width:16px;height:16px}
 .sendbtn{width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1.1rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
 .sendbtn:hover{background:#e5e7eb}
-.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:230px;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
+.sendbtn:disabled{opacity:.5;cursor:not-allowed}
+.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:240px;max-width:330px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:320px;overflow-y:auto}
 .popup.open{display:block}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
 .pu-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
 .pu-item:hover,.pu-item.sel{background:rgba(163,230,53,.12)}
 .pu-item img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex:0 0 auto}
-.pu-item .mi{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;flex:0 0 auto}
-.pu-item.audio{color:#93c5fd}.pu-item.audio .mi{background:rgba(59,130,246,.15)}
-.pu-item.video{color:#fdba74}.pu-item.video .mi{background:rgba(251,146,60,.15)}
+.pu-item .mi{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;background:rgba(255,255,255,.08);flex:0 0 auto}
 .pu-item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pu-item .chk{margin-left:auto;color:var(--lime)}
-.pu-add{color:var(--lime);font-weight:600}
+.pu-item.dis{opacity:.5;cursor:not-allowed}
 .pu-lbl{padding:8px 10px 4px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
 .pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
 .pu-row button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer}
 .pu-row button:hover{color:var(--text)}
 .pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
-.pu-dur{padding:8px 12px 12px;display:flex;gap:10px;align-items:center}
-.pu-dur span{font-family:'Space Grotesk';font-weight:700;color:var(--lime);white-space:nowrap;min-width:52px;text-align:right}
-input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:999px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--lime);border:2px solid #050607;box-shadow:0 0 0 1px var(--lime);cursor:pointer}
 .rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:12px}
-.rolehint b{color:var(--lime)}
 .rolehint a{color:var(--lime)}
-.tl{display:flex;flex-direction:column;gap:9px}
-.tl-item{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.82rem;line-height:1.45}
-.tl-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted);margin-top:4px;flex:0 0 auto}
-.tl-item.done{color:var(--text)}
-.tl-item.done .tl-dot{background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px rgba(163,230,53,.45)}
-.tl-item.now{color:var(--text)}
-.tl-item.now .tl-dot{border-color:var(--lime);animation:pulse 1.2s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(163,230,53,.14)}}
-.outbox{position:relative;border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;padding:14px}
-.outbox video{width:100%;border-radius:14px}
-.ph{text-align:center;color:var(--muted);font-size:.82rem;line-height:1.5;padding:16px}
-.vf{width:74px;height:46px;border:1.5px dashed rgba(163,230,53,.45);border-radius:10px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
-.vf svg{width:20px;height:20px}
+#status{margin-top:10px;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
+.result{margin:26px 0 0}
+.mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
+.outbox{border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);display:grid;place-items:center;overflow:hidden;padding:14px;min-height:240px}
+.outbox video{width:100%;max-height:480px;border-radius:14px}
+.ph{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px}
+.vf{width:64px;height:84px;border:1.5px dashed rgba(163,230,53,.45);border-radius:12px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
+.vf svg{width:22px;height:22px}
 .ph-t{color:var(--text);font-weight:600;font-size:.95rem}
 .ph-s{margin-top:4px;font-size:.78rem}
-.payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.recent{margin:28px 0 0}
+.rhead{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.rcard{flex:0 0 200px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3)}
+.rcard video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.rcard .rc{padding:8px 10px}
+.rcard .rn{color:var(--text);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcard .rd{color:var(--muted);font-size:.68rem;margin:2px 0 6px}
+.rcard a{color:var(--lime);font-size:.72rem;text-decoration:none}
+.footnote{margin:26px 0 0;display:flex;flex-direction:column;gap:10px;align-items:center}
+.payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
 .pay-ic{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.03em}
-.payrow a{margin-left:auto;color:var(--lime);font-size:.75rem;text-decoration:none;white-space:nowrap}
-.payrow a:hover{text-decoration:underline}
-details.hist{border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.25);padding:10px 12px}
-details.hist summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-details.hist summary::-webkit-details-marker{display:none}
-details.hist summary:hover{color:var(--text)}
-details.hist[open] summary{margin-bottom:10px}
-.hitem{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
-.hitem .ht{color:var(--text);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hitem .hd{color:var(--muted);font-size:.7rem}
-.hitem a,.hitem button{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font-size:.75rem;cursor:pointer;text-decoration:none;flex:0 0 auto}
-.hitem a:hover{color:var(--lime);border-color:var(--border-lime)}
-.hitem button.del{color:#fca5a5}
-.hempty{color:var(--muted);font-size:.8rem;line-height:1.5}
-.trust{margin:2px 0 0;color:var(--muted);font-size:.76rem;line-height:1.55;text-align:center}
+.payrow a{color:var(--lime);font-size:.75rem;text-decoration:none}
+.trust{color:var(--muted);font-size:.76rem;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
-.bar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(5,6,7,.78);backdrop-filter:blur(18px);border-top:1px solid var(--border)}
-.bar-in{max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.bar-price{font-family:'Space Grotesk';font-size:1.45rem;font-weight:700;white-space:nowrap}
-.bar-price small{display:block;color:var(--muted);font:.72rem/1.2 'Inter';font-weight:500}
-.agree{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45;flex:1;min-width:230px;margin:0}
-.agree input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
-.agree a{color:var(--lime)}
-.bar .btn{margin-left:auto}
-#status{width:100%;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
-@media(max-width:900px){.ws{grid-template-columns:1fr;margin-top:84px}.bar .btn{margin-left:0;width:100%}.agree{min-width:100%}.studio-bar{flex-wrap:wrap}}
+.shopmask{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:410;display:none;align-items:center;justify-content:center;padding:20px}
+.shopmask.open{display:flex}
+.shop{display:grid;grid-template-columns:300px 1fr;gap:26px;background:#101308;border:1px solid var(--border-lime);border-radius:24px;padding:28px;max-width:880px;width:100%;max-height:88vh;overflow-y:auto;position:relative}
+.shop-x{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer}
+.shop-l{text-align:center}
+.shop-l svg{width:100%;max-width:260px;height:auto}
+.shop-say{color:#c9cfba;font-size:.88rem;line-height:1.6;margin:12px 0 6px;font-style:italic}
+.shop-name{color:var(--lime);font-weight:700;font-size:.9rem}
+.shop-sub{color:var(--muted);font-size:.75rem;margin-top:2px}
+.shop-rate{border:1px solid var(--border-lime);background:rgba(163,230,53,.08);border-radius:12px;padding:10px 14px;color:var(--text);font-size:.9rem;font-weight:600;margin-bottom:12px}
+.shop-bal{color:var(--muted);font-size:.85rem;margin-bottom:14px}
+.shop-bal b{color:var(--text)}
+.soonbadge{padding:2px 8px;border-radius:999px;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);color:#fbbf24;font-size:.68rem;font-weight:700;margin-left:6px}
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.pack{border:1px solid var(--border);border-radius:16px;padding:14px 10px;text-align:center;background:rgba(255,255,255,.03)}
+.pack .pn{font-family:'Space Grotesk';font-size:1.35rem;font-weight:700;color:var(--lime);display:flex;gap:6px;align-items:center;justify-content:center}
+.pack .pn .msv{width:18px;height:18px}
+.pack .pp{color:var(--muted);font-size:.8rem;margin-top:4px}
+.pack .gift{color:#fbbf24;font-size:.7rem;margin-top:4px}
+.shop-btn{width:100%;padding:14px;border-radius:999px;border:none;background:var(--lime);color:#0a0c08;font:700 .95rem 'Inter';cursor:pointer}
+.shop-btn:disabled{opacity:.55;cursor:not-allowed}
+.shop-plate{margin-top:10px;text-align:center;color:#ffb066;font-size:.8rem}
+.shop-legal{margin-top:12px;color:var(--muted);font-size:.74rem;text-align:center}
+.shop-legal a{color:var(--lime)}
+#hwFloat{display:none!important}
+@media(max-width:900px){
+  .rail{display:none}
+  .wrap{padding:0 24px;margin-top:84px}
+  .studio-bar{flex-wrap:wrap}
+  .shop{grid-template-columns:1fr}
+  .packs{grid-template-columns:1fr}
+}
 </style>
-</head><body data-ws="1">
+</head>
+<body data-ws="1">
+
+<nav class="rail">
+  <a href="/gen.html" class="on" title="Создать видео">🎬</a>
+  <a href="/cartoon.html" title="Мультфильм">🎭</a>
+  <a href="/avatar.html" title="Говорящий аватар">🗣</a>
+  <a href="/motion.html" title="Моушен контроль">🕺</a>
+  <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
+  <span class="rspacer"></span>
+  <button class="rbtn" id="rbToken" type="button" title="Мышки — кошелек и лавка"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+  <button class="rbtn user" id="rbUser" type="button" title="Аккаунт"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/></svg></button>
+</nav>
+<div class="rmenu" id="rmenu">
+  <button type="button" data-act="account">👤 <span id="rmAcc">Войти в кабинет</span></button>
+  <button type="button" data-act="help">❓ Помощь</button>
+  <button type="button" data-act="settings" class="dis">⚙️ Настройки · скоро</button>
+  <button type="button" data-act="logout" id="rmOut" style="display:none">🚪 Выйти</button>
+</div>
+
 <header class="top">
   <div class="container nav-in">
-    <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg> Ёшкин кот</a>
+    <a class="logo" href="/">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
+      Ёшкин кот
+    </a>
     <nav class="menu">
       <a href="/cartoon.html">Мультфильм</a>
       <a href="/avatar.html">Аватар</a>
@@ -146,68 +189,124 @@ details.hist[open] summary{margin-bottom:10px}
   <a href="/prices.html">Цены</a>
   <a href="/help.html">Помощь</a>
 </div>
-<main class="ws">
-  <section class="panel">
-    <div class="psteps">
-      <span class="pstep active" id="st1"><i>1</i> Описание и референсы</span>
-      <span class="pstep" id="st2"><i>2</i> Оплата</span>
-      <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
+
+<main class="wrap">
+  <div class="pagehead">
+    <h1>Какое видео создадим?</h1>
+    <p>Опиши сцену словами — кот соберёт кадры. Кружком 「+」 добавь референсы: фото стиля или персонажа</p>
+  </div>
+
+  <div class="psteps">
+    <span class="pstep active" id="st1"><i>1</i> Промпт и референсы</span>
+    <span class="pstep" id="st2"><i>2</i> Оплата</span>
+    <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
+  </div>
+
+  <div class="studio" id="stage">
+    <div class="pwrap">
+      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену: кто, где, что делает, настроение и свет. Пример: 「рыжий кот в шарфе идёт по заснеженной улице вечером, тёплый свет фонарей, снег кружится」. Кружком + добавь референсы — фото стиля или персонажа." spellcheck="false"></div>
     </div>
-    <div class="studio">
-      <div class="pwrap">
-        <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Опиши сцену словами. Кружком 「+」 загрузи до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Напечатай @ — всплывёт список загруженного, клик вставит упоминание в курсор." spellcheck="false"></div>
-      </div>
-      <div class="studio-bar">
-        <button class="pchip mode" id="pcMode" type="button">🎬 Видео ⌄</button>
-        <button class="pchip" id="pcModel" type="button">⚙ Seedance 2.5 ⌄</button>
-        <button class="pchip" id="pcFQ" type="button">16:9 · 480p ⌄</button>
-        <button class="pchip" id="pcDur" type="button">5 сек ⌄</button>
-        <button class="pchip at" id="pcAt" type="button" title="Упомянуть загруженный референс">@</button>
-        <div class="priceBox"><span class="coin">₽</span><span id="priceVal">199</span></div>
-        <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
-      </div>
-      <div class="popup" id="popMenu"></div>
+    <div class="studio-bar">
+      <button class="pchip mode" id="pcStyle" type="button">🎬 Реалистичный ⌄</button>
+      <button class="pchip" id="pcRef" type="button">🖼 Референсы (0) ⌄</button>
+      <button class="pchip" id="pcFmt" type="button">📱 9:16 ⌄</button>
+      <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">499</span></div>
+      <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
     </div>
-    <input type="file" id="uplInput" accept="image/*,video/*,audio/*" multiple style="display:none">
-    <div class="rolehint">💡 <b>Совет студии:</b> сначала загрузи референсы кружком 「+」, потом опиши сцену, упоминая их через @Image1, @Image2 — нейросеть поймёт, кто где стоит. · <a href="/examples.html">Смотреть примеры работ →</a></div>
-  </section>
-  <aside class="panel side">
-    <div class="tl">
-      <div class="tl-item" id="tlPay"><span class="tl-dot"></span>Оплата любым удобным способом</div>
-      <div class="tl-item" id="tlGen"><span class="tl-dot"></span>Seedance 2.5 генерирует — 1–5 минут</div>
-      <div class="tl-item" id="tlUp" style="display:none"><span class="tl-dot"></span>Улучшение до 1080p — ещё ~1 минута</div>
-    </div>
+    <div class="popup" id="popMenu"></div>
+    <div class="refprev" id="refPrev"></div>
+  </div>
+
+  <div class="rolehint" style="text-align:center">🛡 Референсы загружай свои или с согласия человека. Пресеты-стили — иллюстрации, их можно свободно. · <a href="/examples.html">Смотреть примеры →</a></div>
+
+  <div id="status"></div>
+
+  <section class="result" id="resultSec" style="display:none">
+    <div class="mod-h">Твоё видео</div>
     <div class="outbox" id="outbox">
       <div class="ph">
-        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 9.5v5l4.5-2.5L10 9.5z"/></svg></div>
+        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></div>
         <div class="ph-t">Здесь появится твоё видео</div>
-        <div class="ph-s">Опиши сцену слева — остальное студия сделает сама</div>
+        <div class="ph-s">Длина и кадры = твой промпт и стиль</div>
       </div>
     </div>
+  </section>
+
+  <section class="recent" id="recentSec" style="display:none">
+    <div class="rhead"><span>Ваши работы</span><span id="histCount"></span></div>
+    <div class="rrow" id="histList"></div>
+  </section>
+
+  <div class="footnote">
     <div class="payrow">
       <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
       <a href="/prices.html">Цены и оплата →</a>
     </div>
-    <details class="hist">
-      <summary>📦 История (этот браузер) <span id="histCount"></span></summary>
-      <div id="histList"></div>
-    </details>
     <div id="wsNotice"></div>
-    <div class="trust">🔒 Самозанятая Малкова О. А., ИНН 420900493994 · <a href="/legal.html">оферта и реквизиты</a></div>
-  </aside>
+    <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
+  </div>
 </main>
-<div class="bar">
-  <div class="bar-in">
-    <div class="bar-price"><span id="barPrice">199</span> ₽<small id="barMeta">5 сек · 480p</small></div>
-    <div class="agree" id="agreeWrap"><label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;margin:0"><input type="checkbox" id="agree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label></div>
-    <button class="btn btn-primary btn-lg" id="btn">Создать видео — 199 ₽</button>
-    <div id="status"></div>
+
+<div class="shopmask" id="shopMask">
+  <div class="shop">
+    <button class="shop-x" id="shopClose" type="button">✕</button>
+    <div class="shop-l">
+      <svg viewBox="0 0 200 200">
+        <rect x="14" y="132" width="172" height="12" rx="6" fill="#a9764f"/>
+        <rect x="20" y="144" width="160" height="40" rx="6" fill="#8b5e3c"/>
+        <ellipse cx="100" cy="118" rx="52" ry="46" fill="#fb923c"/>
+        <path d="M62 108c0-20 17-34 38-34s38 14 38 34v26H62z" fill="#16a34a"/>
+        <path d="M78 78c6-8 38-8 44 0" stroke="#14532d" stroke-width="6" fill="none"/>
+        <rect x="84" y="110" width="32" height="18" rx="4" fill="#14532d"/>
+        <path d="M78 44l-6-18 16 8z" fill="#fb923c"/>
+        <path d="M122 44l6-18-16 8z" fill="#fb923c"/>
+        <circle cx="100" cy="60" r="30" fill="#fb923c"/>
+        <path d="M86 34c4-3 8-3 10 0M104 34c4-3 8-3 10 0" stroke="#ea580c" stroke-width="4" fill="none"/>
+        <ellipse cx="100" cy="70" rx="14" ry="10" fill="#fde68a"/>
+        <circle cx="88" cy="56" r="3" fill="#111"/>
+        <circle cx="112" cy="56" r="3" fill="#111"/>
+        <path d="M100 66l-3 3h6z" fill="#f9a8d4"/>
+        <path d="M92 74c5 4 11 4 16 0" stroke="#b45309" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M70 62h-14M70 68h-13M130 62h14M130 68h13" stroke="#fff7ed" stroke-width="2" stroke-linecap="round"/>
+        <rect x="34" y="112" width="18" height="20" rx="4" fill="rgba(255,255,255,.28)"/>
+        <circle cx="40" cy="126" r="3" fill="#A3E635"/>
+        <circle cx="46" cy="124" r="3" fill="#A3E635"/>
+        <circle cx="43" cy="119" r="3" fill="#A3E635"/>
+      </svg>
+      <div class="shop-say">«Неси рубли — дам мышек. Курс честный: один к одному, без фокусов. За крупный обмен подарочных мышей насыплю — это за мой счёт».</div>
+      <div class="shop-name">Кот Палыч</div>
+      <div class="shop-sub">поставщик мышек · при студии с первого дня</div>
+    </div>
+    <div class="shop-r">
+      <div class="shop-rate">1 🐭 = 1 ₽ · честный курс поставщика</div>
+      <div class="shop-bal">В кошельке: <b>— 🐭</b><span class="soonbadge">баланс появится после запуска</span></div>
+      <div class="packs">
+        <div class="pack"><div class="pn">100 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 100 ₽</div><div class="gift">хватит на видео</div></div>
+        <div class="pack"><div class="pn">500 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 500 ₽</div><div class="gift">+25 🐭 в подарок</div></div>
+        <div class="pack"><div class="pn">1000 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 1000 ₽</div><div class="gift">+100 🐭 в подарок</div></div>
+      </div>
+      <button class="shop-btn" id="shopBuy" type="button" disabled>Обменять рубли на мышек</button>
+      <div class="shop-plate">🚧 Лавка откроется в день запуска — Палыч уже точит весы</div>
+      <div class="shop-legal">Цены в рублях и правила обмена — на странице <a href="/prices.html">цен</a> и в <a href="/legal.html#offer">оферте</a></div>
+    </div>
   </div>
 </div>
+
+<input type="file" id="photoInput" accept="image/*" multiple style="display:none">
+
 <script type="module">
 let uploadFn = null;
-try { const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm'); uploadFn = m.upload; }
-catch (e) { try { const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client'); uploadFn = m2.upload; } catch (e2) { console.error('Blob client load failed:', e2); } }
+try {
+  const m = await import('https://cdn.jsdelivr.net/npm/@vercel/blob@0.27.0/client/+esm');
+  uploadFn = m.upload;
+} catch (e) {
+  try {
+    const m2 = await import('https://esm.sh/@vercel/blob@0.27.0/client');
+    uploadFn = m2.upload;
+  } catch (e2) {
+    console.error('Blob client load failed:', e2);
+  }
+}
 if (uploadFn) window.blobUpload = uploadFn;
 </script>
 <script src="/gen-app.js"></script>
