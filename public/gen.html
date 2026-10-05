@@ -39,7 +39,10 @@
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
 .studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:16px 18px 12px}
 .pwrap{position:relative;padding:0 0 8px}
-.promptBox{min-height:140px;max-height:300px;overflow-y:auto;outline:none;font:400 .95rem/1.65 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word}
+.promptBox{min-height:140px;max-height:300px;overflow-y:auto;outline:none;font:400 .95rem/1.65 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+.promptBox::-webkit-scrollbar{width:8px}
+.promptBox::-webkit-scrollbar-track{background:transparent}
+.promptBox::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
 .promptBox::before{content:none}
 .promptBox:not(:has(.reftile))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.9rem}
 .reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg);cursor:pointer}
@@ -57,13 +60,17 @@
 .pchip:hover{background:rgba(255,255,255,.06);color:#fff}
 .pchip.mode{color:var(--lime);font-weight:600}
 .pchip.at{font-weight:700;font-size:.95rem}
-.priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;margin-left:auto;display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-right:6px}
+.barRight{margin-left:auto;display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;display:flex;align-items:center;gap:5px;padding-right:2px}
 .priceBox .coin{color:var(--lime);display:grid;place-items:center}
 .priceBox .coin .msv{width:16px;height:16px}
 .sendbtn{width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1.1rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
 .sendbtn:hover{background:#e5e7eb}
 .sendbtn:disabled{opacity:.5;cursor:not-allowed}
-.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:240px;max-width:330px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:320px;overflow-y:auto}
+.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:250px;max-width:340px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:min(420px,70vh);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
+.popup::-webkit-scrollbar{width:8px}
+.popup::-webkit-scrollbar-track{background:transparent}
+.popup::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
 .popup.open{display:block}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
 .pu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
@@ -95,7 +102,10 @@
 .ph-s{margin-top:4px;font-size:.78rem}
 .recent{margin:28px 0 0}
 .rhead{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
-.rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+.rrow::-webkit-scrollbar{height:8px}
+.rrow::-webkit-scrollbar-track{background:transparent}
+.rrow::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
 .rcard{flex:0 0 200px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3)}
 .rcard video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
 .rcard .rc{padding:8px 10px}
@@ -110,7 +120,10 @@
 .trust a{color:var(--lime);text-decoration:none}
 .shopmask{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:410;display:none;align-items:center;justify-content:center;padding:20px}
 .shopmask.open{display:flex}
-.shop{display:grid;grid-template-columns:300px 1fr;gap:26px;background:#101308;border:1px solid var(--border-lime);border-radius:24px;padding:28px;max-width:880px;width:100%;max-height:88vh;overflow-y:auto;position:relative}
+.shop{display:grid;grid-template-columns:300px 1fr;gap:26px;background:#101308;border:1px solid var(--border-lime);border-radius:24px;padding:28px;max-width:880px;width:100%;max-height:88vh;overflow-y:auto;position:relative;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
+.shop::-webkit-scrollbar{width:8px}
+.shop::-webkit-scrollbar-track{background:transparent}
+.shop::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
 .shop-x{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer}
 .shop-l{text-align:center}
 .shop-l svg{width:100%;max-width:260px;height:auto}
@@ -216,8 +229,10 @@
       <button class="pchip" id="pcFQ" type="button">📱 16:9 · 480p ⌄</button>
       <button class="pchip" id="pcDur" type="button">⏱ 5 сек ⌄</button>
       <button class="pchip at" id="pcAt" type="button" title="Вставить упоминание референса">@</button>
-      <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">199</span></div>
-      <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
+      <div class="barRight">
+        <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">199</span></div>
+        <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
+      </div>
     </div>
     <div class="popup" id="popMenu"></div>
     <div class="refprev" id="refPrev"></div>
