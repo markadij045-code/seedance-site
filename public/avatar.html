@@ -155,7 +155,6 @@
 
 <nav class="rail">
   <a href="/gen.html" title="Создать видео">🎬</a>
-  <a href="/cartoon.html" title="Мультфильм">🎭</a>
   <a href="/avatar.html" class="on" title="Говорящий аватар">🗣</a>
   <a href="/motion.html" title="Моушен контроль">🕺</a>
   <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
@@ -178,7 +177,6 @@
     </a>
     <nav class="menu">
       <a href="/gen.html">Создать видео</a>
-      <a href="/cartoon.html">Мультфильм</a>
       <a href="/motion.html">Моушен</a>
       <a href="/lipsync.html">Липсинк</a>
       <a href="/help.html">Помощь</a>
@@ -194,7 +192,6 @@
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
   <a href="/">Главная</a>
   <a href="/gen.html">Создать видео</a>
-  <a href="/cartoon.html">Мультфильм</a>
   <a href="/avatar.html">Аватар</a>
   <a href="/motion.html">Моушен</a>
   <a href="/lipsync.html">Липсинк</a>
@@ -833,7 +830,7 @@ function poll(taskId){
         if(d.status==='succeeded'){
           clearInterval(timer);
           document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+d.videoUrl+'"></video></div>';
-          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          setStatus('Готово! ✅ Видео сохранено в твои работы — смотри и скачивай когда угодно.');
           histPush(d.videoUrl,audioNameStr||'аватар');
           stage='done'; updateSteps(); updateSend();
           try{ localStorage.removeItem('seedgen_avatar_draft'); }catch(e){}
