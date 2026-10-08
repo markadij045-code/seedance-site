@@ -67,7 +67,6 @@
   var key='gen';
   if(path.indexOf('gen.html')!==-1)key='create';
   else if(path.indexOf('photo')!==-1)key='photo';
-  else if(path.indexOf('cartoon')!==-1)key='cartoon';
   else if(path.indexOf('avatar')!==-1)key='avatar';
   else if(path.indexOf('motion')!==-1)key='motion';
   else if(path.indexOf('lipsync')!==-1)key='lipsync';
@@ -76,7 +75,7 @@
 
   var PAYRE=/Оплатить|Создать видео|Сгенерировать|Оживить картинку|Запустить генерацию/;
 
-  var GUIDE_ANCHOR = {create:'video', cartoon:'cartoon', avatar:'avatar', motion:'motion', lipsync:'lipsync'};
+  var GUIDE_ANCHOR = {create:'video', avatar:'avatar', motion:'motion', lipsync:'lipsync'};
 
   document.addEventListener('click', function(e){
     var b=e.target&&e.target.closest?e.target.closest('button'):null;
@@ -112,7 +111,6 @@
     create:{t:'Создать видео',s:['Опиши видео словами в поле — это твой промпт для нейросети.','Кружком 「+」 загрузи референсы: до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Наведи на миниатюру — увидишь превью.','Напечатай @ — всплывёт список загруженного, клик вставит упоминание прямо в текст. Так нейросеть поймёт, кто где в сцене.','Через всплывающие чипы выбери формат кадра и длительность (5–30 сек).','Отметь согласие и оплати — ⚡ Seedance 2.5 создаст ролик за 1–5 минут.']},
     home:{t:'Главная страница',s:['Нажми «Поехали?» — откроется витрина всех услуг.','Выбери карточку услуги — попадёшь на её страницу.','Дальше подсказки будут на самой странице услуги.']},
     photo:{t:'Оживи картинку',s:['Услуга объединена с «Создать видео»: загрузи изображение и опиши сцену.']},
-    cartoon:{t:'Мультфильм из фото',s:['Загрузи фото участников кружком 「+」 (до 10 фото, совет: 1–3 героя).','Опиши сюжет мультфильма.','Выбери стиль чипом 「🎨」: Pixar (3D) или аниме (2D).','Выбери путь: ⚡ Напрямую (быстрее) или 🎨 Через арт (точнее сходство лица). Оба шага включены в одну оплату.']},
     avatar:{t:'Говорящий аватар',s:['Выбери ведущего — пресет-иллюстрацию (Алина, Макс, Ева или кот Барсик) — или загрузи своё фото, лицо крупно.','Выбери озвучку: своё аудио (MP3/WAV, до 30 сек). Озвучка текстом с выбором голоса откроется после запуска.','Выбери формат видео: 9:16, 16:9 или 1:1.','Оплати — Kling Avatar оживит лицо за 1–5 минут: длина видео равна длине озвучки.']},
     motion:{t:'Моушен контроль',s:['Загрузи фото персонажа (своё или с согласия).','Загрузи видео с движением (MP4, до 20 МБ, до 30 сек).','Выбери длительность.','Оплати — персонаж повторит движения через 1–5 минут.']},
     lipsync:{t:'Липсинк (дубляж)',s:['Загрузи видео с человеком (своё или с согласия).','Загрузи свою озвучку (MP3/WAV, до 5 МБ).','Выбери длительность.','Оплати — губы синхронизируются с твоим голосом за 1–5 минут.']}
@@ -120,13 +118,13 @@
   var FAQ=[
     ['Как оплатить?','Карта, Мир, СБП, SberPay, ЮMoney. Без подписки — одна оплата за один заказ.'],
     ['Когда придёт видео?','Через 1–5 минут после оплаты видео появится в правой панели. Скачивай кнопкой 「Скачать видео」 — выкладывай куда хочешь.'],
-    ['Сколько хранится видео?','7 дней на сервере. Скачай его сразу — потом оно удалится без возможности восстановления.'],
+    ['Сколько хранится видео?','Видео сохраняется в твои работы — смотри и скачивай когда угодно.'],
     ['А если видео не пришло из-за сбоя?','Напиши в MAX (ссылка внизу страницы): проверим чек и запустим генерацию заново или вернём деньги по оферте.'],
     ['А если нейросеть отклонила контент?','Деньги вернутся автоматически на ту же карту в течение 1–3 рабочих дней. Подробности — в оферте, раздел 「Политика контента и возврата」.'],
     ['Можно фото с людьми?','Да, если у тебя есть согласие человека — это прописано в оферте. Защита от дипфейков встроена в сам движок Seedance 2.5: он отличает честные сцены от подделок и отказывается снимать вторые. Нам не нужно ничего запрещать руками — движок следит за этим сам.'],
     ['Кто такие ведущие-пресеты?','Алина, Макс, Ева и кот Барсик — иллюстрации-заглушки, чтобы попробовать аватар без своего фото. Их можно использовать свободно. После запуска добавим ИИ-ведущих и озвучку текстом.'],
     ['А если нужно видео длиннее 30 секунд?','После запуска озвучку длиннее 30 секунд будем собирать из фрагментов в один ролик — как в больших аватар-студиях. Цена — за минуту готового видео.'],
-    ['Зачем регистрация?','По желанию: аккаунт хранит твоих ведущих аватара и историю заказов на всех устройствах. Оплатить и получить видео можно и без регистрации.']
+    ['Зачем регистрация?','Аккаунт хранит твоих ведущих аватара и историю заказов на всех устройствах.']
   ];
 
   var fl=document.createElement('link');
@@ -189,7 +187,7 @@
   +'.hwGuideLink{margin:12px 0 22px}'
   +'.hwGuideLink a{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid rgba(163,230,53,.45);background:rgba(163,230,53,.08);color:#A3E635;text-decoration:none;font-size:.92rem;font-weight:600;border-radius:999px;transition:.2s}'
   +'.hwGuideLink a:hover{background:rgba(163,230,53,.16);border-color:rgba(163,230,53,.7)}'
-  +'.hwSoonTip{display:none;position:fixed;z-index:500;max-width:250px;background:#101308;border:1px solid rgba(163,230,53,.45);color:#e5e7eb;padding:8px 12px;border-radius:10px;font-size:.8rem;line-height:1.4;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.5)}';
+  +'.hwSoonTip{display:none;position:fixed;z-index:500;max-width:150px;background:#101308;border:1px solid rgba(163,230,53,.45);color:#e5e7eb;padding:6px 10px;border-radius:8px;font-size:.8rem;line-height:1.4;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.5)}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -203,7 +201,7 @@
     wb.setAttribute('data-new','1');
     wb.innerHTML='<button class="welcome-close" id="hwWelClose">✕</button>'
       +'<h2>🎬 Мурзик уже танцует</h2>'
-      +'<p>Ёшкин кот снимает видео по твоим словам: коты, мемы, мультфильмы, говорящие аватары. Выбери услугу — и поехали.</p>'
+      +'<p>Ёшкин кот снимает видео по твоим словам: коты, мемы, говорящие аватары. Выбери услугу — и поехали.</p>'
       +'<div class="gift">🔥 Хиты: 「Моушен」и 「Липсинк」 — персонаж повторяет твой танец и говорит твоим голосом</div>'
       +'<button id="hwWelGo">Поехали?</button>';
     wb.querySelector('#hwWelClose').onclick=closeWelcomeGlobal;
@@ -223,7 +221,7 @@
   }
   fixFooter();
 
-  var ORDER=[['/gen.html','Создать видео'],['/cartoon.html','Мультфильм'],['/avatar.html','Аватар'],['/motion.html','Моушен'],['/lipsync.html','Липсинк'],['/help.html','Помощь'],['/pro-studio.html','PRO-студия']];
+  var ORDER=[['/gen.html','Создать видео'],['/avatar.html','Аватар'],['/motion.html','Моушен'],['/lipsync.html','Липсинк'],['/help.html','Помощь'],['/pro-studio.html','PRO-студия']];
 
   function ensureOrder(container,withPro){
     if(!container)return;
@@ -274,11 +272,14 @@
       if(href==='/photo.html'){
         a.parentNode.removeChild(a);
       }
+      if(href==='/cartoon.html'){
+        a.parentNode.removeChild(a);
+      }
     }
     var menu=document.querySelector('.menu');
     if(menu&&!menu.querySelector('.hwDrop')){
       var dd=document.createElement('div');dd.className='hwDrop';
-      var items=[['/gen.html','Создать видео'],['/cartoon.html','Мультфильм из фото'],['/avatar.html','Говорящий аватар'],['/motion.html','Моушен контроль'],['/lipsync.html','Липсинк / дубляж']];
+      var items=[['/gen.html','Создать видео'],['/avatar.html','Говорящий аватар'],['/motion.html','Моушен контроль'],['/lipsync.html','Липсинк / дубляж']];
       var ih='';
       for(var q=0;q<items.length;q++){ih+='<a href="'+items[q][0]+'">'+items[q][1]+'</a>';}
       dd.innerHTML='<button type="button" class="hwDropBtn">Услуги ▾</button><div class="hwDropMenu">'+ih+'</div>';
@@ -286,7 +287,7 @@
       dd.querySelector('.hwDropBtn').onclick=function(ev){ev.stopPropagation();dd.classList.toggle('open');};
       document.addEventListener('click',function(){dd.classList.remove('open');});
     }
-    var svc={'/gen.html':1,'/cartoon.html':1,'/avatar.html':1,'/motion.html':1,'/lipsync.html':1};
+    var svc={'/gen.html':1,'/avatar.html':1,'/motion.html':1,'/lipsync.html':1};
     if(svc[path]){
       var db2=document.querySelector('.hwDropBtn');if(db2)db2.classList.add('hwActive');
       var da2=document.querySelector('.hwDropMenu a[href="'+path+'"]');if(da2)da2.classList.add('hwActive');
@@ -304,7 +305,7 @@
     ensureOrder(document.querySelector('.links'),false);
     var sb=document.querySelector('.sidebar');
     if(sb){
-      var slist=[['/gen.html','📝 Создать видео'],['/cartoon.html','🎬 Мультфильм из фото'],['/avatar.html','🗣 Говорящий аватар'],['/motion.html','🕺 Моушен контроль'],['/lipsync.html','🎤 Липсинк / дубляж'],['/examples.html','Примеры'],['/help.html','Помощь'],['/pro-studio.html','🎛 PRO-студия']];
+      var slist=[['/gen.html','📝 Создать видео'],['/avatar.html','🗣 Говорящий аватар'],['/motion.html','🕺 Моушен контроль'],['/lipsync.html','🎤 Липсинк / дубляж'],['/examples.html','Примеры'],['/help.html','Помощь'],['/pro-studio.html','🎛 PRO-студия']];
       for(var s2=0;s2<slist.length;s2++){
         if(!sb.querySelector('a[href="'+slist[s2][0]+'"]')){
           var sa=document.createElement('a');sa.href=slist[s2][0];sa.textContent=slist[s2][1];
@@ -329,11 +330,11 @@
     if(!soonTip){
       soonTip=document.createElement('div');
       soonTip.className='hwSoonTip';
-      soonTip.textContent='🎛 PRO-студия откроется после запуска — скоро';
+      soonTip.textContent='скоро';
       document.body.appendChild(soonTip);
     }
     var r=a.getBoundingClientRect();
-    soonTip.style.left=Math.max(8,Math.min(window.innerWidth-260,r.left))+'px';
+    soonTip.style.left=Math.max(8,Math.min(window.innerWidth-160,r.left))+'px';
     soonTip.style.top=(r.bottom+8)+'px';
     soonTip.style.display='block';
   }
@@ -350,15 +351,15 @@
           ev.preventDefault();
           ev.stopPropagation();
           showSoon(a);
-          setTimeout(hideSoon,2000);
+          setTimeout(hideSoon,1500);
         });
       })(as[i]);
     }
   }
   attachSoon();
 
-  var NAMES={'/gen.html':'Создать видео','/cartoon.html':'Мультфильм из фото','/avatar.html':'Говорящий аватар','/motion.html':'Моушен контроль','/lipsync.html':'Липсинк / дубляж'};
-  var SUBS={'/gen.html':'Опиши сцену словами и загрузи референсы — нейросеть снимет ролик за 1–5 минут','/cartoon.html':'Фото участников превращаются в мультфильм в стиле Pixar или аниме','/avatar.html':'Фото + озвучка = ведущий, который говорит твоими словами','/motion.html':'Персонаж с фото повторит движения из твоего видео','/lipsync.html':'Губы на видео синхронизируются с твоей озвучкой'};
+  var NAMES={'/gen.html':'Создать видео','/avatar.html':'Говорящий аватар','/motion.html':'Моушен контроль','/lipsync.html':'Липсинк / дубляж'};
+  var SUBS={'/gen.html':'Опиши сцену словами и загрузи референсы — нейросеть снимет ролик за 1–5 минут','/avatar.html':'Фото + озвучка = ведущий, который говорит твоими словами','/motion.html':'Персонаж с фото повторит движения из твоего видео','/lipsync.html':'Губы на видео синхронизируются с твоей озвучкой'};
   if(NAMES[path]&&!document.querySelector('h1')){
     var host=document.querySelector('main')||document.querySelector('.container:not(.nav-in):not(.bar-in)')||document.body;
     var h1=document.createElement('h1');
@@ -410,7 +411,7 @@
     }
   }
 
-  if(key==='cartoon'||key==='avatar'||key==='motion'||key==='lipsync'){
+  if(key==='avatar'||key==='motion'||key==='lipsync'){
     var drop=document.querySelector('.drop');
     if(drop&&!drop.parentNode.querySelector('.hwNote')){
       var cn=document.createElement('div');
@@ -482,7 +483,7 @@
       v.parentNode.insertBefore(dl,v.nextSibling);
       var note=document.createElement('div');
       note.className='hwNote';
-      note.textContent='💾 Скачай видео в течение 7 дней — потом оно удалится с сервера без возможности восстановления.';
+      note.textContent='💾 Видео сохраняется в твои работы — смотри и скачивай когда угодно.';
       v.parentNode.insertBefore(note,dl.nextSibling);
     }
   },1000);
