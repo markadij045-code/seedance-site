@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Липсинк (дубляж) — SeedGen</title>
+<title>Липсинк — Ёшкин кот</title>
 <meta property="og:title" content="Липсинк — человек в видео говорит твоими словами">
 <meta property="og:description" content="Загрузи видео и свою озвучку — губы и мимика синхронизируются с твоим голосом. От 199 ₽">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -76,11 +76,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   <div class="container nav-in">
     <a class="logo" href="/">
       <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
-      SeedGen
+      Ёшкин кот
     </a>
     <nav class="menu">
       <a href="/gen.html">Создать видео</a>
-      <a href="/cartoon.html">Мультфильм</a>
       <a href="/avatar.html">Аватар</a>
       <a href="/motion.html">Моушен</a>
       <a href="/help.html">Помощь</a>
@@ -96,7 +95,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
   <a href="/">Главная</a>
   <a href="/gen.html">Создать видео</a>
-  <a href="/cartoon.html">Мультфильм</a>
   <a href="/avatar.html">Аватар</a>
   <a href="/motion.html">Моушен</a>
   <a href="/lipsync.html">Липсинк</a>
@@ -459,7 +457,7 @@ function poll(taskId){
         if(d.status === 'succeeded'){
           clearInterval(timer);
           document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + d.videoUrl + '"></video></div>';
-          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          setStatus('Готово! ✅ Видео сохранено в твои работы — смотри и скачивай когда угодно.');
           stage = 'done';
           updateSteps(); updateBar();
           try{ localStorage.removeItem('seedgen_lipsync_draft'); }catch(e){}
