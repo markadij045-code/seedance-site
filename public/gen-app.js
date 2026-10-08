@@ -10,8 +10,15 @@ var MODELS={
  'seedance-2.5':{name:'Seedance 2.5',base:199,per:30,max:30,api:'seedance-2-5',qualities:{'480p':0,'720p':200,'1080p':300}},
  'wan-3.0':{name:'Wan 3.0',base:99,per:10,max:30,api:'wan-3.0',qualities:{'480p':0,'720p':200,'1080p':300}}
 };
+var STYLES={
+ 'real':{name:'Реализм',ico:'🎥',desc:'Живая картинка как съёмка на камеру: фактура, свет, дыхание кадра.'},
+ 'cartoon':{name:'Мультфильм',ico:'🎭',desc:'Мягкие формы, яркая палитра, как рисованный мультик.'},
+ 'anime':{name:'Аниме',ico:'🌸',desc:'Японская школа: выразительные глаза, чистые линии, драматичный свет.'},
+ 'noir':{name:'Нуар',ico:'🌑',desc:'Чёрно-белое настроение, тени, дождь и детектив.'}
+};
 var MAXIMG=10, MAXVIDSEC=15, MAXAUDSEC=15, MAXVIDMB=20, MAXAUDMB=5;
 var modelKey='seedance-2.5';
+var styleKey='real';
 var enhance=true;
 var orientation='16:9';
 var quality='480p';
@@ -66,6 +73,7 @@ function promptText(){
 
 function updateChips(){
   document.getElementById('pcModel').textContent='⚙ '+model().name+' ⌄';
+  document.getElementById('pcStyle').textContent=STYLES[styleKey].ico+' '+STYLES[styleKey].name+' ⌄';
   document.getElementById('pcEnh').textContent=(enhance?'✨ Простой режим':'✨ Продвинутый')+' ⌄';
   document.getElementById('pcRef').textContent='🖼 Референсы ('+refCount()+') ⌄';
   document.getElementById('pcFQ').textContent='📱 '+orientation+' · '+quality+' ⌄';
@@ -202,6 +210,20 @@ function mountModelPop(){
   });
 }
 
+function stylePopHTML(){
+  var h='<div class="pu-head">Стиль картинки</div>';
+  Object.keys(STYLES).forEach(function(k){
+    var s=STYLES[k];
+    h+='<div class="pu-item" data-style="'+k+'"><span class="mi">'+s.ico+'</span><span class="nc"><span class="nm">'+s.name+'</span><span class="pu-desc">'+s.desc+'</span></span>'+(styleKey===k?'<span class="chk">✓</span>':'')+'</div>';
+  });
+  return h;
+}
+function mountStylePop(){
+  pop.querySelectorAll('[data-style]').forEach(function(el){
+    el.addEventListener('click',function(){ styleKey=el.getAttribute('data-style'); closePop(); updateChips(); saveDraft(); });
+  });
+}
+
 function enhPopHTML(){
   return '<div class="pu-head">Режим промпта — как нейросеть читает твой текст</div>'
     +'<div class="pu-item" data-enh="1"><span class="mi">✨</span><span class="nc"><span class="nm">Простой режим</span><span class="pu-desc">Пиши своими словами, как говоришь другу. Модель сама переведёт на киноязык: добавит камеру, свет, движение и детали. Выбери, если пробуешь впервые.</span></span>'+(enhance?'<span class="chk">✓</span>':'')+'</div>'
@@ -326,6 +348,7 @@ function insertMention(tok){
 }
 
 document.getElementById('pcModel').addEventListener('click',function(){ openPopEl(this,modelPopHTML(),'model',mountModelPop); });
+document.getElementById('pcStyle').addEventListener('click',function(){ openPopEl(this,stylePopHTML(),'style',mountStylePop); });
 document.getElementById('pcEnh').addEventListener('click',function(){ openPopEl(this,enhPopHTML(),'enh',mountEnhPop); });
 document.getElementById('pcRef').addEventListener('click',function(){ openPopEl(this,refPopHTML(),'ref',mountRefPop); });
 document.getElementById('pcFQ').addEventListener('click',function(){ openPopEl(this,fqPopHTML(),'fq',mountFqPop); });
@@ -440,7 +463,7 @@ function saveDraft(){
   if(restoring) return;
   try{
     localStorage.setItem('seedgen_gen_draft',JSON.stringify({
-      prompt:promptText(),model:modelKey,enhance:enhance,orientation:orientation,quality:quality,seconds:seconds,
+      prompt:promptText(),model:modelKey,style:styleKey,enhance:enhance,orientation:orientation,quality:quality,seconds:seconds,
       refs:refs,video:refVideo,audio:refAudio,savedAt:Date.now()
     }));
   }catch(e){}
@@ -451,6 +474,7 @@ function saveDraft(){
     if(!s) return;
     restoring=true;
     if(s.model&&MODELS[s.model]) modelKey=s.model;
+    if(s.style&&STYLES[s.style]) styleKey=s.style;
     if(typeof s.enhance==='boolean') enhance=s.enhance;
     if(s.orientation) orientation=s.orientation;
     if(s.seconds) seconds=s.seconds;
@@ -466,13 +490,18 @@ function saveDraft(){
 })();
 promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); saveDraft(); });
 
+(function applyUrlStyle(){
+  var st=new URLSearchParams(window.location.search).get('style');
+  if(st&&STYLES[st]){ styleKey=st; saveDraft(); }
+})();
+
 function callGenerate(pid){
   stage='gen';
   updateSteps(); updateSend();
   setStatus('Собираем кадры... 1–5 минут ⏳');
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     service:'text2video', paymentId:pid, prompt:promptText(),
-    model:modelKey, enhancePrompt:enhance,
+    model:modelKey, style:styleKey, enhancePrompt:enhance,
     seconds:seconds, quality:quality, aspect:orientation,
     refs:refs, video:refVideo?refVideo.url:null, audio:refAudio?refAudio.url:null
   })})
