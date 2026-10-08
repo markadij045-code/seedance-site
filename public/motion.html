@@ -81,7 +81,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     </a>
     <nav class="menu">
       <a href="/gen.html">Создать видео</a>
-      <a href="/cartoon.html">Мультфильм</a>
       <a href="/avatar.html">Аватар</a>
       <a href="/lipsync.html">Липсинк</a>
       <a href="/help.html">Помощь</a>
@@ -97,7 +96,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
   <a href="/">Главная</a>
   <a href="/gen.html">Создать видео</a>
-  <a href="/cartoon.html">Мультфильм</a>
   <a href="/avatar.html">Аватар</a>
   <a href="/motion.html">Моушен</a>
   <a href="/lipsync.html">Липсинк</a>
@@ -420,7 +418,7 @@ function poll(taskId){
         if(d.status === 'succeeded'){
           clearInterval(timer);
           document.getElementById('outbox').innerHTML = '<div id="result"><video id="video" controls src="' + d.videoUrl + '"></video></div>';
-          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          setStatus('Готово! ✅ Видео сохранено в твои работы — смотри и скачивай когда угодно.');
           stage = 'done';
           updateSteps(); updateBar();
           try{ localStorage.removeItem('seedgen_motion_draft'); }catch(e){}
