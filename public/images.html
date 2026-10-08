@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Генератор изображений — Ёшкин кот</title>
+<meta property="og:title" content="Генератор изображений — текст в картинку">
+<meta property="og:description" content="Опиши картинку словами — шесть моделей нарисуют её за минуту. От 5 🐭 за картинку.">
+<meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.yoshkin-kot.online/images.html">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
+<style>
+::selection{background:rgba(163,230,53,.28)!important;color:#e5e7eb!important}
+::-moz-selection{background:rgba(163,230,53,.28)!important;color:#e5e7eb!important}
+.rail{position:fixed;left:0;top:0;bottom:0;width:64px;background:rgba(5,6,7,.92);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:84px 0 16px;gap:6px;z-index:90}
+.rail a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;text-decoration:none;filter:grayscale(1);opacity:.5}
+.rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
+.rail a.on{opacity:1;filter:none;background:rgba(163,230,53,.12);box-shadow:inset 0 0 0 1px rgba(163,230,53,.45)}
+.rspacer{flex:1}
+.rbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--lime);display:grid;place-items:center;cursor:pointer;margin-top:4px}
+.rbtn:hover{background:rgba(163,230,53,.12);border-color:var(--border-lime)}
+.rbtn svg{width:20px;height:20px}
+.rbtn.user{color:#e5e7eb}
+.rmenu{position:fixed;left:76px;bottom:16px;z-index:400;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:6px;min-width:220px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;flex-direction:column}
+.rmenu.open{display:flex}
+.rmenu button{display:flex;gap:10px;align-items:center;padding:9px 12px;border:none;border-radius:8px;background:none;color:var(--text);font:500 .85rem 'Inter';cursor:pointer;text-align:left}
+.rmenu button:hover{background:rgba(163,230,53,.12)}
+.rmenu button.dis{opacity:.5}
+.msv{width:15px;height:15px;color:var(--lime);display:inline-block;vertical-align:-2px}
+.wrap{max-width:1040px;margin:96px auto 60px;padding:0 24px 0 88px}
+.pagehead{text-align:center;margin:0 0 20px}
+.pagehead h1{font-family:'Space Grotesk';font-size:2rem;line-height:1.2;margin:0;color:var(--text)}
+.psteps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.pstep{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:600}
+.pstep i{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:.66rem}
+.pstep.done{color:var(--lime);border-color:var(--border-lime)}
+.pstep.done i{background:rgba(163,230,53,.15)}
+.pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
+.studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:16px 18px 12px}
+.pwrap{position:relative;padding:0 0 8px}
+.promptBox{min-height:110px;max-height:280px;overflow-y:auto;outline:none;font:400 .95rem/1.65 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+.promptBox::-webkit-scrollbar{width:8px}
+.promptBox::-webkit-scrollbar-track{background:transparent}
+.promptBox::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
+.studio-bar{display:flex;gap:2px;align-items:center;flex-wrap:wrap;padding:4px 0 2px}
+.pchip{border:none;background:none;color:#d1d5db;font:500 .8rem 'Inter';cursor:pointer;white-space:nowrap;padding:7px 8px;border-radius:9px;flex:0 0 auto}
+.pchip:hover{background:rgba(255,255,255,.06);color:#fff}
+.pchip.mode{color:var(--lime);font-weight:600}
+.barRight{margin-left:auto;display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.priceBox{font:600 .92rem 'Inter';color:#d1d5db;white-space:nowrap;display:flex;align-items:center;gap:5px;padding-right:2px}
+.priceBox .coin{color:var(--lime);display:grid;place-items:center}
+.priceBox .coin .msv{width:16px;height:16px}
+.sendbtn{width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1.1rem;font-weight:800;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
+.sendbtn:hover{background:#e5e7eb}
+.sendbtn:disabled{opacity:.5;cursor:not-allowed}
+.popup{position:absolute;z-index:120;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:250px;max-width:340px;box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:min(420px,70vh);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
+.popup::-webkit-scrollbar{width:8px}
+.popup::-webkit-scrollbar-track{background:transparent}
+.popup::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
+.popup.open{display:block}
+.pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
+.pu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
+.pu-item:hover,.pu-item.sel{background:rgba(163,230,53,.12)}
+.pu-item .mi{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:.8rem;background:rgba(255,255,255,.08);flex:0 0 auto}
+.pu-item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pu-item .nc{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pu-item .nc .nm{white-space:normal;font-weight:600}
+.pu-desc{color:var(--muted);font-size:.72rem;line-height:1.45;font-weight:400}
+.pu-item .chk{margin-left:auto;color:var(--lime);flex:0 0 auto}
+.pu-lbl{padding:8px 10px 4px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
+.pu-row button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer}
+.pu-row button:hover{color:var(--text)}
+.pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
+.rolehint{color:var(--muted);font-size:.78rem;line-height:1.55;margin-top:12px}
+.rolehint a{color:var(--lime)}
+#status{margin-top:10px;color:var(--muted);font-size:.84rem;text-align:center;min-height:18px}
+.result{margin:26px 0 0}
+.mod-h{color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px}
+.outbox{border-radius:18px;border:1px solid var(--border);background:radial-gradient(420px 240px at 50% 0,rgba(163,230,53,.07),transparent 70%),rgba(0,0,0,.35);overflow:hidden;padding:14px;min-height:240px;display:grid;place-items:center}
+.outbox.has{display:block}
+.imggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.imgcard{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000}
+.imgcard img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.imgcard .acts{position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;padding:8px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.88))}
+.imgcard .acts a,.imgcard .acts button{flex:1;padding:7px 6px;border-radius:9px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.55);color:#e5e7eb;font-size:.7rem;font-weight:600;cursor:pointer;text-decoration:none;text-align:center}
+.imgcard .acts a:hover,.imgcard .acts button:hover{border-color:var(--border-lime);color:var(--lime)}
+.ph{text-align:center;color:var(--muted);font-size:.85rem;line-height:1.6;padding:24px}
+.vf{width:64px;height:84px;border:1.5px dashed rgba(163,230,53,.45);border-radius:12px;display:grid;place-items:center;color:var(--lime);margin:0 auto 10px;background:rgba(163,230,53,.04)}
+.vf svg{width:22px;height:22px}
+.ph-t{color:var(--text);font-weight:600;font-size:.95rem}
+.ph-s{margin-top:4px;font-size:.78rem}
+.recent{margin:28px 0 0}
+.rhead{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.rrow{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+.rrow::-webkit-scrollbar{height:8px}
+.rrow::-webkit-scrollbar-track{background:transparent}
+.rrow::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}
+.rcard{flex:0 0 180px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3)}
+.rcard img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#000}
+.rcard .rc{padding:8px 10px}
+.rcard .rn{color:var(--text);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcard .rd{color:var(--muted);font-size:.68rem;margin:2px 0 6px}
+.rcard a{color:var(--lime);font-size:.72rem;text-decoration:none}
+.footnote{margin:26px 0 0;display:flex;flex-direction:column;gap:10px;align-items:center}
+.payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
+.pay-ic{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.03em}
+.payrow a{color:var(--lime);font-size:.75rem;text-decoration:none}
+.trust{color:var(--muted);font-size:.76rem;text-align:center}
+.trust a{color:var(--lime);text-decoration:none}
+.shopmask{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:410;display:none;align-items:center;justify-content:center;padding:20px}
+.shopmask.open{display:flex}
+.shop{display:grid;grid-template-columns:300px 1fr;gap:26px;background:#101308;border:1px solid var(--border-lime);border-radius:24px;padding:28px;max-width:880px;width:100%;max-height:88vh;overflow-y:auto;position:relative;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
+.shop::-webkit-scrollbar{width:8px}
+.shop::-webkit-scrollbar-track{background:transparent}
+.shop::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
+.shop-x{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer}
+.shop-l{text-align:center}
+.shop-l svg{width:100%;max-width:260px;height:auto}
+.shop-say{color:#c9cfba;font-size:.88rem;line-height:1.6;margin:12px 0 6px;font-style:italic}
+.shop-name{color:var(--lime);font-weight:700;font-size:.9rem}
+.shop-sub{color:var(--muted);font-size:.75rem;margin-top:2px}
+.shop-rate{border:1px solid var(--border-lime);background:rgba(163,230,53,.08);border-radius:12px;padding:10px 14px;color:var(--text);font-size:.9rem;font-weight:600;margin-bottom:12px}
+.shop-bal{color:var(--muted);font-size:.85rem;margin-bottom:14px}
+.shop-bal b{color:var(--text)}
+.soonbadge{padding:2px 8px;border-radius:999px;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);color:#fbbf24;font-size:.68rem;font-weight:700;margin-left:6px}
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.pack{border:1px solid var(--border);border-radius:16px;padding:14px 10px;text-align:center;background:rgba(255,255,255,.03)}
+.pack .pn{font-family:'Space Grotesk';font-size:1.35rem;font-weight:700;color:var(--lime);display:flex;gap:6px;align-items:center;justify-content:center}
+.pack .pn .msv{width:18px;height:18px}
+.pack .pp{color:var(--muted);font-size:.8rem;margin-top:4px}
+.pack .gift{color:#fbbf24;font-size:.7rem;margin-top:4px}
+.shop-btn{width:100%;padding:14px;border-radius:999px;border:none;background:var(--lime);color:#0a0c08;font:700 .95rem 'Inter';cursor:pointer}
+.shop-btn:disabled{opacity:.55;cursor:not-allowed}
+.shop-plate{margin-top:10px;text-align:center;color:#ffb066;font-size:.8rem}
+.shop-legal{margin-top:12px;color:var(--muted);font-size:.74rem;text-align:center}
+.shop-legal a{color:var(--lime)}
+#hwFloat{display:none!important}
+@media(max-width:900px){
+  .rail{display:none}
+  .wrap{padding:0 24px;margin-top:84px}
+  .shop{grid-template-columns:1fr}
+  .packs{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-ws="1">
+
+<nav class="rail">
+  <a href="/gen.html" title="Создать видео">🎬</a>
+  <a href="/images.html" class="on" title="Генератор изображений">🖼</a>
+  <a href="/avatar.html" title="Говорящий аватар">🗣</a>
+  <a href="/motion.html" title="Моушен контроль">🕺</a>
+  <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
+  <span class="rspacer"></span>
+  <button class="rbtn" id="rbToken" type="button" title="Мышки — кошелек и лавка"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+  <button class="rbtn user" id="rbUser" type="button" title="Аккаунт"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5"/></svg></button>
+</nav>
+<div class="rmenu" id="rmenu">
+  <button type="button" data-act="account">👤 <span id="rmAcc">Войти в кабинет</span></button>
+  <button type="button" data-act="help">❓ Помощь</button>
+  <button type="button" data-act="settings" class="dis">⚙️ Настройки · скоро</button>
+  <button type="button" data-act="logout" id="rmOut" style="display:none">🚪 Выйти</button>
+</div>
+
+<header class="top">
+  <div class="container nav-in">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg>
+      Ёшкин кот
+    </a>
+    <nav class="menu">
+      <a href="/gen.html">Создать видео</a>
+      <a href="/avatar.html">Аватар</a>
+      <a href="/motion.html">Моушен</a>
+      <a href="/lipsync.html">Липсинк</a>
+      <a href="/help.html">Помощь</a>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a class="btn btn-ghost" href="/">На главную</a>
+      <button class="burger" onclick="toggleSidebar()">☰</button>
+    </div>
+  </div>
+</header>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <a href="/">Главная</a>
+  <a href="/gen.html">Создать видео</a>
+  <a href="/images.html">Генератор изображений</a>
+  <a href="/avatar.html">Аватар</a>
+  <a href="/motion.html">Моушен</a>
+  <a href="/lipsync.html">Липсинк</a>
+  <a href="/examples.html">Примеры</a>
+  <a href="/prices.html">Цены</a>
+  <a href="/help.html">Помощь</a>
+</div>
+
+<main class="wrap">
+  <div class="pagehead">
+    <h1>Какую картинку создадим?</h1>
+  </div>
+
+  <div class="psteps">
+    <span class="pstep active" id="st1"><i>1</i> Промпт</span>
+    <span class="pstep" id="st2"><i>2</i> Оплата</span>
+    <span class="pstep" id="st3"><i>3</i> Твои картинки</span>
+  </div>
+
+  <div class="studio" id="stage">
+    <div class="pwrap">
+      <div class="promptBox" id="promptBox" contenteditable="true" spellcheck="false"></div>
+    </div>
+    <div class="studio-bar">
+      <button class="pchip mode" id="pcModel" type="button">⚙ Kling Image ⌄</button>
+      <button class="pchip" id="pcCount" type="button">🖼 1 картинка ⌄</button>
+      <button class="pchip" id="pcAspect" type="button">📱 1:1 ⌄</button>
+      <div class="barRight">
+        <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">5</span></div>
+        <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
+      </div>
+    </div>
+    <div class="popup" id="popMenu"></div>
+  </div>
+
+  <div class="rolehint" style="text-align:center">💡 Опиши картинку словами: кто или что в кадре, стиль, свет, настроение. Готовую картинку можно в один клик отправить референсом в 「Создать видео」 — нейросеть снимет по ней ролик.</div>
+
+  <div id="status"></div>
+
+  <section class="result" id="resultSec" style="display:none">
+    <div class="mod-h">Твои картинки</div>
+    <div class="outbox" id="outbox">
+      <div class="ph">
+        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M8 12l3 3 5-6"/></svg></div>
+        <div class="ph-t">Здесь появятся твои картинки</div>
+        <div class="ph-s">Кадры = твой промпт и выбранная модель</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="recent" id="recentSec" style="display:none">
+    <div class="rhead"><span>Ваши работы</span><span id="histCount"></span></div>
+    <div class="rrow" id="histList"></div>
+  </section>
+
+  <div class="footnote">
+    <div class="payrow">
+      <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
+      <a href="/prices.html">Цены и оплата →</a>
+    </div>
+    <div id="wsNotice"></div>
+    <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
+  </div>
+</main>
+
+<div class="shopmask" id="shopMask">
+  <div class="shop">
+    <button class="shop-x" id="shopClose" type="button">✕</button>
+    <div class="shop-l">
+      <svg viewBox="0 0 200 200">
+        <rect x="14" y="132" width="172" height="12" rx="6" fill="#a9764f"/>
+        <rect x="20" y="144" width="160" height="40" rx="6" fill="#8b5e3c"/>
+        <ellipse cx="100" cy="118" rx="52" ry="46" fill="#fb923c"/>
+        <path d="M62 108c0-20 17-34 38-34s38 14 38 34v26H62z" fill="#16a34a"/>
+        <path d="M78 78c6-8 38-8 44 0" stroke="#14532d" stroke-width="6" fill="none"/>
+        <rect x="84" y="110" width="32" height="18" rx="4" fill="#14532d"/>
+        <path d="M78 44l-6-18 16 8z" fill="#fb923c"/>
+        <path d="M122 44l6-18-16 8z" fill="#fb923c"/>
+        <circle cx="100" cy="60" r="30" fill="#fb923c"/>
+        <path d="M86 34c4-3 8-3 10 0M104 34c4-3 8-3 10 0" stroke="#ea580c" stroke-width="4" fill="none"/>
+        <ellipse cx="100" cy="70" rx="14" ry="10" fill="#fde68a"/>
+        <circle cx="88" cy="56" r="3" fill="#111"/>
+        <circle cx="112" cy="56" r="3" fill="#111"/>
+        <path d="M100 66l-3 3h6z" fill="#f9a8d4"/>
+        <path d="M92 74c5 4 11 4 16 0" stroke="#b45309" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M70 62h-14M70 68h-13M130 62h14M130 68h13" stroke="#fff7ed" stroke-width="2" stroke-linecap="round"/>
+        <rect x="34" y="112" width="18" height="20" rx="4" fill="rgba(255,255,255,.28)"/>
+        <circle cx="40" cy="126" r="3" fill="#A3E635"/>
+        <circle cx="46" cy="124" r="3" fill="#A3E635"/>
+        <circle cx="43" cy="119" r="3" fill="#A3E635"/>
+      </svg>
+      <div class="shop-say">«Неси рубли — дам мышек. Курс честный: один к одному, без фокусов. За крупный обмен подарочных мышей насыплю — это за мой счёт».</div>
+      <div class="shop-name">Кот Палыч</div>
+      <div class="shop-sub">поставщик мышек · при студии с первого дня</div>
+    </div>
+    <div class="shop-r">
+      <div class="shop-rate">1 🐭 = 1 ₽ · честный курс поставщика</div>
+      <div class="shop-bal">В кошельке: <b>— 🐭</b><span class="soonbadge">баланс появится после запуска</span></div>
+      <div class="packs">
+        <div class="pack"><div class="pn">100 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 100 ₽</div><div class="gift">хватит на 20 картинок</div></div>
+        <div class="pack"><div class="pn">500 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 500 ₽</div><div class="gift">+25 🐭 в подарок</div></div>
+        <div class="pack"><div class="pn">1000 <svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><div class="pp">= 1000 ₽</div><div class="gift">+100 🐭 в подарок</div></div>
+      </div>
+      <button class="shop-btn" id="shopBuy" type="button" disabled>Обменять рубли на мышек</button>
+      <div class="shop-plate">🚧 Лавка откроется в день запуска — Палыч уже точит весы</div>
+      <div class="shop-legal">Цены в рублях и правила обмена — на странице <a href="/prices.html">цен</a> и в <a href="/legal.html#offer">оферте</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('open');
+}
+
+var IMG_MODELS={
+ 'gen4-image':{name:'Gen4-image',price:7,api:'gen4-image',desc:'кино-эстетика Runway: свет, фактура, настроение'},
+ 'gpt-image-1.5':{name:'GPT Image 1.5',price:15,api:'gpt-image-1.5',desc:'читаемый текст на картинках и точная композиция'},
+ 'grok-image':{name:'Grok-Imagine-Image-2.0',price:9,api:'grok-imagine-image-2.0',desc:'сочный и популярный, хорош для мемов'},
+ 'kling-image':{name:'Kling Image',price:5,api:'kling-image',desc:'бюджетный вход: дёшево и сердито, умеет правки'},
+ 'nano-banana-2':{name:'Nano Banana 2',price:19,api:'gemini-3.1-flash-image-preview',desc:'премиум Google: до 4K, вау-детализация'},
+ 'qwen-image':{name:'Qwen Image',price:6,api:'qwen-image',desc:'крепкий середняк Alibaba за копейки'}
+};
+var COUNTS={1:{label:'1 картинка',mult:1},2:{label:'2 картинки',mult:2},4:{label:'4 картинки · пак',mult:3}};
+var ASPECTS=['1:1','16:9','9:16','4:3','3:4'];
+var modelKey='kling-image';
+var count=1;
+var aspect='1:1';
+var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
+var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
+var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
+sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
+var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
+
+function setStatus(t){ statusEl.textContent=t; }
+function model(){ return IMG_MODELS[modelKey]||IMG_MODELS['kling-image']; }
+function modelKeys(){ return Object.keys(IMG_MODELS).sort(function(a,b){ return IMG_MODELS[a].name.localeCompare(IMG_MODELS[b].name); }); }
+function price(){ return model().price*COUNTS[count].mult; }
+function promptText(){ return (promptBox.textContent||'').replace(/\s+/g,' ').trim(); }
+
+function requireAuth(){
+  if(token){ return true; }
+  saveDraft();
+  location.href='/account.html?return='+encodeURIComponent('/images.html');
+  return false;
+}
+
+function updateChips(){
+  document.getElementById('pcModel').textContent='⚙ '+model().name+' ⌄';
+  document.getElementById('pcCount').textContent='🖼 '+COUNTS[count].label+' ⌄';
+  document.getElementById('pcAspect').textContent='📱 '+aspect+' ⌄';
+  document.getElementById('priceVal').textContent=price();
+}
+function updateSend(){
+  if(stage==='done'){ sendBtn.disabled=true; sendBtn.title='Готово'; }
+  else{ sendBtn.disabled=false; sendBtn.title=paidSeen?'Запустить генерацию':'На оплату'; }
+}
+function updateSteps(){
+  var ok=!!promptText();
+  var s1=document.getElementById('st1'),s2=document.getElementById('st2'),s3=document.getElementById('st3');
+  s1.className='pstep'+(ok?' done':' active');
+  s2.className='pstep'+(paidSeen?' done':(ok?' active':''));
+  s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
+  document.getElementById('resultSec').style.display=(paidSeen||stage!=='setup')?'block':'none';
+}
+
+function closePop(){ pop.classList.remove('open'); }
+function openPopEl(el,html,mount){
+  pop.innerHTML=html; pop.classList.add('open');
+  var s=studio.getBoundingClientRect(), r=el.getBoundingClientRect();
+  var top=r.bottom-s.top+6, left=r.left-s.left;
+  pop.style.top=top+'px'; pop.style.left='0px';
+  var w=pop.offsetWidth, sw=s.width;
+  if(left+w>sw-8) left=Math.max(8,sw-w-8);
+  pop.style.left=left+'px';
+  if(mount)mount();
+}
+document.addEventListener('mousedown',function(e){
+  if(!pop.contains(e.target)) closePop();
+  var rm=document.getElementById('rmenu');
+  if(rm.classList.contains('open')&&!rm.contains(e.target)&&!e.target.closest('#rbUser')) rm.classList.remove('open');
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePop(); document.getElementById('shopMask').classList.remove('open'); document.getElementById('rmenu').classList.remove('open'); } });
+
+function modelPopHTML(){
+  var h='<div class="pu-head">Модель рисования</div>';
+  modelKeys().forEach(function(k){
+    var m=IMG_MODELS[k];
+    h+='<div class="pu-item" data-model="'+k+'"><span class="nc"><span class="nm">'+m.name+' · '+m.price+' 🐭</span><span class="pu-desc">'+m.desc+' · пак 4 = '+(m.price*3)+' 🐭</span></span>'+(modelKey===k?'<span class="chk">✓</span>':'')+'</div>';
+  });
+  return h;
+}
+function mountModelPop(){
+  pop.querySelectorAll('[data-model]').forEach(function(el){
+    el.addEventListener('click',function(){ modelKey=el.getAttribute('data-model'); closePop(); updateChips(); saveDraft(); });
+  });
+}
+function countPopHTML(){
+  var h='<div class="pu-head">Сколько картинок за один заход</div>';
+  Object.keys(COUNTS).forEach(function(c){
+    var extra=(c==='4')?' · одна в подарок':'';
+    h+='<div class="pu-item" data-count="'+c+'"><span class="nc"><span class="nm">'+COUNTS[c].label+'</span><span class="pu-desc">цена × '+COUNTS[c].mult+extra+'</span></span>'+(String(count)===c?'<span class="chk">✓</span>':'')+'</div>';
+  });
+  return h;
+}
+function mountCountPop(){
+  pop.querySelectorAll('[data-count]').forEach(function(el){
+    el.addEventListener('click',function(){ count=parseInt(el.getAttribute('data-count'),10); closePop(); updateChips(); saveDraft(); });
+  });
+}
+function aspectPopHTML(){
+  return '<div class="pu-lbl">Пропорции кадра</div><div class="pu-row">'+ASPECTS.map(function(a){ return '<button type="button" data-asp="'+a+'" class="'+(a===aspect?'on':'')+'">'+a+'</button>'; }).join('')+'</div>';
+}
+function mountAspectPop(){
+  pop.querySelectorAll('[data-asp]').forEach(function(b){ b.addEventListener('click',function(){ aspect=b.getAttribute('data-asp'); closePop(); updateChips(); saveDraft(); }); });
+}
+document.getElementById('pcModel').addEventListener('click',function(){ openPopEl(this,modelPopHTML(),mountModelPop); });
+document.getElementById('pcCount').addEventListener('click',function(){ openPopEl(this,countPopHTML(),mountCountPop); });
+document.getElementById('pcAspect').addEventListener('click',function(){ openPopEl(this,aspectPopHTML(),mountAspectPop); });
+
+function shrink(dataUrl,cb){
+  var img=new Image();
+  img.onload=function(){
+    var max=1024,w=img.width,h=img.height;
+    if(w>max||h>max){ var k=Math.min(max/w,max/h); w=Math.round(w*k); h=Math.round(h*k); }
+    var c=document.createElement('canvas'); c.width=w; c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    cb(c.toDataURL('image/jpeg',0.85));
+  };
+  img.src=dataUrl;
+}
+function addToGenRefs(url){
+  setStatus('Готовим референс для 「Создать видео」...');
+  fetch(url).then(function(r){ return r.blob(); }).then(function(b){
+    var reader=new FileReader();
+    reader.onload=function(){
+      shrink(reader.result,function(d){
+        try{
+          var s=JSON.parse(localStorage.getItem('seedgen_gen_draft')||'null')||{};
+          s.refs=s.refs||[];
+          if(s.refs.length>=10){ setStatus(''); alert('В 「Создать видео」 уже 10 референсов — освободи место.'); return; }
+          s.refs.push(d.split(',')[1]);
+          s.savedAt=Date.now();
+          localStorage.setItem('seedgen_gen_draft',JSON.stringify(s));
+          setStatus('');
+          alert('✅ Картинка добавлена референсом в 「Создать видео」. Открой студию — плитка уже там.');
+        }catch(e){ setStatus(''); alert('Не удалось добавить референс.'); }
+      });
+    };
+    reader.readAsDataURL(b);
+  }).catch(function(){ setStatus(''); alert('Не удалось скачать картинку для референса.'); });
+}
+
+function renderResults(urls){
+  var box=document.getElementById('outbox');
+  box.classList.add('has');
+  box.innerHTML='<div class="imggrid">'+urls.map(function(u,i){
+    return '<div class="imgcard"><img src="'+u+'" alt="">'
+      +'<div class="acts"><a href="'+u+'" target="_blank" rel="noopener">⬇ скачать</a>'
+      +'<button type="button" data-ref="'+i+'">🎬 в референсы</button></div></div>';
+  }).join('')+'</div>';
+  box.querySelectorAll('[data-ref]').forEach(function(b){
+    b.onclick=function(){ addToGenRefs(urls[parseInt(b.getAttribute('data-ref'),10)]); };
+  });
+}
+
+function histLoad(){ try{ return JSON.parse(localStorage.getItem('seedgen_images_history')||'[]'); }catch(e){ return []; } }
+function histSave(l){ try{ localStorage.setItem('seedgen_images_history',JSON.stringify(l.slice(0,12))); }catch(e){} }
+function histRender(){
+  var l=histLoad();
+  var sec=document.getElementById('recentSec');
+  var box=document.getElementById('histList');
+  if(!l.length){ sec.style.display='none'; box.innerHTML=''; document.getElementById('histCount').textContent=''; return; }
+  sec.style.display='';
+  document.getElementById('histCount').textContent='всего '+l.length;
+  box.innerHTML=l.map(function(h,i){
+    return '<div class="rcard"><img src="'+h.url+'" alt=""><div class="rc"><div class="rn">'+(h.name||'картинка')+'</div><div class="rd">'+h.date+'</div><a href="'+h.url+'" target="_blank" rel="noopener">⬇ скачать</a> <button class="del" data-i="'+i+'" style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:.72rem">✕</button></div></div>';
+  }).join('');
+  box.querySelectorAll('.del').forEach(function(b){
+    b.onclick=function(){ var l2=histLoad(); l2.splice(parseInt(b.getAttribute('data-i'),10),1); histSave(l2); histRender(); };
+  });
+}
+function histPush(url,name){
+  var l=histLoad();
+  l.unshift({url:url,name:name,date:new Date().toLocaleDateString('ru-RU')});
+  histSave(l); histRender();
+}
+
+function saveDraft(){
+  if(restoring) return;
+  try{
+    localStorage.setItem('seedgen_images_draft',JSON.stringify({
+      prompt:promptText(),model:modelKey,count:count,aspect:aspect,savedAt:Date.now()
+    }));
+  }catch(e){}
+}
+(function restoreDraft(){
+  try{
+    var s=JSON.parse(localStorage.getItem('seedgen_images_draft')||'null');
+    if(!s) return;
+    restoring=true;
+    if(s.model&&IMG_MODELS[s.model]) modelKey=s.model;
+    if(s.count&&COUNTS[s.count]) count=s.count;
+    if(s.aspect&&ASPECTS.indexOf(s.aspect)!==-1) aspect=s.aspect;
+    restoring=false;
+    if(s.prompt){ promptBox.textContent=s.prompt; }
+    updateChips(); updateSteps(); updateSend();
+  }catch(e){ restoring=false; updateChips(); }
+})();
+promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); saveDraft(); });
+
+function callGenerate(pid){
+  stage='gen';
+  updateSteps(); updateSend();
+  setStatus('Рисуем... обычно до минуты ⏳');
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    service:'text2image', paymentId:pid, prompt:promptText(),
+    model:modelKey, count:count, aspect:aspect
+  })})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error){ throw new Error(d.error); }
+      try{ localStorage.setItem('seedgen_images_task_'+pid,d.taskId); }catch(e){}
+      poll(d.taskId);
+    })
+    .catch(function(e){ setStatus('Ошибка: '+e.message); stage='setup'; updateSteps(); updateSend(); });
+}
+function poll(taskId){
+  var timer=setInterval(function(){
+    fetch('/api/status?taskId='+encodeURIComponent(taskId))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d.status==='succeeded'){
+          clearInterval(timer);
+          var urls=d.imageUrls||(d.imageUrl?[d.imageUrl]:[]);
+          renderResults(urls);
+          urls.forEach(function(u){ histPush(u,promptText().slice(0,30)||'картинка'); });
+          setStatus('Готово! ✅ Картинки сохранены в твои работы — скачивай или кидай референсом в видео.');
+          stage='done'; updateSteps(); updateSend();
+          try{ localStorage.removeItem('seedgen_images_draft'); }catch(e){}
+        }else if(d.status==='failed'){
+          clearInterval(timer);
+          setStatus('Ошибка: '+(d.error||'попробуй другой промпт'));
+          stage='setup'; updateSteps(); updateSend();
+        }else{
+          setStatus('Рисуем... обычно до минуты ⏳');
+        }
+      })
+      .catch(function(){});
+  },4000);
+}
+
+function payClick(){
+  if(!requireAuth()) return;
+  if(paidSeen&&activePaymentId&&promptText()&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
+  if(!promptText()){ alert('Опиши картинку словами в поле выше'); return; }
+  sendBtn.disabled=true;
+  setStatus('Создаём платёж...');
+  saveDraft();
+  fetch('/api/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    service:'text2image', model:modelKey, count:count, aspect:aspect
+  })})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.error){ throw new Error(data.error); }
+      activePaymentId=data.paymentId;
+      saveDraft();
+      window.location.href=data.confirmationUrl;
+    })
+    .catch(function(e){ setStatus('Ошибка: '+e.message); sendBtn.disabled=false; });
+}
+sendBtn.addEventListener('click',payClick);
+
+(function(){
+  var pid=new URLSearchParams(window.location.search).get('paymentId');
+  if(!pid) return;
+  activePaymentId=pid; paidSeen=true;
+  var savedTask=localStorage.getItem('seedgen_images_task_'+pid);
+  if(savedTask){ stage='gen'; updateSteps(); updateSend(); setStatus('Рисуем... обычно до минуты ⏳'); poll(savedTask); return; }
+  setStatus('Проверяем оплату...');
+  fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.paid){
+        saveDraft();
+        if(promptText()){ setStatus('Оплата прошла! Запускаем рисование...'); callGenerate(pid); }
+        else{ setStatus('Оплата прошла! ✅ Опиши картинку и нажми ↑ ещё раз.'); updateSteps(); updateSend(); }
+      }else{
+        paidSeen=false; activePaymentId=null;
+        setStatus('Оплата не завершена. Черновик сохранён — можешь оплатить ещё раз.');
+        updateSteps(); updateSend();
+      }
+    })
+    .catch(function(e){ paidSeen=false; setStatus('Ошибка: '+e.message); updateSteps(); updateSend(); });
+})();
+
+function syncUserMenu(){
+  document.getElementById('rmAcc').textContent=token?'Мой кабинет':'Войти в кабинет';
+  document.getElementById('rmOut').style.display=token?'flex':'none';
+}
+var rbUser=document.getElementById('rbUser'), rmenu=document.getElementById('rmenu');
+rbUser.addEventListener('click',function(){ rmenu.classList.toggle('open'); syncUserMenu(); });
+rmenu.querySelectorAll('button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var act=b.getAttribute('data-act');
+    rmenu.classList.remove('open');
+    if(act==='account') location.href='/account.html';
+    if(act==='help'){ var hf=document.getElementById('hwFloat'); if(hf) hf.click(); }
+    if(act==='settings') alert('Настройки откроются после запуска: звук, язык интерфейса, уведомления.');
+    if(act==='logout'){
+      try{ localStorage.removeItem('seedgen_token'); localStorage.removeItem('yk_token'); }catch(e){}
+      location.reload();
+    }
+  });
+});
+document.getElementById('rbToken').addEventListener('click',function(){ document.getElementById('shopMask').classList.add('open'); });
+document.getElementById('shopClose').addEventListener('click',function(){ document.getElementById('shopMask').classList.remove('open'); });
+document.getElementById('shopMask').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+document.getElementById('shopBuy').addEventListener('click',function(){ alert('Палыч открывает лавку в день запуска. Сейчас он только точит весы 🐭'); });
+
+updateChips();
+updateSteps();
+updateSend();
+histRender();
+syncUserMenu();
+</script>
+<script src="/help-widget.js"></script>
+</body>
+</html>
