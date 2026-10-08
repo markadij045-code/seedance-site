@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Личный кабинет — Ёшкин кот</title>
-<meta name="description" content="Аккаунт Ёшкин кот: мои ведущие для аватара, история заказов, документы. Регистрация по желанию — оплата работает и без неё.">
+<meta name="description" content="Аккаунт Ёшкин кот: вход и регистрация. Генерация видео доступна после входа — заказы и видео хранятся в кабинете на всех устройствах.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
@@ -62,9 +62,10 @@ footer a{color:#A3E635}
 
 <main class="acc-main">
 <h1>Личный кабинет</h1>
-<p class="acc-sub">Регистрация — по желанию: оплатить и получить видео можно и без неё. Аккаунт хранит твоих ведущих и историю заказов на всех устройствах.</p>
+<p class="acc-sub">Генерация видео доступна после входа: заказы, черновики и готовые ролики хранятся в кабинете и открываются с любого устройства. Пароль храним в виде хеша, лишнего не собираем.</p>
 
 <div class="acc-card" id="authBox">
+  <div class="acc-why" id="returnNote" style="display:none;margin:0 0 14px"><b>↩ Черновик сохранён.</b> Войди или создай аккаунт — сразу вернём тебя к сцене со всеми референсами и настройками.</div>
   <div class="acc-tabs">
     <button id="tabLogin" class="on">Вход</button>
     <button id="tabReg">Регистрация</button>
@@ -75,7 +76,7 @@ footer a{color:#A3E635}
   <input type="password" id="fPass" placeholder="Минимум 6 символов" autocomplete="current-password">
   <button class="acc-btn" id="authBtn">Войти</button>
   <div class="acc-err" id="authErr"></div>
-  <div class="acc-why"><b>Зачем аккаунт:</b> мои ведущие аватара (фото+озвучка в один клик) · история заказов с видео с любого устройства · будущие минуты аватара и промокоды. Пароль храним в виде хеша, лишнего не собираем.</div>
+  <div class="acc-why"><b>Зачем аккаунт:</b> без входа генерации нет — так твои видео и черновики живут в кабинете, а не теряются в браузере · мои ведущие аватара (фото+озвучка в один клик) · история заказов с видео с любого устройства · будущие минуты аватара и промокоды.</div>
 </div>
 
 <div class="acc-card" id="accBox" style="display:none">
@@ -119,6 +120,18 @@ footer a{color:#A3E635}
 var token = localStorage.getItem('seedgen_token') || '';
 var mode = 'login';
 
+var RETURN_WHITELIST = ['/', '/gen.html', '/cartoon.html', '/avatar.html', '/motion.html', '/lipsync.html', '/images.html', '/examples.html', '/prices.html', '/help.html'];
+function safeReturn(v){
+  if(!v) return '';
+  if(v.charAt(0) !== '/') return '';
+  if(v.indexOf('//') !== -1) return '';
+  if(v.indexOf(':') !== -1 || v.indexOf('@') !== -1 || v.indexOf('\\') !== -1) return '';
+  for(var i = 0; i < RETURN_WHITELIST.length; i++){ if(RETURN_WHITELIST[i] === v) return v; }
+  return '';
+}
+var RETURN = safeReturn(new URLSearchParams(location.search).get('return'));
+if(RETURN){ document.getElementById('returnNote').style.display = 'block'; }
+
 function setMode(m){
   mode = m;
   document.getElementById('tabLogin').classList.toggle('on', m === 'login');
@@ -146,6 +159,11 @@ function api(body, cb){
     .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
     .then(function(x){ cb(x.ok, x.d); })
     .catch(function(){ cb(false, {error:'Сеть недоступна'}); });
+}
+
+function afterAuth(email){
+  if(RETURN){ location.href = RETURN; return; }
+  showAccount(email);
 }
 
 function showAccount(email){
@@ -187,7 +205,7 @@ document.getElementById('authBtn').onclick = function(){
     token = d.token;
     localStorage.setItem('seedgen_token', token);
     err.textContent = '';
-    showAccount(d.email);
+    afterAuth(d.email);
   });
 };
 
@@ -203,7 +221,10 @@ document.getElementById('logoutBtn').onclick = function(){
 
 if(token){
   api({action:'me', token:token}, function(ok, d){
-    if(ok){ showAccount(d.email); } else { localStorage.removeItem('seedgen_token'); token = ''; }
+    if(ok){
+      if(RETURN){ location.href = RETURN; return; }
+      showAccount(d.email);
+    } else { localStorage.removeItem('seedgen_token'); token = ''; }
   });
 }
 </script>
