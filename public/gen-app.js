@@ -34,6 +34,13 @@ function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s
 function refCount(){ return refs.length+(refVideo?1:0)+(refAudio?1:0); }
 function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
 
+function requireAuth(){
+  if(token){ return true; }
+  saveDraft();
+  location.href='/account.html?return='+encodeURIComponent('/gen.html');
+  return false;
+}
+
 function saveCaret(){
   var sel=window.getSelection();
   if(!sel||!sel.rangeCount) return;
@@ -478,7 +485,7 @@ function poll(taskId){
         if(d.status==='succeeded'){
           clearInterval(timer);
           document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+d.videoUrl+'"></video></div>';
-          setStatus('Готово! ✅ Скачай видео в течение 7 дней.');
+          setStatus('Готово! ✅ Видео сохранено в твои работы — смотри и скачивай когда угодно.');
           histPush(d.videoUrl,promptText().slice(0,40)||'видео');
           stage='done'; updateSteps(); updateSend();
           try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e){}
@@ -495,6 +502,7 @@ function poll(taskId){
 }
 
 function payClick(){
+  if(!requireAuth()) return;
   if(paidSeen&&activePaymentId&&promptText()&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
   if(!promptText()){ alert('Опиши сцену словами в поле выше'); return; }
   sendBtn.disabled=true;
