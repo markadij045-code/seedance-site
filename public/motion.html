@@ -94,9 +94,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .rcard .rd{color:var(--muted);font-size:.68rem;margin:2px 0 6px}
 .rcard a{color:var(--lime);font-size:.72rem;text-decoration:none}
 .footnote{margin:26px 0 0;display:flex;flex-direction:column;gap:10px;align-items:center}
-.agree{display:flex;gap:9px;align-items:flex-start;justify-content:center;color:var(--muted);font-size:.8rem;line-height:1.45;max-width:560px;margin:0 auto}
-.agree input{width:17px;height:17px;accent-color:var(--lime);margin-top:1px;flex:0 0 auto}
-.agree a{color:var(--lime)}
 .payrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
 .pay-ic{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.03em}
 .payrow a{color:var(--lime);font-size:.75rem;text-decoration:none}
@@ -235,7 +232,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   </section>
 
   <div class="footnote">
-    <label class="agree"><input type="checkbox" id="contentAgree"><span>Принимаю <a href="/legal.html#offer">оферту</a> и даю согласие на <a href="/legal.html#policy">обработку данных</a></span></label>
     <div class="payrow">
       <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
       <a href="/prices.html">Цены и оплата →</a>
@@ -326,7 +322,6 @@ var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.get
 
 function setStatus(t){ statusEl.textContent=t; }
 function price(){ return 199+(seconds-5)*30; }
-function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s/60), ss=s%60; return m>0? m+':'+(ss<10?'0':'')+ss : '0:'+ss; }
 
 function requireAuth(){
   if(token){ return true; }
@@ -575,7 +570,6 @@ function payClick(){
   if(paidSeen&&activePaymentId&&imageData&&videoData&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
   if(!imageData){ alert('Сначала добавь фото персонажа'); return; }
   if(!videoData){ alert('Сначала добавь видео с движением'); return; }
-  if(!document.getElementById('contentAgree').checked){ alert('Сначала отметь согласие с офертой ⚠️'); return; }
   sendBtn.disabled=true;
   setStatus('Создаём платёж...');
   saveDraft();
