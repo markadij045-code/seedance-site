@@ -4,12 +4,12 @@ function toggleSidebar(){
 }
 
 var MODELS={
- 'wan-3.0':{name:'Wan 3.0',base:99,per:10,max:30,api:'wan-3.0'},
- 'kling-standard':{name:'Kling',base:129,per:15,max:10,api:'kling-video'},
- 'seedance-2.0':{name:'Seedance 2.0',base:129,per:15,max:15,api:'seedance-2-0'},
- 'seedance-2.5':{name:'Seedance 2.5',base:199,per:30,max:30,api:'seedance-2-5'}
+ 'kling-standard':{name:'Kling',base:129,per:15,max:10,api:'kling-video',qualities:{'480p':0,'720p':200,'1080p':300}},
+ 'minimax-h3':{name:'MiniMax H3',base:149,per:15,max:15,api:'minimax-h3',qualities:{'768p':0,'2K':150}},
+ 'seedance-2.0':{name:'Seedance 2.0',base:129,per:15,max:15,api:'seedance-2-0',qualities:{'480p':0,'720p':200,'1080p':300}},
+ 'seedance-2.5':{name:'Seedance 2.5',base:199,per:30,max:30,api:'seedance-2-5',qualities:{'480p':0,'720p':200,'1080p':300}},
+ 'wan-3.0':{name:'Wan 3.0',base:99,per:10,max:30,api:'wan-3.0',qualities:{'480p':0,'720p':200,'1080p':300}}
 };
-var SURCHARGE={'480p':0,'720p':200,'1080p':300};
 var MAXIMG=10, MAXVIDSEC=15, MAXAUDSEC=15, MAXVIDMB=20, MAXAUDMB=5;
 var modelKey='seedance-2.5';
 var enhance=true;
@@ -29,7 +29,10 @@ var savedRange=null;
 
 function setStatus(t){ statusEl.textContent=t; }
 function model(){ return MODELS[modelKey]||MODELS['seedance-2.5']; }
-function price(){ return model().base + Math.max(0,(seconds-5))*model().per + (SURCHARGE[quality]||0); }
+function modelKeys(){ return Object.keys(MODELS).sort(function(a,b){ return MODELS[a].name.localeCompare(MODELS[b].name); }); }
+function qualities(){ return model().qualities; }
+function fixQuality(){ if(!(quality in qualities())){ quality=Object.keys(qualities())[0]; } }
+function price(){ return model().base + Math.max(0,(seconds-5))*model().per + (qualities()[quality]||0); }
 function fmtDur(s){ if(!s&&s!==0) return ''; s=Math.round(s); var m=Math.floor(s/60), ss=s%60; return m>0? m+':'+(ss<10?'0':'')+ss : '0:'+ss; }
 function refCount(){ return refs.length+(refVideo?1:0)+(refAudio?1:0); }
 function shortName(n){ n=n||'файл'; return n.length>18? n.slice(0,17)+'…': n; }
@@ -180,9 +183,10 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePop(
 
 function modelPopHTML(){
   var h='<div class="pu-head">Модель генерации</div>';
-  Object.keys(MODELS).forEach(function(k){
+  modelKeys().forEach(function(k){
     var m=MODELS[k];
-    h+='<div class="pu-item" data-model="'+k+'"><span class="nc"><span class="nm">'+m.name+'</span><span class="pu-desc">от '+m.base+' 🐭 · до '+m.max+' сек за дубль</span></span>'+(modelKey===k?'<span class="chk">✓</span>':'')+'</div>';
+    var qs=Object.keys(m.qualities).join(' / ');
+    h+='<div class="pu-item" data-model="'+k+'"><span class="nc"><span class="nm">'+m.name+'</span><span class="pu-desc">от '+m.base+' 🐭 · до '+m.max+' сек · '+qs+'</span></span>'+(modelKey===k?'<span class="chk">✓</span>':'')+'</div>';
   });
   return h;
 }
@@ -192,6 +196,7 @@ function mountModelPop(){
       modelKey=el.getAttribute('data-model');
       var cap=Math.min(30,model().max);
       if(seconds>cap) seconds=cap;
+      fixQuality();
       closePop(); updateChips(); saveDraft();
     });
   });
@@ -235,8 +240,9 @@ function mountRefPop(){
 }
 
 function fqPopHTML(){
+  var q=qualities();
   return '<div class="pu-lbl">Формат кадра</div><div class="pu-row" id="puAsp">'+['16:9','9:16','1:1','4:3','3:4','21:9'].map(function(a){ return '<button type="button" data-asp="'+a+'" class="'+(a===orientation?'on':'')+'">'+a+'</button>'; }).join('')+'</div>'
-    +'<div class="pu-lbl">Качество</div><div class="pu-row" id="puQ">'+['480p','720p','1080p'].map(function(q){ return '<button type="button" data-q="'+q+'" class="'+(q===quality?'on':'')+'">'+q+(SURCHARGE[q]?' +'+SURCHARGE[q]:'')+'</button>'; }).join('')+'</div>';
+    +'<div class="pu-lbl">Качество · шкала модели '+model().name+'</div><div class="pu-row" id="puQ">'+Object.keys(q).map(function(k){ return '<button type="button" data-q="'+k+'" class="'+(k===quality?'on':'')+'">'+k+(q[k]?' +'+q[k]:'')+'</button>'; }).join('')+'</div>';
 }
 function mountFqPop(){
   pop.querySelectorAll('[data-asp]').forEach(function(b){ b.addEventListener('click',function(){ orientation=b.getAttribute('data-asp'); closePop(); updateChips(); saveDraft(); }); });
@@ -447,8 +453,9 @@ function saveDraft(){
     if(s.model&&MODELS[s.model]) modelKey=s.model;
     if(typeof s.enhance==='boolean') enhance=s.enhance;
     if(s.orientation) orientation=s.orientation;
-    if(s.quality) quality=s.quality;
     if(s.seconds) seconds=s.seconds;
+    if(s.quality) quality=s.quality;
+    fixQuality();
     refs=s.refs||[];
     refVideo=s.video||null;
     refAudio=s.audio||null;
@@ -571,6 +578,7 @@ document.getElementById('shopClose').addEventListener('click',function(){ docume
 document.getElementById('shopMask').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
 document.getElementById('shopBuy').addEventListener('click',function(){ alert('Палыч открывает лавку в день запуска. Сейчас он только точит весы 🐭'); });
 
+fixQuality();
 renderTiles();
 histRender();
 updateSteps();
