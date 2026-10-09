@@ -28,7 +28,7 @@
             var chunk = ab.slice(i * CHUNK, Math.min(total, (i + 1) * CHUNK));
             var pn = i + 1;
             prog((i * CHUNK) / total * 90);
-            return fetch('/api/upload?mp=part&key=' + encodeURIComponent(cr.key) + '&uploadId=' + encodeURIComponent(cr.uploadId) + '&partNumber=' + pn, { method: 'POST', body: chunk })
+            return fetch('/api/upload?mp=part?key=' + encodeURIComponent(cr.key) + '&uploadId=' + encodeURIComponent(cr.uploadId) + '&partNumber=' + pn, { method: 'POST', body: chunk })
               .then(function(r){ if(!r.ok) return r.text().then(fail); return r.json(); })
               .then(function(pr){ parts.push({ partNumber: pr.partNumber || pn, etag: pr.etag }); i++; return next(); });
           }
@@ -78,38 +78,10 @@
 
   var GUIDE_ANCHOR = {create:'video', avatar:'avatar', motion:'motion', lipsync:'lipsync'};
 
-  document.addEventListener('click', function(e){
-    var b=e.target&&e.target.closest?e.target.closest('button'):null;
-    if(!b)return;
-    var t=b.textContent||'';
-    if(!PAYRE.test(t))return;
-    var ca=document.getElementById('contentAgree');
-    if(ca&&!ca.checked){
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      alert('Подтверди правила контента: поставь галочку в оранжевом блоке над кнопкой оплаты.');
-    }
-  }, true);
-
-  if(LAUNCH_MODE){
-    document.addEventListener('click', function(e){
-      var b=e.target&&e.target.closest?e.target.closest('button'):null;
-      if(!b)return;
-      var t=b.textContent||'';
-      if(PAYRE.test(t)){
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        alert(LAUNCH_MESSAGE);
-      }
-    }, true);
-  }
-
   var PHOTONOTE='📸 <b>Про фото и видео:</b> загружай только свои материалы или с согласия владельца. Нейросеть проверяет контент по правилам безопасности и может отклонить его (знаменитости, чужие фото, насилие, 18+). Тогда заказ не выполняется, а деньги автоматически возвращаются на карту в течение 1–3 дней.';
 
   var DATA={
-    create:{t:'Создать видео',s:['Опиши видео словами в поле — это твой промпт для нейросети.','Кружком 「+」 загрузи референсы: до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Наведи на миниатюру — увидишь превью.','Напечатай @ — всплывёт список загруженного, клик вставит упоминание прямо в текст. Так нейросеть поймёт, кто где в сцене.','Через всплывающие чипы выбери стиль, формат кадра и длительность (5–30 сек).','Отметь согласие и оплати — ролик появится за 1–5 минут.']},
+    create:{t:'Создать видео',s:['Опиши видео словами в поле — это твой промпт для нейросети.','Кружком 「+」 загрузи референсы: до 10 фото, 1 видео (до 15 сек) и 1 звук (до 15 сек). Наведи на миниатюру — увидишь превью.','Напечатай @ — всплывёт список загруженного, клик вставит упоминание прямо в текст. Так нейросеть поймёт, кто где в сцене.','Через всплывающие чипы выбери стиль, формат кадра и длительность (5–30 сек).','Оплати — ролик появится за 1–5 минут.']},
     images:{t:'Генератор изображений',s:['Опиши картинку словами: кто или что в кадре, стиль, свет, настроение.','Чипом ⚙ выбери модель: шесть школ рисования, цена от 5 до 19 🐭 за картинку.','Чипом 🖼 выбери количество: 1, 2 или пакет 4 — четвёртая картинка в подарок.','Чипом 📱 выбери пропорции: 1:1, 16:9, 9:16, 4:3, 3:4.','Оплати — картинки появятся через минуту. Готовую можно кнопкой 「🎬 в референсы」 отправить в 「Создать видео」.']},
     home:{t:'Главная страница',s:['Нажми «Поехали?» — откроется витрина всех услуг.','Выбери карточку услуги — попадёшь на её страницу.','Дальше подсказки будут на самой странице услуги.']},
     photo:{t:'Оживи картинку',s:['Услуга объединена с «Создать видео»: загрузи изображение и опиши сцену.']},
@@ -427,16 +399,6 @@
       badge.className='launchBadge';
       badge.innerHTML=badgeHTML;
       payBtn.parentNode.insertBefore(badge, payBtn);
-    }
-  }
-
-  if(key==='avatar'||key==='motion'||key==='lipsync'){
-    var drop=document.querySelector('.drop');
-    if(drop&&!drop.parentNode.querySelector('.hwNote')){
-      var cn=document.createElement('div');
-      cn.className='hwNote';
-      cn.textContent='🛡 Загружай только своё фото/видео или материал человека, который дал согласие на его использование.';
-      drop.parentNode.insertBefore(cn,drop.nextSibling);
     }
   }
 
