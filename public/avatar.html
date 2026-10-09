@@ -12,6 +12,8 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
+::selection{background:rgba(163,230,53,.28)!important;color:#e5e7eb!important}
+::-moz-selection{background:rgba(163,230,53,.28)!important;color:#e5e7eb!important}
 .rail{position:fixed;left:0;top:0;bottom:0;width:64px;background:rgba(5,6,7,.92);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:84px 0 16px;gap:6px;z-index:90}
 .rail a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;text-decoration:none;filter:grayscale(1);opacity:.5}
 .rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
@@ -40,8 +42,6 @@
 .studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:16px 18px 12px}
 .pwrap{position:relative;padding:0 0 8px}
 .promptBox{min-height:120px;max-height:260px;overflow-y:auto;outline:none;font:400 .95rem/1.65 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word}
-.promptBox::before{content:none}
-.promptBox:not(:has(.reftile))::before{content:attr(data-ph);color:#6b7280;pointer-events:none;font-size:.9rem}
 .reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0 10px 6px 0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);transform:rotate(-1.5deg);cursor:pointer}
 .reftile:nth-child(even){transform:rotate(1.5deg)}
 .reftile img{width:100%;height:100%;object-fit:cover}
@@ -155,6 +155,7 @@
 
 <nav class="rail">
   <a href="/gen.html" title="Создать видео">🎬</a>
+  <a href="/images.html" title="Генератор изображений">🖼</a>
   <a href="/avatar.html" class="on" title="Говорящий аватар">🗣</a>
   <a href="/motion.html" title="Моушен контроль">🕺</a>
   <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
@@ -192,6 +193,7 @@
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
   <a href="/">Главная</a>
   <a href="/gen.html">Создать видео</a>
+  <a href="/images.html">Генератор изображений</a>
   <a href="/avatar.html">Аватар</a>
   <a href="/motion.html">Моушен</a>
   <a href="/lipsync.html">Липсинк</a>
@@ -214,7 +216,7 @@
 
   <div class="studio" id="stage">
     <div class="pwrap">
-      <div class="promptBox" id="promptBox" contenteditable="true" data-ph="Здесь появятся плитки ведущего и озвучки — добавь их кружком 「+」. Режим озвучки выбирай чипом 🗣 слева внизу: своё аудио, запись с микрофона или текст + голос (скоро)." spellcheck="false"></div>
+      <div class="promptBox" id="promptBox" contenteditable="true" spellcheck="false"></div>
     </div>
     <div class="recbox" id="recBox">
       <button class="recbtn" id="recBtn" type="button">⏺ Начать запись</button>
@@ -234,7 +236,7 @@
     <div class="popup" id="popMenu"></div>
   </div>
 
-  <div class="rolehint" style="text-align:center">🛡 Своё фото загружай только своё или с согласия человека. Пресеты-ведущие — иллюстрации, их можно свободно. · <a href="/examples.html">Смотреть примеры →</a></div>
+  <div class="rolehint" style="text-align:center">💡 Выбери ведущего кружком 「+」: пресет-иллюстрация или своё фото, лицо крупно. Озвучка — файл, запись с микрофона или текст + голос (скоро). · <a href="/examples.html">Смотреть примеры →</a></div>
 
   <div id="status"></div>
 
