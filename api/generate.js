@@ -32,6 +32,11 @@ const MODELS = {
   }
 };
 
+// === TTS ГОЛОСА (OpenAI через CometAPI) ===
+const TTS_VOICES = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+const TTS_MODEL = 'gpt-4o-mini-tts';
+const MAX_TEXT_CHARS = 480;
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -47,6 +52,11 @@ export default async function handler(req, res) {
   const modelKey = body.model || 'seedance-2.5';
   const enhancePrompt = body.enhancePrompt !== false;
   const selectedModel = MODELS[modelKey] || MODELS['seedance-2.5'];
+
+  // === РЕЖИМ АВАТАРА: откуда голос ===
+  const voiceMode = body.voiceMode || 'audio'; // 'audio' | 'rec' | 'text'
+  const voiceText = typeof body.text === 'string' ? body.text.trim() : '';
+  const voicePick = typeof body.voice === 'string' ? body.voice : 'nova';
 
   const BASE = { motion: 199, lipsync: 199, cartoon: 299, animate: 299 };
   const PER_SEC = 30;
@@ -86,7 +96,6 @@ export default async function handler(req, res) {
     if (!seconds || seconds < 1) seconds = 1;
     if (seconds > 30) seconds = 30;
   } else if (service === 'text2video') {
-    // === ЦЕНА ЗАВИСИТ ОТ МОДЕЛИ ===
     if (!seconds || seconds < 5) seconds = 5;
     if (seconds > selectedModel.maxDuration) seconds = selectedModel.maxDuration;
     expectedPrice = selectedModel.basePrice + (seconds - 5) * selectedModel.perSecond + surcharge;
@@ -161,10 +170,52 @@ export default async function handler(req, res) {
     vid = await resolveMedia(body.video, 'video');
     if (vid.error) return res.status(400).json({ error: vid.error });
   }
+
+  // === АУДИО: для аватара в режиме "text" — пропускаем требование файла ===
   if (needs.audio) {
-    if (!body.audio) return res.status(400).json({ error: 'Нужно загрузить аудио' });
-    aud = await resolveMedia(body.audio, 'audio');
-    if (aud.error) return res.status(400).json({ error: aud.error });
+    const isAvatarWithText = service === 'avatar' && voiceMode === 'text';
+    if (!isAvatarWithText) {
+      if (!body.audio) return res.status(400).json({ error: 'Нужно загрузить аудио' });
+      aud = await resolveMedia(body.audio, 'audio');
+      if (aud.error) return res.status(400).json({ error: aud.error });
+    }
+  }
+
+  // === TTS: если аватар с текстом — озвучиваем сами через OpenAI ===
+  if (service === 'avatar' && voiceMode === 'text') {
+    if (!voiceText) return res.status(400).json({ error: 'Нужен текст для озвучки' });
+    if (voiceText.length > MAX_TEXT_CHARS) {
+      return res.status(400).json({ error: 'Текст длиннее ' + MAX_TEXT_CHARS + ' символов — сократи до 30 секунд речи' });
+    }
+    if (TTS_VOICES.indexOf(voicePick) === -1) {
+      return res.status(400).json({ error: 'Неизвестный голос. Доступны: ' + TTS_VOICES.join(', ') });
+    }
+    try {
+      const ttsRes = await fetch('https://api.cometapi.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + key,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: TTS_MODEL,
+          voice: voicePick,
+          input: voiceText,
+          response_format: 'mp3'
+        })
+      });
+      if (!ttsRes.ok) {
+        const errTxt = await ttsRes.text().catch(() => '');
+        return res.status(502).json({ error: 'Не удалось озвучить текст: ' + (errTxt.slice(0, 80) || 'ошибка API') });
+      }
+      const audioBuf = Buffer.from(await ttsRes.arrayBuffer());
+      if (audioBuf.length < 500) return res.status(502).json({ error: 'Не удалось озвучить текст: пустой ответ' });
+      aud = { mime: 'audio/mpeg', buffer: audioBuf };
+    } catch (e) {
+      return res.status(502).json({ error: 'Не удалось озвучить текст: ' + (e && e.message ? e.message : 'сетевая ошибка') });
+    }
+    // Ограничение 30 секунд для аватара: текст ~480 символов ≈ 30 сек речи
+    seconds = 30;
   }
 
   var refs = [];
@@ -190,18 +241,12 @@ export default async function handler(req, res) {
     if (refAud.error) return res.status(400).json({ error: 'Звук-референс: ' + refAud.error });
   }
 
-  // === НОВАЯ ФУНКЦИЯ: ПРОМТ-МАСТЕР ===
   async function enhancePromptText(text, nImages, hasVideo, hasAudio) {
-    // Если режим "Продвинутый" — только переводим (если русский) и добавляем роли
-    // Если режим "Простой" — переводим + улучшаем через LLM
-    
     const hasCyrillic = /[а-яА-ЯёЁ]/.test(text);
     
     if (!enhancePrompt) {
-      // Продвинутый режим: только перевод + роли
       let result = text;
       if (hasCyrillic) {
-        // Простой перевод через Gemini
         const translatePrompt = 'Translate this video generation prompt to English, keep it concise:\n\n' + text;
         try {
           const r = await fetch('https://api.cometapi.com/v1beta/models/gemini-2.0-flash:generateContent', {
@@ -226,7 +271,6 @@ export default async function handler(req, res) {
       return withRoles(result, nImages, hasVideo, hasAudio);
     }
     
-    // Простой режим: улучшаем через LLM
     const enhanceSystemPrompt = `You are a professional video generation prompt engineer. Transform the user's simple description into a detailed cinematic English prompt. Add: camera movement, lighting, atmosphere, visual details. Keep it under 100 words. Output ONLY the enhanced prompt, no explanations.
 
 User's description: ${text}
@@ -329,7 +373,6 @@ References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''
       form.append('video', new Blob([vid.buffer], { type: vid.mime }), 'video.mp4');
       form.append('audio', new Blob([aud.buffer], { type: aud.mime }), 'voice.mp3');
     } else {
-      // === НОВАЯ ЛОГИКА: ИСПОЛЬЗУЕМ ВЫБРАННУЮ МОДЕЛЬ ===
       form.append('model', selectedModel.apiModel);
       const enhancedPrompt = await enhancePromptText(prompt, refs.length, !!refVid, !!refAud);
       form.append('prompt', enhancedPrompt);
@@ -356,9 +399,16 @@ References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''
       r2.service = service;
       r2.seconds = seconds;
       r2.quality = quality;
-      // === СОХРАНЯЕМ МОДЕЛЬ И РЕЖИМ ===
       r2.model = modelKey;
       r2.enhancePrompt = enhancePrompt;
+      // === АВАТАР: сохраняем режим голоса ===
+      if (service === 'avatar') {
+        r2.voiceMode = voiceMode;
+        if (voiceMode === 'text') {
+          r2.voice = voicePick;
+          r2.textLen = voiceText.length;
+        }
+      }
       if (paidAmount !== null) r2.amount = paidAmount;
       r2.upscale = quality === '1080p';
       r2.createdAt = Date.now();
