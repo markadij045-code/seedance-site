@@ -188,7 +188,11 @@
   +'.hwGuideLink{margin:12px 0 22px}'
   +'.hwGuideLink a{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid rgba(163,230,53,.45);background:rgba(163,230,53,.08);color:#A3E635;text-decoration:none;font-size:.92rem;font-weight:600;border-radius:999px;transition:.2s}'
   +'.hwGuideLink a:hover{background:rgba(163,230,53,.16);border-color:rgba(163,230,53,.7)}'
-  +'.hwSoonTip{display:none;position:fixed;z-index:500;max-width:150px;background:#101308;border:1px solid rgba(163,230,53,.45);color:#e5e7eb;padding:6px 10px;border-radius:8px;font-size:.8rem;line-height:1.4;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.5)}';
+  +'.hwSoonTip{display:none;position:fixed;z-index:500;max-width:150px;background:#101308;border:1px solid rgba(163,230,53,.45);color:#e5e7eb;padding:6px 10px;border-radius:8px;font-size:.8rem;line-height:1.4;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.5)}'
+  +'.welcome-box{position:relative}'
+  +'.welcome-box .welcome-close{position:absolute;top:10px;right:12px;width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#e5e7eb;font-size:1rem;line-height:1;cursor:pointer;z-index:5;padding:0}'
+  +'.welcome-box .welcome-close:hover{background:rgba(255,255,255,.16);color:#fff}'
+  +'.hwWelVideo{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;margin:0 0 12px;background:#000;display:block}';
   document.head.appendChild(st);
 
   function closeWelcomeGlobal(){
@@ -200,7 +204,8 @@
   var wb=document.querySelector('.welcome-box');
   if(wb&&!wb.getAttribute('data-new')){
     wb.setAttribute('data-new','1');
-    wb.innerHTML='<button class="welcome-close" id="hwWelClose">✕</button>'
+    wb.innerHTML='<button class="welcome-close" id="hwWelClose" type="button">✕</button>'
+      +'<video class="hwWelVideo" src="/cat-dance.mp4" autoplay muted loop playsinline preload="metadata"></video>'
       +'<h2>🎬 Мурзик уже танцует</h2>'
       +'<p>Ёшкин кот снимает видео и рисует картинки по твоим словам: коты, мемы, говорящие аватары. Выбери услугу — и поехали.</p>'
       +'<div class="gift">🔥 Хиты: 「Моушен」и 「Липсинк」 — персонаж повторяет твой танец и говорит твоим голосом</div>'
