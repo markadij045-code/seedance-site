@@ -19,7 +19,7 @@ button{padding:13px 16px;border-radius:12px;border:1px solid rgba(163,230,53,.4)
 button:hover{background:rgba(163,230,53,.16)}
 button:disabled{opacity:.45;cursor:not-allowed}
 button small{display:block;color:#9ca3af;font-weight:400;font-size:.7rem;margin-top:3px}
-#log{white-space:pre-wrap;word-break:break-all;background:#000;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;font:400 .78rem/1.5 monospace;min-height:120px;max-height:340px;overflow-y:auto;color:#9ca3af}
+#log{white-space:pre-wrap;word-break:break-all;background:#000;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;font:400 .78rem/1.5 monospace;min-height:120px;max-height:420px;overflow-y:auto;color:#9ca3af}
 #log a{color:#A3E635}
 .warn{color:#fbbf24;font-size:.78rem;margin-top:10px}
 @media(max-width:600px){.btns{grid-template-columns:1fr}}
@@ -41,13 +41,14 @@ button small{display:block;color:#9ca3af;font-weight:400;font-size:.7rem;margin-
 <button id="tAvatar">🗣 Аватар: текст + голос Nova<small>проверка вставки TTS, ~30 сек речи</small></button>
 <button id="tVideo">🎬 Видео: кот на троне, 5 сек<small>Seedance 2.5, проверка промпт-мастера</small></button>
 <button id="tMotion">🕺 Моушен: фото + танец, 5 сек<small>Kling, проверка переноса движений</small></button>
-<button id="tLipsync">🎤 Липсинк: танец + звук, 5 сек<small>Kling lip-sync, проверка губ</small></button>
+<button id="tPing">🩺 Диагностика: кто отвечает<small>покажет сырой ответ сервера дословно</small></button>
 </div>
 </div>
 
 <div class="card">
 <label>Журнал</label>
-<div id="log">Готов к работе. Введи пароль и нажми кнопку теста.\n</div>
+<div id="log">Готов к работе. Введи пароль и нажми кнопку теста.
+</div>
 </div>
 </div>
 
@@ -58,20 +59,49 @@ function log(t){ logEl.textContent+=t+'\n'; logEl.scrollTop=logEl.scrollHeight; 
 function pw(){ return pwEl.value.trim(); }
 pwEl.addEventListener('keydown',function(e){ if(e.key==='Enter'&&pw()) log('Пароль принят в этой вкладке.'); });
 
+function dumpResponse(r,text){
+  log('── Сырой ответ: статус '+r.status+', адрес: '+r.url);
+  log(text.slice(0,500));
+}
+
 function startTest(name,payload){
   if(!pw()){ alert('Сначала введи админ-пароль'); return; }
   log('── '+name+': отправляю запрос...');
   payload.adminPassword=pw();
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    .then(function(r){ return r.text().then(function(t){ return {r:r,t:t}; }); })
     .then(function(res){
-      if(!res.ok||res.d.error){ log('❌ Ошибка: '+(res.d.error||'код '+res.ok)); return; }
-      var tid=res.d.taskId;
+      var j=null;
+      try{ j=JSON.parse(res.t); }catch(e){}
+      if(!j){
+        log('❌ '+name+': ответ не JSON.');
+        dumpResponse(res.r,res.t);
+        return;
+      }
+      if(j.error){ log('❌ Ошибка сервера: '+j.error); return; }
+      var tid=j.taskId;
       log('✅ Задача создана, taskId='+tid);
       poll(tid,name);
     })
     .catch(function(e){ log('❌ Сеть: '+e.message); });
 }
+
+function pingTest(){
+  log('── Диагностика: шлю простой GET и POST без тела...');
+  fetch('/api/generate',{method:'GET'})
+    .then(function(r){ return r.text().then(function(t){ return {r:r,t:t}; }); })
+    .then(function(res){ log('GET ответ: статус '+res.r.status); log(res.t.slice(0,200)); })
+    .catch(function(e){ log('GET сеть: '+e.message); });
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminPassword:pw()||'x',service:'avatar',voiceMode:'text',text:'тест',voice:'nova',image:'https://www.yoshkin-kot.online/og-image.png'})})
+    .then(function(r){ return r.text().then(function(t){ return {r:r,t:t}; }); })
+    .then(function(res){
+      var j=null; try{ j=JSON.parse(res.t); }catch(e){}
+      if(j){ log('POST ответ: статус '+res.r.status+', JSON: '+res.t.slice(0,200)); }
+      else { log('POST ответ: статус '+res.r.status+', НЕ JSON:'); log(res.t.slice(0,500)); }
+    })
+    .catch(function(e){ log('POST сеть: '+e.message); });
+}
+
 function poll(tid,name){
   var tries=0;
   var timer=setInterval(function(){
@@ -88,7 +118,7 @@ function poll(tid,name){
         }else{
           log('... '+name+': ещё считаем ('+tries*10+' сек)');
         }
-        if(tries>90){ clearInterval(timer); log('⏰ '+name+': таймаут опроса, проверь Журнал в CometAPI'); }
+        if(tries>90){ clearInterval(timer); log('⏰ '+name+': таймаут опроса'); }
       })
       .catch(function(){});
   },10000);
@@ -109,9 +139,7 @@ document.getElementById('tVideo').onclick=function(){
 document.getElementById('tMotion').onclick=function(){
   startTest('Моушен',{service:'motion',seconds:5,image:IMG,video:VID});
 };
-document.getElementById('tLipsync').onclick=function(){
-  startTest('Липсинк',{service:'lipsync',seconds:5,video:VID,audio:VID});
-};
+document.getElementById('tPing').onclick=pingTest;
 </script>
 </body>
 </html>
