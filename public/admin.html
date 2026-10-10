@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Служебная панель — Ёшкин кот</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+body{background:#0b0e09;color:#e5e7eb;font:400 .95rem/1.6 'Inter',system-ui,sans-serif;margin:0;padding:40px 20px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:1.5rem;margin:0 0 6px}
+.sub{color:#9ca3af;font-size:.85rem;margin:0 0 24px}
+.card{border:1px solid rgba(255,255,255,.1);border-radius:16px;background:#101308;padding:20px;margin-bottom:16px}
+label{display:block;color:#9ca3af;font-size:.78rem;margin-bottom:6px}
+input[type=password]{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:#0b0e09;color:#e5e7eb;font-size:.95rem;outline:none}
+input[type=password]:focus{border-color:#A3E635}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{padding:13px 16px;border-radius:12px;border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08);color:#A3E635;font:600 .88rem 'Inter',sans-serif;cursor:pointer;text-align:left}
+button:hover{background:rgba(163,230,53,.16)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button small{display:block;color:#9ca3af;font-weight:400;font-size:.7rem;margin-top:3px}
+#log{white-space:pre-wrap;word-break:break-all;background:#000;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;font:400 .78rem/1.5 monospace;min-height:120px;max-height:340px;overflow-y:auto;color:#9ca3af}
+#log a{color:#A3E635}
+.warn{color:#fbbf24;font-size:.78rem;margin-top:10px}
+@media(max-width:600px){.btns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🛠 Служебная панель</h1>
+<p class="sub">Боевые тесты конвейера через админ-режим. Тратит баланс CometAPI, не трогает оплаты клиентов.</p>
+
+<div class="card">
+<label>Админ-пароль (ADMIN_SECRET из Vercel)</label>
+<input type="password" id="pw" placeholder="вставь пароль и нажми Enter" autocomplete="off">
+<div class="warn">⚠️ Пароль живёт только в этой вкладке до закрытия. Никому его не показывай и не присылай в чат.</div>
+</div>
+
+<div class="card">
+<div class="btns">
+<button id="tAvatar">🗣 Аватар: текст + голос Nova<small>проверка вставки TTS, ~30 сек речи</small></button>
+<button id="tVideo">🎬 Видео: кот на троне, 5 сек<small>Seedance 2.5, проверка промпт-мастера</small></button>
+<button id="tMotion">🕺 Моушен: фото + танец, 5 сек<small>Kling, проверка переноса движений</small></button>
+<button id="tLipsync">🎤 Липсинк: танец + звук, 5 сек<small>Kling lip-sync, проверка губ</small></button>
+</div>
+</div>
+
+<div class="card">
+<label>Журнал</label>
+<div id="log">Готов к работе. Введи пароль и нажми кнопку теста.\n</div>
+</div>
+</div>
+
+<script>
+var pwEl=document.getElementById('pw');
+var logEl=document.getElementById('log');
+function log(t){ logEl.textContent+=t+'\n'; logEl.scrollTop=logEl.scrollHeight; }
+function pw(){ return pwEl.value.trim(); }
+pwEl.addEventListener('keydown',function(e){ if(e.key==='Enter'&&pw()) log('Пароль принят в этой вкладке.'); });
+
+function startTest(name,payload){
+  if(!pw()){ alert('Сначала введи админ-пароль'); return; }
+  log('── '+name+': отправляю запрос...');
+  payload.adminPassword=pw();
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    .then(function(res){
+      if(!res.ok||res.d.error){ log('❌ Ошибка: '+(res.d.error||'код '+res.ok)); return; }
+      var tid=res.d.taskId;
+      log('✅ Задача создана, taskId='+tid);
+      poll(tid,name);
+    })
+    .catch(function(e){ log('❌ Сеть: '+e.message); });
+}
+function poll(tid,name){
+  var tries=0;
+  var timer=setInterval(function(){
+    tries++;
+    fetch('/api/status?taskId='+encodeURIComponent(tid))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d.status==='succeeded'){
+          clearInterval(timer);
+          log('🎉 '+name+' ГОТОВО: '+d.videoUrl);
+        }else if(d.status==='failed'){
+          clearInterval(timer);
+          log('💥 '+name+' ОШИБКА: '+(d.error||'неизвестно'));
+        }else{
+          log('... '+name+': ещё считаем ('+tries*10+' сек)');
+        }
+        if(tries>90){ clearInterval(timer); log('⏰ '+name+': таймаут опроса, проверь Журнал в CometAPI'); }
+      })
+      .catch(function(){});
+  },10000);
+}
+
+var IMG='https://www.yoshkin-kot.online/og-image.png';
+var VID='https://www.yoshkin-kot.online/cat-dance.mp4';
+
+document.getElementById('tAvatar').onclick=function(){
+  startTest('Аватар TTS',{service:'avatar',voiceMode:'text',voice:'nova',
+    text:'Привет! Я Мурзик, ведущий студии Ёшкин кот. Нейросеть снимает видео и рисует картинки по твоим словам.',
+    image:IMG});
+};
+document.getElementById('tVideo').onclick=function(){
+  startTest('Видео',{service:'text2video',model:'seedance-2.5',seconds:5,quality:'480p',aspect:'16:9',
+    prompt:'Рыжий кот в золотой короне сидит на троне и важно кивает, тёплый кинематографичный свет'});
+};
+document.getElementById('tMotion').onclick=function(){
+  startTest('Моушен',{service:'motion',seconds:5,image:IMG,video:VID});
+};
+document.getElementById('tLipsync').onclick=function(){
+  startTest('Липсинк',{service:'lipsync',seconds:5,video:VID,audio:VID});
+};
+</script>
+</body>
+</html>
