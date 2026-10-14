@@ -206,7 +206,7 @@
       <div class="promptBox" id="promptBox" contenteditable="true" spellcheck="false"></div>
     </div>
     <div class="studio-bar">
-      <button class="pchip mode" id="pcModel" type="button">⚙ Kling Image </button>
+      <button class="pchip mode" id="pcModel" type="button">⚙ Kling Image ⌄</button>
       <button class="pchip" id="pcCount" type="button">🖼 1 картинка ⌄</button>
       <button class="pchip" id="pcAspect" type="button">📱 1:1 ⌄</button>
       <div class="barRight">
@@ -303,7 +303,7 @@ var ASPECTS=['1:1','16:9','9:16','4:3','3:4'];
 var modelKey='kling-image';
 var count=1;
 var aspect='1:1';
-var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
+var restoring=false, stage='setup', paidSeen=false, paymentUsed=false, activePaymentId=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
@@ -313,11 +313,17 @@ var rz=RZ.mount('rzZone',{
   emptyIcon:'🖼',
   emptyTitle:'Здесь появятся твои картинки',
   emptySub:'Опиши картинку, оплати — и модель нарисует её за минуту',
-  stages:[
-    {icon:'📨',label:'Отправляем заказ модели'},
-    {icon:'🎨',label:'Модель рисует'},
-    {icon:'📦',label:'Сохраняем в работы'}
+  lines:[
+    'Кот-режиссёр орёт на сценарий...',
+    'Гримёр пудрит нос главному герою...',
+    'Оператор пытается не уронить камеру...',
+    'Дубль 47... нет, опять не то. Дубль 48...',
+    'Почти готово, осталось убрать конфетти'
   ],
+  lineMs:4000,
+  videoUrl:'',
+  screenNote:'Съёмочная площадка монтируется — видео встанет сюда после переезда',
+  doneFlash:'Ёшкин кот, готово!',
   doneTitle:'Готово! Картинки твои'
 });
 
@@ -341,8 +347,8 @@ function updateChips(){
   document.getElementById('priceVal').textContent=price();
 }
 function updateSend(){
-  if(stage==='done'){ sendBtn.disabled=true; sendBtn.title='Готово'; }
-  else{ sendBtn.disabled=false; sendBtn.title=paidSeen?'Запустить генерацию':'На оплату'; }
+  if(stage==='gen'){ sendBtn.disabled=true; sendBtn.title='Генерируем...'; }
+  else{ sendBtn.disabled=false; sendBtn.title=(paidSeen&&!paymentUsed)?'Запустить генерацию':'На оплату'; }
 }
 function updateSteps(){
   var ok=!!promptText();
@@ -445,7 +451,7 @@ function resultsHTML(urls){
       +'<div class="acts"><a href="'+u+'" target="_blank" rel="noopener">⬇ скачать</a>'
       +'<button type="button" data-ref="'+i+'">🎬 в референсы</button></div></div>';
   }).join('')+'</div>'
-  +'<div class="rz-hint">💡 Кнопка 「🎬 в референсы」 отправит картинку в 「Создать видео」 — нейросеть снимет по ней ролик.</div>';
+  +'<div class="rz-hint">💡 Кнопка 「🎬 в референсы」 отправит картинку в 「Создать видео」 — нейросеть снимет по ней ролик. Промпт выше остался на месте: правь и жми ↑, чтобы сгенерировать ещё.</div>';
 }
 function showDone(urls){
   RZ.done(rz, resultsHTML(urls));
@@ -499,16 +505,11 @@ function saveDraft(){
 })();
 promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); saveDraft(); });
 
-function retryGen(){
-  if(paidSeen&&activePaymentId&&promptText()){ callGenerate(activePaymentId); }
-  else{ payClick(); }
-}
-
 function callGenerate(pid){
   stage='gen';
   updateSteps(); updateSend();
   setStatus('');
-  RZ.work(rz,0,'Оплата получена — отправляем заказ модели');
+  RZ.work(rz);
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     service:'text2image', paymentId:pid, prompt:promptText(),
     model:modelKey, count:count, aspect:aspect
@@ -517,10 +518,10 @@ function callGenerate(pid){
     .then(function(d){
       if(d.error){ throw new Error(d.error); }
       try{ localStorage.setItem('seedgen_images_task_'+pid,d.taskId); }catch(e){}
-      RZ.work(rz,1,'Обычно до минуты. Не закрывай вкладку');
+      paymentUsed=true;
       poll(d.taskId);
     })
-    .catch(function(e){ setStatus(''); RZ.error(rz,e.message,retryGen); stage='setup'; updateSteps(); updateSend(); });
+    .catch(function(e){ setStatus(''); RZ.error(rz,e.message); stage='setup'; updateSteps(); updateSend(); });
 }
 function poll(taskId){
   var timer=setInterval(function(){
@@ -530,19 +531,15 @@ function poll(taskId){
         if(d.status==='succeeded'){
           clearInterval(timer);
           var urls=d.imageUrls||(d.imageUrl?[d.imageUrl]:[]);
-          RZ.work(rz,2,'Сохраняем в работы');
           showDone(urls);
           urls.forEach(function(u){ histPush(u,promptText().slice(0,30)||'картинка'); });
           setStatus('');
           stage='done'; updateSteps(); updateSend();
-          try{ localStorage.removeItem('seedgen_images_draft'); }catch(e){}
         }else if(d.status==='failed'){
           clearInterval(timer);
           setStatus('');
-          RZ.error(rz,d.error||'попробуй другой промпт',retryGen);
+          RZ.error(rz,d.error||'попробуй другой промпт');
           stage='setup'; updateSteps(); updateSend();
-        }else{
-          RZ.work(rz,1,'Обычно до минуты. Не закрывай вкладку');
         }
       })
       .catch(function(){});
@@ -551,7 +548,7 @@ function poll(taskId){
 
 function payClick(){
   if(!requireAuth()) return;
-  if(paidSeen&&activePaymentId&&promptText()&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
+  if(paidSeen&&activePaymentId&&!paymentUsed&&promptText()&&stage!=='gen'){ callGenerate(activePaymentId); return; }
   if(!promptText()){ alert('Опиши картинку словами в поле выше'); return; }
   sendBtn.disabled=true;
   setStatus('Создаём платёж...');
@@ -566,7 +563,7 @@ function payClick(){
       saveDraft();
       window.location.href=data.confirmationUrl;
     })
-    .catch(function(e){ setStatus(''); RZ.error(rz,e.message,payClick); sendBtn.disabled=false; });
+    .catch(function(e){ setStatus(''); RZ.error(rz,e.message); sendBtn.disabled=false; updateSend(); });
 }
 sendBtn.addEventListener('click',payClick);
 
@@ -575,7 +572,7 @@ sendBtn.addEventListener('click',payClick);
   if(!pid) return;
   activePaymentId=pid; paidSeen=true;
   var savedTask=localStorage.getItem('seedgen_images_task_'+pid);
-  if(savedTask){ stage='gen'; updateSteps(); updateSend(); RZ.work(rz,1,'Генерация уже идёт — продолжаем следить'); poll(savedTask); return; }
+  if(savedTask){ stage='gen'; paymentUsed=true; updateSteps(); updateSend(); RZ.work(rz); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
@@ -590,7 +587,7 @@ sendBtn.addEventListener('click',payClick);
         updateSteps(); updateSend();
       }
     })
-    .catch(function(e){ paidSeen=false; setStatus(''); RZ.error(rz,e.message,function(){ location.href='/images.html?paymentId='+encodeURIComponent(pid); }); updateSteps(); updateSend(); });
+    .catch(function(e){ paidSeen=false; setStatus(''); RZ.error(rz,e.message); updateSteps(); updateSend(); });
 })();
 
 function syncUserMenu(){
