@@ -37,6 +37,14 @@ const TTS_VOICES = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
 const TTS_MODEL = 'gpt-4o-mini-tts';
 const MAX_TEXT_CHARS = 480;
 
+// === МОДЕЛИ ДЛЯ ГЕНЕРАЦИИ КАРТИНОК ===
+const IMAGE_MODELS = {
+  'nano-banana': 'gemini-2.5-flash-image',
+  'nano-banana-2': 'gemini-3.1-flash-image-preview'
+};
+
+const IMAGE_ASPECTS = { '1:1': '1:1', '16:9': '16:9', '9:16': '9:16', '4:3': '4:3', '3:4': '3:4' };
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -48,13 +56,132 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const isAdmin = !!process.env.ADMIN_SECRET && body.adminPassword === process.env.ADMIN_SECRET;
 
-  // === ПРИНИМАЕМ МОДЕЛЬ И РЕЖИМ ===
+  let service = body.service || 'text2video';
+  if (service === 'text30') service = 'text2video';
+
+  // === ОБРАБОТКА TEXT2IMAGE (ГЕНЕРАЦИЯ КАРТИНОК) ===
+  if (service === 'text2image') {
+    const prompt = String(body.prompt || '').trim();
+    if (!prompt) return res.status(400).json({ error: 'Нужен промпт' });
+
+    const modelKey = body.model || 'kling-image';
+    const aspect = IMAGE_ASPECTS[body.aspect] || '1:1';
+    const count = parseInt(body.count, 10) || 1;
+
+    const paymentId = body.paymentId;
+    if (!isAdmin) {
+      if (!paymentId) return res.status(403).json({ error: 'Генерация доступна только после оплаты' });
+
+      const shopId = process.env.YOOKASSA_SHOP_ID;
+      const secret = process.env.YOOKASSA_SECRET_KEY;
+      if (!shopId || !secret) return res.status(500).json({ error: 'ЮKassa не настроена' });
+
+      const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
+      const pr = await fetch('https://api.yookassa.ru/v3/payments/' + paymentId, { headers: { 'Authorization': auth } });
+      const pdata = await pr.json();
+      if (!pr.ok || pdata.status !== 'succeeded') {
+        return res.status(403).json({ error: 'Оплата не найдена или не завершена' });
+      }
+    }
+
+    const bal = await getBalance();
+    if (bal !== null && bal < 0.06 * count) {
+      return res.status(503).json({ error: 'Сервис временно недоступен: недостаточно ресурсов генерации' });
+    }
+
+    const parts = [{ text: prompt }];
+    if (typeof body.refImage === 'string' && body.refImage.length > 100) {
+      let b64 = body.refImage;
+      let mime = 'image/jpeg';
+      if (b64.startsWith('data:')) {
+        const comma = b64.indexOf(',');
+        const header = b64.slice(0, comma);
+        b64 = b64.slice(comma + 1);
+        if (header.indexOf('image/png') !== -1) mime = 'image/png';
+        else if (header.indexOf('image/webp') !== -1) mime = 'image/webp';
+      }
+      parts.push({ inlineData: { mimeType: mime, data: b64 } });
+    }
+
+    // Nano Banana использует Gemini-стиль
+    if (IMAGE_MODELS[modelKey]) {
+      const modelId = IMAGE_MODELS[modelKey];
+      try {
+        const r = await fetch('https://api.cometapi.com/v1beta/models/' + modelId + ':generateContent', {
+          method: 'POST',
+          headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: parts }],
+            generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: aspect } }
+          })
+        });
+        const data = await r.json();
+        if (!r.ok) return res.status(502).json({ error: 'Модель отказала: ' + ((data && data.error && data.error.message) || 'попробуй ещё раз') });
+        const outParts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
+        let finalImage = null;
+        if (outParts) {
+          for (let i = outParts.length - 1; i >= 0; i--) {
+            if (outParts[i].thought) continue;
+            if (outParts[i].inlineData && outParts[i].inlineData.data) { finalImage = outParts[i].inlineData; break; }
+          }
+        }
+        if (!finalImage) return res.status(502).json({ error: 'Модель не вернула картинку, попробуй другой промпт' });
+        return res.json({ image: finalImage.data, mime: finalImage.mimeType || 'image/png', model: modelKey });
+      } catch (e) {
+        return res.status(500).json({ error: 'Не удалось связаться с моделью' });
+      }
+    }
+
+    // Остальные модели (Kling, GPT, Grok, Qwen, Gen4) — OpenAI-совместимый формат
+    const modelMap = {
+      'kling-image': 'kling-image',
+      'gpt-image-1.5': 'gpt-image-1.5',
+      'grok-image': 'grok-imagine-image-2.0',
+      'qwen-image': 'qwen-image',
+      'gen4-image': 'gen4-image'
+    };
+
+    const apiModel = modelMap[modelKey] || 'kling-image';
+    try {
+      const requestBody = {
+        model: apiModel,
+        prompt: prompt,
+        n: count,
+        size: aspect === '1:1' ? '1024x1024' : (aspect === '16:9' ? '1024x576' : (aspect === '9:16' ? '576x1024' : '1024x768')),
+        response_format: 'b64_json'
+      };
+
+      if (parts.length > 1 && parts[1].inlineData) {
+        requestBody.image = 'data:' + parts[1].inlineData.mimeType + ';base64,' + parts[1].inlineData.data;
+      }
+
+      const r = await fetch('https://api.cometapi.com/v1/images/generations', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      const data = await r.json();
+      if (!r.ok) return res.status(502).json({ error: 'Модель отказала: ' + ((data && data.error && data.error.message) || 'попробуй ещё раз') });
+
+      const images = data.data || [];
+      if (!images.length) return res.status(502).json({ error: 'Модель не вернула картинки' });
+
+      if (count === 1) {
+        return res.json({ image: images[0].b64_json, mime: 'image/png', model: modelKey });
+      } else {
+        return res.json({ images: images.map(img => img.b64_json), mime: 'image/png', model: modelKey });
+      }
+    } catch (e) {
+      return res.status(500).json({ error: 'Не удалось связаться с моделью' });
+    }
+  }
+
+  // === ОБРАБОТКА ВИДЕО-УСЛУГ (СУЩЕСТВУЮЩАЯ ЛОГИКА) ===
   const modelKey = body.model || 'seedance-2.5';
   const enhancePrompt = body.enhancePrompt !== false;
   const selectedModel = MODELS[modelKey] || MODELS['seedance-2.5'];
 
-  // === РЕЖИМ АВАТАРА: откуда голос ===
-  const voiceMode = body.voiceMode || 'audio'; // 'audio' | 'rec' | 'text'
+  const voiceMode = body.voiceMode || 'audio';
   const voiceText = typeof body.text === 'string' ? body.text.trim() : '';
   const voicePick = typeof body.voice === 'string' ? body.voice : 'nova';
 
@@ -79,8 +206,6 @@ export default async function handler(req, res) {
     lipsync: { video: true, audio: true }
   };
 
-  let service = body.service || 'text2video';
-  if (service === 'text30') service = 'text2video';
   const needs = NEEDS[service];
   if (!needs) return res.status(400).json({ error: 'Неизвестная услуга' });
 
@@ -171,7 +296,6 @@ export default async function handler(req, res) {
     if (vid.error) return res.status(400).json({ error: vid.error });
   }
 
-  // === АУДИО: для аватара в режиме "text" — пропускаем требование файла ===
   if (needs.audio) {
     const isAvatarWithText = service === 'avatar' && voiceMode === 'text';
     if (!isAvatarWithText) {
@@ -181,7 +305,6 @@ export default async function handler(req, res) {
     }
   }
 
-  // === TTS: если аватар с текстом — озвучиваем сами через OpenAI ===
   if (service === 'avatar' && voiceMode === 'text') {
     if (!voiceText) return res.status(400).json({ error: 'Нужен текст для озвучки' });
     if (voiceText.length > MAX_TEXT_CHARS) {
@@ -214,7 +337,6 @@ export default async function handler(req, res) {
     } catch (e) {
       return res.status(502).json({ error: 'Не удалось озвучить текст: ' + (e && e.message ? e.message : 'сетевая ошибка') });
     }
-    // Ограничение 30 секунд для аватара: текст ~480 символов ≈ 30 сек речи
     seconds = 30;
   }
 
@@ -265,7 +387,6 @@ export default async function handler(req, res) {
             }
           }
         } catch (e) {
-          // Если перевод не удался — используем оригинал
         }
       }
       return withRoles(result, nImages, hasVideo, hasAudio);
@@ -294,7 +415,6 @@ References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''
         }
       }
     } catch (e) {
-      // Если улучшение не удалось — используем оригинал
     }
     
     return withRoles(text, nImages, hasVideo, hasAudio);
@@ -401,7 +521,6 @@ References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''
       r2.quality = quality;
       r2.model = modelKey;
       r2.enhancePrompt = enhancePrompt;
-      // === АВАТАР: сохраняем режим голоса ===
       if (service === 'avatar') {
         r2.voiceMode = voiceMode;
         if (voiceMode === 'text') {
