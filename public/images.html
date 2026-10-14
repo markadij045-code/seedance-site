@@ -40,6 +40,14 @@
 .pstep.active{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
 .studio{position:relative;border:1px solid rgba(255,255,255,.06);border-radius:24px;background:radial-gradient(600px 220px at 50% 0,rgba(163,230,53,.05),transparent 70%),linear-gradient(180deg,#101308,#0b0e09);padding:16px 18px 12px}
 .pwrap{position:relative;padding:0 0 8px}
+.refrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.refrow:empty{display:none;margin:0}
+.reftile{display:inline-block;vertical-align:middle;width:60px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,.75);overflow:hidden;position:relative;margin:0;background:#000;box-shadow:-5px 5px 0 -3px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.5);cursor:default;user-select:none;-webkit-user-select:none}
+.reftile img{width:100%;height:100%;object-fit:cover}
+.reftile .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.8);color:#fca5a5;font-size:.65rem;cursor:pointer;display:none;place-items:center;line-height:1;padding:0;z-index:5}
+.reftile:hover .x{display:grid}
+.addbadge{display:inline-block;vertical-align:middle;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#e5e7eb;text-align:center;line-height:30px;font-size:1rem;cursor:pointer;margin:0;user-select:none;-webkit-user-select:none}
+.addbadge:hover{background:rgba(255,255,255,.26)}
 .promptBox{min-height:110px;max-height:280px;overflow-y:auto;outline:none;font:400 .95rem/1.65 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
 .promptBox::-webkit-scrollbar{width:8px}
 .promptBox::-webkit-scrollbar-track{background:transparent}
@@ -203,6 +211,7 @@
 
   <div class="studio" id="stage">
     <div class="pwrap">
+      <div class="refrow" id="refRow"></div>
       <div class="promptBox" id="promptBox" contenteditable="true" spellcheck="false"></div>
     </div>
     <div class="studio-bar">
@@ -217,7 +226,7 @@
     <div class="popup" id="popMenu"></div>
   </div>
 
-  <div class="rolehint" style="text-align:center">💡 Опиши картинку словами: кто или что в кадре, стиль, свет, настроение. Готовую картинку можно в один клик отправить референсом в 「Создать видео」 — нейросеть снимет по ней ролик.</div>
+  <div class="rolehint" style="text-align:center">💡 Опиши картинку словами, а кружком 「+」 добавь свою картинку для правки — нейросеть изменит её по твоему описанию (убрать фон, сменить стиль, добавить детали).</div>
 
   <div id="status"></div>
 
@@ -283,6 +292,8 @@
   </div>
 </div>
 
+<input type="file" id="refInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+
 <script src="/result-zone.js"></script>
 <script>
 function toggleSidebar(){
@@ -303,9 +314,11 @@ var ASPECTS=['1:1','16:9','9:16','4:3','3:4'];
 var modelKey='kling-image';
 var count=1;
 var aspect='1:1';
-var restoring=false, stage='setup', paidSeen=false, paymentUsed=false, activePaymentId=null;
+var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
+var refData=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
+var refInput=document.getElementById('refInput'), refRow=document.getElementById('refRow');
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
 
@@ -340,6 +353,44 @@ function requireAuth(){
   return false;
 }
 
+function renderRefRow(){
+  refRow.innerHTML='';
+  if(refData){
+    var tile=document.createElement('div');
+    tile.className='reftile';
+    tile.innerHTML='<img src="'+refData+'" alt="своя картинка"><button type="button" class="x" title="Убрать">✕</button>';
+    tile.querySelector('.x').addEventListener('click',function(e){
+      e.stopPropagation();
+      refData=null;
+      try{ sessionStorage.removeItem('seedgen_images_ref'); }catch(err){}
+      renderRefRow();
+    });
+    refRow.appendChild(tile);
+  }
+  var add=document.createElement('button');
+  add.type='button'; add.className='addbadge'; add.title='Добавить свою картинку для правки';
+  add.textContent='+';
+  add.addEventListener('click',function(){ refInput.click(); });
+  refRow.appendChild(add);
+}
+
+refInput.addEventListener('change',function(){
+  var f=refInput.files&&refInput.files[0];
+  refInput.value='';
+  if(!f) return;
+  if(f.size>20*1024*1024){ alert('Файл слишком большой (максимум 20 МБ)'); return; }
+  var reader=new FileReader();
+  reader.onload=function(){
+    shrink(reader.result,function(d){
+      refData=d;
+      try{ sessionStorage.setItem('seedgen_images_ref',d); }catch(e){}
+      renderRefRow();
+    });
+  };
+  reader.onerror=function(){ alert('Не удалось прочитать файл'); };
+  reader.readAsDataURL(f);
+});
+
 function updateChips(){
   document.getElementById('pcModel').textContent='⚙ '+model().name+' ⌄';
   document.getElementById('pcCount').textContent='🖼 '+COUNTS[count].label+' ⌄';
@@ -347,8 +398,8 @@ function updateChips(){
   document.getElementById('priceVal').textContent=price();
 }
 function updateSend(){
-  if(stage==='gen'){ sendBtn.disabled=true; sendBtn.title='Генерируем...'; }
-  else{ sendBtn.disabled=false; sendBtn.title=(paidSeen&&!paymentUsed)?'Запустить генерацию':'На оплату'; }
+  if(stage==='done'){ sendBtn.disabled=true; sendBtn.title='Готово'; }
+  else{ sendBtn.disabled=false; sendBtn.title=paidSeen?'Запустить генерацию':'На оплату'; }
 }
 function updateSteps(){
   var ok=!!promptText();
@@ -451,7 +502,7 @@ function resultsHTML(urls){
       +'<div class="acts"><a href="'+u+'" target="_blank" rel="noopener">⬇ скачать</a>'
       +'<button type="button" data-ref="'+i+'">🎬 в референсы</button></div></div>';
   }).join('')+'</div>'
-  +'<div class="rz-hint">💡 Кнопка 「🎬 в референсы」 отправит картинку в 「Создать видео」 — нейросеть снимет по ней ролик. Промпт выше остался на месте: правь и жми ↑, чтобы сгенерировать ещё.</div>';
+  +'<div class="rz-hint">💡 Кнопка 「🎬 в референсы」 отправит картинку в 「Создать видео」 — нейросеть снимет по ней ролик.</div>';
 }
 function showDone(urls){
   RZ.done(rz, resultsHTML(urls));
@@ -493,15 +544,18 @@ function saveDraft(){
 (function restoreDraft(){
   try{
     var s=JSON.parse(localStorage.getItem('seedgen_images_draft')||'null');
-    if(!s) return;
-    restoring=true;
-    if(s.model&&IMG_MODELS[s.model]) modelKey=s.model;
-    if(s.count&&COUNTS[s.count]) count=s.count;
-    if(s.aspect&&ASPECTS.indexOf(s.aspect)!==-1) aspect=s.aspect;
-    restoring=false;
-    if(s.prompt){ promptBox.textContent=s.prompt; }
-    updateChips(); updateSteps(); updateSend();
-  }catch(e){ restoring=false; updateChips(); }
+    if(s){
+      restoring=true;
+      if(s.model&&IMG_MODELS[s.model]) modelKey=s.model;
+      if(s.count&&COUNTS[s.count]) count=s.count;
+      if(s.aspect&&ASPECTS.indexOf(s.aspect)!==-1) aspect=s.aspect;
+      if(s.prompt){ promptBox.textContent=s.prompt; }
+      restoring=false;
+    }
+  }catch(e){ restoring=false; }
+  try{ var r=sessionStorage.getItem('seedgen_images_ref'); if(r&&r.length>100) refData=r; }catch(e){}
+  renderRefRow();
+  updateChips(); updateSteps(); updateSend();
 })();
 promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); saveDraft(); });
 
@@ -510,45 +564,29 @@ function callGenerate(pid){
   updateSteps(); updateSend();
   setStatus('');
   RZ.work(rz);
-  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    service:'text2image', paymentId:pid, prompt:promptText(),
-    model:modelKey, count:count, aspect:aspect
-  })})
+  var payload={ service:'text2image', paymentId:pid, prompt:promptText(), model:modelKey, count:count, aspect:aspect };
+  if(refData) payload.refImage=refData;
+  fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(d.error){ throw new Error(d.error); }
-      try{ localStorage.setItem('seedgen_images_task_'+pid,d.taskId); }catch(e){}
-      paymentUsed=true;
-      poll(d.taskId);
+      var urls=[];
+      if(d.image) urls=[d.image];
+      else if(d.images) urls=d.images;
+      if(!urls.length) throw new Error('Модель не вернула картинки');
+      urls=urls.map(function(u){ return (u.indexOf('data:')===0||u.indexOf('http')===0)?u:('data:image/png;base64,'+u); });
+      showDone(urls);
+      urls.forEach(function(u){ histPush(u,promptText().slice(0,30)||'картинка'); });
+      setStatus('');
+      stage='done'; updateSteps(); updateSend();
+      try{ localStorage.removeItem('seedgen_images_draft'); sessionStorage.removeItem('seedgen_images_ref'); }catch(e){}
     })
     .catch(function(e){ setStatus(''); RZ.error(rz,e.message); stage='setup'; updateSteps(); updateSend(); });
-}
-function poll(taskId){
-  var timer=setInterval(function(){
-    fetch('/api/status?taskId='+encodeURIComponent(taskId))
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(d.status==='succeeded'){
-          clearInterval(timer);
-          var urls=d.imageUrls||(d.imageUrl?[d.imageUrl]:[]);
-          showDone(urls);
-          urls.forEach(function(u){ histPush(u,promptText().slice(0,30)||'картинка'); });
-          setStatus('');
-          stage='done'; updateSteps(); updateSend();
-        }else if(d.status==='failed'){
-          clearInterval(timer);
-          setStatus('');
-          RZ.error(rz,d.error||'попробуй другой промпт');
-          stage='setup'; updateSteps(); updateSend();
-        }
-      })
-      .catch(function(){});
-  },4000);
 }
 
 function payClick(){
   if(!requireAuth()) return;
-  if(paidSeen&&activePaymentId&&!paymentUsed&&promptText()&&stage!=='gen'){ callGenerate(activePaymentId); return; }
+  if(paidSeen&&activePaymentId&&promptText()&&stage!=='gen'&&stage!=='done'){ callGenerate(activePaymentId); return; }
   if(!promptText()){ alert('Опиши картинку словами в поле выше'); return; }
   sendBtn.disabled=true;
   setStatus('Создаём платёж...');
@@ -563,7 +601,7 @@ function payClick(){
       saveDraft();
       window.location.href=data.confirmationUrl;
     })
-    .catch(function(e){ setStatus(''); RZ.error(rz,e.message); sendBtn.disabled=false; updateSend(); });
+    .catch(function(e){ setStatus(''); RZ.error(rz,e.message); sendBtn.disabled=false; });
 }
 sendBtn.addEventListener('click',payClick);
 
@@ -571,8 +609,6 @@ sendBtn.addEventListener('click',payClick);
   var pid=new URLSearchParams(window.location.search).get('paymentId');
   if(!pid) return;
   activePaymentId=pid; paidSeen=true;
-  var savedTask=localStorage.getItem('seedgen_images_task_'+pid);
-  if(savedTask){ stage='gen'; paymentUsed=true; updateSteps(); updateSend(); RZ.work(rz); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
