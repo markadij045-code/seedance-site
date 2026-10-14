@@ -1,35 +1,11 @@
 import { readLedger, writeLedger, getBalance, estimateCost } from '../lib/ledger.js';
 
-// === НОВАЯ ЛОГИКА: МАППИНГ МОДЕЛЕЙ ===
+// === МАППИНГ ВИДЕО-МОДЕЛЕЙ ===
 const MODELS = {
-  'wan-3.0': {
-    name: 'Wan 3.0',
-    basePrice: 99,
-    perSecond: 10,
-    maxDuration: 30,
-    apiModel: 'wan-3.0'
-  },
-  'kling-standard': {
-    name: 'Kling',
-    basePrice: 129,
-    perSecond: 15,
-    maxDuration: 10,
-    apiModel: 'kling-video'
-  },
-  'seedance-2.0': {
-    name: 'Seedance 2.0',
-    basePrice: 129,
-    perSecond: 15,
-    maxDuration: 15,
-    apiModel: 'seedance-2-0'
-  },
-  'seedance-2.5': {
-    name: 'Seedance 2.5',
-    basePrice: 199,
-    perSecond: 30,
-    maxDuration: 30,
-    apiModel: 'seedance-2-5'
-  }
+  'wan-3.0': { name: 'Wan 3.0', basePrice: 99, perSecond: 10, maxDuration: 30, apiModel: 'wan-3.0' },
+  'kling-standard': { name: 'Kling', basePrice: 129, perSecond: 15, maxDuration: 10, apiModel: 'kling-video' },
+  'seedance-2.0': { name: 'Seedance 2.0', basePrice: 129, perSecond: 15, maxDuration: 15, apiModel: 'seedance-2-0' },
+  'seedance-2.5': { name: 'Seedance 2.5', basePrice: 199, perSecond: 30, maxDuration: 30, apiModel: 'seedance-2-5' }
 };
 
 // === TTS ГОЛОСА (OpenAI через CometAPI) ===
@@ -37,13 +13,22 @@ const TTS_VOICES = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
 const TTS_MODEL = 'gpt-4o-mini-tts';
 const MAX_TEXT_CHARS = 480;
 
-// === МОДЕЛИ ДЛЯ ГЕНЕРАЦИИ КАРТИНОК ===
-const IMAGE_MODELS = {
+// === МОДЕЛИ КАРТИНОК ===
+// Gemini-семейство — нативный формат generateContent (правка через inlineData)
+const GEMINI_IMAGE_MODELS = {
   'nano-banana': 'gemini-2.5-flash-image',
   'nano-banana-2': 'gemini-3.1-flash-image-preview'
 };
-
+// Остальные — OpenAI-совместимый формат (генерация: /v1/images/generations, правка: /v1/images/edits)
+const OPENAI_IMAGE_MODELS = {
+  'kling-image': 'kling-image',
+  'gpt-image-1.5': 'gpt-image-1.5',
+  'grok-image': 'grok-imagine-image-2.0',
+  'qwen-image': 'qwen-image',
+  'gen4-image': 'gen4-image'
+};
 const IMAGE_ASPECTS = { '1:1': '1:1', '16:9': '16:9', '9:16': '9:16', '4:3': '4:3', '3:4': '3:4' };
+const SIZE_BY_ASPECT = { '1:1': '1024x1024', '16:9': '1024x576', '9:16': '576x1024', '4:3': '1024x768', '3:4': '768x1024' };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -59,23 +44,24 @@ export default async function handler(req, res) {
   let service = body.service || 'text2video';
   if (service === 'text30') service = 'text2video';
 
-  // === ОБРАБОТКА TEXT2IMAGE (ГЕНЕРАЦИЯ КАРТИНОК) ===
+  // ============================================================
+  // === TEXT2IMAGE — ГЕНЕРАЦИЯ И ПРАВКА КАРТИНОК (СИНХРОННО) ===
+  // ============================================================
   if (service === 'text2image') {
     const prompt = String(body.prompt || '').trim();
     if (!prompt) return res.status(400).json({ error: 'Нужен промпт' });
 
     const modelKey = body.model || 'kling-image';
     const aspect = IMAGE_ASPECTS[body.aspect] || '1:1';
-    const count = parseInt(body.count, 10) || 1;
+    let count = parseInt(body.count, 10);
+    if (!(count >= 1) || count > 4) count = 1;
 
     const paymentId = body.paymentId;
     if (!isAdmin) {
       if (!paymentId) return res.status(403).json({ error: 'Генерация доступна только после оплаты' });
-
       const shopId = process.env.YOOKASSA_SHOP_ID;
       const secret = process.env.YOOKASSA_SECRET_KEY;
       if (!shopId || !secret) return res.status(500).json({ error: 'ЮKassa не настроена' });
-
       const auth = 'Basic ' + Buffer.from(shopId + ':' + secret).toString('base64');
       const pr = await fetch('https://api.yookassa.ru/v3/payments/' + paymentId, { headers: { 'Authorization': auth } });
       const pdata = await pr.json();
@@ -89,10 +75,10 @@ export default async function handler(req, res) {
       return res.status(503).json({ error: 'Сервис временно недоступен: недостаточно ресурсов генерации' });
     }
 
-    const parts = [{ text: prompt }];
+    // Разбираем свою картинку для правки (если пришла)
+    let ref = null;
     if (typeof body.refImage === 'string' && body.refImage.length > 100) {
-      let b64 = body.refImage;
-      let mime = 'image/jpeg';
+      let b64 = body.refImage, mime = 'image/jpeg';
       if (b64.startsWith('data:')) {
         const comma = b64.indexOf(',');
         const header = b64.slice(0, comma);
@@ -100,83 +86,94 @@ export default async function handler(req, res) {
         if (header.indexOf('image/png') !== -1) mime = 'image/png';
         else if (header.indexOf('image/webp') !== -1) mime = 'image/webp';
       }
-      parts.push({ inlineData: { mimeType: mime, data: b64 } });
+      const buf = Buffer.from(b64, 'base64');
+      if (buf.length < 100) return res.status(400).json({ error: 'Не удалось прочитать картинку' });
+      if (buf.length > 20 * 1024 * 1024) return res.status(400).json({ error: 'Файл слишком большой (максимум 20 МБ)' });
+      ref = { mime, buffer: buf };
     }
 
-    // Nano Banana использует Gemini-стиль
-    if (IMAGE_MODELS[modelKey]) {
-      const modelId = IMAGE_MODELS[modelKey];
-      try {
-        const r = await fetch('https://api.cometapi.com/v1beta/models/' + modelId + ':generateContent', {
+    try {
+      // --- Gemini-семейство: generateContent, правка через inlineData ---
+      if (GEMINI_IMAGE_MODELS[modelKey]) {
+        const modelId = GEMINI_IMAGE_MODELS[modelKey];
+        const baseParts = [{ text: prompt }];
+        if (ref) baseParts.push({ inlineData: { mimeType: ref.mime, data: ref.buffer.toString('base64') } });
+
+        const runOne = async () => {
+          const r = await fetch('https://api.cometapi.com/v1beta/models/' + modelId + ':generateContent', {
+            method: 'POST',
+            headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: baseParts }],
+              generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: aspect } }
+            })
+          });
+          const data = await r.json();
+          if (!r.ok) throw new Error((data && data.error && data.error.message) || 'модель отказала');
+          const op = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
+          let fi = null;
+          if (op) {
+            for (let i = op.length - 1; i >= 0; i--) {
+              if (op[i].thought) continue;
+              if (op[i].inlineData && op[i].inlineData.data) { fi = op[i].inlineData; break; }
+            }
+          }
+          if (!fi) throw new Error('модель не вернула картинку, попробуй другой промпт');
+          return { data: fi.data, mime: fi.mimeType || 'image/png' };
+        };
+
+        const results = await Promise.all(Array.from({ length: count }, runOne));
+        if (count === 1) return res.json({ image: results[0].data, mime: results[0].mime, model: modelKey });
+        return res.json({ images: results.map(x => x.data), mime: results[0].mime, model: modelKey });
+      }
+
+      // --- OpenAI-совместимые модели ---
+      if (!OPENAI_IMAGE_MODELS[modelKey]) return res.status(400).json({ error: 'Неизвестная модель картинки' });
+      const apiModel = OPENAI_IMAGE_MODELS[modelKey];
+      const sizeStr = SIZE_BY_ASPECT[aspect] || '1024x1024';
+
+      if (ref) {
+        // ПРАВКА: /v1/images/edits (multipart)
+        const fd = new FormData();
+        fd.append('model', apiModel);
+        fd.append('image', new Blob([ref.buffer], { type: ref.mime }), 'image.' + (ref.mime.indexOf('png') !== -1 ? 'png' : (ref.mime.indexOf('webp') !== -1 ? 'webp' : 'jpg')));
+        fd.append('prompt', prompt);
+        fd.append('n', String(count));
+        fd.append('size', sizeStr);
+        fd.append('response_format', 'b64_json');
+        const r = await fetch('https://api.cometapi.com/v1/images/edits', {
           method: 'POST',
-          headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: parts }],
-            generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: aspect } }
-          })
+          headers: { 'Authorization': 'Bearer ' + key },
+          body: fd
         });
         const data = await r.json();
-        if (!r.ok) return res.status(502).json({ error: 'Модель отказала: ' + ((data && data.error && data.error.message) || 'попробуй ещё раз') });
-        const outParts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
-        let finalImage = null;
-        if (outParts) {
-          for (let i = outParts.length - 1; i >= 0; i--) {
-            if (outParts[i].thought) continue;
-            if (outParts[i].inlineData && outParts[i].inlineData.data) { finalImage = outParts[i].inlineData; break; }
-          }
-        }
-        if (!finalImage) return res.status(502).json({ error: 'Модель не вернула картинку, попробуй другой промпт' });
-        return res.json({ image: finalImage.data, mime: finalImage.mimeType || 'image/png', model: modelKey });
-      } catch (e) {
-        return res.status(500).json({ error: 'Не удалось связаться с моделью' });
-      }
-    }
-
-    // Остальные модели (Kling, GPT, Grok, Qwen, Gen4) — OpenAI-совместимый формат
-    const modelMap = {
-      'kling-image': 'kling-image',
-      'gpt-image-1.5': 'gpt-image-1.5',
-      'grok-image': 'grok-imagine-image-2.0',
-      'qwen-image': 'qwen-image',
-      'gen4-image': 'gen4-image'
-    };
-
-    const apiModel = modelMap[modelKey] || 'kling-image';
-    try {
-      const requestBody = {
-        model: apiModel,
-        prompt: prompt,
-        n: count,
-        size: aspect === '1:1' ? '1024x1024' : (aspect === '16:9' ? '1024x576' : (aspect === '9:16' ? '576x1024' : '1024x768')),
-        response_format: 'b64_json'
-      };
-
-      if (parts.length > 1 && parts[1].inlineData) {
-        requestBody.image = 'data:' + parts[1].inlineData.mimeType + ';base64,' + parts[1].inlineData.data;
+        if (!r.ok) return res.status(502).json({ error: 'Модель отказала править картинку: ' + ((data && data.error && data.error.message) || 'попробуй другой промпт или другую модель') });
+        const imgs = (data && data.data) || [];
+        if (!imgs.length) return res.status(502).json({ error: 'Модель не вернула результат правки' });
+        if (count === 1) return res.json({ image: imgs[0].b64_json, mime: 'image/png', model: modelKey });
+        return res.json({ images: imgs.map(x => x.b64_json), mime: 'image/png', model: modelKey });
       }
 
+      // ГЕНЕРАЦИЯ С НУЛЯ: /v1/images/generations (JSON)
       const r = await fetch('https://api.cometapi.com/v1/images/generations', {
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({ model: apiModel, prompt: prompt, n: count, size: sizeStr, response_format: 'b64_json' })
       });
       const data = await r.json();
       if (!r.ok) return res.status(502).json({ error: 'Модель отказала: ' + ((data && data.error && data.error.message) || 'попробуй ещё раз') });
-
-      const images = data.data || [];
-      if (!images.length) return res.status(502).json({ error: 'Модель не вернула картинки' });
-
-      if (count === 1) {
-        return res.json({ image: images[0].b64_json, mime: 'image/png', model: modelKey });
-      } else {
-        return res.json({ images: images.map(img => img.b64_json), mime: 'image/png', model: modelKey });
-      }
+      const imgs = (data && data.data) || [];
+      if (!imgs.length) return res.status(502).json({ error: 'Модель не вернула картинки' });
+      if (count === 1) return res.json({ image: imgs[0].b64_json, mime: 'image/png', model: modelKey });
+      return res.json({ images: imgs.map(x => x.b64_json), mime: 'image/png', model: modelKey });
     } catch (e) {
-      return res.status(500).json({ error: 'Не удалось связаться с моделью' });
+      return res.status(502).json({ error: 'Не удалось связаться с моделью: ' + (e && e.message ? e.message : 'ошибка') });
     }
   }
 
-  // === ОБРАБОТКА ВИДЕО-УСЛУГ (СУЩЕСТВУЮЩАЯ ЛОГИКА) ===
+  // ============================================================
+  // === ВИДЕО-УСЛУГИ (БЕЗ ИЗМЕНЕНИЙ) ===
+  // ============================================================
   const modelKey = body.model || 'seedance-2.5';
   const enhancePrompt = body.enhancePrompt !== false;
   const selectedModel = MODELS[modelKey] || MODELS['seedance-2.5'];
@@ -215,7 +212,7 @@ export default async function handler(req, res) {
 
   let seconds = parseInt(body.seconds, 10);
   let expectedPrice;
-  
+
   if (service === 'avatar') {
     expectedPrice = 499;
     if (!seconds || seconds < 1) seconds = 1;
@@ -316,16 +313,8 @@ export default async function handler(req, res) {
     try {
       const ttsRes = await fetch('https://api.cometapi.com/v1/audio/speech', {
         method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + key,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: TTS_MODEL,
-          voice: voicePick,
-          input: voiceText,
-          response_format: 'mp3'
-        })
+        headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: TTS_MODEL, voice: voicePick, input: voiceText, response_format: 'mp3' })
       });
       if (!ttsRes.ok) {
         const errTxt = await ttsRes.text().catch(() => '');
@@ -365,7 +354,7 @@ export default async function handler(req, res) {
 
   async function enhancePromptText(text, nImages, hasVideo, hasAudio) {
     const hasCyrillic = /[а-яА-ЯёЁ]/.test(text);
-    
+
     if (!enhancePrompt) {
       let result = text;
       if (hasCyrillic) {
@@ -391,7 +380,7 @@ export default async function handler(req, res) {
       }
       return withRoles(result, nImages, hasVideo, hasAudio);
     }
-    
+
     const enhanceSystemPrompt = `You are a professional video generation prompt engineer. Transform the user's simple description into a detailed cinematic English prompt. Add: camera movement, lighting, atmosphere, visual details. Keep it under 100 words. Output ONLY the enhanced prompt, no explanations.
 
 User's description: ${text}
@@ -416,7 +405,7 @@ References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''
       }
     } catch (e) {
     }
-    
+
     return withRoles(text, nImages, hasVideo, hasAudio);
   }
 
@@ -441,7 +430,7 @@ References available: ${nImages} image(s)${hasVideo ? ', 1 video reference' : ''
       }
       const userScene = String(body.prompt || '').trim();
       const stylePrompt = 'Transform this photo into a 3D animated movie character in Pixar style. Keep the person recognizable but clearly cartoonish. Bright friendly colors, clean simple background.' + (userScene ? ' Scene and action: ' + userScene : '');
-      const geminiAspect = (['1:1','16:9','9:16','4:3','3:4','21:9'].indexOf(aspect) !== -1) ? aspect : '1:1';
+      const geminiAspect = (['1:1', '16:9', '9:16', '4:3', '3:4', '21:9'].indexOf(aspect) !== -1) ? aspect : '1:1';
       const r = await fetch('https://api.cometapi.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent', {
         method: 'POST',
         headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
