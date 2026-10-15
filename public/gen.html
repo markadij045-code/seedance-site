@@ -94,7 +94,6 @@
 .popup::-webkit-scrollbar{width:8px}
 .popup::-webkit-scrollbar-track{background:transparent}
 .popup::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
-.popup.open{display:block}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
 .pu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
 .pu-item:hover,.pu-item.sel{background:rgba(163,230,53,.12)}
@@ -270,15 +269,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
   <div id="status"></div>
 
-  <section class="result" id="resultSec" style="display:none">
-    <div class="mod-h">Твоё видео</div>
-    <div class="outbox" id="outbox">
-      <div class="ph">
-        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="12" r="4"/><path d="M17 9c1.5 1.8 1.5 4.2 0 6"/><path d="M20 7c2.5 3 2.5 7 0 10"/></svg></div>
-        <div class="ph-t">Здесь появится твоё видео</div>
-        <div class="ph-s">Кадры = твой промпт, модель и стиль</div>
-      </div>
-    </div>
+  <section class="result">
+    <div id="rzZone"></div>
   </section>
 
   <section class="recent" id="recentSec" style="display:none">
@@ -358,6 +350,7 @@ try {
 }
 if (uploadFn) window.blobUpload = uploadFn;
 </script>
+<script src="/result-zone.js"></script>
 <script src="/gen-app.js"></script>
 <script src="/help-widget.js"></script>
 </body>
