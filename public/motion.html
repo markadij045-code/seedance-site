@@ -164,6 +164,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <a href="/gen.html">Создать видео</a>
       <a href="/avatar.html">Аватар</a>
       <a href="/lipsync.html">Липсинк</a>
+      <a href="/prices.html">Цены</a>
       <a href="/help.html">Помощь</a>
     </nav>
     <div style="display:flex;gap:10px;align-items:center">
@@ -191,11 +192,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h1>Чей танец повторим?</h1>
   </div>
 
-  <div class="psteps">
-    <span class="pstep active" id="st1"><i>1</i> Фото и видео</span>
-    <span class="pstep" id="st2"><i>2</i> Оплата</span>
-    <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
-  </div>
+  <section class="result">
+    <div id="rzZone"></div>
+  </section>
 
   <div class="studio" id="stage">
     <div class="pwrap">
@@ -211,20 +210,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="popup" id="popMenu"></div>
   </div>
 
-  <div class="rolehint" style="text-align:center">💡 Человек в кадре крупно — танец, речь и жесты повторятся точь-в-точь. · <a href="/examples.html">Смотреть примеры →</a></div>
+  <div class="rolehint" style="text-align:center">💡 Человек в кадре крупно — танец, речь и жесты повторятся точь-в-точь. Готовый мем появится над пультом через 2–5 минут. · <a href="/examples.html">Смотреть примеры →</a></div>
 
   <div id="status"></div>
-
-  <section class="result" id="resultSec" style="display:none">
-    <div class="mod-h">Твоё видео</div>
-    <div class="outbox" id="outbox">
-      <div class="ph">
-        <div class="vf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12a8 8 0 0 1 13.6-5.6"/><path d="M20 12a8 8 0 0 1-13.6 5.6"/><path d="M17.5 3v3.5H14"/><path d="M6.5 21v-3.5H10"/></svg></div>
-        <div class="ph-t">Здесь появится твой мем с танцем</div>
-        <div class="ph-s">Персонаж с фото повторит движения из видео</div>
-      </div>
-    </div>
-  </section>
 
   <section class="recent" id="recentSec" style="display:none">
     <div class="rhead"><span>Ваши работы</span><span id="histCount"></span></div>
@@ -232,10 +220,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   </section>
 
   <div class="footnote">
-    <div class="payrow">
-      <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
-      <a href="/prices.html">Цены и оплата →</a>
-    </div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
   </div>
@@ -304,6 +288,7 @@ try {
 }
 if (uploadFn) window.blobUpload = uploadFn;
 </script>
+<script src="/result-zone.js"></script>
 
 <script>
 function toggleSidebar(){
@@ -317,6 +302,7 @@ var videoNameStr=null, localVideoBlobUrl=null;
 var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
 var tileRow=document.getElementById('tileRow'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
+var rz=(window.RZ)?RZ.mount('rzZone',{aspect:'16:9',doneTitle:'Твой мем готов',workTitle:'Ставим движение... обычно 2–5 минут'}):null;
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
 
@@ -339,12 +325,7 @@ function updateSend(){
   else{ sendBtn.disabled=false; sendBtn.title=paidSeen?'Запустить генерацию':'На оплату'; }
 }
 function updateSteps(){
-  var ok=!!imageData&&!!videoData;
-  var s1=document.getElementById('st1'),s2=document.getElementById('st2'),s3=document.getElementById('st3');
-  s1.className='pstep'+(ok?' done':' active');
-  s2.className='pstep'+(paidSeen?' done':(ok?' active':''));
-  s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
-  document.getElementById('resultSec').style.display=(paidSeen||stage!=='setup')?'block':'none';
+  /* шаги 1-2-3 убраны со страницы: функция оставлена пустой, чтобы старые вызовы не сыпались */
 }
 
 function closePop(){ pop.classList.remove('open'); }
@@ -531,7 +512,8 @@ function histPush(url,name){
 function callGenerate(pid){
   stage='gen';
   updateSteps(); updateSend();
-  setStatus('Переносим движения... 1–5 минут ⏳');
+  if(rz) RZ.work(rz,{aspect:'16:9'});
+  setStatus('');
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service:'motion',paymentId:pid,image:imageData,video:videoData,seconds:seconds})})
     .then(function(r){ return r.json(); })
     .then(function(d){
@@ -539,7 +521,7 @@ function callGenerate(pid){
       try{ localStorage.setItem('seedgen_motion_task_'+pid,d.taskId); }catch(e){}
       poll(d.taskId);
     })
-    .catch(function(e){ setStatus('Ошибка: '+e.message); stage='setup'; updateSteps(); updateSend(); });
+    .catch(function(e){ if(rz) RZ.error(rz,e.message); setStatus(''); stage='setup'; updateSteps(); updateSend(); });
 }
 function poll(taskId){
   var timer=setInterval(function(){
@@ -548,17 +530,17 @@ function poll(taskId){
       .then(function(d){
         if(d.status==='succeeded'){
           clearInterval(timer);
-          document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+d.videoUrl+'"></video></div>';
+          if(rz) RZ.done(rz,'<video controls playsinline src="'+d.videoUrl+'"></video>');
           setStatus('Готово! ✅ Видео сохранено в твои работы — смотри и скачивай когда угодно.');
           histPush(d.videoUrl,videoNameStr||'моушен');
           stage='done'; updateSteps(); updateSend();
           try{ localStorage.removeItem('seedgen_motion_draft'); }catch(e){}
         }else if(d.status==='failed'){
           clearInterval(timer);
-          setStatus('Ошибка: '+(d.error||'попробуй другие фото и видео'));
+          if(rz) RZ.error(rz,d.error||'попробуй другие фото и видео'); setStatus('');
           stage='setup'; updateSteps(); updateSend();
         }else{
-          setStatus('Переносим движения... 1–5 минут ⏳');
+          /* движение ставится — экран говорит сам */
         }
       })
       .catch(function(){});
@@ -590,7 +572,7 @@ sendBtn.addEventListener('click',payClick);
   if(!pid) return;
   activePaymentId=pid; paidSeen=true;
   var savedTask=localStorage.getItem('seedgen_motion_task_'+pid);
-  if(savedTask){ stage='gen'; updateSteps(); updateSend(); setStatus('Переносим движения... 1–5 минут ⏳'); poll(savedTask); return; }
+  if(savedTask){ stage='gen'; updateSteps(); updateSend(); if(rz) RZ.work(rz,{aspect:'16:9'}); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
