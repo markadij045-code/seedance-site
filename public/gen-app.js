@@ -27,6 +27,7 @@ var refs=[];
 var refVideo=null, refAudio=null;
 var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
+var rz=(window.RZ)?RZ.mount('rzZone',{workVideoUrl:'/cat-dance.mp4.mp4',doneVideoUrl:'/cat-hero.mp4',doneTitle:'Твоё видео готово'}):null;
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
 var refPrev=document.getElementById('refPrev'), refRow=document.getElementById('refRow');
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
@@ -90,7 +91,6 @@ function updateSteps(){
   s1.className='pstep'+(ok?' done':' active');
   s2.className='pstep'+(paidSeen?' done':(ok?' active':''));
   s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
-  document.getElementById('resultSec').style.display=(paidSeen||stage!=='setup')?'block':'none';
 }
 
 function hideRefPrev(){ refPrev.classList.remove('open'); refPrev.innerHTML=''; }
@@ -498,6 +498,7 @@ promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); save
 function callGenerate(pid){
   stage='gen';
   updateSteps(); updateSend();
+  if(rz) RZ.work(rz);
   setStatus('Собираем кадры... 1–5 минут ⏳');
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     service:'text2video', paymentId:pid, prompt:promptText(),
@@ -511,7 +512,7 @@ function callGenerate(pid){
       try{ localStorage.setItem('seedgen_gen_task_'+pid,d.taskId); }catch(e){}
       poll(d.taskId);
     })
-    .catch(function(e){ setStatus('Ошибка: '+e.message); stage='setup'; updateSteps(); updateSend(); });
+    .catch(function(e){ if(rz) RZ.error(rz,e.message); setStatus(''); stage='setup'; updateSteps(); updateSend(); });
 }
 function poll(taskId){
   var timer=setInterval(function(){
@@ -520,14 +521,14 @@ function poll(taskId){
       .then(function(d){
         if(d.status==='succeeded'){
           clearInterval(timer);
-          document.getElementById('outbox').innerHTML='<div id="result"><video id="video" controls src="'+d.videoUrl+'"></video></div>';
+          if(rz) RZ.done(rz,'<video controls playsinline src="'+d.videoUrl+'"></video>');
           setStatus('Готово! ✅ Видео сохранено в твои работы — смотри и скачивай когда угодно.');
           histPush(d.videoUrl,promptText().slice(0,40)||'видео');
           stage='done'; updateSteps(); updateSend();
           try{ localStorage.removeItem('seedgen_gen_draft'); }catch(e){}
         }else if(d.status==='failed'){
           clearInterval(timer);
-          setStatus('Ошибка: '+(d.error||'попробуй другой промпт'));
+          if(rz) RZ.error(rz,d.error||'попробуй другой промпт'); setStatus('');
           stage='setup'; updateSteps(); updateSend();
         }else{
           setStatus('Собираем кадры... 1–5 минут ⏳');
@@ -565,7 +566,7 @@ sendBtn.addEventListener('click',payClick);
   if(!pid) return;
   activePaymentId=pid; paidSeen=true;
   var savedTask=localStorage.getItem('seedgen_gen_task_'+pid);
-  if(savedTask){ stage='gen'; updateSteps(); updateSend(); setStatus('Собираем кадры... 1–5 минут ⏳'); poll(savedTask); return; }
+  if(savedTask){ stage='gen'; updateSteps(); updateSend(); if(rz) RZ.work(rz); setStatus('Собираем кадры... 1–5 минут ⏳'); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
