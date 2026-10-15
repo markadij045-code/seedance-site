@@ -21,6 +21,18 @@
 .tstrip span{color:var(--muted);font-size:.8rem;display:flex;gap:7px;align-items:center}
 .tstrip b{color:var(--text);font-weight:600}
 .tstrip i{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:0 0 auto}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-bottom:60px}
+.feat.flip .feat-media{order:2}
+.feat-media{position:relative;aspect-ratio:16/9;border-radius:20px;border:1px solid var(--border);background:radial-gradient(420px 200px at 50% 0,rgba(163,230,53,.07),transparent 70%),#0b0e09;display:grid;place-items:center;overflow:hidden}
+.feat-media .fico{width:64px;height:64px;border-radius:16px;background:rgba(163,230,53,.1);color:var(--lime);display:grid;place-items:center}
+.feat-media .fico svg{width:30px;height:30px}
+.feat-media .fnote{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:var(--muted);font-size:.78rem}
+.feat h3{font-size:1.5rem;margin-bottom:10px}
+.feat p{color:var(--muted);line-height:1.7;margin-bottom:14px}
+.feat p b{color:var(--lime);font-weight:600}
+.feat ul{list-style:none;margin:0 0 18px;display:flex;flex-direction:column;gap:8px;padding:0}
+.feat li{color:rgba(244,245,246,.8);font-size:.9rem;padding-left:22px;position:relative}
+.feat li::before{content:'✓';position:absolute;left:0;color:var(--lime)}
 .feat-list{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .feat.txt{display:block;margin-bottom:0;border:1px solid var(--border);border-radius:18px;padding:22px 24px;background:linear-gradient(180deg,#101308,#0b0e09)}
 .feat.txt h3{font-size:1.2rem;margin:0 0 10px}
@@ -34,7 +46,7 @@
 .step .sico{position:relative;width:52px;height:52px;border-radius:14px;background:var(--lime);color:#0a0c08;display:grid;place-items:center;margin-bottom:16px}
 .step .sico svg{width:24px;height:24px}
 .step .sico .num{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:#0a0c08;color:var(--lime);font-size:.7rem;font-weight:700;display:grid;place-items:center;border:1px solid rgba(163,230,53,.5)}
-@media(max-width:900px){.feat-list{grid-template-columns:1fr}}
+@media(max-width:900px){.feat{grid-template-columns:1fr;gap:20px}.feat.flip .feat-media{order:0}.feat-list{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -96,7 +108,7 @@
   <div class="container">
     <div class="tstrip rv">
       <span><i></i>Платишь <b>за ролик</b>, не за месяц</span>
-      <span><i></i>Чек <b>по 54-ФЗ</b> на почту</span>
+      <span><i></i>Чек <b>из «Мой налог»</b> на почту</span>
       <span><i></i><b>Возврат</b>, если не сгенерилось</span>
       <span><i></i><b>5 моделей</b> на выбор</span>
     </div>
@@ -213,7 +225,7 @@
     <div class="steps rv">
       <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span class="num">1</span></div><h3>Опиши или загрузи</h3><p>Текст, фото, видео или озвучка — смотря какую услугу выбрал. Референсы и @-упоминания помогают попасть в цель с первого дубля.</p></div>
       <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg><span class="num">2</span></div><h3>Настрой</h3><p>Длительность до 30 секунд, формат кадра и качество: 480p, 720p или 1080p.</p></div>
-      <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span class="num">3</span></div><h3>Оплати</h3><p>Один раз за ролик — без подписки и скрытых списаний. Чек по 54-ФЗ приходит на почту сразу. <a href="/prices.html" style="color:var(--lime)">Все цены →</a></p></div>
+      <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span class="num">3</span></div><h3>Оплати</h3><p>Один раз за ролик — без подписки и скрытых списаний. Чек из «Мой налог» приходит на почту сразу. <a href="/prices.html" style="color:var(--lime)">Все цены →</a></p></div>
       <div class="step"><div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg><span class="num">4</span></div><h3>Скачай</h3><p>Ролик появится на странице через 1–5 минут — смотри и скачивай когда угодно.</p></div>
     </div>
   </div>
@@ -297,7 +309,7 @@
     </div>
     <div class="guar rv">
       <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9.5 12l2 2 3.5-4"/></svg><h3>Самозанятая</h3><p>Официальный статус, ИНН 420900493994</p></div>
-      <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16"/><path d="M8 15h4"/></svg><h3>Чеки по 54-ФЗ</h3><p>Приходят на почту сразу после оплаты</p></div>
+      <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16"/><path d="M8 15h4"/></svg><h3>Чек из «Мой налог»</h3><p>Приходит на почту сразу после оплаты — по нашему режиму, без кассы</p></div>
       <div class="guar-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M9.5 12l2 2 3.5-4"/></svg><h3>Возврат при сбое</h3><p>Не сгенерилось — вернём или перегенерируем</p></div>
     </div>
   </div>
