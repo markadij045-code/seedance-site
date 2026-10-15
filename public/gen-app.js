@@ -27,7 +27,7 @@ var refs=[];
 var refVideo=null, refAudio=null;
 var restoring=false, stage='setup', paidSeen=false, activePaymentId=null;
 var sendBtn=document.getElementById('sendBtn'), statusEl=document.getElementById('status');
-var rz=(window.RZ)?RZ.mount('rzZone',{workVideoUrl:'/cat-dance.mp4.mp4',doneVideoUrl:'/cat-hero.mp4',doneTitle:'Твоё видео готово'}):null;
+var rz=(window.RZ)?RZ.mount('rzZone',{aspect:orientation,doneTitle:'Твоё видео готово',workTitle:'Съёмка идёт... обычно 1–5 минут'}):null;
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu'), studio=document.getElementById('stage');
 var refPrev=document.getElementById('refPrev'), refRow=document.getElementById('refRow');
 sendBtn.insertAdjacentHTML('beforeend','<span style="display:none">Оплатить</span>');
@@ -86,11 +86,7 @@ function updateSend(){
   else{ sendBtn.disabled=false; sendBtn.title=paidSeen?'Запустить генерацию':'На оплату'; }
 }
 function updateSteps(){
-  var ok=!!promptText();
-  var s1=document.getElementById('st1'),s2=document.getElementById('st2'),s3=document.getElementById('st3');
-  s1.className='pstep'+(ok?' done':' active');
-  s2.className='pstep'+(paidSeen?' done':(ok?' active':''));
-  s3.className='pstep'+(stage==='done'?' done':(paidSeen?' active':''));
+  /* шаги 1-2-3 убраны со страницы: функция оставлена пустой, чтобы старые вызовы не сыпались */
 }
 
 function hideRefPrev(){ refPrev.classList.remove('open'); refPrev.innerHTML=''; }
@@ -498,8 +494,8 @@ promptBox.addEventListener('input',function(){ updateSteps(); updateSend(); save
 function callGenerate(pid){
   stage='gen';
   updateSteps(); updateSend();
-  if(rz) RZ.work(rz);
-  setStatus('Собираем кадры... 1–5 минут ⏳');
+  if(rz) RZ.work(rz,{aspect:orientation});
+  setStatus('');
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
     service:'text2video', paymentId:pid, prompt:promptText(),
     model:modelKey, style:styleKey, enhancePrompt:enhance,
@@ -531,7 +527,7 @@ function poll(taskId){
           if(rz) RZ.error(rz,d.error||'попробуй другой промпт'); setStatus('');
           stage='setup'; updateSteps(); updateSend();
         }else{
-          setStatus('Собираем кадры... 1–5 минут ⏳');
+          /* съёмка идёт — экран говорит сам */
         }
       })
       .catch(function(){});
@@ -566,7 +562,7 @@ sendBtn.addEventListener('click',payClick);
   if(!pid) return;
   activePaymentId=pid; paidSeen=true;
   var savedTask=localStorage.getItem('seedgen_gen_task_'+pid);
-  if(savedTask){ stage='gen'; updateSteps(); updateSend(); if(rz) RZ.work(rz); setStatus('Собираем кадры... 1–5 минут ⏳'); poll(savedTask); return; }
+  if(savedTask){ stage='gen'; updateSteps(); updateSend(); if(rz) RZ.work(rz,{aspect:orientation}); poll(savedTask); return; }
   setStatus('Проверяем оплату...');
   fetch('/api/check-payment?paymentId='+encodeURIComponent(pid))
     .then(function(r){ return r.json(); })
