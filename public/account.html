@@ -8,70 +8,121 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/style.css">
 <style>
-.acc-bar{position:sticky;top:0;background:rgba(5,6,7,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);z-index:50}
+body{background:radial-gradient(900px 480px at 50% -8%,rgba(163,230,53,.10),transparent 70%),radial-gradient(600px 400px at 100% 0,rgba(56,189,248,.05),transparent 70%),#050607}
+::selection{background:rgba(163,230,53,.28)!important;color:#e5e7eb!important}
+::-moz-selection{background:rgba(163,230,53,.28)!important;color:#e5e7eb!important}
+.rail{position:fixed;left:0;top:0;bottom:0;width:64px;background:rgba(5,6,7,.92);border-right:1px solid rgba(255,255,255,.07);display:none;flex-direction:column;align-items:center;padding:84px 0 16px;gap:6px;z-index:90}
+body.has-rail .rail{display:flex}
+.rail a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;text-decoration:none;filter:grayscale(1);opacity:.5;transition:.18s}
+.rail a:hover{opacity:1;filter:none;background:rgba(255,255,255,.06)}
+.acc-bar{position:sticky;top:0;background:rgba(5,6,7,.82);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);z-index:50}
 .acc-bar-in{max-width:1160px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.acc-bar a{color:#e5e7eb;text-decoration:none;font-size:.9rem}
+.acc-bar a{color:#e5e7eb;text-decoration:none;font-size:.9rem;transition:.15s}
 .acc-bar a.logo{font-weight:700;color:#fff;font-size:1.05rem;display:flex;align-items:center;gap:8px}
 .acc-bar a.logo svg{width:18px;height:18px}
 .acc-bar a:hover{color:#A3E635}
-.acc-main{max-width:760px;margin:0 auto;padding:40px 20px 80px;color:#c9cfba}
-.acc-main h1{color:#fff;font-size:1.9rem;margin:0 0 6px;font-family:'Space Grotesk','Inter',sans-serif}
-.acc-sub{color:#9ca3af;margin:0 0 24px;font-size:.92rem;line-height:1.6}
-.acc-card{border:1px solid rgba(163,230,53,.18);background:linear-gradient(180deg,#101308,#0c0f0a);border-radius:20px;padding:24px;margin-bottom:20px}
-.acc-tabs{display:flex;gap:8px;margin-bottom:18px}
-.acc-tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:none;color:#9ca3af;font-weight:600;font-size:.9rem;cursor:pointer;transition:.2s}
-.acc-tabs button.on{border-color:rgba(163,230,53,.5);background:rgba(163,230,53,.08);color:#A3E635}
-.acc-card label{display:block;font-size:.8rem;color:#6b7280;margin:12px 0 6px}
-.acc-card input{width:100%;padding:12px 14px;background:#050607;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#fff;font-size:.95rem;outline:none}
-.acc-card input:focus{border-color:#A3E635}
-.acc-btn{width:100%;margin-top:16px;padding:13px;border:none;border-radius:12px;background:#A3E635;color:#000;font-weight:700;font-size:.95rem;cursor:pointer}
-.acc-btn.ghost{background:none;border:1px solid rgba(255,255,255,.16);color:#e5e7eb}
+.acc-main{max-width:780px;margin:0 auto;padding:40px 20px 90px;color:#c9cfba}
+body.has-rail .acc-main{padding-left:88px;max-width:868px}
+.hero{display:none;align-items:center;gap:18px;flex-wrap:wrap;margin:0 0 26px;padding:22px 24px;border:1px solid rgba(163,230,53,.22);border-radius:22px;background:linear-gradient(180deg,rgba(163,230,53,.07),rgba(0,0,0,.25)),radial-gradient(420px 200px at 0% 0,rgba(163,230,53,.10),transparent 70%);box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.hero.on{display:flex}
+.hero-cat{flex:0 0 auto;width:74px;height:74px;border-radius:18px;background:rgba(0,0,0,.35);border:1px solid rgba(163,230,53,.25);display:grid;place-items:center;box-shadow:inset 0 0 24px rgba(163,230,53,.08)}
+.hero-cat svg{width:58px;height:58px}
+.hero-txt{flex:1 1 220px;min-width:0}
+.hero-txt h1{color:#fff;font-size:1.55rem;margin:0 0 3px;font-family:'Space Grotesk','Inter',sans-serif;line-height:1.2}
+.hero-txt p{color:#9ca3af;margin:0;font-size:.86rem;word-break:break-all}
+.hero-stats{display:flex;gap:10px;flex:0 0 auto}
+.stat{min-width:74px;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.08);text-align:center}
+.stat b{display:block;font-family:'Space Grotesk';font-size:1.4rem;font-weight:700;color:#A3E635;line-height:1}
+.stat span{display:block;color:#6b7280;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.acc-sub{color:#9ca3af;margin:0 0 22px;font-size:.9rem;line-height:1.6}
+.acc-card{border:1px solid rgba(163,230,53,.16);background:linear-gradient(180deg,#101308,#0b0e09);border-radius:22px;padding:26px;margin-bottom:20px;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.door-switch{position:relative;display:flex;gap:0;margin-bottom:20px;padding:4px;border-radius:14px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08)}
+.door-knob{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:11px;background:rgba(163,230,53,.14);border:1px solid rgba(163,230,53,.45);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:0}
+.door-switch button{position:relative;z-index:1;flex:1;padding:11px;border:none;background:none;color:#9ca3af;font-weight:600;font-size:.9rem;cursor:pointer;transition:color .2s}
+.door-switch button.on{color:#A3E635}
+.acc-card label{display:block;font-size:.78rem;color:#9ca3af;margin:14px 0 6px;letter-spacing:.02em}
+.acc-card input{width:100%;padding:13px 15px;background:#050607;border:1px solid rgba(255,255,255,.12);border-radius:13px;color:#fff;font-size:.95rem;outline:none;transition:border-color .2s,box-shadow .2s}
+.acc-card input:focus{border-color:#A3E635;box-shadow:0 0 0 3px rgba(163,230,53,.14)}
+.acc-btn{width:100%;margin-top:18px;padding:14px;border:none;border-radius:13px;background:#A3E635;color:#050607;font-weight:700;font-size:.95rem;cursor:pointer;transition:transform .15s,box-shadow .2s,background .2s;box-shadow:0 6px 18px rgba(163,230,53,.18)}
+.acc-btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(163,230,53,.28);background:#b6f24a}
+.acc-btn:active{transform:translateY(0)}
+.acc-btn.ghost{background:none;border:1px solid rgba(255,255,255,.16);color:#e5e7eb;box-shadow:none}
+.acc-btn.ghost:hover{border-color:rgba(163,230,53,.5);color:#A3E635;background:rgba(163,230,53,.06);transform:none;box-shadow:none}
 .acc-err{color:#fca5a5;font-size:.85rem;min-height:20px;margin-top:10px}
-.acc-why{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:rgba(163,230,53,.06);border:1px solid rgba(163,230,53,.18);color:#9ca3af;font-size:.85rem;line-height:1.6}
-.acc-why b{color:#A3E635}
+.why-list{margin:18px 0 0;display:flex;flex-direction:column;gap:9px}
+.why-row{display:flex;gap:11px;align-items:flex-start;color:#9ca3af;font-size:.83rem;line-height:1.5}
+.why-row .wi{flex:0 0 auto;width:30px;height:30px;border-radius:9px;background:rgba(163,230,53,.10);border:1px solid rgba(163,230,53,.22);display:grid;place-items:center;font-size:.95rem}
+.why-row b{color:#e5e7eb;font-weight:600}
+.acc-tabs{display:flex;gap:8px;margin-bottom:18px}
+.acc-tabs button{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25);color:#9ca3af;font-weight:600;font-size:.88rem;cursor:pointer;transition:.2s}
+.acc-tabs button:hover{color:#e5e7eb;border-color:rgba(255,255,255,.2)}
+.acc-tabs button.on{border-color:rgba(163,230,53,.5);background:rgba(163,230,53,.10);color:#A3E635}
 .shelf{display:none}
-.shelf.on{display:block}
-.shelf-h{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:1rem;margin:0 0 4px}
+.shelf.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.shelf-h{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:1.02rem;margin:0 0 4px}
 .shelf-h .ico{font-size:1.2rem}
-.shelf-h .cnt{margin-left:auto;color:#6b7280;font-size:.78rem;font-weight:600}
-.shelf-p{color:#6b7280;font-size:.82rem;margin:0 0 14px;line-height:1.5}
-.soonbox{padding:18px;border:1px dashed rgba(163,230,53,.35);border-radius:14px;color:#9ca3af;font-size:.88rem;line-height:1.6;background:rgba(163,230,53,.04)}
-.soonbox b{color:#A3E635}
-.docrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.docrow a{padding:9px 14px;border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#e5e7eb;text-decoration:none;font-size:.85rem}
-.docrow a:hover{border-color:rgba(163,230,53,.5);color:#A3E635}
-.pcard{display:flex;gap:14px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:14px;margin-bottom:10px;flex-wrap:wrap;background:rgba(0,0,0,.25)}
-.pcard img{width:56px;height:56px;border-radius:10px;object-fit:cover}
+.shelf-h .cnt{margin-left:auto;color:#6b7280;font-size:.76rem;font-weight:600}
+.shelf-p{color:#9ca3af;font-size:.82rem;margin:0 0 14px;line-height:1.55}
+.softbox{padding:16px 18px;border-radius:14px;color:#9ca3af;font-size:.85rem;line-height:1.6;background:linear-gradient(180deg,rgba(163,230,53,.05),rgba(0,0,0,.2));border:1px solid rgba(163,230,53,.16)}
+.softbox b{color:#A3E635}
+.docrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.docrow a{padding:10px 15px;border:1px solid rgba(255,255,255,.12);border-radius:11px;color:#e5e7eb;text-decoration:none;font-size:.85rem;transition:.18s;background:rgba(0,0,0,.2)}
+.docrow a:hover{border-color:rgba(163,230,53,.5);color:#A3E635;transform:translateY(-1px)}
+.pcard{display:flex;gap:14px;align-items:center;padding:13px;border:1px solid rgba(255,255,255,.1);border-radius:15px;margin-bottom:10px;flex-wrap:wrap;background:rgba(0,0,0,.25);transition:.18s}
+.pcard:hover{border-color:rgba(163,230,53,.3);transform:translateY(-1px)}
+.pcard img{width:58px;height:58px;border-radius:11px;object-fit:cover;border:1px solid rgba(255,255,255,.1)}
 .pcard .pn{color:#e5e7eb;font-weight:600;font-size:.9rem}
-.pcard .pd{color:#6b7280;font-size:.75rem}
+.pcard .pd{color:#6b7280;font-size:.75rem;margin-top:2px}
 .pcard .pa{margin-left:auto;display:flex;gap:8px}
-.pcard .pa a,.pcard .pa button{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.8rem;cursor:pointer;text-decoration:none}
+.pcard .pa a,.pcard .pa button{padding:8px 13px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.8rem;cursor:pointer;text-decoration:none;transition:.15s}
 .pcard .pa a:hover{border-color:rgba(163,230,53,.5);color:#A3E635}
 .pcard .pa button.del{color:#fca5a5}
-.ord-note{padding:10px 14px;border-radius:12px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.22);color:#9ca3af;font-size:.8rem;line-height:1.55;margin:0 0 14px}
+.pcard .pa button.del:hover{border-color:rgba(248,113,113,.5)}
+.ord-note{padding:11px 15px;border-radius:12px;background:linear-gradient(180deg,rgba(251,191,36,.07),rgba(0,0,0,.18));border:1px solid rgba(251,191,36,.22);color:#9ca3af;font-size:.8rem;line-height:1.55;margin:0 0 15px}
 .ord-note b{color:#fbbf24}
-.ord-clear{margin-left:auto;padding:7px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:none;color:#9ca3af;font-size:.75rem;cursor:pointer}
+.ord-clear{margin-left:auto;padding:7px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:none;color:#9ca3af;font-size:.75rem;cursor:pointer;transition:.15s}
 .ord-clear:hover{border-color:rgba(248,113,113,.5);color:#fca5a5}
-.ord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.ocard{border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.28);display:flex;flex-direction:column}
-.ocard .thumb{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.ord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:14px}
+.ocard{border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.3);display:flex;flex-direction:column;transition:transform .18s,box-shadow .2s,border-color .2s}
+.ocard:hover{transform:translateY(-3px);border-color:rgba(163,230,53,.35);box-shadow:0 14px 30px rgba(0,0,0,.5),0 0 0 1px rgba(163,230,53,.12)}
+.ocard .thumb{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
 .ocard .thumb video{width:100%;height:100%;object-fit:cover;display:block}
-.ocard .src{position:absolute;top:6px;left:6px;padding:2px 8px;border-radius:999px;background:rgba(0,0,0,.7);border:1px solid rgba(163,230,53,.4);color:#A3E635;font-size:.62rem;font-weight:700;letter-spacing:.03em}
-.ocard .oc{padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px;flex:1}
-.ocard .on{color:#e5e7eb;font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ocard .od{color:#6b7280;font-size:.68rem}
-.ocard .oa{display:flex;gap:6px;margin-top:6px}
-.ocard .oa a,.ocard .oa button{flex:1;padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:none;color:#e5e7eb;font-size:.72rem;cursor:pointer;text-decoration:none;text-align:center}
+.ocard .src{position:absolute;top:7px;left:7px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid;font-size:.62rem;font-weight:700;letter-spacing:.03em;backdrop-filter:blur(4px)}
+.ocard .oc{padding:9px 11px 11px;display:flex;flex-direction:column;gap:2px;flex:1}
+.ocard .on{color:#e5e7eb;font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ocard .od{color:#6b7280;font-size:.7rem}
+.ocard .oa{display:flex;gap:6px;margin-top:7px}
+.ocard .oa a,.ocard .oa button{flex:1;padding:7px 8px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:none;color:#e5e7eb;font-size:.72rem;cursor:pointer;text-decoration:none;text-align:center;transition:.15s}
 .ocard .oa a:hover{border-color:rgba(163,230,53,.5);color:#A3E635}
 .ocard .oa button.del{color:#fca5a5}
 .ocard .oa button.del:hover{border-color:rgba(248,113,113,.5)}
-.ord-empty{padding:22px;border:1px dashed rgba(255,255,255,.14);border-radius:14px;color:#6b7280;font-size:.85rem;text-align:center;line-height:1.6}
-.ord-empty a{color:#A3E635;text-decoration:none}
-footer{padding:28px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+.ord-empty{padding:30px 22px;border-radius:16px;color:#9ca3af;font-size:.88rem;text-align:center;line-height:1.7;background:linear-gradient(180deg,rgba(163,230,53,.04),rgba(0,0,0,.2));border:1px solid rgba(255,255,255,.08)}
+.ord-empty .ec{font-size:2rem;display:block;margin-bottom:8px;filter:saturate(1.1)}
+.ord-empty a{color:#A3E635;text-decoration:none;border-bottom:1px dashed rgba(163,230,53,.4)}
+.ord-empty a:hover{border-bottom-style:solid}
+footer{padding:30px 20px;color:#6b7280;font-size:.85rem;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
 footer a{color:#A3E635}
+@media(max-width:900px){
+  .rail{display:none!important}
+  body.has-rail .acc-main{padding-left:20px;max-width:780px}
+  .hero{padding:18px}
+  .hero-stats{width:100%;justify-content:space-between}
+  .stat{flex:1}
+  .ord-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+}
 </style>
 </head>
 <body>
+
+<nav class="rail" id="accRail">
+  <a href="/gen.html" title="Создать видео">🎬</a>
+  <a href="/images.html" title="Картинка и правка">🖼</a>
+  <a href="/avatar.html" title="Говорящий аватар">🗣</a>
+  <a href="/motion.html" title="Моушен контроль">🕺</a>
+  <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
+</nav>
+
 <header class="acc-bar"><div class="acc-bar-in">
 <a class="logo" href="/"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="#A3E635"/></svg> Ёшкин кот</a>
 <a href="/gen.html">Создать видео</a>
@@ -83,57 +134,77 @@ footer a{color:#A3E635}
 </div></header>
 
 <main class="acc-main">
-<h1>Личный кабинет</h1>
-<p class="acc-sub">Генерация видео доступна после входа: заказы, черновики и готовые ролики хранятся в кабинете и открываются с любого устройства. Пароль храним в виде хеша, лишнего не собираем.</p>
 
-<div class="acc-card" id="authBox">
-  <div class="acc-why" id="returnNote" style="display:none;margin:0 0 14px"><b>↩ Черновик сохранён.</b> Войди или создай аккаунт — сразу вернём тебя к сцене со всеми референсами и настройками.</div>
-  <div class="acc-tabs">
-    <button id="tabLogin" class="on">Вход</button>
-    <button id="tabReg">Регистрация</button>
-  </div>
-  <label>E-mail</label>
-  <input type="email" id="fEmail" placeholder="you@mail.ru" autocomplete="email">
-  <label>Пароль</label>
-  <input type="password" id="fPass" placeholder="Минимум 6 символов" autocomplete="current-password">
-  <button class="acc-btn" id="authBtn">Войти</button>
-  <div class="acc-err" id="authErr"></div>
-  <div class="acc-why"><b>Зачем аккаунт:</b> без входа генерации нет — так твои видео и черновики живут в кабинете, а не теряются в браузере · мои ведущие аватара (фото+озвучка в один клик) · история заказов с видео с любого устройства · будущие минуты аватара и промокоды.</div>
-</div>
+  <section class="hero" id="hero">
+    <div class="hero-cat">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M150 160l26-76 44 52z" fill="#2a2f24"/><path d="M362 160l-26-76-44 52z" fill="#2a2f24"/><circle cx="256" cy="250" r="120" fill="#2a2f24"/><circle cx="212" cy="232" r="17" fill="#A3E635"/><circle cx="300" cy="232" r="17" fill="#A3E635"/><circle cx="212" cy="232" r="6" fill="#050607"/><circle cx="300" cy="232" r="6" fill="#050607"/><path d="M244 282h24l-12 14z" fill="#f9a8d4"/><path d="M256 296c0 11-11 17-22 17M256 296c0 11 11 17 22 17" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M158 268l-42-7M158 288l-40 9M354 268l42-7M354 288l40 9" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/></svg>
+    </div>
+    <div class="hero-txt">
+      <h1 id="heroHello">С возвращением!</h1>
+      <p id="heroMail">—</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b id="stWorks">—</b><span>работ</span></div>
+      <div class="stat"><b id="stHosts">—</b><span>ведущих</span></div>
+      <div class="stat"><b id="stCoins">—</b><span>мышек</span></div>
+    </div>
+  </section>
 
-<div class="acc-card" id="accBox" style="display:none">
-  <h3 style="color:#A3E635;margin:0 0 6px" id="accEmail"></h3>
-  <div class="acc-tabs" style="margin-top:14px">
-    <button id="shelfBtnPresets" class="on">👤 Мои ведущие</button>
-    <button id="shelfBtnOrders">📦 Мои заказы</button>
-    <button id="shelfBtnProfile">📄 Профиль</button>
-  </div>
+  <h1 id="pageTitle" style="color:#fff;font-size:1.9rem;margin:0 0 6px;font-family:'Space Grotesk','Inter',sans-serif">Личный кабинет</h1>
+  <p class="acc-sub" id="pageSub">Генерация доступна после входа: заказы, черновики и готовые ролики хранятся в кабинете и открываются с любого устройства. Пароль храним в виде хеша, лишнего не собираем.</p>
 
-  <div class="shelf on" id="shelfPresets">
-    <div class="shelf-h"><span class="ico">👤</span> Мои ведущие</div>
-    <p class="shelf-p">Сохраняются со страницы «Аватар» кнопкой «💾 Сохранить ведущего». Открываются в один клик с любого устройства.</p>
-    <div id="presetsList"></div>
-  </div>
-
-  <div class="shelf" id="shelfOrders">
-    <div class="shelf-h"><span class="ico">📦</span> Мои заказы <span class="cnt" id="ordCount"></span><button class="ord-clear" id="ordClear" type="button" style="display:none">Очистить историю</button></div>
-    <div class="ord-note"><b>История этого браузера.</b> Работы, которые ты создал на этом устройстве, собраны здесь в одну ленту. После переезда на наш сервер каждый заказ станет вечным: «оплачен → генерируется → готово», с чеком и доступом с любого устройства.</div>
-    <div id="ordersList"></div>
-  </div>
-
-  <div class="shelf" id="shelfProfile">
-    <div class="shelf-h"><span class="ico">📄</span> Профиль и документы</div>
-    <p class="shelf-p">Почта: <span id="profEmail" style="color:#e5e7eb"></span>. Чеки приходят на неё автоматически после каждой оплаты.</p>
-    <div class="soonbox">Мы храним только почту, хеш пароля и твоих ведущих. Лишнего не собираем и никому не передаём.</div>
-    <div class="docrow">
-      <a href="/legal.html#offer">Публичная оферта</a>
-      <a href="/legal.html#policy">Обработка данных</a>
-      <a href="/legal.html">Реквизиты</a>
+  <div class="acc-card" id="authBox">
+    <div class="softbox" id="returnNote" style="display:none;margin:0 0 16px"><b>↩ Черновик сохранён.</b> Войди или создай аккаунт — сразу вернём тебя к сцене со всеми референсами и настройками.</div>
+    <div class="door-switch">
+      <span class="door-knob" id="doorKnob"></span>
+      <button id="tabLogin" class="on">Вход</button>
+      <button id="tabReg">Регистрация</button>
+    </div>
+    <label>E-mail</label>
+    <input type="email" id="fEmail" placeholder="you@mail.ru" autocomplete="email">
+    <label>Пароль</label>
+    <input type="password" id="fPass" placeholder="Минимум 6 символов" autocomplete="current-password">
+    <button class="acc-btn" id="authBtn">Войти</button>
+    <div class="acc-err" id="authErr"></div>
+    <div class="why-list">
+      <div class="why-row"><span class="wi">🔒</span><span><b>Пароль — в хеше.</b> Не храним открытый текст, лишнего не собираем и никому не передаём.</span></div>
+      <div class="why-row"><span class="wi">📦</span><span><b>Работы — в кабинете.</b> Видео и черновики живут тут, а не теряются в браузере вместе с кэшем.</span></div>
+      <div class="why-row"><span class="wi">👤</span><span><b>Ведущие — в один клик.</b> Сохранённая связка «фото + озвучка» открывается с любого устройства.</span></div>
     </div>
   </div>
 
-  <button class="acc-btn ghost" id="logoutBtn" style="margin-top:18px">Выйти</button>
-</div>
+  <div class="acc-card" id="accBox" style="display:none">
+    <div class="acc-tabs" style="margin-top:0">
+      <button id="shelfBtnPresets" class="on">👤 Мои ведущие</button>
+      <button id="shelfBtnOrders">📦 Мои заказы</button>
+      <button id="shelfBtnProfile">📄 Профиль</button>
+    </div>
+
+    <div class="shelf on" id="shelfPresets">
+      <div class="shelf-h"><span class="ico">👤</span> Мои ведущие</div>
+      <p class="shelf-p">Сохраняются со страницы «Аватар» кнопкой «💾 Сохранить ведущего». Открываются в один клик с любого устройства.</p>
+      <div id="presetsList"></div>
+    </div>
+
+    <div class="shelf" id="shelfOrders">
+      <div class="shelf-h"><span class="ico">📦</span> Мои заказы <span class="cnt" id="ordCount"></span><button class="ord-clear" id="ordClear" type="button" style="display:none">Очистить историю</button></div>
+      <div class="ord-note"><b>История этого браузера.</b> Работы, созданные на этом устройстве, собраны здесь в одну ленту. После переезда на наш сервер каждый заказ станет вечным: «оплачен → генерируется → готово», с чеком и доступом с любого устройства.</div>
+      <div id="ordersList"></div>
+    </div>
+
+    <div class="shelf" id="shelfProfile">
+      <div class="shelf-h"><span class="ico">📄</span> Профиль и документы</div>
+      <p class="shelf-p">Почта: <span id="profEmail" style="color:#e5e7eb"></span>. Чеки приходят на неё автоматически после каждой оплаты.</p>
+      <div class="softbox">Мы храним только почту, хеш пароля и твоих ведущих. Лишнего не собираем и никому не передаём.</div>
+      <div class="docrow">
+        <a href="/legal.html#offer">Публичная оферта</a>
+        <a href="/legal.html#policy">Обработка данных</a>
+        <a href="/legal.html">Реквизиты</a>
+      </div>
+    </div>
+
+    <button class="acc-btn ghost" id="logoutBtn" style="margin-top:20px">Выйти из кабинета</button>
+  </div>
 </main>
 
 <footer>© 2026 Ёшкин кот · Самозанятая Малкова О. А. · ИНН 420900493994 · <a href="/legal.html">оферта</a></footer>
@@ -158,6 +229,7 @@ function setMode(m){
   mode = m;
   document.getElementById('tabLogin').classList.toggle('on', m === 'login');
   document.getElementById('tabReg').classList.toggle('on', m === 'reg');
+  document.getElementById('doorKnob').style.transform = (m === 'login') ? 'translateX(0)' : 'translateX(100%)';
   document.getElementById('authBtn').textContent = (m === 'login') ? 'Войти' : 'Создать аккаунт';
   document.getElementById('authErr').textContent = '';
 }
@@ -184,6 +256,30 @@ function api(body, cb){
     .catch(function(){ cb(false, {error:'Сеть недоступна'}); });
 }
 
+/* ===== герой: приветствие по времени суток + счётчики ===== */
+function getGreeting(){
+  var h = new Date().getHours();
+  if(h < 6) return 'Доброй ночи';
+  if(h < 12) return 'Доброе утро';
+  if(h < 18) return 'Добрый день';
+  return 'Добрый вечер';
+}
+function setStat(id, val){ document.getElementById(id).textContent = val; }
+function heroEnter(email){
+  document.getElementById('heroHello').textContent = getGreeting() + '!';
+  document.getElementById('heroMail').textContent = email;
+  document.getElementById('hero').classList.add('on');
+  document.getElementById('pageTitle').style.display = 'none';
+  document.getElementById('pageSub').style.display = 'none';
+  document.body.classList.add('has-rail');
+}
+function heroLeave(){
+  document.getElementById('hero').classList.remove('on');
+  document.getElementById('pageTitle').style.display = '';
+  document.getElementById('pageSub').style.display = '';
+  document.body.classList.remove('has-rail');
+}
+
 function afterAuth(email){
   if(RETURN){ location.href = RETURN; return; }
   showAccount(email);
@@ -192,16 +288,21 @@ function afterAuth(email){
 function showAccount(email){
   document.getElementById('authBox').style.display = 'none';
   document.getElementById('accBox').style.display = 'block';
-  document.getElementById('accEmail').textContent = email;
-  document.getElementById('profEmail').textContent = email;
+  heroEnter(email);
   setShelf('presets');
   loadPresets();
+  loadOrders();
 }
 
 function loadPresets(){
   api({action:'presets-list', token:token}, function(ok, d){
     var box = document.getElementById('presetsList');
-    if(!ok || !d.presets || !d.presets.length){ box.innerHTML = '<p style="color:#6b7280;font-size:.85rem">Ведущих пока нет. Собери связку фото+озвучка на странице «Аватар» и нажми «💾 Сохранить ведущего».</p>'; return; }
+    if(!ok || !d.presets || !d.presets.length){
+      setStat('stHosts', '0');
+      box.innerHTML = '<div class="ord-empty"><span class="ec">🐈</span>Ведущих пока нет. Собери связку фото+озвучка на странице <a href="/avatar.html">«Аватар»</a> и нажми «💾 Сохранить ведущего».</div>';
+      return;
+    }
+    setStat('stHosts', String(d.presets.length));
     box.innerHTML = d.presets.map(function(p){
       var dt = new Date(p.createdAt || Date.now()).toLocaleDateString('ru-RU');
       return '<div class="pcard"><img src="data:image/jpeg;base64,' + p.image + '" alt="">'
@@ -219,17 +320,37 @@ function loadPresets(){
 
 /* ===== ПОЛКА ЗАКАЗОВ: лента всех работ из этого браузера ===== */
 var ORD_SOURCES = [
-  {key:'seedgen_gen_history',    label:'Видео'},
-  {key:'seedgen_images_history', label:'Картинка'},
-  {key:'seedgen_avatar_history', label:'Аватар'},
-  {key:'seedgen_motion_history', label:'Моушен'},
-  {key:'seedgen_lipsync_history',label:'Дубляж'}
+  {key:'seedgen_gen_history',    label:'Видео',    color:'#A3E635'},
+  {key:'seedgen_images_history', label:'Картинка', color:'#38bdf8'},
+  {key:'seedgen_avatar_history', label:'Аватар',   color:'#f472b6'},
+  {key:'seedgen_motion_history', label:'Моушен',   color:'#fbbf24'},
+  {key:'seedgen_lipsync_history',label:'Дубляж',   color:'#34d399'}
 ];
+var MONTHS_G = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 function ordParseDate(s){
   if(!s) return 0;
   var m = String(s).match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
   if(!m) return 0;
   return new Date(+m[3], +m[2]-1, +m[1]).getTime();
+}
+function ordHuman(s){
+  if(!s) return '—';
+  var m = String(s).match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if(!m) return s;
+  var d = new Date(+m[3], +m[2]-1, +m[1]);
+  var now = new Date();
+  var t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  var dayMs = 86400000;
+  var diff = Math.round((t0 - d.getTime()) / dayMs);
+  if(diff === 0) return 'сегодня';
+  if(diff === 1) return 'вчера';
+  if(diff === 2) return 'позавчера';
+  return d.getDate() + ' ' + MONTHS_G[d.getMonth()];
+}
+function hexA(hex, a){
+  var h = hex.replace('#','');
+  var r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
 }
 function ordRead(key){
   try{ return JSON.parse(localStorage.getItem(key) || '[]'); }catch(e){ return []; }
@@ -244,10 +365,11 @@ function loadOrders(){
     if(!Array.isArray(arr)) return;
     arr.forEach(function(h, i){
       if(!h || !h.url) return;
-      all.push({ key:src.key, i:i, url:h.url, name:h.name||src.label, date:h.date||'', label:src.label, _t:ordParseDate(h.date) });
+      all.push({ key:src.key, i:i, url:h.url, name:h.name||src.label, date:h.date||'', label:src.label, color:src.color, _t:ordParseDate(h.date) });
     });
   });
   all.sort(function(a, b){ return b._t - a._t; });
+  setStat('stWorks', String(all.length));
   renderOrders(all);
 }
 function renderOrders(list){
@@ -257,16 +379,17 @@ function renderOrders(list){
   if(!list.length){
     cnt.textContent = '';
     clr.style.display = 'none';
-    box.innerHTML = '<div class="ord-empty">Пока пусто. Создай первое <a href="/gen.html">видео</a>, <a href="/images.html">картинку</a> или <a href="/avatar.html">аватара</a> — работы появятся здесь.</div>';
+    box.innerHTML = '<div class="ord-empty"><span class="ec">🎬</span>Пока пусто. Создай первое <a href="/gen.html">видео</a>, <a href="/images.html">картинку</a> или <a href="/avatar.html">аватара</a> — работы появятся здесь.</div>';
     return;
   }
   cnt.textContent = 'всего ' + list.length;
   clr.style.display = '';
   box.innerHTML = '<div class="ord-grid">' + list.map(function(h){
-    return '<div class="ocard"><div class="thumb"><span class="src">' + h.label + '</span>'
+    var nm = String(h.name).replace(/"/g,'&quot;');
+    return '<div class="ocard"><div class="thumb"><span class="src" style="color:' + h.color + ';border-color:' + hexA(h.color,.5) + '">' + h.label + '</span>'
       + '<video src="' + h.url + '" muted preload="metadata" playsinline></video></div>'
-      + '<div class="oc"><div class="on" title="' + String(h.name).replace(/"/g,'&quot;') + '">' + h.name + '</div>'
-      + '<div class="od">' + (h.date || '—') + '</div>'
+      + '<div class="oc"><div class="on" title="' + nm + '">' + nm + '</div>'
+      + '<div class="od">' + ordHuman(h.date) + '</div>'
       + '<div class="oa"><a href="' + h.url + '" target="_blank" rel="noopener">⬇ скачать</a>'
       + '<button class="del" data-key="' + h.key + '" data-i="' + h.i + '">✕</button></div></div></div>';
   }).join('') + '</div>';
@@ -305,6 +428,7 @@ document.getElementById('logoutBtn').onclick = function(){
   api({action:'logout', token:token}, function(){
     localStorage.removeItem('seedgen_token');
     token = '';
+    heroLeave();
     document.getElementById('accBox').style.display = 'none';
     document.getElementById('authBox').style.display = 'block';
     setMode('login');
