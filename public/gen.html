@@ -185,7 +185,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
 <nav class="rail">
   <a href="/gen.html" class="on" title="Создать видео">🎬</a>
-  <a href="/images.html" title="Генератор изображений">🖼</a>
+  <a href="/images.html" title="Картинка и правка">🖼</a>
   <a href="/avatar.html" title="Говорящий аватар">🗣</a>
   <a href="/motion.html" title="Моушен контроль">🕺</a>
   <a href="/lipsync.html" title="Липсинк / дубляж">🎤</a>
@@ -210,6 +210,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <a href="/avatar.html">Аватар</a>
       <a href="/motion.html">Моушен</a>
       <a href="/lipsync.html">Липсинк</a>
+      <a href="/prices.html">Цены</a>
       <a href="/help.html">Помощь</a>
     </nav>
     <div style="display:flex;gap:10px;align-items:center">
@@ -223,7 +224,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
   <a href="/">Главная</a>
   <a href="/gen.html">Создать видео</a>
-  <a href="/images.html">Генератор изображений</a>
+  <a href="/images.html">Картинка и правка</a>
   <a href="/avatar.html">Аватар</a>
   <a href="/motion.html">Моушен</a>
   <a href="/lipsync.html">Липсинк</a>
@@ -237,11 +238,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h1>Какое видео создадим?</h1>
   </div>
 
-  <div class="psteps">
-    <span class="pstep active" id="st1"><i>1</i> Промпт и референсы</span>
-    <span class="pstep" id="st2"><i>2</i> Оплата</span>
-    <span class="pstep" id="st3"><i>3</i> Твоё видео</span>
-  </div>
+  <section class="result">
+    <div id="rzZone"></div>
+  </section>
 
   <div class="studio" id="stage">
     <div class="pwrap">
@@ -269,20 +268,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
   <div id="status"></div>
 
-  <section class="result">
-    <div id="rzZone"></div>
-  </section>
-
   <section class="recent" id="recentSec" style="display:none">
     <div class="rhead"><span>Ваши работы</span><span id="histCount"></span></div>
     <div class="rrow" id="histList"></div>
   </section>
 
   <div class="footnote">
-    <div class="payrow">
-      <span class="pay-ic">VISA</span><span class="pay-ic">MC</span><span class="pay-ic">МИР</span><span class="pay-ic">СБП</span><span class="pay-ic">SberPay</span><span class="pay-ic">ЮMoney</span>
-      <a href="/prices.html">Цены и оплата →</a>
-    </div>
     <div id="wsNotice"></div>
     <div class="trust">🔒 <a href="/legal.html">Оферта и реквизиты</a> · <a href="/legal.html#policy">Конфиденциальность</a></div>
   </div>
