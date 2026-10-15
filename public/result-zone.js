@@ -1,24 +1,29 @@
-/* ЗОНА РЕЗУЛЬТАТА (RZ) — универсальный компонент студии «Ёшкин кот»
+/* ЗОНА РЕЗУЛЬТАТА (RZ) v2 — универсальный компонент студии «Ёшкин кот»
    Состояния: hidden (скрыта) | work (идёт работа) | done (готово) | error (ошибка)
    До старта генерации зона НЕВИДИМА — появляется по факту.
-   work: переливающийся «холст» (или зацикленное видео, если cfg.workVideoUrl задан)
+   work: переливающийся неоном холст (или зацикленное видео, если cfg.workVideoUrl задан)
+         + подпись cfg.workTitle под экраном
    done: рамка-холст с результатом (или клип cfg.doneVideoUrl, затем рамка)
    error: красная карточка + поддержка, без кнопки повтора
-   Субтитров и процентов нет по умолчанию.
+   Экран повторяет формат кадра: cfg.aspect ('16:9','9:16','1:1','4:3','3:4','21:9')
+   Перелив: лимонный -> бирюзовый -> сиреневый -> янтарный, круг 14 сек
    Подключение: <script src="/result-zone.js"></script>
-   var rz = RZ.mount('rzZone', cfg); RZ.work(rz); RZ.done(rz, html); RZ.error(rz, msg); RZ.hidden(rz); */
+   var rz = RZ.mount('rzZone', cfg); RZ.work(rz, over); RZ.done(rz, html); RZ.error(rz, msg); RZ.hidden(rz); */
 (function(){
   var CSS = ''
   +'.rz{margin:0}'
   +'.rz-card{border:1px solid var(--border,#23281f);border-radius:18px;background:rgba(0,0,0,.32);overflow:hidden}'
-  +'.rz-anim{position:relative;aspect-ratio:16/9;background:#07090a;overflow:hidden}'
-  +'.rz-anim::before{content:"";position:absolute;inset:-40%;background:radial-gradient(closest-side,rgba(163,230,53,.30),rgba(163,230,53,.07) 45%,transparent 72%);animation:rzdrift 7s ease-in-out infinite alternate,rzbreath 3.2s ease-in-out infinite}'
+  +'.rz-anim{position:relative;aspect-ratio:16/9;width:100%;margin:0 auto;background:#07090a;overflow:hidden}'
+  +'.rz-anim::before{content:"";position:absolute;inset:-40%;background:radial-gradient(closest-side,rgba(163,230,53,.30),rgba(163,230,53,.07) 45%,transparent 72%);animation:rzdrift 7s ease-in-out infinite alternate,rzbreath 3.2s ease-in-out infinite,rzhue 14s linear infinite}'
   +'.rz-anim::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.55));pointer-events:none}'
   +'@keyframes rzdrift{from{transform:translate(-12%,-8%) scale(1)}to{transform:translate(14%,10%) scale(1.18)}}'
   +'@keyframes rzbreath{0%,100%{opacity:.5}50%{opacity:.95}}'
+  +'@keyframes rzhue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}'
   +'.rz-anim video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}'
+  +'.rz-wt{padding:10px 14px 12px;color:var(--muted,#9ca3af);font-size:.82rem;text-align:center}'
   +'.rz-canvas{padding:14px;background:linear-gradient(180deg,#2a1f14,#1a120b);border-top:1px solid rgba(255,255,255,.05)}'
-  +'.rz-canvas .slot img{width:100%;border-radius:6px;display:block;background:#000}'
+  +'.rz-canvas .slot img{width:100%;max-height:70vh;object-fit:contain;border-radius:6px;display:block;background:#000}'
+  +'.rz-canvas .slot video{width:100%;max-height:70vh;border-radius:6px;display:block;background:#000}'
   +'.rz-canvas .slot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05)}'
   +'.rz-donehead{display:flex;gap:8px;align-items:center;color:var(--lime,#A3E635);font-weight:700;font-size:.92rem;padding:12px 16px 0}'
   +'.rz-err{border-color:rgba(248,113,113,.45);background:radial-gradient(420px 200px at 50% 0,rgba(248,113,113,.08),transparent 70%),rgba(0,0,0,.32);padding:22px 18px;text-align:center}'
@@ -38,6 +43,13 @@
   function esc(s){ return String(s).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
   function stopTimers(z){ if(z._vtimeout){ clearTimeout(z._vtimeout); z._vtimeout=null; } }
 
+  function applyAspect(el,c){
+    var p=String((c&&c.aspect)||'16:9').split(':');
+    var w=parseFloat(p[0])||16, h=parseFloat(p[1])||9, n=w/h;
+    el.style.aspectRatio=w+' / '+h;
+    el.style.width='min(100%, calc(70vh * '+n.toFixed(4)+'))';
+  }
+
   function mount(target,cfg){
     var z=get(target); if(!z) return null;
     z.className='rz'; z._cfg=cfg||{}; z._vtimeout=null; z._state='hidden';
@@ -50,14 +62,17 @@
     z.style.display='none'; z.innerHTML='';
   }
 
-  function work(z){
+  function work(z,over){
     z=get(z); stopTimers(z); var c=z._cfg||{};
+    if(over){ for(var k in over){ c[k]=over[k]; } }
     z.style.display=''; z._state='work';
+    var title=(c.workTitle)?'<div class="rz-wt">'+esc(c.workTitle)+'</div>':'';
     if(c.workVideoUrl){
-      z.innerHTML='<div class="rz-card"><div class="rz-anim"><video src="'+c.workVideoUrl+'" autoplay muted loop playsinline></video></div></div>';
+      z.innerHTML='<div class="rz-card"><div class="rz-anim"><video src="'+c.workVideoUrl+'" autoplay muted loop playsinline></video></div>'+title+'</div>';
     }else{
-      z.innerHTML='<div class="rz-card"><div class="rz-anim"></div></div>';
+      z.innerHTML='<div class="rz-card"><div class="rz-anim"></div>'+title+'</div>';
     }
+    var a=z.querySelector('.rz-anim'); if(a) applyAspect(a,c);
   }
 
   function paintCanvas(z,html){
@@ -73,6 +88,7 @@
     z.style.display=''; z._state='done';
     if(c.doneVideoUrl){
       z.innerHTML='<div class="rz-card"><div class="rz-anim"><video id="rzDoneVid" src="'+c.doneVideoUrl+'" autoplay muted playsinline></video></div></div>';
+      var a=z.querySelector('.rz-anim'); if(a) applyAspect(a,c);
       var v=z.querySelector('#rzDoneVid');
       var reveal=function(){ paintCanvas(z,html); };
       if(v){ v.addEventListener('ended',reveal); z._vtimeout=setTimeout(reveal,5000); }
