@@ -257,6 +257,7 @@
 
     <div class="studio-bar">
       <button class="pchip" id="pcFmt" type="button">📱 9:16 ⌄</button>
+      <button class="pchip" id="pcSave" type="button" title="Сохранить связку фото+озвучка в личный кабинет">💾 Сохранить ведущего</button>
       <div class="barRight">
         <div class="priceBox"><span class="coin"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span><span id="priceVal">499</span></div>
         <button class="sendbtn" id="sendBtn" type="button" title="На оплату">↑</button>
@@ -386,6 +387,7 @@ var hostRow = document.getElementById('hostRow');
 var audioZone = document.getElementById('audioZone');
 var pop = document.getElementById('popMenu');
 var studio = document.getElementById('stage');
+var pcSave = document.getElementById('pcSave');
 var rz = (window.RZ) ? RZ.mount('rzZone', {aspect:orientation, doneTitle:'Твой аватар готов', workTitle:'Оживляем аватар... обычно 1–5 минут'}) : null;
 var token = '';
 try { token = localStorage.getItem('seedgen_token') || localStorage.getItem('yk_token') || ''; } catch(e){}
@@ -404,8 +406,14 @@ function hostName(){
 function requireAuth(){
   if(token) return true;
   saveDraft();
-  location.href = '/account.html?return=' + encodeURIComponent('/avatar.html');
+  location.href = '/account.html?return=' + encodeURIComponent(location.pathname + location.search);
   return false;
+}
+function api(body, cb){
+  fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+    .then(function(x){ cb(x.ok, x.d); })
+    .catch(function(){ cb(false, {error:'Сеть недоступна'}); });
 }
 
 function updateChips(){
@@ -637,6 +645,20 @@ function openPopEl(el, html, mount){
 }
 document.addEventListener('mousedown', function(e){ if(!pop.contains(e.target)) closePop(); });
 document.getElementById('pcFmt').addEventListener('click', function(){ openPopEl(this, fmtPopHTML(), mountFmtPop); });
+
+pcSave.addEventListener('click', function(){
+  if(!requireAuth()) return;
+  if(!imageData){ alert('Сначала выбери ведущего: пресет сверху или загрузи своё фото'); return; }
+  if(!audioData){ alert('Для сохранения ведущего нужна аудио-озвучка: загрузи файл или запиши с микрофона.\n\nВедущего «текст + голос студии» научим сохранять чуть позже.'); return; }
+  var name = prompt('Имя ведущего (например: Барсик-диктор):', hostName() || 'Мой ведущий');
+  if(name === null) return;
+  name = String(name).trim().slice(0,40) || 'Мой ведущий';
+  setStatus('Сохраняем ведущего...');
+  api({action:'presets-save', token:token, preset:{ name:name, image:imageData, audio:audioData, audioName:audioNameStr||null, orientation:orientation }}, function(ok,d){
+    if(!ok){ setStatus(''); alert(d.error || 'Не удалось сохранить'); return; }
+    setStatus('✅ Ведущий «'+name+'» сохранён в кабинете — откроется в один клик с любого устройства.');
+  });
+});
 
 function shrink(dataUrl, cb){
   var img = new Image();
@@ -871,6 +893,28 @@ sendBtn.addEventListener('click', payClick);
       }
     })
     .catch(function(e){ paidSeen = false; setStatus('Ошибка: '+e.message); updateSteps(); updateSend(); });
+})();
+
+(function applyPresetFromUrl(){
+  var pid = new URLSearchParams(window.location.search).get('preset');
+  if(!pid) return;
+  if(!token){ requireAuth(); return; }
+  api({action:'presets-list', token:token}, function(ok, d){
+    if(!ok || !d.presets){ return; }
+    var p = null;
+    for(var i=0;i<d.presets.length;i++){ if(d.presets[i].id===pid){ p=d.presets[i]; break; } }
+    if(!p){ setStatus('⚠️ Такой ведущий не найден в кабинете.'); return; }
+    imageData = p.image || null;
+    presetId = null;
+    audioData = p.audio || null;
+    audioNameStr = p.audioName || null;
+    if(p.orientation) orientation = p.orientation;
+    if(audioData) voiceMode = 'audio';
+    renderHosts();
+    renderAudioZone();
+    updateChips();
+    setStatus('✅ Загружен ведущий «'+(p.name||'')+'» из кабинета.');
+  });
 })();
 
 function syncUserMenu(){
