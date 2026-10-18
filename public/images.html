@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Картинки и правка — Ёшкин кот</title>
 <meta property="og:title" content="Картинки и правка — Ёшкин кот">
-<meta property="og:description" content="Опиши картинку словами — шесть моделей нарисуют её. Или загрузи свою — нейросеть изменит по твоему слову. От 5 🐭.">
+<meta property="og:description" content="Опиши картинку словами — семь моделей нарисуют её. Или загрузи свою — нейросеть изменит по твоему слову. От 5 🐭.">
 <meta property="og:image" content="https://www.yoshkin-kot.online/og-image.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.yoshkin-kot.online/images.html">
@@ -29,7 +29,7 @@
 .rmenu button:hover{background:rgba(163,230,53,.12)}
 .rmenu button.dis{opacity:.5}
 .msv{width:15px;height:15px;color:var(--lime);display:inline-block;vertical-align:-2px}
-.wrap{max-width:1140px;margin:96px auto 0;padding:0 24px 170px 88px}
+.wrap{max-width:1140px;margin:96px auto 0;padding:0 24px 160px 88px}
 .pagehead{text-align:center;margin:0 0 18px}
 .pagehead h1{font-family:'Space Grotesk';font-size:1.9rem;line-height:1.2;margin:0;color:var(--text)}
 .tape-empty{margin:70px auto 0;text-align:center;color:var(--muted);font-size:.95rem}
@@ -37,16 +37,12 @@
 .exrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:18px}
 .exrow button{padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font:500 .8rem 'Inter';cursor:pointer;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .exrow button:hover{color:var(--text);border-color:var(--border-lime)}
-.herocard{position:relative;border-radius:18px;border:1px solid var(--border);background:#000;margin:4px 0 16px;overflow:hidden;cursor:pointer}
-.herocard img{width:100%;max-height:420px;object-fit:contain;display:block}
-.herocard .tb{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--border-lime);color:var(--lime);font-size:.68rem;font-weight:700}
-.herocard .hacts{position:absolute;top:10px;right:10px;display:flex;gap:6px}
-.herocard .hacts button{width:32px;height:32px;border-radius:50%;border:none;background:rgba(0,0,0,.75);color:#e5e7eb;font-size:.85rem;cursor:pointer;display:grid;place-items:center}
-.herocard .hacts button:hover{background:rgba(0,0,0,.95);color:var(--lime)}
 .tapegrid{columns:3;column-gap:12px;margin-top:4px}
 .tile{position:relative;display:inline-block;width:100%;margin:0 0 12px;break-inside:avoid;-webkit-column-break-inside:avoid;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000;cursor:pointer}
 .tile img{width:100%;height:auto;display:block}
-.tile .tb{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--border-lime);color:var(--lime);font-size:.66rem;font-weight:700}
+.tile.sel{border-color:var(--border-lime);box-shadow:0 0 0 1px rgba(163,230,53,.5)}
+.tile .tb{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--border-lime);color:var(--lime);font-size:.66rem;font-weight:700;opacity:0;transition:opacity .15s}
+.tile:hover .tb{opacity:1}
 .tile .dots{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,.72);color:#e5e7eb;cursor:pointer;display:grid;place-items:center;font-size:.95rem;line-height:1;opacity:0;transition:opacity .15s;z-index:4;padding:0}
 .tile:hover .dots{opacity:1}
 .tile.gen{cursor:default}
@@ -72,20 +68,27 @@ body.editing #tapeSec{display:none}
 .ebar button,.ebar a{border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);border-radius:10px;padding:8px 12px;font:600 .8rem 'Inter';cursor:pointer;text-decoration:none}
 .ebar button:hover,.ebar a:hover{border-color:var(--border-lime);color:var(--lime)}
 .etitle{flex:1;color:var(--muted);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.estrip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.estrip .v{width:64px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer;opacity:.65}
-.estrip .v img{width:100%;height:100%;object-fit:cover}
-.estrip .v.on{opacity:1;border-color:var(--border-lime);box-shadow:0 0 0 1px rgba(163,230,53,.4)}
-.ecanvas{border-radius:18px;overflow:hidden;border:1px solid var(--border);background:#000;display:grid;place-items:center;max-height:68vh}
+.ework{display:flex;gap:14px;align-items:flex-start}
+.ecanvas{flex:1;min-width:0;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:#000;display:grid;place-items:center;max-height:68vh}
 .ecanvas img{max-width:100%;max-height:68vh;object-fit:contain;display:block}
+.ehist{width:116px;flex:0 0 116px;max-height:68vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:2px;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
+.ehist::-webkit-scrollbar{width:6px}
+.ehist::-webkit-scrollbar-track{background:transparent}
+.ehist::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
+.ehist .v{cursor:pointer;opacity:.6;border-radius:10px;overflow:hidden;border:1px solid transparent;transition:opacity .15s,border-color .15s}
+.ehist .v img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#000}
+.ehist .v .vp{color:var(--muted);font-size:.62rem;line-height:1.35;padding:3px 2px 0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ehist .v:hover{opacity:.9}
+.ehist .v.on{opacity:1;border-color:var(--border-lime);box-shadow:0 0 0 1px rgba(163,230,53,.4)}
+.ehist .v.on .vp{color:var(--lime)}
 .emeta{margin-top:12px;color:var(--muted);font-size:.82rem;line-height:1.6}
 .emeta .ver{color:var(--lime);font-weight:700}
-.composer{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;width:min(780px,calc(100% - 28px));z-index:300;background:rgba(12,15,10,.94);border:1px solid var(--border);border-radius:20px;padding:10px 12px 8px;box-shadow:0 14px 40px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
+.composer{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(780px,calc(100% - 28px));z-index:300;background:rgba(12,15,10,.94);border:1px solid var(--border);border-radius:20px;padding:8px 10px 6px;box-shadow:0 14px 40px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
 .crow1{display:flex;gap:8px;align-items:flex-start}
-.promptBox{flex:1;min-height:26px;max-height:120px;overflow-y:auto;outline:none;font:400 .92rem/1.55 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word;scrollbar-width:thin}
+.promptBox{flex:1;min-height:24px;max-height:120px;overflow-y:auto;outline:none;font:400 .92rem/1.5 'Inter',sans-serif;color:#e5e7eb;white-space:pre-wrap;word-wrap:break-word;scrollbar-width:thin}
 .promptBox:empty:before{content:attr(data-ph);color:var(--muted);pointer-events:none}
-.crow2{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
-.cbtn{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:#e5e7eb;font-size:1rem;cursor:pointer;flex:0 0 auto}
+.crow2{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.cbtn{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:#e5e7eb;font-size:.95rem;cursor:pointer;flex:0 0 auto}
 .cbtn:hover{background:rgba(255,255,255,.24)}
 .refchip{display:flex;gap:6px;align-items:center;padding:3px 8px 3px 4px;border-radius:10px;border:1px solid var(--border-lime);background:rgba(163,230,53,.08);cursor:default}
 .refchip img{width:22px;height:22px;border-radius:5px;object-fit:cover}
@@ -94,7 +97,7 @@ body.editing #tapeSec{display:none}
 .sumchip:hover{border-color:var(--border-lime);color:var(--lime)}
 .cright{margin-left:auto;display:flex;gap:8px;align-items:center;flex:0 0 auto}
 .prc{color:var(--lime);font:700 .85rem 'Inter';white-space:nowrap;display:flex;gap:4px;align-items:center}
-.sendbtn{width:38px;height:38px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1.05rem;font-weight:800;cursor:pointer;display:grid;place-items:center}
+.sendbtn{width:36px;height:36px;border-radius:50%;border:none;background:#fff;color:#050607;font-size:1rem;font-weight:800;cursor:pointer;display:grid;place-items:center}
 .sendbtn:hover{background:#e5e7eb}
 .sendbtn:disabled{opacity:.5;cursor:not-allowed}
 .popup{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:320;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:8px;width:min(360px,calc(100vw - 40px));box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:min(440px,60vh);overflow-y:auto;scrollbar-width:thin}
@@ -112,7 +115,7 @@ body.editing #tapeSec{display:none}
 .pu-row button:hover{color:var(--text)}
 .pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
 .pu-cost{padding:8px 10px 4px;color:var(--lime);font-size:.8rem;font-weight:700;border-top:1px solid var(--border);margin-top:6px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:120px;z-index:340;background:#1a0d0d;border:1px solid rgba(248,113,113,.5);color:#fca5a5;border-radius:12px;padding:10px 16px;font-size:.84rem;max-width:min(560px,calc(100vw - 40px));display:none;text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:110px;z-index:340;background:#1a0d0d;border:1px solid rgba(248,113,113,.5);color:#fca5a5;border-radius:12px;padding:10px 16px;font-size:.84rem;max-width:min(560px,calc(100vw - 40px));display:none;text-align:center}
 .toast a{color:var(--lime)}
 .shopmask{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:410;display:none;align-items:center;justify-content:center;padding:20px}
 .shopmask.open{display:flex}
@@ -145,12 +148,16 @@ body.editing #tapeSec{display:none}
 body.editing .cbtn.add{display:none}
 @media(max-width:900px){
   .rail{display:none}
-  .wrap{padding:0 16px 170px;margin-top:84px}
+  .wrap{padding:0 16px 160px;margin-top:84px}
   .shop{grid-template-columns:1fr}
   .packs{grid-template-columns:1fr}
   .tapegrid{columns:2}
-  .herocard img{max-height:320px}
-  .tile .dots{opacity:1}
+  .tile .tb,.tile .dots{opacity:1}
+  .ework{flex-direction:column}
+  .ecanvas{width:100%;max-height:46vh}
+  .ecanvas img{max-height:46vh}
+  .ehist{width:100%;flex:0 0 auto;max-height:none;flex-direction:row;overflow-x:auto;overflow-y:hidden}
+  .ehist .v{flex:0 0 72px;width:72px}
 }
 </style>
 </head>
@@ -218,7 +225,6 @@ body.editing .cbtn.add{display:none}
       Напиши промпт или перетащи свою картинку
       <div class="exrow" id="exRow"></div>
     </div>
-    <div id="heroSec"></div>
     <div class="tapegrid" id="tapeGrid"></div>
     <div class="footnote">
       <div id="wsNotice"></div>
@@ -233,8 +239,10 @@ body.editing .cbtn.add{display:none}
       <a id="edDl" download>⬇ скачать</a>
       <button type="button" id="edRef">🎬 в референсы</button>
     </div>
-    <div class="estrip" id="edStrip"></div>
-    <div class="ecanvas"><img id="edImg" alt=""></div>
+    <div class="ework">
+      <div class="ecanvas"><img id="edImg" alt=""></div>
+      <div class="ehist" id="edHist"></div>
+    </div>
     <div class="emeta"><span class="ver" id="edVer"></span> <span id="edPrompt"></span></div>
   </section>
 </main>
@@ -336,7 +344,7 @@ var TAPE_KEY='seedgen_images_tape', DRAFT_KEY='seedgen_images_draft2', PEND_KEY=
 
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu');
 var sendBtn=document.getElementById('sendBtn'), tapeGrid=document.getElementById('tapeGrid'), tapeEmpty=document.getElementById('tapeEmpty');
-var heroSec=document.getElementById('heroSec'), tileMenu=document.getElementById('tileMenu');
+var tileMenu=document.getElementById('tileMenu');
 var refChip=document.getElementById('refChip'), refInput=document.getElementById('refInput'), sumChip=document.getElementById('sumChip');
 var toastEl=document.getElementById('toast');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
@@ -349,6 +357,7 @@ function find(id){ for(var i=0;i<tape.length;i++){ if(tape[i].id===id) return ta
 function hasChildren(id){ for(var i=0;i<tape.length;i++){ if(tape[i].parent===id) return true; } return false; }
 function uid(){ return 't'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
 function arStyle(a){ return 'aspect-ratio:'+String(a||'1:1').replace(':','/'); }
+function shortPrompt(s){ s=String(s||''); return s.length>26?s.slice(0,26)+'…':s; }
 
 function showToast(msg){
   toastEl.innerHTML=msg+' · <a href="/help.html">поддержка</a>';
@@ -366,24 +375,12 @@ function saveTape(){
   }
 }
 function renderTape(){
-  var hero=(srcId&&refData)?find(srcId):null;
-  if(hero){
-    heroSec.innerHTML='<div class="herocard" id="heroCard"><img src="'+hero.url+'" alt="">'
-      +'<span class="tb">исходник</span>'
-      +'<div class="hacts"><button type="button" id="heroSwap" title="Загрузить другую картинку">🔄</button><button type="button" id="heroX" title="Отцепить (картинка останется в ленте)">✕</button></div>'
-      +'</div>';
-    document.getElementById('heroCard').addEventListener('click',function(){ openEdit(hero.id); });
-    document.getElementById('heroSwap').addEventListener('click',function(e){ e.stopPropagation(); refInput.click(); });
-    document.getElementById('heroX').addEventListener('click',function(e){ e.stopPropagation(); unlinkRef(); });
-  }else{
-    heroSec.innerHTML='';
-  }
-  var wall=tape.filter(function(t){ return !(hero&&t.id===hero.id); });
   tapeEmpty.style.display=tape.length?'none':'';
-  tapeGrid.innerHTML=wall.map(function(t){
+  tapeGrid.innerHTML=tape.map(function(t){
     if(t.status==='gen') return '<div class="tile gen" data-id="'+t.id+'" style="'+arStyle(t.aspect)+'"><div class="shim"></div></div>';
+    var sel=(t.id===srcId)?' sel':'';
     var b=t.kind==='src'?'<span class="tb">исходник</span>':'';
-    return '<div class="tile" data-id="'+t.id+'"><img src="'+t.url+'" alt="">'+b+'<button type="button" class="dots" data-dots="'+t.id+'" title="Действия">⋮</button></div>';
+    return '<div class="tile'+sel+'" data-id="'+t.id+'"><img src="'+t.url+'" alt="">'+b+'<button type="button" class="dots" data-dots="'+t.id+'" title="Действия">⋮</button></div>';
   }).join('');
   tapeGrid.querySelectorAll('.tile:not(.gen)').forEach(function(el){
     el.addEventListener('click',function(){ openEdit(el.getAttribute('data-id')); });
@@ -464,42 +461,33 @@ function setBase(id){
   var t=find(id); if(!t||t.status==='gen') return;
   var prev=snap();
   refData=t.url; srcId=t.id;
-  actSnap(prev,null);
-  renderChip(); renderTape();
+  actSnap(prev);
+  restore(snap());
 }
 function deleteTile(id){
   var t=find(id); if(!t) return;
   if(hasChildren(id)){ showToast('Убрать нельзя: на эту картинку опираются следующие версии'); return; }
-  var prev=snap();
   tape.splice(tape.indexOf(t),1);
   if(srcId===id){ refData=null; srcId=null; }
-  actSnap(prev,null);
-  restore(snap());
+  saveTape(); renderTape(); renderChip();
 }
 
-/* --- undo / redo --- */
+/* --- undo / redo (настройки + выбор источника) --- */
 function snap(){ return {m:modelKey,c:count,a:aspect,r:refData,s:srcId}; }
-function actSnap(prev,kill){ undoStack.push({p:prev,k:kill||null}); if(undoStack.length>20) undoStack.shift(); redoStack.length=0; }
+function actSnap(prev){ undoStack.push(prev); if(undoStack.length>20) undoStack.shift(); redoStack.length=0; }
 function restore(s){
   modelKey=s.m; count=s.c; aspect=s.a; refData=s.r; srcId=s.s;
-  syncSrcTile(); renderChip(); updateChips(); renderTape(); saveDraftDebounced();
-}
-function syncSrcTile(){
-  if(srcId && refData && !find(srcId)){
-    tape.push({id:srcId,kind:'src',status:'done',url:refData,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
-  }
-  saveTape();
+  renderChip(); updateChips(); renderTape(); saveDraftDebounced();
 }
 function doUndo(){
   var e=undoStack.pop(); if(!e) return;
-  if(e.k){ var t=find(e.k); if(t&&!hasChildren(e.k)) tape.splice(tape.indexOf(t),1); }
-  redoStack.push({p:snap(),k:null});
-  restore(e.p);
+  redoStack.push(snap());
+  restore(e);
 }
 function doRedo(){
   var e=redoStack.pop(); if(!e) return;
-  undoStack.push({p:snap(),k:null});
-  restore(e.p);
+  undoStack.push(snap());
+  restore(e);
 }
 
 /* --- своя картинка: библиотека источников --- */
@@ -515,7 +503,7 @@ function loadRefFile(f){
       var nid=uid();
       tape.push({id:nid,kind:'src',status:'done',url:d,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
       refData=d; srcId=nid;
-      actSnap(prev,nid);
+      actSnap(prev);
       restore(snap());
     });
   };
@@ -525,7 +513,7 @@ function loadRefFile(f){
 function unlinkRef(){
   var prev=snap();
   refData=null; srcId=null;
-  actSnap(prev,null);
+  actSnap(prev);
   restore(snap());
 }
 function renderChip(){
@@ -581,7 +569,7 @@ function changeSetting(k,v){
   if(cur===v) return;
   var prev=snap();
   if(k==='m') modelKey=v; if(k==='a') aspect=v; if(k==='c') count=v;
-  actSnap(prev,null);
+  actSnap(prev);
   updateChips(); saveDraftDebounced();
 }
 sumChip.addEventListener('click',function(e){ e.stopPropagation(); if(pop.classList.contains('open')) closePop(); else openPop(); });
@@ -603,7 +591,7 @@ function onPromptInput(){
 promptBox.addEventListener('input',onPromptInput);
 window.addEventListener('beforeunload',saveDraft);
 
-/* --- режим правки --- */
+/* --- режим правки: страничка работы с картинкой --- */
 function chainOf(id){
   var arr=[], cur=find(id), guard=0;
   while(cur&&guard<50){ arr.unshift(cur); cur=cur.parent?find(cur.parent):null; guard++; }
@@ -634,11 +622,15 @@ function renderEdit(){
   document.getElementById('edDl').setAttribute('download','yoshkin-'+t.id+'.jpg');
   document.getElementById('edVer').textContent='версия '+ch.length+' ·';
   document.getElementById('edPrompt').textContent=t.prompt||'';
-  var strip=document.getElementById('edStrip');
-  strip.innerHTML=ch.map(function(v){ return '<div class="v'+(v.id===editId?' on':'')+'" data-id="'+v.id+'"><img src="'+v.url+'" alt=""></div>'; }).join('');
-  strip.querySelectorAll('.v').forEach(function(el){
+  var hist=document.getElementById('edHist');
+  hist.innerHTML=ch.map(function(v){
+    return '<div class="v'+(v.id===editId?' on':'')+'" data-id="'+v.id+'"><img src="'+v.url+'" alt=""><div class="vp">'+shortPrompt(v.prompt)+'</div></div>';
+  }).join('');
+  hist.querySelectorAll('.v').forEach(function(el){
     el.addEventListener('click',function(){ editId=el.getAttribute('data-id'); renderEdit(); });
   });
+  var on=hist.querySelector('.v.on');
+  if(on) on.scrollIntoView({block:'nearest'});
 }
 document.getElementById('edBack').addEventListener('click',closeEdit);
 document.getElementById('edRef').addEventListener('click',function(){
