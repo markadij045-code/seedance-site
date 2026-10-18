@@ -17,7 +17,8 @@ const MAX_TEXT_CHARS = 480;
 // Gemini-семейство — нативный формат generateContent (правка через inlineData)
 const GEMINI_IMAGE_MODELS = {
   'nano-banana': 'gemini-2.5-flash-image',
-  'nano-banana-2': 'gemini-3.1-flash-image-preview'
+  'nano-banana-2': 'gemini-3.1-flash-image-preview',
+  'nano-banana-2.1': 'gemini-nano-banana-2.1'
 };
 // Остальные — OpenAI-совместимый формат (генерация: /v1/images/generations, правка: /v1/images/edits)
 const OPENAI_IMAGE_MODELS = {
