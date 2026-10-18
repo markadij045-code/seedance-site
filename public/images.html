@@ -47,12 +47,21 @@
 .tile{position:relative;display:inline-block;width:100%;margin:0 0 12px;break-inside:avoid;-webkit-column-break-inside:avoid;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000;cursor:pointer}
 .tile img{width:100%;height:auto;display:block}
 .tile .tb{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--border-lime);color:var(--lime);font-size:.66rem;font-weight:700}
+.tile .dots{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(0,0,0,.72);color:#e5e7eb;cursor:pointer;display:grid;place-items:center;font-size:.95rem;line-height:1;opacity:0;transition:opacity .15s;z-index:4;padding:0}
+.tile:hover .dots{opacity:1}
 .tile.gen{cursor:default}
 .shim{position:absolute;inset:0;background:#07090a;overflow:hidden}
 .shim::before{content:"";position:absolute;inset:-40%;background:radial-gradient(closest-side,rgba(163,230,53,.30),rgba(163,230,53,.07) 45%,transparent 72%);animation:shdrift 7s ease-in-out infinite alternate,shbreath 3.2s ease-in-out infinite}
 .shim::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.55))}
 @keyframes shdrift{from{transform:translate(-12%,-8%) scale(1)}to{transform:translate(14%,10%) scale(1.18)}}
 @keyframes shbreath{0%,100%{opacity:.5}50%{opacity:.95}}
+.tmenu{position:fixed;z-index:360;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:236px;box-shadow:0 12px 32px rgba(0,0,0,.65);display:none}
+.tmenu.open{display:block}
+.tmenu button{display:flex;gap:8px;align-items:center;width:100%;padding:8px 10px;border:none;border-radius:8px;background:none;color:var(--text);font:500 .82rem 'Inter';cursor:pointer;text-align:left}
+.tmenu button:hover{background:rgba(163,230,53,.12)}
+.tmenu button.danger{color:#fca5a5}
+.tmenu button.danger:hover{background:rgba(248,113,113,.12)}
+.tmenu .sn{margin-left:auto;color:var(--muted);font-size:.64rem;border:1px solid var(--border);border-radius:999px;padding:1px 7px;flex:0 0 auto}
 .footnote{margin:34px 0 0;display:flex;flex-direction:column;gap:10px;align-items:center}
 .trust{color:var(--muted);font-size:.76rem;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
@@ -141,6 +150,7 @@ body.editing .cbtn.add{display:none}
   .packs{grid-template-columns:1fr}
   .tapegrid{columns:2}
   .herocard img{max-height:320px}
+  .tile .dots{opacity:1}
 }
 </style>
 </head>
@@ -235,7 +245,7 @@ body.editing .cbtn.add{display:none}
   </div>
   <div class="crow2">
     <button class="cbtn add" id="addBtn" type="button" title="Загрузить свою картинку для правки">+</button>
-    <span class="refchip" id="refChip" style="display:none"><img alt=""><button type="button" class="x" title="Убрать">✕</button></span>
+    <span class="refchip" id="refChip" style="display:none"><img alt=""><button type="button" class="x" title="Отцепить (картинка останется в ленте)">✕</button></span>
     <button class="sumchip" id="sumChip" type="button"></button>
     <div class="cright">
       <span class="prc"><svg viewBox="0 0 24 24" class="msv"><ellipse cx="11" cy="15" rx="7" ry="5.5" fill="currentColor"/><circle cx="7" cy="10" r="3" fill="currentColor"/><circle cx="8.6" cy="14.4" r=".9" fill="#0b0e09"/><path d="M18 15c2.5 0 4-1.6 3.4-3.6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><span id="priceVal">5</span></span>
@@ -245,6 +255,7 @@ body.editing .cbtn.add{display:none}
   <div class="popup" id="popMenu"></div>
 </div>
 
+<div class="tmenu" id="tileMenu"></div>
 <div class="toast" id="toast"></div>
 
 <div class="shopmask" id="shopMask">
@@ -325,7 +336,7 @@ var TAPE_KEY='seedgen_images_tape', DRAFT_KEY='seedgen_images_draft2', PEND_KEY=
 
 var promptBox=document.getElementById('promptBox'), pop=document.getElementById('popMenu');
 var sendBtn=document.getElementById('sendBtn'), tapeGrid=document.getElementById('tapeGrid'), tapeEmpty=document.getElementById('tapeEmpty');
-var heroSec=document.getElementById('heroSec');
+var heroSec=document.getElementById('heroSec'), tileMenu=document.getElementById('tileMenu');
 var refChip=document.getElementById('refChip'), refInput=document.getElementById('refInput'), sumChip=document.getElementById('sumChip');
 var toastEl=document.getElementById('toast');
 var token=''; try{ token=localStorage.getItem('seedgen_token')||localStorage.getItem('yk_token')||''; }catch(e){}
@@ -355,28 +366,34 @@ function saveTape(){
   }
 }
 function renderTape(){
-  var hero=null;
-  if(srcId&&refData){ hero=find(srcId); }
+  var hero=(srcId&&refData)?find(srcId):null;
   if(hero){
     heroSec.innerHTML='<div class="herocard" id="heroCard"><img src="'+hero.url+'" alt="">'
       +'<span class="tb">исходник</span>'
-      +'<div class="hacts"><button type="button" id="heroSwap" title="Заменить картинку">🔄</button><button type="button" id="heroX" title="Убрать картинку">✕</button></div>'
+      +'<div class="hacts"><button type="button" id="heroSwap" title="Загрузить другую картинку">🔄</button><button type="button" id="heroX" title="Отцепить (картинка останется в ленте)">✕</button></div>'
       +'</div>';
     document.getElementById('heroCard').addEventListener('click',function(){ openEdit(hero.id); });
     document.getElementById('heroSwap').addEventListener('click',function(e){ e.stopPropagation(); refInput.click(); });
-    document.getElementById('heroX').addEventListener('click',function(e){ e.stopPropagation(); clearRef(); });
+    document.getElementById('heroX').addEventListener('click',function(e){ e.stopPropagation(); unlinkRef(); });
   }else{
     heroSec.innerHTML='';
   }
   var wall=tape.filter(function(t){ return !(hero&&t.id===hero.id); });
-  if(!tape.length){ tapeEmpty.style.display=''; } else { tapeEmpty.style.display='none'; }
+  tapeEmpty.style.display=tape.length?'none':'';
   tapeGrid.innerHTML=wall.map(function(t){
     if(t.status==='gen') return '<div class="tile gen" data-id="'+t.id+'" style="'+arStyle(t.aspect)+'"><div class="shim"></div></div>';
     var b=t.kind==='src'?'<span class="tb">исходник</span>':'';
-    return '<div class="tile" data-id="'+t.id+'"><img src="'+t.url+'" alt="">'+b+'</div>';
+    return '<div class="tile" data-id="'+t.id+'"><img src="'+t.url+'" alt="">'+b+'<button type="button" class="dots" data-dots="'+t.id+'" title="Действия">⋮</button></div>';
   }).join('');
   tapeGrid.querySelectorAll('.tile:not(.gen)').forEach(function(el){
     el.addEventListener('click',function(){ openEdit(el.getAttribute('data-id')); });
+  });
+  tapeGrid.querySelectorAll('.dots').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.stopPropagation();
+      var r=el.getBoundingClientRect();
+      openTileMenu(el.getAttribute('data-dots'), r);
+    });
   });
   toggleExamples();
 }
@@ -393,30 +410,99 @@ function toggleExamples(){
   });
 })();
 
+/* --- меню трёх точек --- */
+function closeTileMenu(){ tileMenu.classList.remove('open'); tileMenu.innerHTML=''; }
+function openTileMenu(id,rect){
+  var t=find(id); if(!t||t.status==='gen') return;
+  var items=[
+    {k:'dl',l:'⬇ Скачать · оригинал'},
+    {k:'dl2',l:'⬇ Скачать · 2x HD',soon:'скоро'},
+    {k:'dl4',l:'⬇ Скачать · 4K',soon:'скоро'},
+    {k:'vid',l:'🎬 Сделать видео'},
+    {k:'av',l:'🗣 В аватар',soon:'скоро'},
+    {k:'mo',l:'🕺 В моушен',soon:'скоро'},
+    {k:'edit',l:'✏️ Править'},
+    {k:'base',l:'📌 Взять за основу'},
+    {k:'del',l:'✕ Убрать',danger:true}
+  ];
+  tileMenu.innerHTML=items.map(function(it){
+    return '<button type="button" data-k="'+it.k+'" class="'+(it.danger?'danger':'')+'">'+it.l+(it.soon?'<span class="sn">'+it.soon+'</span>':'')+'</button>';
+  }).join('');
+  tileMenu.classList.add('open');
+  var mw=240, top=rect.bottom+6, left=rect.right-mw;
+  if(left<8) left=8;
+  if(top+items.length*36>window.innerHeight-8) top=Math.max(8,rect.top-items.length*36-6);
+  tileMenu.style.top=top+'px'; tileMenu.style.left=left+'px';
+  tileMenu.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=b.getAttribute('data-k');
+      closeTileMenu();
+      menuAction(k,id);
+    });
+  });
+}
+function menuAction(k,id){
+  var t=find(id); if(!t) return;
+  if(k==='dl'){
+    var a=document.createElement('a'); a.href=t.url; a.download='yoshkin-'+t.id+'.jpg';
+    document.body.appendChild(a); a.click(); a.remove();
+    return;
+  }
+  if(k==='dl2'||k==='dl4'){ showToast('Скачивание в 2x HD и 4K откроется вместе с оплатой апскейла'); return; }
+  if(k==='av'||k==='mo'){ showToast('Скоро: страницы учатся принимать картинку из ленты'); return; }
+  if(k==='vid'){ addToGenRefs(t.url); return; }
+  if(k==='edit'){ openEdit(id); return; }
+  if(k==='base'){ setBase(id); return; }
+  if(k==='del'){ deleteTile(id); return; }
+}
+document.addEventListener('mousedown',function(e){
+  if(!tileMenu.contains(e.target)) closeTileMenu();
+});
+window.addEventListener('scroll',function(){ closeTileMenu(); },true);
+
+function setBase(id){
+  var t=find(id); if(!t||t.status==='gen') return;
+  var prev=snap();
+  refData=t.url; srcId=t.id;
+  actSnap(prev,null);
+  renderChip(); renderTape();
+}
+function deleteTile(id){
+  var t=find(id); if(!t) return;
+  if(hasChildren(id)){ showToast('Убрать нельзя: на эту картинку опираются следующие версии'); return; }
+  var prev=snap();
+  tape.splice(tape.indexOf(t),1);
+  if(srcId===id){ refData=null; srcId=null; }
+  actSnap(prev,null);
+  restore(snap());
+}
+
 /* --- undo / redo --- */
 function snap(){ return {m:modelKey,c:count,a:aspect,r:refData,s:srcId}; }
-function actSnap(prev){ undoStack.push(prev); if(undoStack.length>20) undoStack.shift(); redoStack.length=0; }
+function actSnap(prev,kill){ undoStack.push({p:prev,k:kill||null}); if(undoStack.length>20) undoStack.shift(); redoStack.length=0; }
 function restore(s){
   modelKey=s.m; count=s.c; aspect=s.a; refData=s.r; srcId=s.s;
   syncSrcTile(); renderChip(); updateChips(); renderTape(); saveDraftDebounced();
 }
 function syncSrcTile(){
-  for(var i=tape.length-1;i>=0;i--){
-    if(tape[i].kind==='src' && tape[i].id!==srcId && !hasChildren(tape[i].id)) tape.splice(i,1);
+  if(srcId && refData && !find(srcId)){
+    tape.push({id:srcId,kind:'src',status:'done',url:refData,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
   }
-  if(srcId && refData && !find(srcId)) tape.push({id:srcId,kind:'src',status:'done',url:refData,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
   saveTape();
 }
 function doUndo(){
-  if(!undoStack.length) return;
-  var cur=snap(); var s=undoStack.pop(); redoStack.push(cur); restore(s);
+  var e=undoStack.pop(); if(!e) return;
+  if(e.k){ var t=find(e.k); if(t&&!hasChildren(e.k)) tape.splice(tape.indexOf(t),1); }
+  redoStack.push({p:snap(),k:null});
+  restore(e.p);
 }
 function doRedo(){
-  if(!redoStack.length) return;
-  var cur=snap(); var s=redoStack.pop(); undoStack.push(cur); restore(s);
+  var e=redoStack.pop(); if(!e) return;
+  undoStack.push({p:snap(),k:null});
+  restore(e.p);
 }
 
-/* --- своя картинка --- */
+/* --- своя картинка: библиотека источников --- */
 function loadRefFile(f){
   if(editId){ showToast('Выйди из правки (←), чтобы загрузить новую картинку'); return; }
   if(!f) return;
@@ -426,21 +512,21 @@ function loadRefFile(f){
   reader.onload=function(){
     shrink(reader.result,function(d){
       var prev=snap();
-      if(srcId && find(srcId) && !hasChildren(srcId)){
-        var old=find(srcId); tape.splice(tape.indexOf(old),1);
-      }
-      refData=d; srcId=uid();
-      tape.push({id:srcId,kind:'src',status:'done',url:refData,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
-      actSnap(prev); restore(snap());
+      var nid=uid();
+      tape.push({id:nid,kind:'src',status:'done',url:d,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
+      refData=d; srcId=nid;
+      actSnap(prev,nid);
+      restore(snap());
     });
   };
   reader.onerror=function(){ showToast('Не удалось прочитать файл'); };
   reader.readAsDataURL(f);
 }
-function clearRef(){
+function unlinkRef(){
   var prev=snap();
   refData=null; srcId=null;
-  syncSrcTile(); actSnap(prev); restore(snap());
+  actSnap(prev,null);
+  restore(snap());
 }
 function renderChip(){
   if(refData){ refChip.style.display=''; refChip.querySelector('img').src=refData; }
@@ -448,7 +534,7 @@ function renderChip(){
 }
 document.getElementById('addBtn').addEventListener('click',function(){ refInput.click(); });
 refInput.addEventListener('change',function(){ var f=refInput.files&&refInput.files[0]; refInput.value=''; loadRefFile(f); });
-refChip.querySelector('.x').addEventListener('click',clearRef);
+refChip.querySelector('.x').addEventListener('click',unlinkRef);
 document.addEventListener('dragover',function(e){ e.preventDefault(); });
 document.addEventListener('drop',function(e){ e.preventDefault(); var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; loadRefFile(f); });
 
@@ -495,7 +581,7 @@ function changeSetting(k,v){
   if(cur===v) return;
   var prev=snap();
   if(k==='m') modelKey=v; if(k==='a') aspect=v; if(k==='c') count=v;
-  actSnap(prev);
+  actSnap(prev,null);
   updateChips(); saveDraftDebounced();
 }
 sumChip.addEventListener('click',function(e){ e.stopPropagation(); if(pop.classList.contains('open')) closePop(); else openPop(); });
@@ -634,7 +720,6 @@ function startGeneration(pid){
       }
       saveTape(); renderTape();
       pendingClear(); paymentUsed=false; sendBtn.disabled=false;
-      if(refData){ refData=null; srcId=null; syncSrcTile(); renderChip(); renderTape(); }
       promptBox.textContent='';
       saveDraft();
       if(pend.mode==='edit') openEdit(genId);
@@ -664,7 +749,7 @@ function startGeneration(pid){
 
 /* --- горячие клавиши --- */
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){ closePop(); document.getElementById('shopMask').classList.remove('open'); document.getElementById('rmenu').classList.remove('open'); if(editId) closeEdit(); return; }
+  if(e.key==='Escape'){ closeTileMenu(); closePop(); document.getElementById('shopMask').classList.remove('open'); document.getElementById('rmenu').classList.remove('open'); if(editId) closeEdit(); return; }
   var inText = document.activeElement===promptBox;
   if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); sendClick(); return; }
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'&&!inText){ e.preventDefault(); doUndo(); return; }
