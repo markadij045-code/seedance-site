@@ -62,27 +62,28 @@
 .trust{color:var(--muted);font-size:.76rem;text-align:center}
 .trust a{color:var(--lime);text-decoration:none}
 #editView{display:none}
-body.editing #editView{display:block}
+body.editing #editView{display:flex}
 body.editing #tapeSec{display:none}
 body.editing{overflow:hidden}
-.ebar{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+#editView{position:fixed;inset:0;z-index:290;background:#050607;flex-direction:column;padding:16px 24px 112px}
+.ebar{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex:0 0 auto}
 .ebar button,.ebar a{border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);border-radius:10px;padding:8px 12px;font:600 .8rem 'Inter';cursor:pointer;text-decoration:none}
 .ebar button:hover,.ebar a:hover{border-color:var(--border-lime);color:var(--lime)}
 .etitle{flex:1;color:var(--muted);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ework{display:flex;gap:14px;align-items:flex-start}
-.ecanvas{flex:1;min-width:0;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:#000;display:grid;place-items:center;max-height:calc(100vh - 240px)}
-.ecanvas img{max-width:100%;max-height:calc(100vh - 240px);object-fit:contain;display:block}
-.ehist{width:116px;flex:0 0 116px;max-height:calc(100vh - 240px);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:10px;padding:2px;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
+.ework{display:flex;gap:14px;align-items:stretch;flex:1;min-height:0}
+.ecanvas{flex:1;min-width:0;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:#000;display:grid;place-items:center}
+.ecanvas img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.ehist{width:120px;flex:0 0 120px;height:100%;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:10px;padding:2px;scrollbar-width:thin;scrollbar-color:rgba(163,230,53,.3) transparent}
 .ehist::-webkit-scrollbar{width:6px}
 .ehist::-webkit-scrollbar-track{background:transparent}
 .ehist::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
-.ehist .v{cursor:pointer;opacity:.6;border-radius:10px;overflow:hidden;border:1px solid transparent;transition:opacity .15s,border-color .15s}
+.ehist .v{cursor:pointer;opacity:.6;border-radius:10px;overflow:hidden;border:1px solid transparent;transition:opacity .15s,border-color .15s;flex:0 0 auto}
 .ehist .v img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#000}
 .ehist .v .vp{color:var(--muted);font-size:.62rem;line-height:1.35;padding:3px 2px 0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .ehist .v:hover{opacity:.9}
 .ehist .v.on{opacity:1;border-color:var(--border-lime);box-shadow:0 0 0 1px rgba(163,230,53,.4)}
 .ehist .v.on .vp{color:var(--lime)}
-.emeta{margin-top:12px;color:var(--muted);font-size:.82rem;line-height:1.6}
+.emeta{margin-top:10px;color:var(--muted);font-size:.82rem;line-height:1.6;flex:0 0 auto}
 .emeta .ver{color:var(--lime);font-weight:700}
 .composer{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(780px,calc(100% - 28px));z-index:300;background:rgba(12,15,10,.94);border:1px solid var(--border);border-radius:20px;padding:8px 10px 6px;box-shadow:0 14px 40px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
 .crow1{display:flex;gap:8px;align-items:flex-start}
@@ -116,7 +117,7 @@ body.editing{overflow:hidden}
 .pu-row button:hover{color:var(--text)}
 .pu-row button.on{border-color:var(--border-lime);color:var(--lime);background:rgba(163,230,53,.08)}
 .pu-cost{padding:8px 10px 4px;color:var(--lime);font-size:.8rem;font-weight:700;border-top:1px solid var(--border);margin-top:6px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:110px;z-index:340;background:#1a0d0d;border:1px solid rgba(248,113,113,.5);color:#fca5a5;border-radius:12px;padding:10px 16px;font-size:.84rem;max-width:min(560px,calc(100vw - 40px));display:none;text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:120px;z-index:340;background:#1a0d0d;border:1px solid rgba(248,113,113,.5);color:#fca5a5;border-radius:12px;padding:10px 16px;font-size:.84rem;max-width:min(560px,calc(100vw - 40px));display:none;text-align:center}
 .toast a{color:var(--lime)}
 .shopmask{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:410;display:none;align-items:center;justify-content:center;padding:20px}
 .shopmask.open{display:flex}
@@ -153,11 +154,11 @@ body.editing .cbtn.add{display:none}
   .shop{grid-template-columns:1fr}
   .packs{grid-template-columns:1fr}
   .tile .tb,.tile .dots{opacity:1}
-  .ecanvas{width:100%;max-height:calc(100vh - 320px)}
-  .ecanvas img{max-height:calc(100vh - 320px)}
+  #editView{padding:12px 16px 132px}
   .ework{flex-direction:column}
-  .ehist{width:100%;flex:0 0 auto;max-height:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;overscroll-behavior:contain}
-  .ehist .v{flex:0 0 72px;width:72px}
+  .ecanvas{flex:1;min-height:0}
+  .ehist{width:100%;flex:0 0 96px;height:96px;max-height:96px;flex-direction:row;overflow-x:auto;overflow-y:hidden;overscroll-behavior:contain}
+  .ehist .v{flex:0 0 84px;width:84px}
 }
 </style>
 </head>
@@ -338,7 +339,7 @@ var EXAMPLES=[
 ];
 var ASPECT_RATIO={'1:1':1,'16:9':16/9,'9:16':9/16,'4:3':4/3,'3:4':3/4};
 function ratioFromAspect(a){ return ASPECT_RATIO[a]||1; }
-function rowHeight(){ return window.innerWidth<=900?150:210; }
+function rowHeight(){ return window.innerWidth<=900?160:240; }
 
 var modelKey='kling-image', count=1, aspect='1:1';
 var tape=[], editId=null, refData=null, srcId=null;
@@ -361,7 +362,7 @@ function find(id){ for(var i=0;i<tape.length;i++){ if(tape[i].id===id) return ta
 function hasChildren(id){ for(var i=0;i<tape.length;i++){ if(tape[i].parent===id) return true; } return false; }
 function uid(){ return 't'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
 function shortPrompt(s){ s=String(s||''); return s.length>26?s.slice(0,26)+'…':s; }
-function tileRatio(t){ return t.ratio||ratioFromAspect(t.aspect); }
+function tileRatio(t){ return (t.ratio&&t.ratio>0.2&&t.ratio<5)?t.ratio:1; }
 
 function measureRatio(url){
   return new Promise(function(res){
@@ -378,10 +379,17 @@ function showToast(msg){
   setTimeout(function(){ toastEl.style.display='none'; },9000);
 }
 
-/* --- лента: хранение --- */
+/* --- лента: хранение + перемер реальных пропорций --- */
 function loadTape(){
   try{ tape=JSON.parse(localStorage.getItem(TAPE_KEY)||'[]'); if(!tape.length) tape=[]; }catch(e){ tape=[]; }
-  tape.forEach(function(t){ if(!t.ratio) t.ratio=ratioFromAspect(t.aspect); });
+  tape.forEach(function(t){ if(!t.measured){ t.ratio=1; } });
+}
+function remeasureAll(){
+  var todo=tape.filter(function(t){ return !t.measured && t.url; });
+  if(!todo.length) return Promise.resolve();
+  return Promise.all(todo.map(function(t){
+    return measureRatio(t.url).then(function(r){ t.ratio=r; t.measured=true; });
+  })).then(function(){ saveTape(); renderTape(); });
 }
 function saveTape(){
   try{ localStorage.setItem(TAPE_KEY, JSON.stringify(tape.slice(-12))); }
@@ -522,7 +530,7 @@ function loadRefFile(f){
     shrink(reader.result,function(d,w,h){
       var prev=snap();
       var nid=uid();
-      tape.push({id:nid,kind:'src',status:'done',url:d,ratio:(w&&h?w/h:1),prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
+      tape.push({id:nid,kind:'src',status:'done',url:d,ratio:(w&&h?w/h:1),measured:true,prompt:'исходник',model:modelKey,aspect:aspect,count:count,parent:null,ts:Date.now()});
       refData=d; srcId=nid;
       actSnap(prev);
       restore(snap());
@@ -612,7 +620,7 @@ function onPromptInput(){
 promptBox.addEventListener('input',onPromptInput);
 window.addEventListener('beforeunload',saveDraft);
 
-/* --- режим правки: страничка работы с картинкой --- */
+/* --- режим правки: полноэкранный слой --- */
 function chainOf(id){
   var arr=[], cur=find(id), guard=0;
   while(cur&&guard<50){ arr.unshift(cur); cur=cur.parent?find(cur.parent):null; guard++; }
@@ -707,10 +715,10 @@ function startGeneration(pid){
   if(!pend){ sendBtn.disabled=false; return; }
   paymentUsed=true;
   sendBtn.disabled=true;
-  var refUrl=null, refRatio=null;
-  if(pend.refId){ var rt=find(pend.refId); if(rt){ refUrl=rt.url; refRatio=tileRatio(rt); } }
+  var refUrl=null;
+  if(pend.refId){ var rt=find(pend.refId); if(rt) refUrl=rt.url; }
   var genId=uid();
-  tape.push({id:genId,kind:'img',status:'gen',url:'',ratio:ratioFromAspect(pend.aspect),prompt:pend.prompt,model:pend.model,aspect:pend.aspect,count:pend.count,parent:pend.refId||null,ts:Date.now()});
+  tape.push({id:genId,kind:'img',status:'gen',url:'',ratio:ratioFromAspect(pend.aspect),measured:false,prompt:pend.prompt,model:pend.model,aspect:pend.aspect,count:pend.count,parent:pend.refId||null,ts:Date.now()});
   saveTape();
   if(editId) closeEdit();
   renderTape();
@@ -728,9 +736,9 @@ function startGeneration(pid){
       urls=urls.map(function(u){ return (u.indexOf('data:')===0||u.indexOf('http')===0)?u:('data:image/png;base64,'+u); });
       return Promise.all(urls.map(measureRatio)).then(function(ratios){
         var gt=find(genId);
-        if(gt){ gt.status='done'; gt.url=urls[0]; gt.ratio=ratios[0]; }
+        if(gt){ gt.status='done'; gt.url=urls[0]; gt.ratio=ratios[0]; gt.measured=true; }
         for(var i=1;i<urls.length;i++){
-          tape.push({id:uid(),kind:'img',status:'done',url:urls[i],ratio:ratios[i],prompt:pend.prompt,model:pend.model,aspect:pend.aspect,count:1,parent:pend.refId||null,ts:Date.now()});
+          tape.push({id:uid(),kind:'img',status:'done',url:urls[i],ratio:ratios[i],measured:true,prompt:pend.prompt,model:pend.model,aspect:pend.aspect,count:1,parent:pend.refId||null,ts:Date.now()});
         }
         saveTape(); renderTape();
         pendingClear(); paymentUsed=false; sendBtn.disabled=false;
@@ -809,6 +817,7 @@ document.getElementById('shopBuy').addEventListener('click',function(){ alert('�
     }
   }catch(e){}
   updateChips(); renderChip(); renderTape(); syncUserMenu();
+  remeasureAll();
 })();
 </script>
 <script src="/help-widget.js"></script>
