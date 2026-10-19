@@ -18,7 +18,7 @@ try {
     if (i === -1) continue;
     const k = t.slice(0, i).trim();
     let v = t.slice(i + 1).trim();
-    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if ((v.startsWith("'") && v.endsWith("'")) || (v.startsWith('"') && v.endsWith('"'))) v = v.slice(1, -1);
     if (!(k in process.env)) process.env[k] = v;
   }
 } catch (e) {
@@ -57,7 +57,7 @@ async function serveStatic(req, res, urlPath) {
   }
   let st = await fs.promises.stat(filePath).catch(() => null);
   if (st && st.isDirectory()) { filePath = path.join(filePath, 'index.html'); st = await fs.promises.stat(filePath).catch(() => null); }
-  if (!st && !path.extname(filePath)) {
+  if (st && !path.extname(filePath)) {
     const alt = filePath + '.html';
     const st2 = await fs.promises.stat(alt).catch(() => null);
     if (st2) { filePath = alt; st = st2; }
@@ -86,9 +86,58 @@ async function getHandler(name) {
   return handlerCache.get(name);
 }
 
+// >>> ПРАВКА 1 (помощники-«официанты»): эмуляция req.query и req.body,
+//     которые на Vercel наполняет платформа, а на голом Node — нет.
+const MAX_BODY_BYTES = 80 * 1024 * 1024; // ~80 МБ: base64-картинки проходят, память не съедают
+
+function parseQuery(searchParams) {
+  const out = {};
+  for (const [k, v] of searchParams) {
+    if (k in out) {
+      if (Array.isArray(out[k])) out[k].push(v);
+      else out[k] = [out[k], v];
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
+async function readBody(req) {
+  // возвращает { ok:true, value } | { ok:false, tooBig:true } | { ok:false, badJson:true }
+  const ct = (req.headers['content-type'] || '').toLowerCase();
+  const hasBody = req.headers['content-length'] !== undefined || /chunked/i.test(req.headers['transfer-encoding'] || '');
+  if (!hasBody) return { ok: true, value: undefined };
+  const chunks = [];
+  let size = 0;
+  try {
+    for await (const ch of req) {
+      size += ch.length;
+      if (size > MAX_BODY_BYTES) { req.destroy(); return { ok: false, tooBig: true }; }
+      chunks.push(ch);
+    }
+  } catch (e) {
+    return { ok: false, badJson: true };
+  }
+  const buf = Buffer.concat(chunks);
+  if (buf.length === 0) return { ok: true, value: undefined };
+  if (ct.includes('application/json')) {
+    try { return { ok: true, value: JSON.parse(buf.toString('utf8')) }; }
+    catch { return { ok: false, badJson: true }; }
+  }
+  if (ct.includes('application/x-www-form-urlencoded')) {
+    return { ok: true, value: Object.fromEntries(new URLSearchParams(buf.toString('utf8'))) };
+  }
+  return { ok: true, value: buf };
+}
+// <<< ПРАВКА 1
+
 const server = http.createServer(async (req, res) => {
   const started = Date.now();
   const u = new URL(req.url, 'http://localhost');
+  // >>> ПРАВКА 2: протягиваем повару коробочку с параметрами из адреса
+  req.query = parseQuery(u.searchParams);
+  // <<< ПРАВКА 2
   res.on('finish', () => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} -> ${res.statusCode} (${Date.now() - started}ms)`);
   });
@@ -100,6 +149,18 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: 'not found' }));
       }
+      // >>> ПРАВКА 3: читаем тело запроса и кладём повару в req.body
+      const bodyRes = await readBody(req);
+      if (!bodyRes.ok) {
+        if (bodyRes.tooBig) {
+          res.writeHead(413, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ error: 'too large' }));
+        }
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'invalid json' }));
+      }
+      req.body = bodyRes.value;
+      // <<< ПРАВКА 3
       await handler(req, res);
       if (!res.writableEnded) res.end();
       return;
