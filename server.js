@@ -8,7 +8,6 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const API_DIR = path.join(__dirname, 'api');
 const PORT = Number(process.env.PORT || 3000);
 
-// --- читаем .env сами, чтобы не зависеть от версии Node и настроек pm2 ---
 try {
   const raw = fs.readFileSync(path.join(__dirname, '.env'), 'utf8');
   for (const line of raw.split('\n')) {
@@ -86,9 +85,7 @@ async function getHandler(name) {
   return handlerCache.get(name);
 }
 
-// >>> ПРАВКА 1 (помощники-«официанты»): эмуляция req.query и req.body,
-//     которые на Vercel наполняет платформа, а на голом Node — нет.
-const MAX_BODY_BYTES = 80 * 1024 * 1024; // ~80 МБ: base64-картинки проходят, память не съедают
+const MAX_BODY_BYTES = 80 * 1024 * 1024;
 
 function parseQuery(searchParams) {
   const out = {};
@@ -104,7 +101,6 @@ function parseQuery(searchParams) {
 }
 
 async function readBody(req) {
-  // возвращает { ok:true, value } | { ok:false, tooBig:true } | { ok:false, badJson:true }
   const ct = (req.headers['content-type'] || '').toLowerCase();
   const hasBody = req.headers['content-length'] !== undefined || /chunked/i.test(req.headers['transfer-encoding'] || '');
   if (!hasBody) return { ok: true, value: undefined };
@@ -130,14 +126,27 @@ async function readBody(req) {
   }
   return { ok: true, value: buf };
 }
-// <<< ПРАВКА 1
+
+function decorateRes(res) {
+  res.status = (code) => { res.statusCode = code; return res; };
+  res.json = (obj) => {
+    if (!res.headersSent) res.writeHead(res.statusCode || 200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(obj));
+    return res;
+  };
+  res.send = (data) => {
+    if (!res.headersSent) res.writeHead(res.statusCode || 200);
+    res.end(typeof data === 'string' || Buffer.isBuffer(data) ? data : String(data == null ? '' : data));
+    return res;
+  };
+  res.sendStatus = (code) => { res.statusCode = code; if (!res.headersSent) res.writeHead(code); res.end(String(code)); return res; };
+}
 
 const server = http.createServer(async (req, res) => {
   const started = Date.now();
   const u = new URL(req.url, 'http://localhost');
-  // >>> ПРАВКА 2: протягиваем повару коробочку с параметрами из адреса
   req.query = parseQuery(u.searchParams);
-  // <<< ПРАВКА 2
+  decorateRes(res);
   res.on('finish', () => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} -> ${res.statusCode} (${Date.now() - started}ms)`);
   });
@@ -149,7 +158,6 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: 'not found' }));
       }
-      // >>> ПРАВКА 3: читаем тело запроса и кладём повару в req.body
       const bodyRes = await readBody(req);
       if (!bodyRes.ok) {
         if (bodyRes.tooBig) {
@@ -160,7 +168,6 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ error: 'invalid json' }));
       }
       req.body = bodyRes.value;
-      // <<< ПРАВКА 3
       await handler(req, res);
       if (!res.writableEnded) res.end();
       return;
@@ -173,7 +180,6 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// длинные генерации видео не должны обрываться по таймауту Node
 server.timeout = 0;
 server.requestTimeout = 0;
 server.headersTimeout = 650000;
