@@ -190,7 +190,7 @@ var EXAMPLES=[
 ];
 var ASPECT_RATIO={'1:1':1,'16:9':16/9,'9:16':9/16,'4:3':4/3,'3:4':3/4};
 function ratioFromAspect(a){ return ASPECT_RATIO[a]||1; }
-function rowHeight(){ return window.innerWidth<=900?160:240; }
+function rowHeight(){ return window.innerWidth<=900?160:180; }
 
 var modelKey='kling-image', count=1, aspect='1:1';
 var tape=[], editId=null, refData=null, srcId=null;
