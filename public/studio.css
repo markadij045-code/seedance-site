@@ -109,8 +109,12 @@ body.editing{overflow:hidden}
 body.editing .cbtn.add{display:none}
 
 /* --- попап настроек режима --- */
-.popup{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:320;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:8px;width:min(360px,calc(100vw - 40px));box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:min(440px,60vh);overflow-y:auto;scrollbar-width:thin}
+.popup{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:320;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:8px;width:min(360px,calc(100vw - 40px));box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:min(560px,72vh);overflow-y:auto;scrollbar-width:thin}
 .popup.open{display:block}
+.popup{scrollbar-color:rgba(163,230,53,.3) transparent}
+.popup::-webkit-scrollbar{width:8px}
+.popup::-webkit-scrollbar-track{background:transparent}
+.popup::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
 .pu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
 .pu-item:hover{background:rgba(163,230,53,.12)}
