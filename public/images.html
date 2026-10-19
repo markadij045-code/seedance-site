@@ -191,6 +191,7 @@ var EXAMPLES=[
 var ASPECT_RATIO={'1:1':1,'16:9':16/9,'9:16':9/16,'4:3':4/3,'3:4':3/4};
 function ratioFromAspect(a){ return ASPECT_RATIO[a]||1; }
 function rowHeight(){ return window.innerWidth<=900?160:180; }
+function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 var modelKey='kling-image', count=1, aspect='1:1';
 var tape=[], editId=null, refData=null, srcId=null;
@@ -287,34 +288,40 @@ function toggleExamples(){
   });
 })();
 
-/* --- меню трёх точек --- */
+/* --- меню трёх точек: 5 пунктов + flyout-подменю --- */
 function closeTileMenu(){ tileMenu.classList.remove('open'); tileMenu.innerHTML=''; }
 function openTileMenu(id,rect){
   var t=find(id); if(!t||t.status==='gen') return;
   var items=[
-    {k:'dl',l:'⬇ Скачать · оригинал'},
-    {k:'dl2',l:'⬇ Скачать · 2x HD',soon:'скоро'},
-    {k:'dl4',l:'⬇ Скачать · 4K',soon:'скоро'},
-    {k:'vid',l:'🎬 Сделать видео'},
-    {k:'av',l:'🗣 В аватар',soon:'скоро'},
-    {k:'mo',l:'🕺 В моушен',soon:'скоро'},
+    {k:'dl',l:'📥 Скачать',fly:[{k:'dl',l:'Оригиналом'},{k:'dl2',l:'2x HD',soon:'скоро'},{k:'dl4',l:'4K',soon:'скоро'}]},
+    {k:'use',l:'🎯 Использовать в…',fly:[{k:'vid',l:'Сделать видео'},{k:'av',l:'В аватар',soon:'скоро'},{k:'mo',l:'В моушен',soon:'скоро'}]},
     {k:'edit',l:'✏️ Править'},
     {k:'base',l:'📌 Взять за основу'},
     {k:'del',l:'✕ Убрать',danger:true}
   ];
   tileMenu.innerHTML=items.map(function(it){
-    return '<button type="button" data-k="'+it.k+'" class="'+(it.danger?'danger':'')+'">'+it.l+(it.soon?'<span class="sn">'+it.soon+'</span>':'')+'</button>';
+    if(it.fly){
+      return '<div class="item"><button type="button" data-par="'+it.k+'" class="'+(it.danger?'danger':'')+'">'+it.l+'<span class="ar">▸</span></button>'
+        +'<div class="fly">'+it.fly.map(function(f){ return '<button type="button" data-k="'+f.k+'">'+f.l+(f.soon?'<span class="sn">'+f.soon+'</span>':'')+'</button>'; }).join('')+'</div></div>';
+    }
+    return '<div class="item"><button type="button" data-k="'+it.k+'" class="'+(it.danger?'danger':'')+'">'+it.l+'</button></div>';
   }).join('');
   tileMenu.classList.add('open');
-  var mw=240, top=rect.bottom+6, left=rect.right-mw;
+  var mw=210, top=rect.bottom+6, left=rect.right-mw;
   if(left<8) left=8;
-  if(top+items.length*36>window.innerHeight-8) top=Math.max(8,rect.top-items.length*36-6);
+  if(top+items.length*40>window.innerHeight-8) top=Math.max(8,rect.top-items.length*40-6);
   tileMenu.style.top=top+'px'; tileMenu.style.left=left+'px';
-  tileMenu.querySelectorAll('button').forEach(function(b){
+  tileMenu.querySelectorAll('[data-k]').forEach(function(b){
     b.addEventListener('click',function(){
       var k=b.getAttribute('data-k');
       closeTileMenu();
       menuAction(k,id);
+    });
+  });
+  tileMenu.querySelectorAll('[data-par]').forEach(function(b){
+    b.addEventListener('click',function(e){
+      e.stopPropagation();
+      b.parentNode.classList.toggle('open');
     });
   });
 }
@@ -418,18 +425,20 @@ function shrink(dataUrl,cb){
   img.src=dataUrl;
 }
 
-/* --- композер: чипсы и попап --- */
+/* --- композер: чипсы и попап рабочей зоны --- */
 function updateChips(){
   sumChip.textContent='⚙ '+model().name+' · '+aspect+' · '+COUNTS[count].label;
   document.getElementById('priceVal').textContent=price();
 }
 function closePop(){ pop.classList.remove('open'); }
 function openPop(){
-  var h='<div class="pu-head">Модель рисования</div>';
-  modelKeys().forEach(function(k){
+  var h='<div class="pu-head">Модель рисования</div><div class="pu-grid">';
+  h+=modelKeys().map(function(k){
     var m=IMG_MODELS[k];
-    h+='<div class="pu-item" data-model="'+k+'"><span class="nc"><span class="nm">'+m.name+' · '+m.price+' 🐭</span><span class="pu-desc">'+m.desc+' · пак x4 = '+(m.price*3)+' 🐭</span></span>'+(modelKey===k?'<span class="chk">✓</span>':'')+'</div>';
-  });
+    return '<div class="pu-cell'+(modelKey===k?' on':'')+'" data-model="'+k+'" title="'+escAttr(m.desc)+'">'
+      +'<span class="nm">'+m.name+'</span><span class="pp">'+m.price+' 🐭 · пак '+(m.price*3)+' 🐭</span></div>';
+  }).join('');
+  h+='</div>';
   h+='<div class="pu-lbl">Пропорции кадра</div><div class="pu-row">'+ASPECTS.map(function(a){ return '<button type="button" data-asp="'+a+'" class="'+(a===aspect?'on':'')+'">'+a+'</button>'; }).join('')+'</div>';
   h+='<div class="pu-lbl">Сколько картинок</div><div class="pu-row">'+Object.keys(COUNTS).map(function(c){ return '<button type="button" data-count="'+c+'" class="'+(String(count)===c?'on':'')+'">'+COUNTS[c].label+'</button>'; }).join('')+'</div>';
   h+='<div class="pu-cost">Стоимость генерации: '+price()+' 🐭</div>';
