@@ -53,14 +53,18 @@
 @keyframes shdrift{from{transform:translate(-12%,-8%) scale(1)}to{transform:translate(14%,10%) scale(1.18)}}
 @keyframes shbreath{0%,100%{opacity:.5}50%{opacity:.95}}
 
-/* --- меню трёх точек --- */
-.tmenu{position:fixed;z-index:360;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:236px;box-shadow:0 12px 32px rgba(0,0,0,.65);display:none}
+/* --- меню трёх точек: компактное + flyout-подменю --- */
+.tmenu{position:fixed;z-index:360;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;min-width:210px;box-shadow:0 12px 32px rgba(0,0,0,.65);display:none}
 .tmenu.open{display:block}
+.tmenu .item{position:relative}
 .tmenu button{display:flex;gap:8px;align-items:center;width:100%;padding:8px 10px;border:none;border-radius:8px;background:none;color:var(--text);font:500 .82rem 'Inter';cursor:pointer;text-align:left}
 .tmenu button:hover{background:rgba(163,230,53,.12)}
 .tmenu button.danger{color:#fca5a5}
 .tmenu button.danger:hover{background:rgba(248,113,113,.12)}
 .tmenu .sn{margin-left:auto;color:var(--muted);font-size:.64rem;border:1px solid var(--border);border-radius:999px;padding:1px 7px;flex:0 0 auto}
+.tmenu .ar{margin-left:auto;color:var(--muted);font-size:.68rem;flex:0 0 auto}
+.tmenu .fly{display:none;position:absolute;right:calc(100% + 6px);top:0;min-width:190px;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:12px;padding:6px;box-shadow:0 12px 32px rgba(0,0,0,.65)}
+.tmenu .item:hover .fly,.tmenu .item.open .fly{display:block}
 
 /* --- режим правки: полноэкранный слой --- */
 #editView{display:none}
@@ -108,21 +112,18 @@ body.editing{overflow:hidden}
 .sendbtn:disabled{opacity:.5;cursor:not-allowed}
 body.editing .cbtn.add{display:none}
 
-/* --- попап настроек режима --- */
-.popup{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:320;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:8px;width:min(360px,calc(100vw - 40px));box-shadow:0 12px 32px rgba(0,0,0,.6);display:none;max-height:min(560px,72vh);overflow-y:auto;scrollbar-width:thin}
+/* --- попап настроек режима: компактный, БЕЗ прокрутки --- */
+.popup{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:320;background:#0c0f0a;border:1px solid var(--border-lime);border-radius:14px;padding:8px;width:min(400px,calc(100vw - 40px));box-shadow:0 12px 32px rgba(0,0,0,.6);display:none}
 .popup.open{display:block}
-.popup{scrollbar-color:rgba(163,230,53,.3) transparent}
-.popup::-webkit-scrollbar{width:8px}
-.popup::-webkit-scrollbar-track{background:transparent}
-.popup::-webkit-scrollbar-thumb{background:rgba(163,230,53,.28);border-radius:999px}
 .pu-head{padding:6px 10px;color:var(--muted);font-size:.75rem}
-.pu-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text);font-size:.85rem}
-.pu-item:hover{background:rgba(163,230,53,.12)}
-.pu-item .nc{display:flex;flex-direction:column;gap:3px;min-width:0}
-.pu-item .nm{font-weight:600}
-.pu-desc{color:var(--muted);font-size:.72rem;line-height:1.45}
-.pu-item .chk{margin-left:auto;color:var(--lime);flex:0 0 auto}
 .pu-lbl{padding:8px 10px 4px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.pu-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px 10px 8px}
+.pu-cell{border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--text);display:flex;flex-direction:column;gap:2px}
+.pu-cell:hover{border-color:var(--border-lime)}
+.pu-cell.on{border-color:var(--border-lime);background:rgba(163,230,53,.08);color:var(--lime)}
+.pu-cell .nm{font-weight:600;font-size:.8rem}
+.pu-cell .pp{color:var(--muted);font-size:.68rem}
+.pu-cell.on .pp{color:var(--lime)}
 .pu-row{display:flex;gap:6px;flex-wrap:wrap;padding:4px 10px 8px}
 .pu-row button{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font:600 .8rem 'Inter';cursor:pointer}
 .pu-row button:hover{color:var(--text)}
@@ -174,4 +175,5 @@ body.editing .cbtn.add{display:none}
   .ecanvas{flex:1;min-height:0}
   .ehist{width:100%;flex:0 0 96px;height:96px;max-height:96px;flex-direction:row;overflow-x:auto;overflow-y:hidden;overscroll-behavior:contain}
   .ehist .v{flex:0 0 84px;width:84px}
+  .tmenu .fly{right:auto;left:0;top:100%;margin-top:4px}
 }
