@@ -14,7 +14,7 @@ try {
     const t = line.trim();
     if (!t || t.startsWith('#')) continue;
     const i = t.indexOf('=');
-    if (i === -1) continue;
+    if (i === -1') continue;
     const k = t.slice(0, i).trim();
     let v = t.slice(i + 1).trim();
     if ((v.startsWith("'") && v.endsWith("'")) || (v.startsWith('"') && v.endsWith('"'))) v = v.slice(1, -1);
@@ -23,6 +23,8 @@ try {
 } catch (e) {
   console.error('[env] не удалось прочитать .env:', e.message);
 }
+
+const HOST = process.env.HOST || '127.0.0.1';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -56,11 +58,6 @@ async function serveStatic(req, res, urlPath) {
   }
   let st = await fs.promises.stat(filePath).catch(() => null);
   if (st && st.isDirectory()) { filePath = path.join(filePath, 'index.html'); st = await fs.promises.stat(filePath).catch(() => null); }
-  if (st && !path.extname(filePath)) {
-    const alt = filePath + '.html';
-    const st2 = await fs.promises.stat(alt).catch(() => null);
-    if (st2) { filePath = alt; st = st2; }
-  }
   if (!st || !st.isFile()) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     return res.end('404');
@@ -185,6 +182,6 @@ server.requestTimeout = 0;
 server.headersTimeout = 650000;
 server.keepAliveTimeout = 60000;
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`[server] слушает http://127.0.0.1:${PORT} (статика: public/, api: api/)`);
+server.listen(PORT, HOST, () => {
+  console.log(`[server] слушает http://${HOST}:${PORT} (статика: public/, api: api/)`);
 });
